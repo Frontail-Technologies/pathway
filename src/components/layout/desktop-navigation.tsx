@@ -1,0 +1,2 @@
+import Link from 'next/link'
+export function DesktopNavigation({ items }: { items: readonly { label: string; href: string }[] }) { return <nav className="hidden items-center gap-5 overflow-x-auto md:flex">{items.map(item => <Link key={item.href} href={item.href} className="flex shrink-0 items-center rounded-sm text-[13px] font-medium text-primary-foreground/80 outline-none transition-colors hover:text-primary-foreground focus-visible:ring-2 focus-visible:ring-white/70">{item.label}</Link>)}</nav> }
