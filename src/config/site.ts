@@ -1,0 +1,1 @@
+export const siteConfig = { name: 'Pathway', tagline: 'Find your next step.', description: 'A clearer way to discover education opportunities.', url: process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000' } as const

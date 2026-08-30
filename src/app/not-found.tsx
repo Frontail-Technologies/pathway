@@ -1,0 +1,2 @@
+import Link from 'next/link'
+export default function NotFound() { return <main className="container-shell flex min-h-screen items-center justify-center"><div className="text-center"><p className="font-mono text-sm font-semibold text-primary">404</p><h1 className="mt-2 font-heading text-3xl font-bold">This path is not mapped yet.</h1><Link href="/" className="mt-5 inline-block text-sm font-semibold text-primary underline-offset-4 hover:underline">Return home</Link></div></main> }
