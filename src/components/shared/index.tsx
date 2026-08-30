@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import { Fragment, type ReactNode } from 'react'
 import { BadgeCheck, Search, Star } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb'
@@ -6,11 +6,32 @@ import { Pagination, PaginationContent, PaginationItem, PaginationNext, Paginati
 
 export function Container({ children, className = '' }: { children: ReactNode; className?: string }) { return <div className={`container-shell ${className}`}>{children}</div> }
 export function Logo({ inverted = false }: { inverted?: boolean }) { return <span className={`font-heading text-xl font-extrabold tracking-tight ${inverted ? 'text-primary-foreground' : 'text-primary'}`}>Pathway</span> }
-export function GlobalSearch({ compact = false, placeholder = 'Search colleges, courses, exams and more' }: { compact?: boolean; placeholder?: string }) { return <form action="/search" className={`flex w-full items-center gap-2 rounded-[10px] border bg-card pl-3 pr-1 transition-colors focus-within:border-primary ${compact ? 'h-11' : 'h-12 pl-4'}`}><Search className="size-4 shrink-0 text-muted-foreground" aria-hidden="true" /><input name="q" aria-label={placeholder} placeholder={placeholder} className="h-full min-w-0 flex-1 bg-transparent px-1 text-sm outline-none placeholder:text-muted-foreground" /><Button type="submit" variant="cta" className={compact ? 'h-9 w-23 shrink-0 text-sm font-semibold' : 'h-11 shrink-0 px-6 text-sm font-semibold'}>Search</Button></form> }
+export function GlobalSearch({ compact = false, placeholder = 'Search colleges, courses, exams and more', quiet = false }: { compact?: boolean; placeholder?: string; quiet?: boolean }) {
+  if (quiet) {
+    return (
+      <form action="/search" className="flex h-10 w-full items-center gap-2 rounded-lg bg-card pl-3 pr-1 transition-colors focus-within:ring-2 focus-within:ring-primary/30">
+        <Search className="size-3.5 shrink-0 text-muted-foreground" aria-hidden="true" />
+        <input name="q" aria-label={placeholder} placeholder={placeholder} className="h-full min-w-0 flex-1 bg-transparent px-1 text-xs outline-none placeholder:text-muted-foreground" />
+        <Button type="submit" variant="cta" size="icon" className="size-8 shrink-0" aria-label="Search">
+          <Search className="size-4" aria-hidden="true" />
+        </Button>
+      </form>
+    )
+  }
+  return (
+    <form action="/search" className={`flex w-full items-center gap-2 rounded-[10px] border bg-card pl-3 pr-1 transition-colors focus-within:border-primary ${compact ? 'h-11' : 'h-12 pl-4'}`}>
+      <Search className="size-4 shrink-0 text-muted-foreground" aria-hidden="true" />
+      <input name="q" aria-label={placeholder} placeholder={placeholder} className="h-full min-w-0 flex-1 bg-transparent px-1 text-sm outline-none placeholder:text-muted-foreground" />
+      <Button type="submit" variant="cta" className={compact ? 'h-9 w-23 shrink-0 text-sm font-semibold' : 'h-11 shrink-0 px-6 text-sm font-semibold'}>
+        Search
+      </Button>
+    </form>
+  )
+}
 export function SearchInput({ placeholder = 'Search' }: { placeholder?: string }) { return <input aria-label={placeholder} placeholder={placeholder} className="h-10 w-full rounded-md border bg-card px-3 text-sm outline-none transition-colors focus:border-primary" /> }
 export function SectionHeader({ title, description }: { title: string; description?: string }) { return <div><h2 className="font-heading text-xl font-bold sm:text-2xl">{title}</h2>{description && <p className="mt-1.5 text-sm text-muted-foreground sm:mt-2 sm:text-base">{description}</p>}</div> }
 export function PageHeader({ title, description }: { title: string; description?: string }) { return <header className="flex flex-col gap-2"><h1 className="font-heading text-3xl font-extrabold">{title}</h1>{description && <p className="text-muted-foreground">{description}</p>}</header> }
-export function Breadcrumbs({ items }: { items: string[] }) { return <Breadcrumb><BreadcrumbList>{items.map((item, index) => <BreadcrumbItem key={item}>{index === items.length - 1 ? <BreadcrumbPage>{item}</BreadcrumbPage> : <BreadcrumbLink href="#">{item}</BreadcrumbLink>}{index < items.length - 1 && <BreadcrumbSeparator />}</BreadcrumbItem>)}</BreadcrumbList></Breadcrumb> }
+export function Breadcrumbs({ items }: { items: string[] }) { return <Breadcrumb><BreadcrumbList>{items.map((item, index) => <Fragment key={item}><BreadcrumbItem>{index === items.length - 1 ? <BreadcrumbPage>{item}</BreadcrumbPage> : <BreadcrumbLink href="#">{item}</BreadcrumbLink>}</BreadcrumbItem>{index < items.length - 1 && <BreadcrumbSeparator />}</Fragment>)}</BreadcrumbList></Breadcrumb> }
 export function Rating({ value, count }: { value: number; count?: number }) { return <span aria-label={`${value} out of 5 stars${typeof count === 'number' ? ` from ${count} reviews` : ''}`} className="inline-flex items-center gap-1 text-sm font-medium text-foreground"><Star className="size-4 fill-warning text-warning" aria-hidden="true" />{value.toFixed(1)}{typeof count === 'number' && <span className="font-normal text-muted-foreground">({count} reviews)</span>}</span> }
 export function VerifiedBadge() { return <span className="inline-flex items-center gap-1 rounded-full bg-success-surface px-2 py-1 text-xs font-medium text-success"><BadgeCheck className="size-3.5" aria-hidden="true" />Verified</span> }
 export function SponsoredBadge() { return <span className="rounded-full bg-accent px-2 py-1 text-xs font-medium text-accent-foreground">Sponsored</span> }

@@ -7,11 +7,12 @@ import {
   Bookmark,
   BookOpen,
   Briefcase,
+  Building2,
   CalendarCheck,
   ChevronRight,
   FileText,
   Globe,
-  Home,
+  House,
   Info,
   Landmark,
   Library,
@@ -136,26 +137,32 @@ export function MobileNavigation() {
 }
 
 export function MobileBottomNavigation() {
+  const pathname = usePathname()
   const items = [
-    { label: 'Home', href: '/', icon: Home },
-    { label: 'Colleges', href: '/colleges', icon: Search },
-    { label: 'Courses', href: '/courses', icon: Search },
+    { label: 'Home', href: '/', icon: House },
+    { label: 'Colleges', href: '/colleges', icon: Building2 },
+    { label: 'Courses', href: '/courses', icon: BookOpen },
     { label: 'Saved', href: '/saved', icon: Bookmark },
     { label: 'Profile', href: '/profile', icon: UserRound },
   ]
   return (
-    <nav aria-label="Mobile navigation" className="fixed inset-x-0 bottom-0 z-20 border-t border-primary-foreground/10 bg-primary px-4 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-1.5 md:hidden">
-      <div className="mx-auto grid max-w-md grid-cols-5 gap-1">
-        {items.map(({ label, href, icon: Icon }) => (
-          <Link
-            key={href}
-            href={href}
-            className={`flex flex-col items-center gap-0.5 rounded-lg py-1 text-[11px] outline-none focus-visible:ring-2 focus-visible:ring-white/70 ${label === 'Home' ? 'font-semibold text-primary-foreground' : 'text-primary-foreground/70 hover:text-primary-foreground'}`}
-          >
-            <Icon className="size-4" aria-hidden="true" />
-            {label}
-          </Link>
-        ))}
+    <nav aria-label="Mobile navigation" className="fixed inset-x-0 bottom-0 z-20 border-t bg-card pt-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] md:hidden">
+      <div className="mx-auto grid max-w-md grid-cols-5">
+        {items.map(({ label, href, icon: Icon }) => {
+          const isActive = pathname === href
+          return (
+            <Link
+              key={href}
+              href={href}
+              aria-current={isActive ? 'page' : undefined}
+              className="relative flex min-h-11 flex-col items-center justify-center gap-0.5 text-[11px] outline-none transition-colors duration-150 motion-reduce:transition-none active:bg-cta/10 focus-visible:ring-2 focus-visible:ring-primary/40"
+            >
+              {isActive && <span aria-hidden="true" className="absolute top-0 h-0.75 w-6 rounded-full bg-cta" />}
+              <Icon className={isActive ? 'size-5 text-cta' : 'size-5 text-muted-foreground'} aria-hidden="true" />
+              <span className={isActive ? 'font-semibold text-cta' : 'text-muted-foreground'}>{label}</span>
+            </Link>
+          )
+        })}
       </div>
     </nav>
   )

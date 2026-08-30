@@ -1,5 +1,6 @@
 import { Inter, Manrope } from 'next/font/google'
 import type { Metadata, Viewport } from 'next'
+import { Toaster } from '@/components/ui/sonner'
 import './globals.css'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
@@ -9,5 +10,5 @@ export const metadata: Metadata = { title: { default: 'Pathway — Education dis
 export const viewport: Viewport = { colorScheme: 'light', themeColor: '#1D4ED8', width: 'device-width', initialScale: 1 }
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="en" className="bg-background"><body className={`${inter.variable} ${manrope.variable} antialiased`}>{children}</body></html>
+  return <html lang="en" className="bg-background"><body className={`${inter.variable} ${manrope.variable} antialiased`}>{children}<Toaster /></body></html>
 }
