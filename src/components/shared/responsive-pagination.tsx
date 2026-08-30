@@ -1,0 +1,1 @@
+export { ResponsivePagination } from './index'

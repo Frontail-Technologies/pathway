@@ -1,0 +1,1 @@
+export { SponsoredBadge } from './index'
