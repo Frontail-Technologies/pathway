@@ -104,3 +104,22 @@ h1, h2, h3, h4, h5, h6 { font-family: var(--font-manrope), sans-serif; letter-sp
     background-color: var(--muted-foreground);
   }
 }
+
+/*
+ * Targeted print styles for the CMP-01 "Download PDF" flow (window.print()
+ * as the frontend-only first version — see CollegeComparePage). Hides the
+ * global chrome and any interactive/decorative page furniture so only the
+ * comparison content prints; forces a light background regardless of the
+ * viewer's OS theme. Does not touch normal screen styles.
+ */
+@media print {
+  header,
+  footer,
+  nav[aria-label='Mobile navigation'] {
+    display: none !important;
+  }
+  body {
+    background: #ffffff !important;
+    color: #172033 !important;
+  }
+}
