@@ -5,6 +5,14 @@ export type ApplicationStatus = 'open' | 'closing-soon' | 'upcoming' | 'closed'
 export type GenderEligibility = 'All Genders' | 'Female Only'
 export type IncomeLimitBucket = 'Below ₹2.5 Lakh' | '₹2.5–5 Lakh' | '₹5–8 Lakh' | 'Above ₹8 Lakh'
 
+/** Shared status badge styling — used by `ScholarshipResultCard` (SCH-01) and the Scholarship Detail identity header/sidebar (SCH-02) so the two never drift. */
+export const scholarshipStatusStyles: Record<ApplicationStatus, { label: string; className: string }> = {
+  open: { label: 'Open', className: 'bg-success-surface text-success' },
+  'closing-soon': { label: 'Closing Soon', className: 'bg-warning-surface text-warning' },
+  upcoming: { label: 'Upcoming', className: 'bg-secondary text-primary' },
+  closed: { label: 'Closed', className: 'bg-muted text-muted-foreground' },
+}
+
 export type ScholarshipListItem = {
   id: string
   slug: string

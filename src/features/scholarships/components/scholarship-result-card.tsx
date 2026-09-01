@@ -1,22 +1,21 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import { toast } from 'sonner'
 import { Bookmark, Building2, CalendarDays, GraduationCap, IndianRupee, MapPin } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { SponsoredBadge } from '@/components/shared'
-import { getDaysRemaining, type ScholarshipListItem } from '../data/scholarships'
-
-const statusStyles: Record<ScholarshipListItem['status'], { label: string; className: string }> = {
-  open: { label: 'Open', className: 'bg-success-surface text-success' },
-  'closing-soon': { label: 'Closing Soon', className: 'bg-warning-surface text-warning' },
-  upcoming: { label: 'Upcoming', className: 'bg-secondary text-primary' },
-  closed: { label: 'Closed', className: 'bg-muted text-muted-foreground' },
-}
+import { getDaysRemaining, scholarshipStatusStyles, type ScholarshipListItem } from '../data/scholarships'
+import { getScholarshipDetail } from '../data/scholarship-detail'
 
 export function ScholarshipResultCard({ scholarship }: { scholarship: ScholarshipListItem }) {
   const [saved, setSaved] = useState(false)
-  const status = statusStyles[scholarship.status]
+  const status = scholarshipStatusStyles[scholarship.status]
+  // Only a scholarship with an implemented SCH-02 detail record gets a live,
+  // Blue "View Details" link — everything else stays visibly disabled/
+  // secondary rather than knowingly navigating to an unimplemented route.
+  const detail = getScholarshipDetail(scholarship.slug)
   const daysRemaining = scholarship.status === 'closing-soon' ? getDaysRemaining(scholarship.deadline) : null
 
   const toggleSaved = () => {
@@ -77,14 +76,22 @@ export function ScholarshipResultCard({ scholarship }: { scholarship: Scholarshi
       <div className="mt-3 flex flex-col gap-3 border-t pt-3 sm:mt-4 sm:flex-row sm:items-center sm:justify-between sm:pt-4">
         <div />
         <div className="grid grid-cols-2 gap-2 sm:flex">
-          {/* Scholarship Detail (SCH-02) doesn't exist yet. Rendered as an unmistakably
-              non-interactive, visually secondary affordance — outline (not solid Blue),
-              disabled (pointer-events-none + not-allowed cursor + reduced opacity via the
-              shared Button primitive) — never a button that reads as a working action.
-              Swap back to the normal solid-Blue primary action once SCH-02 exists. */}
-          <Button variant="outline" className="h-11 px-4 text-sm text-muted-foreground sm:h-10 sm:flex-none" disabled title="Scholarship detail page coming soon">
-            View Details
-          </Button>
+          {detail ? (
+            // A matching SCH-02 detail record exists for this scholarship — the
+            // normal solid-Blue primary discovery action.
+            <Button className="h-11 px-4 text-sm sm:h-10 sm:flex-none" nativeButton={false} render={<Link href={`/scholarship/${scholarship.slug}`} />}>
+              View Details
+            </Button>
+          ) : (
+            // Scholarship Detail (SCH-02) doesn't exist yet for this record. Rendered
+            // as an unmistakably non-interactive, visually secondary affordance —
+            // outline (not solid Blue), disabled (pointer-events-none + not-allowed
+            // cursor + reduced opacity via the shared Button primitive) — never a
+            // button that reads as a working action.
+            <Button variant="outline" className="h-11 px-4 text-sm text-muted-foreground sm:h-10 sm:flex-none" disabled title="Scholarship detail page coming soon">
+              View Details
+            </Button>
+          )}
           {scholarship.officialApplyUrl && (
             <Button
               variant="cta"
