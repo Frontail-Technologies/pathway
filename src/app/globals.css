@@ -123,3 +123,37 @@ h1, h2, h3, h4, h5, h6 { font-family: var(--font-manrope), sans-serif; letter-sp
     color: #172033 !important;
   }
 }
+
+/*
+ * Shared chevron progress loader (`LoadingState`, `src/components/feedback`).
+ * Same conic-gradient mask + sweeping fill technique as supplied — retuned to
+ * the locked palette (Primary Blue fill on a neutral border-tone track,
+ * see docs/DESIGN_SYSTEM.md) instead of its original teal/grey, so it never
+ * introduces an off-brand color. Respects reduced motion.
+ */
+.pw-loader {
+  width: 124px;
+  height: 24px;
+  -webkit-mask:
+    conic-gradient(from 135deg at top, #0000, #000 0.5deg 90deg, #0000 90.5deg) 0 0,
+    conic-gradient(from -45deg at bottom, #0000, #000 0.5deg 90deg, #0000 90.5deg) 0 100%;
+  mask:
+    conic-gradient(from 135deg at top, #0000, #000 0.5deg 90deg, #0000 90.5deg) 0 0,
+    conic-gradient(from -45deg at bottom, #0000, #000 0.5deg 90deg, #0000 90.5deg) 0 100%;
+  -webkit-mask-size: 25% 50%;
+  mask-size: 25% 50%;
+  -webkit-mask-repeat: repeat-x;
+  mask-repeat: repeat-x;
+  background: linear-gradient(var(--primary) 0 0) left / 0% 100% no-repeat var(--border);
+  animation: pw-loader-sweep 2s infinite linear;
+}
+@keyframes pw-loader-sweep {
+  100% {
+    background-size: 100% 100%;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pw-loader {
+    animation-duration: 4s;
+  }
+}
