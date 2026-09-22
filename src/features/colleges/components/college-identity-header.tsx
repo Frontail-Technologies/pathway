@@ -1,23 +1,17 @@
 'use client'
 
-import { useState } from 'react'
 import { toast } from 'sonner'
 import { Bookmark, Landmark, MapPin, Share2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Rating } from '@/components/shared/rating'
 import { VerifiedBadge } from '@/components/shared/verified-badge'
 import { SponsoredBadge } from '@/components/shared/sponsored-badge'
+import { useSavedItem } from '@/features/saved/saved-items-provider'
 import type { CollegeDetailData } from '../data/college-detail'
 import { CollegeGallery } from './college-gallery'
 
 export function CollegeIdentityHeader({ college }: { college: CollegeDetailData }) {
-  const [saved, setSaved] = useState(false)
-
-  const toggleSaved = () => {
-    const next = !saved
-    setSaved(next)
-    toast.success(next ? 'College saved to your list.' : 'College removed from saved items.')
-  }
+  const { saved, toggleSaved } = useSavedItem('college', college.slug, 'College')
 
   const share = async () => {
     const shareData = { title: college.name, text: college.fullName, url: typeof window !== 'undefined' ? window.location.href : '' }

@@ -1,8 +1,7 @@
 'use client'
 
-import { useState } from 'react'
 import Link from 'next/link'
-import { toast } from 'sonner'
+import { useSavedItem } from '@/features/saved/saved-items-provider'
 import { Bookmark, Building2, CalendarDays, GraduationCap, IndianRupee, MapPin } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { SponsoredBadge } from '@/components/shared'
@@ -10,7 +9,7 @@ import { getDaysRemaining, scholarshipStatusStyles, type ScholarshipListItem } f
 import { getScholarshipDetail } from '../data/scholarship-detail'
 
 export function ScholarshipResultCard({ scholarship }: { scholarship: ScholarshipListItem }) {
-  const [saved, setSaved] = useState(false)
+  const { saved, toggleSaved } = useSavedItem('scholarship', scholarship.slug, 'Scholarship')
   const status = scholarshipStatusStyles[scholarship.status]
   // Only a scholarship with an implemented SCH-02 detail record gets a live,
   // Blue "View Details" link — everything else stays visibly disabled/
@@ -18,11 +17,6 @@ export function ScholarshipResultCard({ scholarship }: { scholarship: Scholarshi
   const detail = getScholarshipDetail(scholarship.slug)
   const daysRemaining = scholarship.status === 'closing-soon' ? getDaysRemaining(scholarship.deadline) : null
 
-  const toggleSaved = () => {
-    const next = !saved
-    setSaved(next)
-    toast.success(next ? 'Scholarship saved to your list.' : 'Scholarship removed from saved items.')
-  }
 
   const summary = [scholarship.educationLevels[0], scholarship.streams[0] ?? 'All Streams', scholarship.states[0] ?? 'All India'].filter(Boolean).join(' · ')
 

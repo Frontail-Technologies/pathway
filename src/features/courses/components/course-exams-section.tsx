@@ -16,7 +16,9 @@ export function CourseExamsSection({ course }: { course: CourseDetailData }) {
                   {exam.level} · {exam.purpose}
                 </p>
               </div>
-              <Button variant="outline" className="h-9 w-fit px-4 text-sm">
+              {/* No exam detail/listing screen exists yet — disabled rather than an
+                  active-looking button that does nothing. */}
+              <Button variant="outline" className="h-9 w-fit px-4 text-sm" disabled title="Exam details are coming soon">
                 View Exam
               </Button>
             </div>

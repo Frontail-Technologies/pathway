@@ -1,20 +1,13 @@
 'use client'
 
-import { useState } from 'react'
 import Link from 'next/link'
-import { toast } from 'sonner'
+import { useSavedItem } from '@/features/saved/saved-items-provider'
 import { Bookmark, Building2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import type { CourseListItem } from '../data/courses'
 
 export function CourseResultCard({ course }: { course: CourseListItem }) {
-  const [saved, setSaved] = useState(false)
-
-  const toggleSaved = () => {
-    const next = !saved
-    setSaved(next)
-    toast.success(next ? 'Course saved to your list.' : 'Course removed from saved items.')
-  }
+  const { saved, toggleSaved } = useSavedItem('course', course.slug, 'Course')
 
   return (
     <article className="rounded-[10px] border bg-card p-4 transition-colors hover:border-primary/30 sm:p-5">

@@ -1,15 +1,15 @@
 'use client'
 
-import { useState } from 'react'
-import { toast } from 'sonner'
 import { Container } from '@/components/shared/container'
 import { Breadcrumbs } from '@/components/shared/breadcrumbs'
+import { DetailSectionNav } from '@/components/shared/detail-section-nav'
+import { DetailStickySidebar } from '@/components/shared/detail-sticky-sidebar'
+import { useSavedItem } from '@/features/saved/saved-items-provider'
 import type { ScholarshipDetailData } from '../data/scholarship-detail'
 import { ScholarshipIdentityHeader } from './scholarship-identity-header'
 import { ScholarshipOpportunitySnapshot } from './scholarship-opportunity-snapshot'
 import { ScholarshipEligibilitySnapshot } from './scholarship-eligibility-snapshot'
 import { ScholarshipTopActions } from './scholarship-top-actions'
-import { ScholarshipDetailNav } from './scholarship-detail-nav'
 import { ScholarshipAboutSection } from './scholarship-about-section'
 import { ScholarshipEligibilitySection } from './scholarship-eligibility-section'
 import { ScholarshipBenefitsSection } from './scholarship-benefits-section'
@@ -21,16 +21,22 @@ import { ScholarshipRelatedSection } from './scholarship-related-section'
 import { ScholarshipFaqSection } from './scholarship-faq-section'
 import { ScholarshipActionSidebar } from './scholarship-action-sidebar'
 
+const SCHOLARSHIP_NAV_SECTIONS = [
+  { id: 'overview', label: 'Overview' },
+  { id: 'eligibility', label: 'Eligibility' },
+  { id: 'benefits', label: 'Benefits' },
+  { id: 'dates', label: 'Dates' },
+  { id: 'documents', label: 'Documents' },
+  { id: 'apply', label: 'Apply' },
+  { id: 'selection', label: 'Selection' },
+  { id: 'faqs', label: 'FAQs' },
+]
+
 export function ScholarshipDetailPage({ scholarship }: { scholarship: ScholarshipDetailData }) {
   // Lifted here (rather than local to one component) because the top action
   // row's and the desktop sidebar's "Save Scholarship" controls must reflect
   // the same underlying state.
-  const [saved, setSaved] = useState(false)
-  const toggleSaved = () => {
-    const next = !saved
-    setSaved(next)
-    toast.success(next ? 'Scholarship saved to your list.' : 'Scholarship removed from saved items.')
-  }
+  const { saved, toggleSaved } = useSavedItem('scholarship', scholarship.slug, 'Scholarship')
 
   return (
     <div className="bg-background">
@@ -43,7 +49,7 @@ export function ScholarshipDetailPage({ scholarship }: { scholarship: Scholarshi
         actions block.
       */}
       <Container className="px-4 pt-5 lg:pt-6">
-        <Breadcrumbs items={['Home', 'Scholarships', scholarship.name]} />
+        <Breadcrumbs items={['Home', { label: 'Scholarships', href: '/scholarships' }, scholarship.name]} />
         <div className="mt-4 border-b pb-5 sm:pb-6">
           <ScholarshipIdentityHeader scholarship={scholarship} />
           <ScholarshipOpportunitySnapshot scholarship={scholarship} />
@@ -52,7 +58,7 @@ export function ScholarshipDetailPage({ scholarship }: { scholarship: Scholarshi
         </div>
       </Container>
 
-      <ScholarshipDetailNav />
+      <DetailSectionNav items={SCHOLARSHIP_NAV_SECTIONS} />
 
       <Container className="px-4">
         <div className="flex flex-col gap-8 lg:flex-row lg:items-start lg:gap-6">
@@ -71,9 +77,9 @@ export function ScholarshipDetailPage({ scholarship }: { scholarship: Scholarshi
           {/* Desktop-only single sticky action card — no second sticky mobile
               conversion bar (Mobile Detail Rule reused from COL-02/CRS-02).
               Mobile gets its action summary once, at the top of the page. */}
-          <div className="hidden shrink-0 lg:sticky lg:top-40 lg:block lg:w-75">
+          <DetailStickySidebar>
             <ScholarshipActionSidebar scholarship={scholarship} saved={saved} onToggleSaved={toggleSaved} />
-          </div>
+          </DetailStickySidebar>
         </div>
       </Container>
     </div>

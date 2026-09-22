@@ -1,19 +1,13 @@
 'use client'
 
-import { useState } from 'react'
-import { toast } from 'sonner'
+import Link from 'next/link'
 import { Bookmark, GraduationCap } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { useSavedItem } from '@/features/saved/saved-items-provider'
 import type { CourseDetailData } from '../data/course-detail'
 
 export function CourseIdentityHeader({ course }: { course: CourseDetailData }) {
-  const [saved, setSaved] = useState(false)
-
-  const toggleSaved = () => {
-    const next = !saved
-    setSaved(next)
-    toast.success(next ? 'Course saved to your list.' : 'Course removed from saved items.')
-  }
+  const { saved, toggleSaved } = useSavedItem('course', course.slug, 'Course')
 
   return (
     <div className="border-b pb-5 sm:pb-6">
@@ -65,8 +59,17 @@ export function CourseIdentityHeader({ course }: { course: CourseDetailData }) {
       </div>
 
       <div className="mt-4 flex flex-col gap-2 sm:mt-5 sm:flex-row sm:items-center">
-        <Button className="h-11 px-6 text-sm font-semibold sm:h-10">View Colleges</Button>
-        <Button variant="outline" className="h-11 px-6 text-sm font-semibold sm:h-10">
+        {/* /colleges does not yet support a course-filter query param — COL-01 predates
+            the URL-filter-state rule (see docs/PAGE_PATTERNS.md and CourseCollegesSection's
+            own note) — link to the plain listing rather than inventing an unsupported
+            query contract. */}
+        <Button className="h-11 px-6 text-sm font-semibold sm:h-10" nativeButton={false} render={<Link href="/colleges" />}>
+          View Colleges
+        </Button>
+        {/* Course Compare is explicitly not built (only College Compare/CMP-01 exists) —
+            disabled rather than knowingly routing to the wrong compare tool or an
+            unimplemented route. */}
+        <Button variant="outline" className="h-11 px-6 text-sm font-semibold sm:h-10" disabled title="Course comparison is coming soon">
           Compare Courses
         </Button>
       </div>

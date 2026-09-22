@@ -1,0 +1,86 @@
+'use client'
+
+import { useState } from 'react'
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
+import { Checkbox } from '@/components/ui/checkbox'
+import { countActiveFilters, filterGroups, type FilterKey, type FilterState } from '../data/filters'
+
+type CoachingFilterSidebarProps = {
+  filters: FilterState
+  onToggle: (key: FilterKey, value: string) => void
+  onClearAll: () => void
+}
+
+export function CoachingFilterSidebar({ filters, onToggle, onClearAll }: CoachingFilterSidebarProps) {
+  const activeCount = countActiveFilters(filters)
+
+  return (
+    <aside className="w-60 shrink-0">
+      <div className="rounded-[10px] border bg-card p-3 shadow-[0_8px_24px_rgba(15,23,42,0.04)]">
+        <div className="flex items-start justify-between gap-3 border-b pb-3">
+          <div>
+            <p className="text-sm font-semibold text-foreground">Search Filters</p>
+            <p className="mt-0.5 text-xs text-muted-foreground">{activeCount} active</p>
+          </div>
+          <button
+            type="button"
+            onClick={onClearAll}
+            className="cursor-pointer rounded-md px-1.5 py-1 text-xs font-semibold text-primary outline-none hover:bg-secondary focus-visible:ring-2 focus-visible:ring-primary/40"
+          >
+            Clear
+          </button>
+        </div>
+        <Accordion multiple defaultValue={filterGroups.map((group) => group.key)} className="mt-1">
+          {filterGroups.map((group) => (
+            <FilterGroupSection key={group.key} groupKey={group.key} title={group.title} options={group.options} selected={filters[group.key]} onToggle={onToggle} />
+          ))}
+        </Accordion>
+      </div>
+    </aside>
+  )
+}
+
+function FilterGroupSection({
+  groupKey,
+  title,
+  options,
+  selected,
+  onToggle,
+}: {
+  groupKey: FilterKey
+  title: string
+  options: readonly string[]
+  selected: string[]
+  onToggle: (key: FilterKey, value: string) => void
+}) {
+  const [showAll, setShowAll] = useState(false)
+  const visible = showAll ? options : options.slice(0, 5)
+
+  return (
+    <AccordionItem value={groupKey}>
+      <AccordionTrigger className="text-[13px] font-semibold text-foreground">{title}</AccordionTrigger>
+      <AccordionContent>
+        <div className="flex flex-col gap-1.5 pb-1">
+          {visible.map((option) => (
+            <label
+              key={option}
+              className="flex min-h-8 cursor-pointer items-center gap-2 rounded-md px-1.5 py-1 text-[13px] text-foreground transition-colors hover:bg-muted"
+            >
+              <Checkbox checked={selected.includes(option)} onCheckedChange={() => onToggle(groupKey, option)} />
+              {option}
+            </label>
+          ))}
+          {options.length > 5 && (
+            <button
+              type="button"
+              onClick={() => setShowAll((value) => !value)}
+              className="w-fit cursor-pointer text-xs font-semibold text-primary outline-none hover:underline focus-visible:ring-2 focus-visible:ring-primary/40"
+            >
+              {showAll ? 'View Less' : 'View More'}
+            </button>
+          )}
+        </div>
+      </AccordionContent>
+    </AccordionItem>
+  )
+}

@@ -1,4 +1,5 @@
 import { Fragment, type ReactNode } from "react";
+import Link from "next/link";
 import { BadgeCheck, Search, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -146,22 +147,40 @@ export function PageHeader({
     </header>
   );
 }
-export function Breadcrumbs({ items }: { items: string[] }) {
+export type BreadcrumbItemInput = string | { label: string; href: string };
+
+/**
+ * Never a dead `href="#"` crumb. The current page (last item) is always
+ * plain text. Any earlier item is a real link only when the caller supplies
+ * one (`{ label, href }`) or when it's literally "Home" (universally `/`
+ * sitewide) — every other plain-string intermediate crumb renders as
+ * non-interactive text rather than a fake link, since we don't know its
+ * route without the caller telling us.
+ */
+export function Breadcrumbs({ items }: { items: BreadcrumbItemInput[] }) {
   return (
     <Breadcrumb>
       <BreadcrumbList>
-        {items.map((item, index) => (
-          <Fragment key={item}>
-            <BreadcrumbItem>
-              {index === items.length - 1 ? (
-                <BreadcrumbPage>{item}</BreadcrumbPage>
-              ) : (
-                <BreadcrumbLink href="#">{item}</BreadcrumbLink>
-              )}
-            </BreadcrumbItem>
-            {index < items.length - 1 && <BreadcrumbSeparator />}
-          </Fragment>
-        ))}
+        {items.map((item, index) => {
+          const label = typeof item === "string" ? item : item.label;
+          const isLast = index === items.length - 1;
+          const href = typeof item === "string" ? (item === "Home" ? "/" : undefined) : item.href;
+
+          return (
+            <Fragment key={label}>
+              <BreadcrumbItem>
+                {isLast ? (
+                  <BreadcrumbPage>{label}</BreadcrumbPage>
+                ) : href ? (
+                  <BreadcrumbLink render={<Link href={href} />}>{label}</BreadcrumbLink>
+                ) : (
+                  <span>{label}</span>
+                )}
+              </BreadcrumbItem>
+              {!isLast && <BreadcrumbSeparator />}
+            </Fragment>
+          );
+        })}
       </BreadcrumbList>
     </Breadcrumb>
   );

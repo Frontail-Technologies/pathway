@@ -1,8 +1,9 @@
 import { Container } from '@/components/shared/container'
 import { Breadcrumbs } from '@/components/shared/breadcrumbs'
+import { DetailSectionNav } from '@/components/shared/detail-section-nav'
+import { DetailStickySidebar } from '@/components/shared/detail-sticky-sidebar'
 import type { CourseDetailData } from '../data/course-detail'
 import { CourseIdentityHeader } from './course-identity-header'
-import { CourseDetailNav } from './course-detail-nav'
 import { CourseOverviewSection } from './course-overview-section'
 import { CourseEligibilitySection } from './course-eligibility-section'
 import { CourseFeesSection } from './course-fees-section'
@@ -15,17 +16,30 @@ import { RelatedCoursesSection } from './related-courses-section'
 import { CourseFaqSection } from './course-faq-section'
 import { CourseDiscoverySidebar } from './course-discovery-sidebar'
 
+const COURSE_NAV_SECTIONS = [
+  { id: 'overview', label: 'Overview' },
+  { id: 'eligibility', label: 'Eligibility' },
+  { id: 'fees', label: 'Fees' },
+  { id: 'exams', label: 'Exams' },
+  { id: 'specializations', label: 'Specializations' },
+  { id: 'syllabus', label: 'Syllabus' },
+  { id: 'careers', label: 'Careers' },
+  { id: 'colleges', label: 'Colleges' },
+  { id: 'related', label: 'Related Courses' },
+  { id: 'faqs', label: 'FAQs' },
+]
+
 export function CourseDetailPage({ course }: { course: CourseDetailData }) {
   return (
     <div className="bg-background">
       <Container className="px-4 pt-5 lg:pt-6">
-        <Breadcrumbs items={['Home', 'Courses', course.name]} />
+        <Breadcrumbs items={['Home', { label: 'Courses', href: '/courses' }, course.name]} />
         <div className="mt-4">
           <CourseIdentityHeader course={course} />
         </div>
       </Container>
 
-      <CourseDetailNav />
+      <DetailSectionNav items={COURSE_NAV_SECTIONS} />
 
       <Container className="px-4">
         <div className="flex flex-col gap-8 lg:flex-row lg:items-start lg:gap-6">
@@ -42,9 +56,9 @@ export function CourseDetailPage({ course }: { course: CourseDetailData }) {
             <CourseFaqSection course={course} />
           </div>
 
-          <div className="hidden shrink-0 lg:sticky lg:top-40 lg:block lg:w-75">
+          <DetailStickySidebar>
             <CourseDiscoverySidebar course={course} />
-          </div>
+          </DetailStickySidebar>
         </div>
       </Container>
     </div>

@@ -2,27 +2,22 @@
 
 import { useEffect, useRef, useState } from 'react'
 
-const sections = [
-  { id: 'overview', label: 'Overview' },
-  { id: 'courses', label: 'Courses' },
-  { id: 'fees', label: 'Fees' },
-  { id: 'admissions', label: 'Admissions' },
-  { id: 'placements', label: 'Placements' },
-  { id: 'facilities', label: 'Facilities' },
-  { id: 'scholarships', label: 'Scholarships' },
-  { id: 'reviews', label: 'Reviews' },
-  { id: 'faqs', label: 'FAQs' },
-]
+type CoachingDetailNavProps = {
+  sections: { id: string; label: string }[]
+}
 
-export function CollegeDetailNav() {
-  const [active, setActive] = useState(sections[0].id)
+/**
+ * Sticky horizontal section nav with scroll-spy — same mechanics already
+ * established by `CourseDetailNav`/College Detail/Scholarship Detail (117px
+ * mobile / 104px desktop sticky offsets, `IntersectionObserver` scroll-spy,
+ * active tab kept visible via the tab strip's own `scrollLeft` only). Only
+ * sections that actually exist for this provider are passed in — no empty
+ * Results/Reviews tabs.
+ */
+export function CoachingDetailNav({ sections }: CoachingDetailNavProps) {
+  const [active, setActive] = useState(sections[0]?.id)
   const scrollerRef = useRef<HTMLDivElement>(null)
 
-  // Scroll-spy: observes section position and updates the highlighted tab
-  // only. It must never call scrollIntoView/scrollTo(document)/router
-  // navigation from here — doing so previously caused the page to snap back
-  // toward the top while the user scrolled (a known browser quirk with
-  // scrollIntoView on descendants of a `position: sticky` container).
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -38,13 +33,8 @@ export function CollegeDetailNav() {
       if (node) observer.observe(node)
     })
     return () => observer.disconnect()
-  }, [])
+  }, [sections])
 
-  // Keep the active tab visible inside the horizontal tab strip only. This
-  // adjusts the strip's own `scrollLeft` directly — never `scrollIntoView`,
-  // which walks up every scrollable ancestor including the document and is
-  // what caused the scroll-reset bug above. A plain `container.scrollTo`
-  // call on this local div cannot touch document scroll at all.
   useEffect(() => {
     const container = scrollerRef.current
     const activeLink = container?.querySelector<HTMLAnchorElement>(`a[href="#${active}"]`)
@@ -60,11 +50,9 @@ export function CollegeDetailNav() {
     container.scrollTo({ left: targetScrollLeft, behavior: prefersReducedMotion ? 'auto' : 'smooth' })
   }, [active])
 
+  if (sections.length === 0) return null
+
   return (
-    // Mobile top offset (117px) is the measured height of the sticky mobile
-    // app header + its compact search row (56px primary row + 1px border +
-    // 60px search row). Desktop/tablet uses the header's own 104px height
-    // (64px primary row + 40px nav row) at `md:` and up.
     <div className="sticky top-[117px] z-20 border-y bg-card md:top-26">
       <div className="container-shell px-4">
         <div ref={scrollerRef} className="flex gap-1 overflow-x-auto">

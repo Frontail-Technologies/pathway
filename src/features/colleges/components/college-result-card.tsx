@@ -1,8 +1,7 @@
 'use client'
 
-import { useState } from 'react'
 import Link from 'next/link'
-import { toast } from 'sonner'
+import { useSavedItem } from '@/features/saved/saved-items-provider'
 import { Bookmark, Landmark, MapPin } from 'lucide-react'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Button } from '@/components/ui/button'
@@ -18,13 +17,7 @@ type CollegeResultCardProps = {
 }
 
 export function CollegeResultCard({ college, compared, onToggleCompare }: CollegeResultCardProps) {
-  const [saved, setSaved] = useState(false)
-
-  const toggleSaved = () => {
-    const next = !saved
-    setSaved(next)
-    toast.success(next ? 'College saved to your list.' : 'College removed from saved items.')
-  }
+  const { saved, toggleSaved } = useSavedItem('college', college.slug, 'College')
 
   const nameLink = (
     <Link href={`/college/${college.slug}`} className="cursor-pointer text-base font-bold text-foreground outline-none hover:text-primary focus-visible:ring-2 focus-visible:ring-primary/40">

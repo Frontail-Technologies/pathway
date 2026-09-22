@@ -1,8 +1,9 @@
 import { Container } from '@/components/shared/container'
 import { Breadcrumbs } from '@/components/shared/breadcrumbs'
+import { DetailSectionNav } from '@/components/shared/detail-section-nav'
+import { DetailStickySidebar } from '@/components/shared/detail-sticky-sidebar'
 import type { CollegeDetailData } from '../data/college-detail'
 import { CollegeIdentityHeader } from './college-identity-header'
-import { CollegeDetailNav } from './college-detail-nav'
 import { CollegeOverviewSection } from './college-overview-section'
 import { CollegeCoursesSection } from './college-courses-section'
 import { CollegeFeesSection } from './college-fees-section'
@@ -14,17 +15,29 @@ import { CollegeReviewsSection } from './college-reviews-section'
 import { CollegeFaqSection } from './college-faq-section'
 import { CollegeEnquirySidebar } from './college-enquiry-sidebar'
 
+const COLLEGE_NAV_SECTIONS = [
+  { id: 'overview', label: 'Overview' },
+  { id: 'courses', label: 'Courses' },
+  { id: 'fees', label: 'Fees' },
+  { id: 'admissions', label: 'Admissions' },
+  { id: 'placements', label: 'Placements' },
+  { id: 'facilities', label: 'Facilities' },
+  { id: 'scholarships', label: 'Scholarships' },
+  { id: 'reviews', label: 'Reviews' },
+  { id: 'faqs', label: 'FAQs' },
+]
+
 export function CollegeDetailPage({ college }: { college: CollegeDetailData }) {
   return (
     <div className="bg-background">
       <Container className="px-4 pt-5 lg:pt-6">
-        <Breadcrumbs items={['Home', 'Colleges', college.name]} />
+        <Breadcrumbs items={['Home', { label: 'Colleges', href: '/colleges' }, college.name]} />
         <div className="mt-4">
           <CollegeIdentityHeader college={college} />
         </div>
       </Container>
 
-      <CollegeDetailNav />
+      <DetailSectionNav items={COLLEGE_NAV_SECTIONS} />
 
       <Container className="px-4">
         <div className="flex flex-col gap-8 lg:flex-row lg:items-start lg:gap-6">
@@ -40,9 +53,9 @@ export function CollegeDetailPage({ college }: { college: CollegeDetailData }) {
             <CollegeFaqSection college={college} />
           </div>
 
-          <div className="hidden shrink-0 lg:sticky lg:top-40 lg:block lg:w-75">
+          <DetailStickySidebar>
             <CollegeEnquirySidebar college={college} />
-          </div>
+          </DetailStickySidebar>
         </div>
       </Container>
     </div>

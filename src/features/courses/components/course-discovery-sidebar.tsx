@@ -10,11 +10,17 @@ export function CourseDiscoverySidebar({ course }: { course: CourseDetailData })
     <div className="rounded-[10px] border bg-card p-4">
       <p className="text-[15px] font-semibold text-foreground">Explore {course.name} Colleges</p>
       <p className="mt-1 text-xs text-muted-foreground">{course.collegesCount} colleges offer this course.</p>
-      <Button className="mt-3 h-10 w-full text-sm font-semibold">View Colleges</Button>
+      {/* /colleges does not yet support a course-filter query param (COL-01 predates the
+          URL-filter-state rule) — link to the plain listing rather than an unsupported query. */}
+      <Button className="mt-3 h-10 w-full text-sm font-semibold" nativeButton={false} render={<Link href="/colleges" />}>
+        View Colleges
+      </Button>
 
       <div className="mt-4 border-t pt-4">
         <p className="text-xs text-muted-foreground">Compare this course with other popular programmes.</p>
-        <Button variant="outline" className="mt-2 h-10 w-full text-sm font-semibold">
+        {/* Course Compare doesn't exist yet (only College Compare/CMP-01) — disabled rather
+            than routing to the wrong compare tool. */}
+        <Button variant="outline" className="mt-2 h-10 w-full text-sm font-semibold" disabled title="Course comparison is coming soon">
           Compare Courses
         </Button>
       </div>
