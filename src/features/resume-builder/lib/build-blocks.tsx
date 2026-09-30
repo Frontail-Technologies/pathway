@@ -3,12 +3,12 @@ import type { PaginationBlock } from '../hooks/use-paged-blocks'
 
 export type ResumeSection = { id: string; heading: ReactNode; items: ReactNode[] }
 
-/**
- * Converts a template's ordered sections into flat atomic pagination blocks:
- * a section's heading is always combined with its first item into one block
- * (so a heading can never land alone at the bottom of a page), and every
- * subsequent item becomes its own block.
- */
+
+
+
+
+
+ 
 export function buildBlocksFromSections(sections: ResumeSection[]): PaginationBlock[] {
   const blocks: PaginationBlock[] = []
   sections.forEach((section) => {

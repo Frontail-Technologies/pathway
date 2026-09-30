@@ -1,7 +1,7 @@
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 
-/** Reused across Education/Experience/Projects/Achievements — a plain labeled text input, not a form-schema abstraction. */
+ 
 export function LabeledInput({
   label,
   value,

@@ -11,14 +11,14 @@ import { getCoachingVisual } from '../data/visuals'
 export function CoachingResultCard({ provider }: { provider: CoachingProvider }) {
   const { saved, toggleSaved } = useSavedItem('coaching', provider.slug, 'Provider')
   const visual = getCoachingVisual(provider)
-  // COA-02 route activation: only a provider with an implemented detail page
-  // gets a live link — every other card keeps the disabled/"Details soon"
-  // treatment rather than a knowing dead link.
+  
+  
+  
   const detailHref = provider.hasDetailPage ? `/coaching/${provider.slug}` : undefined
 
-  // Listing cards stay intentionally shallow (approved reference, correction
-  // pass) — at most 3 tags total, one description line, one mode/format
-  // line. Full exam/subject/course-type detail belongs on COA-02.
+  
+  
+  
   const tags = [...provider.exams, ...provider.subjects].slice(0, 3)
 
   return (
@@ -70,11 +70,11 @@ export function CoachingResultCard({ provider }: { provider: CoachingProvider })
                 {tag}
               </span>
             ))}
-            {/* Mobile-only affordance — deliberately just text (no button
-                chrome/border row) so it doesn't add a large secondary row on
-                small screens; the compact Button below is the desktop
-                treatment. Active/Blue once a detail page exists, muted
-                otherwise. */}
+            {
+
+
+
+ }
             {detailHref ? (
               <Link href={detailHref} className="ml-auto flex shrink-0 items-center gap-0.5 text-[11px] font-semibold text-primary md:hidden">
                 View Details

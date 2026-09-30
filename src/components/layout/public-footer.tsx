@@ -12,6 +12,8 @@ const footerGroups = [
       { label: 'Careers', href: '/careers' },
       { label: 'Privacy', href: '/privacy' },
       { label: 'Terms', href: '/terms' },
+      { label: 'Cookie Policy', href: '/cookies' },
+      { label: 'Disclaimer', href: '/disclaimer' },
     ],
   },
   {
@@ -40,6 +42,7 @@ const footerGroups = [
     links: [
       { label: 'Admissions', href: '/admissions' },
       { label: 'Career Guidance', href: '/resources?topic=careers' },
+      { label: 'Notes & Study Material', href: '/notes' },
       { label: 'FAQs', href: '/faq' },
       { label: 'Resources', href: '/resources' },
     ],

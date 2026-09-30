@@ -3,7 +3,7 @@ import type { CollegeDetailData } from '../data/college-detail'
 
 export function CollegeCoursesSection({ college }: { college: CollegeDetailData }) {
   return (
-    <section id="courses" className="scroll-mt-[172px] border-b py-7 lg:scroll-mt-40 lg:py-9">
+    <section id="courses" className="scroll-mt-[172px] border-b py-7 lg:scroll-mt-44 lg:py-9">
       <h2 className="font-heading text-xl font-bold text-foreground sm:text-[22px]">Courses at {college.name}</h2>
       <p className="mt-1 text-sm text-muted-foreground">{college.courses.length} programmes across UG and PG levels</p>
 
@@ -11,7 +11,7 @@ export function CollegeCoursesSection({ college }: { college: CollegeDetailData 
         <div className="divide-y">
           {college.courses.map((course) => (
             <div key={course.name} className="p-5">
-              {/* Mobile: compact prioritized rows — name, then condensed metadata lines, actions last with reduced weight. */}
+              { }
               <div className="sm:hidden">
                 <p className="text-sm font-semibold text-foreground">{course.name}</p>
                 <p className="mt-0.5 text-xs text-muted-foreground">
@@ -31,7 +31,7 @@ export function CollegeCoursesSection({ college }: { college: CollegeDetailData 
                 </div>
               </div>
 
-              {/* Desktop: structured columns — name/meta, then fees/exam/eligibility, then equal-weight actions. */}
+              { }
               <div className="hidden sm:flex sm:items-center sm:gap-6">
                 <div className="sm:w-56 sm:shrink-0">
                   <p className="text-[15px] font-semibold text-foreground">{course.name}</p>

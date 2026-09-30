@@ -5,7 +5,7 @@ import { Menu } from 'lucide-react'
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
 import { StudentNavigation } from './student-navigation'
 
-/** Account navigation Sheet for widths below `lg`, where the sidebar is hidden. */
+ 
 export function StudentMobileMenu() {
   const [open, setOpen] = useState(false)
 

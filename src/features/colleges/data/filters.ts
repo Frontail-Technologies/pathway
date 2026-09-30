@@ -58,6 +58,16 @@ function ratingMatchesBucket(rating: number, bucket: string): boolean {
   return true
 }
 
+const normalize = (value: string) => value.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim()
+
+ 
+export function matchesQuery(college: CollegeListItem, query: string): boolean {
+  const terms = normalize(query).split(' ').filter(Boolean)
+  if (terms.length === 0) return true
+  const haystack = normalize([college.name, college.city, college.state, college.popularCourse, college.degree].join(' '))
+  return terms.every((term) => haystack.includes(term))
+}
+
 export function matchesFilters(college: CollegeListItem, filters: FilterState): boolean {
   if (filters.states.length && !filters.states.includes(college.state)) return false
   if (filters.cities.length && !filters.cities.includes(college.city)) return false

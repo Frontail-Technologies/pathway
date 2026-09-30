@@ -1,26 +1,28 @@
 import Link from 'next/link'
 import { ArrowRight, Target } from 'lucide-react'
-import { SectionHeader } from '@/components/shared/section-header'
+import { HorizontalContentRail } from '@/components/shared/horizontal-content-rail'
 import { collegePredictors } from '../data/college-predictors'
 
+ 
 export function CollegePredictorsSection() {
   return (
-    <section className="border-b bg-card py-6 sm:py-9 lg:py-10">
-      <div className="container-shell px-4">
-        <SectionHeader title="Predict Colleges Based on Your Exam" description="See colleges you may qualify for using your exam score or rank." />
-        <div className="mt-4 flex snap-x snap-mandatory gap-3 overflow-x-auto pb-1 sm:mt-5 sm:grid sm:grid-cols-3 sm:overflow-visible sm:pb-0 lg:grid-cols-4">
+    <section className="bg-background pt-7 pb-3 sm:pt-9 lg:pt-12">
+      <div className="container-shell">
+        <h2 className="font-heading text-xl font-bold text-foreground sm:text-2xl">Predict Colleges Based on Your Exam</h2>
+        <p className="mt-1 text-sm text-muted-foreground">See colleges you may qualify for using your exam score or rank.</p>
+        <HorizontalContentRail ariaLabel="College predictors" edgeBleed className="mt-4 sm:mx-0" trackClassName="sm:grid sm:grid-cols-2 sm:gap-3 sm:overflow-visible sm:px-0 sm:scroll-px-0 lg:grid-cols-4">
           {collegePredictors.map((predictor) => (
             <Link
               key={predictor.exam}
               href={predictor.href}
-              className="group flex w-[82vw] shrink-0 snap-start flex-col justify-between gap-3 rounded-[10px] border bg-card p-4 outline-none transition-colors hover:border-primary hover:bg-secondary focus-visible:ring-2 focus-visible:ring-primary/40 sm:w-auto"
+              className="group flex w-64 shrink-0 snap-start flex-col justify-between gap-3 rounded-[12px] border bg-card p-4 shadow-[0_2px_10px_rgba(15,23,42,0.04)] outline-none transition-colors hover:border-primary hover:bg-secondary focus-visible:ring-2 focus-visible:ring-primary/40 sm:w-auto"
             >
               <div className="flex items-start gap-3">
-                <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-secondary text-primary">
+                <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-secondary text-primary group-hover:bg-white">
                   <Target className="size-5" aria-hidden="true" />
-                </div>
+                </span>
                 <div className="min-w-0">
-                  <p className="text-sm font-semibold text-foreground">{predictor.exam} College Predictor</p>
+                  <p className="text-sm font-bold text-foreground">{predictor.exam} College Predictor</p>
                   <p className="mt-0.5 text-xs leading-5 text-muted-foreground">{predictor.description}</p>
                 </div>
               </div>
@@ -29,7 +31,7 @@ export function CollegePredictorsSection() {
               </span>
             </Link>
           ))}
-        </div>
+        </HorizontalContentRail>
       </div>
     </section>
   )

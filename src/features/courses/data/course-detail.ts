@@ -21,12 +21,12 @@ export type CourseCollegeRow = {
   fees: string
   verified?: boolean
   rating?: number
-  /**
-   * Where "View College" navigates. Only colleges with an implemented
-   * College Detail record (see `features/colleges/data/college-detail.ts`)
-   * link straight to `/college/[slug]` — every other mock row falls back to
-   * `/colleges` so browsing never knowingly lands on a 404.
-   */
+  
+
+
+
+
+ 
   href: string
 }
 
@@ -35,12 +35,12 @@ export type RelatedCourse = {
   name: string
   level: string
   duration: string
-  /**
-   * Where "Explore" navigates. Only a course with an implemented Course
-   * Detail record links straight to `/course/[slug]`; unimplemented mock
-   * courses fall back to a CRS-01-supported filtered `/courses` URL (or
-   * plain `/courses` when no valid filter combination applies).
-   */
+  
+
+
+
+
+ 
   href: string
 }
 
@@ -163,8 +163,8 @@ const courseDetails: Record<string, CourseDetailData> = {
       { label: 'Higher Studies', value: 'M.Tech / MS / MBA' },
     ],
     colleges: [
-      // Only IIT Delhi has an implemented College Detail record — see the
-      // `href` doc comment on `CourseCollegeRow` above.
+      
+      
       { slug: 'iit-delhi', name: 'IIT Delhi', city: 'New Delhi', type: 'Government', exam: 'JEE Advanced', fees: '₹2.2L', verified: true, rating: 4.7, href: '/college/iit-delhi' },
       { slug: 'iit-bombay', name: 'IIT Bombay', city: 'Mumbai', type: 'Government', exam: 'JEE Advanced', fees: '₹2.3L', verified: true, rating: 4.8, href: '/colleges' },
       { slug: 'bits-pilani', name: 'BITS Pilani', city: 'Pilani', type: 'Private', exam: 'BITSAT', fees: '₹5.2L', verified: true, rating: 4.5, href: '/colleges' },
@@ -172,11 +172,11 @@ const courseDetails: Record<string, CourseDetailData> = {
       { slug: 'manipal-university', name: 'Manipal University', city: 'Manipal', type: 'Private', exam: 'MET', fees: '₹4.5L', verified: true, rating: 4.2, href: '/colleges' },
       { slug: 'chandigarh-university', name: 'Chandigarh University', city: 'Chandigarh', type: 'Private', exam: 'CUCET', fees: '₹3.2L', rating: 4.1, href: '/colleges' },
     ],
-    // None of these related courses have an implemented Course Detail record
-    // yet (only `btech-computer-science` does) — each `href` below points to
-    // a CRS-01-supported filtered `/courses` URL using only valid degree/
-    // specialization slugs from `features/courses/data/filters.ts`, falling
-    // back to plain `/courses` where no matching specialization slug exists.
+    
+    
+    
+    
+    
     relatedCourses: [
       { slug: 'btech-ai-data-science', name: 'B.Tech Artificial Intelligence & Data Science', level: 'Undergraduate', duration: '4 Years', href: '/courses?degree=btech&specialization=artificial-intelligence' },
       { slug: 'btech-information-technology', name: 'B.Tech Information Technology', level: 'Undergraduate', duration: '4 Years', href: '/courses?degree=btech' },

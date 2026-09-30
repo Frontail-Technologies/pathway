@@ -1,10 +1,10 @@
 import { Button } from '@/components/ui/button'
 import type { ScholarshipDetailData } from '../data/scholarship-detail'
 
-/** Connected numbered stepper — one of the strongest sections on the page, deliberately reading as an application guide rather than a syllabus/curriculum list. */
+ 
 export function ScholarshipApplicationSection({ scholarship }: { scholarship: ScholarshipDetailData }) {
   return (
-    <section id="apply" className="scroll-mt-43 border-b py-7 lg:scroll-mt-40 lg:py-9">
+    <section id="apply" className="scroll-mt-43 border-b py-7 lg:scroll-mt-44 lg:py-9">
       <h2 className="font-heading text-xl font-bold text-foreground sm:text-[22px]">How to Apply</h2>
 
       <div className="mt-4 flex flex-col">

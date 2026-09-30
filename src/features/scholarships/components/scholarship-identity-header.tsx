@@ -2,13 +2,13 @@ import { Landmark } from 'lucide-react'
 import { scholarshipStatusStyles } from '../data/scholarships'
 import type { ScholarshipDetailData } from '../data/scholarship-detail'
 
-/**
- * Compact identity only — name, provider identity, status/type/level chips.
- * Deliberately carries no fact grid and no action buttons of its own: those
- * live in `ScholarshipOpportunitySnapshot`/`ScholarshipTopActions` right
- * below, which is what gives Scholarship Detail its own "opportunity" shape
- * instead of reading like Course Detail's identity+facts+actions block.
- */
+
+
+
+
+
+
+ 
 export function ScholarshipIdentityHeader({ scholarship }: { scholarship: ScholarshipDetailData }) {
   const status = scholarshipStatusStyles[scholarship.status]
 

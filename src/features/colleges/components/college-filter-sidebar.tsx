@@ -13,16 +13,20 @@ type CollegeFilterSidebarProps = {
 }
 
 export function CollegeFilterSidebar({ filters, onToggle, onClearAll }: CollegeFilterSidebarProps) {
+  const activeCount = (Object.values(filters) as string[][]).reduce((total, values) => total + values.length, 0)
   return (
-    <aside className="w-[270px] shrink-0">
-      <div className="flex items-center justify-between px-1 pb-3">
-        <p className="text-sm font-semibold text-foreground">Search Filters</p>
-        <button type="button" onClick={onClearAll} className="cursor-pointer text-xs font-semibold text-primary outline-none hover:underline focus-visible:ring-2 focus-visible:ring-primary/40">
-          Clear
-        </button>
-      </div>
-      <div className="rounded-[10px] border bg-card px-3">
-        <Accordion multiple defaultValue={filterGroups.map((group) => group.key)}>
+    <aside className="w-64 shrink-0">
+      <div className="rounded-[10px] border bg-card p-3 shadow-[0_8px_24px_rgba(15,23,42,0.04)]">
+        <div className="flex items-start justify-between gap-3 border-b pb-3">
+          <div>
+            <p className="text-sm font-semibold text-foreground">Filters</p>
+            <p className="mt-0.5 text-xs text-muted-foreground">{activeCount} active</p>
+          </div>
+          <button type="button" onClick={onClearAll} className="cursor-pointer rounded-md px-1.5 py-1 text-xs font-semibold text-primary outline-none hover:bg-secondary focus-visible:ring-2 focus-visible:ring-primary/40">
+            Clear
+          </button>
+        </div>
+        <Accordion multiple defaultValue={filterGroups.map((group) => group.key)} className="mt-1">
           {filterGroups.map((group) => (
             <FilterGroupSection key={group.key} groupKey={group.key} title={group.title} options={group.options} selected={filters[group.key]} onToggle={onToggle} />
           ))}

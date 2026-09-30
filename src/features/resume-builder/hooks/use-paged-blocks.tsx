@@ -5,25 +5,25 @@ import { useLayoutEffect, useRef, useState, type ReactNode } from 'react'
 export type PaginationBlock = { id: string; node: ReactNode }
 
 type PagedBlocksOptions = {
-  /** Fixed content width the blocks are measured at — must match the width they'll actually render at. */
+   
   width: number
-  /** Usable vertical space per page (page height minus top/bottom padding). */
+   
   usableHeight: number
-  /** Vertical gap rendered between consecutive blocks, so measurement matches the real stacked layout. */
+   
   gap: number
 }
 
-/**
- * Deterministic, measurement-based pagination: renders every block off-screen
- * at the real content width, measures each one's actual height, then greedily
- * packs them onto pages so a page never exceeds `usableHeight`. A block is
- * never split — if a single block doesn't fit within the current page and
- * the page isn't empty, it moves whole to the next page. This is why a
- * section heading is combined into the same block as its first entry (see
- * `buildBlocksFromSections`) — it's how "never split a heading from its
- * first item" is enforced structurally rather than with an `if length > N`
- * business rule.
- */
+
+
+
+
+
+
+
+
+
+
+ 
 export function usePagedBlocks(blocks: PaginationBlock[], { width, usableHeight, gap }: PagedBlocksOptions) {
   const measureRef = useRef<HTMLDivElement>(null)
   const [pages, setPages] = useState<PaginationBlock[][]>(() => (blocks.length > 0 ? [blocks] : [[]]))
@@ -56,7 +56,7 @@ export function usePagedBlocks(blocks: PaginationBlock[], { width, usableHeight,
     }
 
     measure()
-    // Fonts/images can change block heights after the first layout pass.
+    
     const raf = requestAnimationFrame(measure)
     return () => cancelAnimationFrame(raf)
   }, [blocks, width, usableHeight, gap])

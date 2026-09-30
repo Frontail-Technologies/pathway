@@ -21,7 +21,7 @@ const sameSet = (a: string[], b: string[]) => a.length === b.length && a.every((
 
 export function StudentPreferencesPage() {
   const { hydrated } = useStudentProfile()
-  // Seed the form only after the stored demo profile has been read.
+  
   return hydrated ? <PreferencesEditor /> : <div className="h-96 w-full" aria-hidden="true" />
 }
 
@@ -37,9 +37,9 @@ function PreferencesEditor() {
   const toggle = (key: 'streams' | 'courses' | 'exams' | 'locations', value: string) =>
     setDraft((prev) => ({ ...prev, [key]: prev[key].includes(value) ? prev[key].filter((item) => item !== value) : [...prev[key], value] }))
 
-  // Specific courses come from the course fixture, narrowed to the selected streams.
+  
   const courseChoices = useMemo(() => courses.filter((course) => draft.streams.includes(course.stream)).map((course) => course.name), [draft.streams])
-  // A course whose stream was just deselected drops out on save so the profile never keeps an orphaned course.
+  
   const save = () => {
     const keptCourses = draft.courses.filter((name) => courseChoices.includes(name) || !courses.some((course) => course.name === name))
     updateProfile({

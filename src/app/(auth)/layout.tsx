@@ -8,7 +8,7 @@ const points = [
   { icon: GraduationCap, text: 'Pick up where you left off on any student tool' },
 ]
 
-// Dedicated auth shell: no public header, mega navigation or footer.
+
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="grid min-h-dvh bg-background lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]">

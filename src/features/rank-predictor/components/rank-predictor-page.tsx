@@ -16,7 +16,7 @@ const LAST = STEPS.length - 1
 
 export function RankPredictorPage() {
   const searchParams = useSearchParams()
-  // `?exam=` is an exam-only prefill — scores, percentiles and category are never written to the URL.
+  
   const [draft, setDraft] = useState<RankPredictorDraft>(() => ({ ...emptyRankDraft, exam: rankExamFromSlug[searchParams.get('exam') ?? ''] ?? '' }))
   const [step, setStep] = useState(0)
   const [errors, setErrors] = useState<RankErrors>({})
@@ -67,7 +67,7 @@ export function RankPredictorPage() {
       <RankHero />
 
       <Container className="px-4 pb-4">
-        <div className="mx-auto max-w-340">
+        <div>
           <div className="grid gap-6 lg:grid-cols-[minmax(0,7fr)_minmax(0,3fr)] lg:items-start">
             <div className="min-w-0 rounded-[14px] border bg-card p-4 shadow-[0_10px_30px_rgba(30,58,138,0.07)] sm:p-6 lg:p-8">
               <ToolStepper steps={STEPS} step={step} />

@@ -34,11 +34,11 @@ export function CollegeComparePage() {
   const pathname = usePathname()
   const searchParams = useSearchParams()
 
-  // The URL is the single source of truth for the selection (same
-  // convention as CRS-01's filter state). `colleges` is required for a
-  // slot to exist at all; a missing/invalid `programs` entry for that slot
-  // safely falls back to the college's own default program — so URLs
-  // carrying only `colleges=` (from before program support) keep working.
+  
+  
+  
+  
+  
   const collegeSlugs = useMemo(() => {
     const urlSlugs = parseComparisonSlugs(searchParams)
     return urlSlugs.length > 0 ? urlSlugs : defaultComparisonSlugs
@@ -80,11 +80,11 @@ export function CollegeComparePage() {
     updateUrl(currentSelections().map((entry) => (entry.collegeSlug === previousSlug ? selection : entry)))
   }
 
-  // Mirrors the comparison body's horizontal scroll onto the (separately
-  // sticky) header row — see the note on `COMPARE_GRID_COLS_DATA` in
-  // compare-grid.ts for why the header can't share the body's own
-  // `overflow-x-auto` container. Desktop and mobile each get their own
-  // independent scroll value since only one layout is ever visible at once.
+  
+  
+  
+  
+  
   const [scrollLeft, setScrollLeft] = useState(0)
   const [mobileScrollLeft, setMobileScrollLeft] = useState(0)
 
@@ -101,7 +101,7 @@ export function CollegeComparePage() {
         {entries.length > 2 && <p className="mt-3 text-xs text-muted-foreground md:hidden print:hidden">Swipe to see more →</p>}
 
         <div className="mt-3 lg:mt-4">
-          {/* Desktop/tablet (md+): unchanged attribute + up-to-3-column matrix. Forced visible in print regardless of viewport, since the printed output always uses this layout. */}
+          { }
           <div className="hidden md:block print:block">
             <CollegeCompareHeaderRow entries={entries} onRemove={removeCollege} onAdd={addCollege} onModify={modifyCollege} scrollLeft={scrollLeft} />
             <div
@@ -114,7 +114,7 @@ export function CollegeComparePage() {
             </div>
           </div>
 
-          {/* Mobile (< md): two-column layout with the label inline in each cell — no shared attribute column (see compare-grid.ts). Never shown in print. */}
+          { }
           <div className="md:hidden print:hidden">
             <MobileComparisonHeaderRow entries={entries} onRemove={removeCollege} onAdd={addCollege} onModify={modifyCollege} scrollLeft={mobileScrollLeft} />
             <div onScroll={(event) => setMobileScrollLeft(event.currentTarget.scrollLeft)} className="overflow-x-auto rounded-b-[10px] border border-t-0">
@@ -125,7 +125,7 @@ export function CollegeComparePage() {
           </div>
         </div>
 
-        <div className="mt-6 flex flex-col items-start gap-3 rounded-[10px] border bg-card p-4 sm:flex-row sm:items-center sm:justify-between print:hidden">
+        <div className="mt-6 flex flex-col items-start gap-3 rounded-[12px] border bg-card p-4 shadow-[0_2px_10px_rgba(15,23,42,0.04)] sm:flex-row sm:items-center sm:justify-between print:hidden">
           <div className="flex items-center gap-3">
             <FileDown className="size-5 shrink-0 text-primary" aria-hidden="true" />
             <div>
@@ -147,7 +147,7 @@ export function CollegeComparePage() {
           <PopularComparisonsSection />
         </div>
 
-        <div className="mt-6 flex flex-col items-start gap-3 rounded-[10px] border bg-card p-4 sm:flex-row sm:items-center sm:justify-between print:hidden">
+        <div className="mt-6 flex flex-col items-start gap-3 rounded-[12px] border bg-card p-4 shadow-[0_2px_10px_rgba(15,23,42,0.04)] sm:flex-row sm:items-center sm:justify-between print:hidden">
           <div>
             <p className="text-sm font-semibold text-foreground">Need help choosing a college?</p>
             <p className="mt-0.5 text-xs text-muted-foreground">Get free counselling from our education experts.</p>

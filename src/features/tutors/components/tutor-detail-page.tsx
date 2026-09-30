@@ -18,14 +18,14 @@ const chip = 'rounded-md bg-secondary px-2 py-0.5 text-xs font-semibold text-pri
 
 function Section({ id, title, children }: { id: string; title: string; children: ReactNode }) {
   return (
-    <section id={id} className="scroll-mt-43 border-b py-7 lg:scroll-mt-40 lg:py-9">
+    <section id={id} className="scroll-mt-43 border-b py-7 lg:scroll-mt-44 lg:py-9">
       <h2 className="font-heading text-xl font-bold text-foreground sm:text-[22px]">{title}</h2>
       <div className="mt-4">{children}</div>
     </section>
   )
 }
 
-/** No session/booking flow exists yet, so the request action is disabled everywhere it appears. */
+ 
 function RequestSessionButton({ className }: { className?: string }) {
   return (
     <Button variant="cta" className={className} disabled title="Session requests are coming soon">
@@ -45,7 +45,7 @@ function TutorHeader({ tutor }: { tutor: DetailedTutor }) {
   return (
     <div>
       <div className="relative overflow-hidden rounded-[16px] border bg-[linear-gradient(135deg,#ffffff_45%,var(--brand-blue-light))] p-4 shadow-[0_8px_28px_rgba(30,58,138,0.06)] sm:p-6 lg:p-7">
-        {/* Restrained decorative shapes — no data, no banner. */}
+        { }
         <span className="pointer-events-none absolute -top-16 -right-10 size-56 rounded-full bg-primary/5" aria-hidden="true" />
         <span className="pointer-events-none absolute -right-4 bottom-6 size-24 rounded-full border border-primary/10" aria-hidden="true" />
 
@@ -221,7 +221,7 @@ function LanguagesSection({ tutor }: { tutor: DetailedTutor }) {
 
 function AvailabilitySection() {
   return (
-    <section id="availability" className="scroll-mt-43 py-7 lg:scroll-mt-40 lg:py-9">
+    <section id="availability" className="scroll-mt-43 py-7 lg:scroll-mt-44 lg:py-9">
       <h2 className="font-heading text-xl font-bold text-foreground sm:text-[22px]">Availability</h2>
       <div className="mt-4 flex items-start gap-3 rounded-[10px] border border-dashed bg-muted/40 p-4">
         <Info className="mt-0.5 size-4 shrink-0 text-primary" aria-hidden="true" />

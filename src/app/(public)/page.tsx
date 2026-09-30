@@ -1,5 +1,4 @@
 import { HeroSection } from '@/features/home/components/hero-section'
-import { PopularSearches } from '@/features/home/components/popular-searches'
 import { DiscoveryToolsSection } from '@/features/home/components/discovery-tools-section'
 import { AdmissionsBanner } from '@/features/home/components/admissions-banner'
 import { TopExamsSection } from '@/features/home/components/top-exams-section'
@@ -16,7 +15,6 @@ export default function PublicHomePage() {
   return (
     <>
       <HeroSection />
-      <PopularSearches />
       <DiscoveryToolsSection />
       <AdmissionsBanner />
       <TopExamsSection />

@@ -1,8 +1,8 @@
-// Frontend DEMO account state only — there is no authentication, student database, saved-items API,
-// counselling CRM or recommendation engine yet. Everything here is a deterministic local fixture that a
-// real backend will replace. Keep it feature-local until auth exists.
 
-/** Extra education detail; the current level and stream live on the profile itself (`studyLevel`, `stream`). */
+
+
+
+ 
 export type StudentEducation = {
   institution?: string
   graduationYear?: number
@@ -15,7 +15,7 @@ export type WorkExperience = {
   organisation: string
   role: string
   type?: WorkExperienceType
-  /** Free month/year text such as "Jun 2025" — kept simple, no date logic. */
+   
   start?: string
   end?: string
   description?: string
@@ -31,7 +31,7 @@ export type StudentProfile = {
   stream?: string
   studyGoal?: string
   careerGoal?: string
-  /** Broad stream categories chosen in Preferences (Engineering, Medical, ...). Optional for profiles stored before it existed. */
+   
   preferredStreams?: string[]
   preferredCourses: string[]
   preferredExams: string[]
@@ -56,10 +56,10 @@ export const demoStudent: StudentProfile = {
   workExperience: [],
 }
 
-// --- Profile completion ------------------------------------------------------------
+
 export type ProfileFieldKey = 'name' | 'email' | 'phone' | 'city' | 'studyLevel' | 'stream' | 'graduationYear' | 'preferredCourse' | 'preferredExam' | 'preferredLocation' | 'careerGoal'
 
-/** The fields that count towards completion — the percentage is always derived from these, never hardcoded. */
+ 
 export const profileFields: { key: ProfileFieldKey; label: string; isFilled: (profile: StudentProfile) => boolean }[] = [
   { key: 'name', label: 'Name', isFilled: (p) => !!p.name.trim() },
   { key: 'email', label: 'Email', isFilled: (p) => !!p.email.trim() },
@@ -81,7 +81,7 @@ export function getProfileCompletion(profile: StudentProfile) {
   return { filled, total, percent: Math.round((filled / total) * 100), missing: missing.map((field) => field.key) }
 }
 
-/** Fresh demo profile for a newly registered demo account — nothing carried over from the sample student. */
+ 
 export function createStudentProfile(input: { firstName: string; lastName: string; email: string; studyLevel?: string }): StudentProfile {
   return {
     id: 'demo-student',

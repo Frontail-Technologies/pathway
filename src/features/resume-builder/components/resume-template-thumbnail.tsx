@@ -3,12 +3,12 @@ import { RESUME_PAGE_HEIGHT, RESUME_PAGE_WIDTH } from '../data/page-size'
 import { useFitScale } from '../hooks/use-fit-scale'
 import { useResumeDocument } from './resume-template-renderer'
 
-/**
- * A real scaled instance of page 1 of `useResumeDocument` — never a
- * schematic placeholder diagram — so the template picker always matches the
- * actual live preview exactly. A "N pages" badge is shown when the current
- * data produces more than one page for that template.
- */
+
+
+
+
+
+ 
 export function ResumeTemplateThumbnail({ templateId, data }: { templateId: ResumeTemplateId; data: ResumeData }) {
   const document = useResumeDocument(templateId, data)
   const { ref, scale } = useFitScale(RESUME_PAGE_WIDTH)

@@ -27,7 +27,7 @@ const tabs: Record<SavedKind, { label: string; singular: string; emptyTitle: str
   tutor: { label: 'Tutors', singular: 'tutor', emptyTitle: 'No saved tutors yet.', cta: 'Browse Tutors', ctaHref: '/tutors' },
 }
 
-/** Resolves saved slugs against the existing fixtures. Slugs that no longer resolve are simply skipped. */
+ 
 function resolve(kind: SavedKind, ids: string[]): Row[] {
   return ids.flatMap((id): Row[] => {
     if (kind === 'college') {

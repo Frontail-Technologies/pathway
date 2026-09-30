@@ -11,9 +11,9 @@ import { getScholarshipDetail } from '../data/scholarship-detail'
 export function ScholarshipResultCard({ scholarship }: { scholarship: ScholarshipListItem }) {
   const { saved, toggleSaved } = useSavedItem('scholarship', scholarship.slug, 'Scholarship')
   const status = scholarshipStatusStyles[scholarship.status]
-  // Only a scholarship with an implemented SCH-02 detail record gets a live,
-  // Blue "View Details" link — everything else stays visibly disabled/
-  // secondary rather than knowingly navigating to an unimplemented route.
+  
+  
+  
   const detail = getScholarshipDetail(scholarship.slug)
   const daysRemaining = scholarship.status === 'closing-soon' ? getDaysRemaining(scholarship.deadline) : null
 
@@ -28,9 +28,9 @@ export function ScholarshipResultCard({ scholarship }: { scholarship: Scholarshi
             {scholarship.providerInitials}
           </div>
           <div className="min-w-0">
-            {/* Name stays alone on its own line as the strongest card text — the
-                featured badge lives on the provider line below so it never
-                competes with the title (correction pass rule 4). */}
+            {
+
+ }
             <h3 className="text-base font-bold text-foreground">{scholarship.name}</h3>
             <p className="mt-0.5 flex flex-wrap items-center gap-1.5 text-xs text-muted-foreground sm:text-sm">
               <span className="flex items-center gap-1">
@@ -57,9 +57,9 @@ export function ScholarshipResultCard({ scholarship }: { scholarship: Scholarshi
         <span className="rounded-md bg-secondary px-2 py-0.5 text-xs font-medium text-primary">{summary}</span>
       </div>
 
-      {/* Compact 2-column grid on mobile (Benefit/Deadline, then Eligibility/Applicable),
-          4-column single row on desktop — same data, density chosen per viewport rather
-          than one grid squeezed to fit both. */}
+      {
+
+ }
       <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-3 border-t pt-3 sm:mt-4 sm:grid-cols-4 sm:pt-4">
         <DetailBlock icon={IndianRupee} label="Benefit" value={scholarship.benefitLabel} />
         <DetailBlock icon={CalendarDays} label="Application Deadline" value={scholarship.deadlineDisplay} helper={daysRemaining !== null ? `Closing in ${daysRemaining} days` : undefined} />
@@ -71,17 +71,17 @@ export function ScholarshipResultCard({ scholarship }: { scholarship: Scholarshi
         <div />
         <div className="grid grid-cols-2 gap-2 sm:flex">
           {detail ? (
-            // A matching SCH-02 detail record exists for this scholarship — the
-            // normal solid-Blue primary discovery action.
+            
+            
             <Button className="h-11 px-4 text-sm sm:h-10 sm:flex-none" nativeButton={false} render={<Link href={`/scholarship/${scholarship.slug}`} />}>
               View Details
             </Button>
           ) : (
-            // Scholarship Detail (SCH-02) doesn't exist yet for this record. Rendered
-            // as an unmistakably non-interactive, visually secondary affordance —
-            // outline (not solid Blue), disabled (pointer-events-none + not-allowed
-            // cursor + reduced opacity via the shared Button primitive) — never a
-            // button that reads as a working action.
+            
+            
+            
+            
+            
             <Button variant="outline" className="h-11 px-4 text-sm text-muted-foreground sm:h-10 sm:flex-none" disabled title="Scholarship detail page coming soon">
               View Details
             </Button>

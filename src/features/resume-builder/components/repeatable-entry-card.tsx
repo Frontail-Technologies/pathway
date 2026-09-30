@@ -1,7 +1,7 @@
 import { Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
-/** Presentational wrapper reused by Education, Experience, Projects, and Achievements — layout only, fields stay per-step. */
+ 
 export function RepeatableEntryCard({ title, onRemove, children }: { title: string; onRemove?: () => void; children: React.ReactNode }) {
   return (
     <div className="rounded-[10px] border bg-card p-4">

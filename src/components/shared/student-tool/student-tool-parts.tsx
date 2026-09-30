@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { ArrowRight, Check, Info, type LucideIcon } from 'lucide-react'
 
-/** Desktop number-circle/connector stepper; mobile "Step X of N" + progress bar. */
+ 
 export function ToolStepper({ steps, step }: { steps: string[]; step: number }) {
   return (
     <>
@@ -57,7 +57,7 @@ export function ToolHowItWorks({ items, columnsClass }: { items: ToolHowItWorksI
   )
 }
 
-/** A tool with an `href` renders as a real link; without one it's a non-interactive "Coming Soon" card (never `href="#"`). */
+ 
 export type ToolRelatedItem = { icon: LucideIcon; title: string; text: string; href?: string }
 
 const cardClass = 'flex h-full items-center gap-4 rounded-[12px] border bg-card p-5 shadow-[0_2px_10px_rgba(15,23,42,0.04)]'
@@ -97,7 +97,7 @@ export function ToolRelatedTools({ tools, columnsClass = 'md:grid-cols-3' }: { t
   )
 }
 
-/** Right-hand input/profile summary shell. */
+ 
 export function ToolSummaryCard({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div className="rounded-[14px] border bg-card p-5 shadow-[0_10px_30px_rgba(30,58,138,0.07)] sm:p-6">
@@ -107,7 +107,7 @@ export function ToolSummaryCard({ title, children }: { title: string; children: 
   )
 }
 
-/** Soft blue "engine not connected" notice — the single warning treatment shared by predictor tools. */
+ 
 export function ToolEngineNotice({ title, text }: { title: string; text: string }) {
   return (
     <div className="mt-3 flex items-start gap-3 rounded-[10px] bg-primary/8 p-4">
@@ -122,12 +122,12 @@ export function ToolEngineNotice({ title, text }: { title: string; text: string 
   )
 }
 
-/** Inline under the form on every breakpoint — deliberately not sticky/fixed, so it never covers content (e.g. exam cards) while scrolling. */
+ 
 export function ToolActionBar({ children }: { children: React.ReactNode }) {
   return <div className="mt-6 flex items-center justify-between gap-3 border-t pt-3">{children}</div>
 }
 
-/** Visual exam-choice card (monogram + name + check). Selection semantics are decided by the caller. */
+ 
 export function ToolExamCard({ exam, active, onClick }: { exam: string; active: boolean; onClick: () => void }) {
   return (
     <button
@@ -147,15 +147,15 @@ export function ToolExamCard({ exam, active, onClick }: { exam: string; active: 
   )
 }
 
-/**
- * Scoped page frame for Student Tool pages (deliberately not a change to the
- * shared public layout, which would affect every locked public screen). The
- * tool content fills at least the viewport below the public header
- * (117px mobile / 105px desktop, measured) so a short wizard step never lets
- * the footer sit right under the content; longer steps grow naturally.
- * `100dvh` (not `100vh`) so mobile browser chrome doesn't skew it. The footer
- * stays in normal flow.
- */
+
+
+
+
+
+
+
+
+ 
 export function StudentToolPageFrame({ children }: { children: React.ReactNode }) {
   return <div className="flex min-h-[calc(100dvh-7.3125rem)] flex-col bg-background md:min-h-[calc(100dvh-6.5625rem)]">{children}</div>
 }

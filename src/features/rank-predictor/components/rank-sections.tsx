@@ -2,7 +2,7 @@ import { Brain, ClipboardList, FileSearch, GitCompareArrows, GraduationCap, Targ
 import { StudentToolHero } from '@/components/shared/student-tool/student-tool-hero'
 import { ToolHowItWorks, ToolRelatedTools } from '@/components/shared/student-tool/student-tool-parts'
 
-/** Local decorative illustration: an upward staircase with a flag, plus a blank exam-result sheet. No numbers, no chart, no gauge. */
+ 
 function RankArtwork() {
   return (
     <div className="relative hidden h-52 w-120 shrink-0 lg:block" aria-hidden="true">

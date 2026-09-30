@@ -1,7 +1,7 @@
 import type { ResumeData } from './types'
 import { makeEntryId } from './id'
 
-/** Blank starting point — "Start from Scratch". No real personal data anywhere in this module. */
+ 
 export function createEmptyResume(): ResumeData {
   return {
     personal: {
@@ -25,7 +25,7 @@ export function createEmptyResume(): ResumeData {
   }
 }
 
-/** Neutral fictional student/fresher fixture used for "Choose a Template" and preview demos — no real personal data. */
+ 
 export function createSampleResume(): ResumeData {
   return {
     personal: {

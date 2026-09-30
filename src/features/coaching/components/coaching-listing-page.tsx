@@ -29,9 +29,9 @@ import { CoachingResultCard } from './coaching-result-card'
 import { CoachingResultsHeader } from './coaching-results-header'
 import { CoachingResultsToolbar } from './coaching-results-toolbar'
 
-// With only 9 truthful unique fixtures, an initial batch of 6 still leaves a
-// real second batch (3 more) to demonstrate the infinite-scroll mechanism
-// without fabricating repeated providers — see `getCoachingFeed`.
+
+
+
 const BATCH_SIZE = 6
 
 export function CoachingListingPage() {
@@ -127,7 +127,7 @@ export function CoachingListingPage() {
         />
 
         <div className="mt-5 flex flex-col gap-5 lg:flex-row lg:items-start lg:gap-7">
-          <div className="sticky top-30 hidden max-h-[calc(100dvh-7.5rem-1rem)] overflow-y-auto lg:block">
+          <div className="sticky top-34 hidden max-h-[calc(100dvh-8.5rem-1rem)] overflow-y-auto lg:block">
             <CoachingFilterSidebar filters={filters} onToggle={toggleFilter} onClearAll={clearAllFilters} />
           </div>
 
@@ -174,10 +174,10 @@ function CoachingHero() {
 
   return (
     <section className="overflow-hidden rounded-[14px] border bg-card shadow-[0_16px_42px_rgba(15,23,42,0.08)]">
-      {/* Mobile order (approved reference): copy -> hero image -> stats -> search.
-          Desktop: copy+stats together in the left column, image fills the right
-          column across both rows. Achieved with explicit grid placement (which
-          ignores DOM order) rather than duplicating markup per breakpoint. */}
+      {
+
+
+ }
       <div className="grid min-h-[250px] lg:min-h-[300px] lg:grid-cols-[minmax(0,0.95fr)_minmax(420px,0.85fr)] lg:grid-rows-[auto_auto]">
         <div className="relative z-10 order-1 flex flex-col justify-center p-5 sm:p-7 lg:order-0 lg:col-start-1 lg:row-start-1 lg:p-8">
           <CoachingBreadcrumb />
@@ -259,9 +259,9 @@ function RecommendedProviders({ providers }: { providers: CoachingProvider[] }) 
 
 function RecommendedProviderCard({ provider }: { provider: CoachingProvider }) {
   const visual = getCoachingVisual(provider)
-  // Recommended cards stay to identity + 2-3 tags only (approved reference) —
-  // no separate description sentence, that level of detail belongs on COA-02
-  // or the full result card below.
+  
+  
+  
   const tags = [...provider.exams, ...provider.subjects].slice(0, 3)
 
   return (

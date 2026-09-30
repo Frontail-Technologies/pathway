@@ -39,7 +39,7 @@ export function OptionSelect({ value, onChange, options, placeholder, invalid }:
   )
 }
 
-/** Multi-select as toggle chips — Blue when selected, neutral otherwise (design-system chip rule). */
+ 
 export function ChipGroup({ options, selected, onToggle, ariaLabel }: { options: string[]; selected: string[]; onToggle: (option: string) => void; ariaLabel: string }) {
   return (
     <div role="group" aria-label={ariaLabel} className="flex flex-wrap gap-2">
@@ -63,7 +63,7 @@ export function ChipGroup({ options, selected, onToggle, ariaLabel }: { options:
   )
 }
 
-/** Single-choice segmented buttons (radio semantics). */
+ 
 export function SegmentedChoice<T extends string>({ options, value, onChange, ariaLabel }: { options: T[]; value: T | ''; onChange: (value: T) => void; ariaLabel: string }) {
   return (
     <div role="radiogroup" aria-label={ariaLabel} className="flex flex-wrap gap-2">

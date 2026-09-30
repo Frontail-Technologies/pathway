@@ -9,7 +9,7 @@ type CoachingEnquiryCardProps = {
   onToggleSaved: () => void
 }
 
-/** Desktop-only single sticky sidebar card — a genuinely working inline enquiry form (not just a dead button), matching the approved reference's stronger sidebar. */
+ 
 export function CoachingEnquiryCard({ provider, saved, onToggleSaved }: CoachingEnquiryCardProps) {
   return (
     <div className="rounded-[10px] border bg-card p-4 shadow-[0_8px_24px_rgba(15,23,42,0.06)]">

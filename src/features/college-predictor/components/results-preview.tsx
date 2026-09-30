@@ -4,11 +4,11 @@ import { Button } from '@/components/ui/button'
 import { StepHeading } from '@/components/shared/student-tool/tool-fields'
 import { getPreviewCollege, previewBuckets, type CollegePredictorDraft } from '../data/predictor'
 
-/**
- * Sample layout only. The prediction engine is not connected: nothing here is
- * derived from the student's inputs, there are no probabilities or safe/target
- * labels, and no cutoff numbers — every card is visibly marked "Sample layout".
- */
+
+
+
+
+ 
 export function ResultsPreview({ draft }: { draft: CollegePredictorDraft }) {
   const context = [draft.exams.join(' + '), draft.counselling].filter(Boolean).join(' · ')
 

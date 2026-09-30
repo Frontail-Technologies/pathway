@@ -17,16 +17,16 @@ type TemplatePickerProps = {
   trigger: ReactElement
 }
 
-/** Switching template only changes `templateId` — the same resume `data` is reused, so nothing entered is ever lost. Thumbnails are real scaled `ResumeTemplateRenderer` pages, never schematic placeholders. */
-// Thumbnails always use populated sample content so every template is recognizable, even before the user has entered anything.
+ 
+
 const SAMPLE_DATA = createSampleResume()
 
 export function TemplatePicker({ data, templateId, onSelect, trigger }: TemplatePickerProps) {
   const [open, setOpen] = useState(false)
-  // Render exactly one of Dialog/Sheet — mounting both simultaneously (even
-  // with one visually `hidden`) leaves two real modal backdrops in the DOM,
-  // and the "hidden" one's overlay still intercepts clicks meant for the
-  // visible one.
+  
+  
+  
+  
   const isDesktop = useMediaQuery('(min-width: 640px)')
   const cards = (
     <>
@@ -50,7 +50,7 @@ export function TemplatePicker({ data, templateId, onSelect, trigger }: Template
       <span onClick={() => setOpen(true)}>{trigger}</span>
 
       {isDesktop ? (
-        // Desktop: a proper template gallery, not a narrow list of tiny previews.
+        
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogContent showCloseButton className="flex max-h-[82vh] flex-col gap-0 p-0" style={{ width: 'min(920px, calc(100vw - 64px))', maxWidth: 'min(920px, calc(100vw - 64px))' }}>
             <DialogHeader className="shrink-0 border-b p-4">
@@ -62,7 +62,7 @@ export function TemplatePicker({ data, templateId, onSelect, trigger }: Template
           </DialogContent>
         </Dialog>
       ) : (
-        // Mobile: full-screen Sheet, cards stacked vertically.
+        
         <Sheet open={open} onOpenChange={setOpen}>
           <SheetContent side="bottom" className="flex h-dvh max-w-none flex-col gap-0 p-0">
             <SheetHeader className="shrink-0 border-b p-4">

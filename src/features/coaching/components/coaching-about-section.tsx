@@ -4,12 +4,12 @@ import type { CoachingProvider } from '../data/coaching'
 
 const FEATURE_ICONS = [Award, ClipboardCheck, LifeBuoy, MonitorPlay]
 
-/** Copy + feature items are both sourced directly from the fixture (`aboutCopy`, `highlights`, `modes`) — no inflated marketing claims added. Feature items use a light surface (no heavy borders) to read as informative highlights, not a form. */
+ 
 export function CoachingAboutSection({ provider }: { provider: CoachingProvider }) {
   const features = [...provider.highlights, `${provider.modes.join(' + ')} learning`].slice(0, 4)
 
   return (
-    <section id="overview" className="scroll-mt-43 border-b py-8 lg:scroll-mt-40 lg:py-12">
+    <section id="overview" className="scroll-mt-43 border-b py-8 lg:scroll-mt-44 lg:py-12">
       <DetailSectionHeader title={`About ${provider.name}`} />
       <p className="mt-2.5 max-w-3xl text-sm leading-6 text-muted-foreground sm:text-[15px]">{provider.aboutCopy}</p>
 

@@ -10,7 +10,7 @@ type CoachingEnquiryDialogProps = {
   trigger: ReactElement
 }
 
-/** Dialog wrapper around the shared `CoachingEnquiryForm` — used for the hero, mobile, and closing-CTA "Enquire Now" triggers (the desktop sidebar renders the same form inline instead). */
+ 
 export function CoachingEnquiryDialog({ provider, trigger }: CoachingEnquiryDialogProps) {
   const [open, setOpen] = useState(false)
 

@@ -1,10 +1,10 @@
 import { FileText } from 'lucide-react'
 import type { ScholarshipDetailData } from '../data/scholarship-detail'
 
-/** Neutral document/file rows — deliberately not green checkmarks, so this reads as a paperwork checklist rather than a repeat of the Eligibility qualification checks. */
+ 
 export function ScholarshipDocumentsSection({ scholarship }: { scholarship: ScholarshipDetailData }) {
   return (
-    <section id="documents" className="scroll-mt-43 border-b py-7 lg:scroll-mt-40 lg:py-9">
+    <section id="documents" className="scroll-mt-43 border-b py-7 lg:scroll-mt-44 lg:py-9">
       <h2 className="font-heading text-xl font-bold text-foreground sm:text-[22px]">Documents Required</h2>
 
       <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2">

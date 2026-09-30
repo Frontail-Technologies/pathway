@@ -1,6 +1,6 @@
 import type { Tutor, TutorAvatarSpec } from '../data/tutors'
 
-/** Illustrated bust used only when a tutor has no `portrait` asset yet. Fills its frame (no circle crop). */
+ 
 export function TutorAvatar({ spec, className = 'size-16' }: { spec: TutorAvatarSpec; className?: string }) {
   const { skin, hair, shirt, style, glasses } = spec
   return (
@@ -26,16 +26,16 @@ export function TutorAvatar({ spec, className = 'size-16' }: { spec: TutorAvatar
   )
 }
 
-/**
- * Portrait frame used everywhere a tutor appears (cards, hero, sidebar, related). Renders the tutor's local
- * `portrait` photo with object-cover, top-weighted so faces stay in frame; falls back to the illustrated
- * bust only while a tutor has no photo asset. `className` sets size and radius.
- */
+
+
+
+
+ 
 export function TutorPortrait({ tutor, className = 'size-20 rounded-xl' }: { tutor: Pick<Tutor, 'name' | 'portrait' | 'avatar'>; className?: string }) {
   return (
     <div className={`shrink-0 overflow-hidden bg-[#e8effd] ring-1 ring-black/5 ${className}`}>
       {tutor.portrait ? (
-        // eslint-disable-next-line @next/next/no-img-element
+        
         <img src={tutor.portrait} alt={`Portrait of ${tutor.name}`} loading="lazy" decoding="async" className="size-full object-cover object-[50%_20%]" />
       ) : (
         <TutorAvatar spec={tutor.avatar} className="size-full" />

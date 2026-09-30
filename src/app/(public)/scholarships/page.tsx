@@ -6,8 +6,8 @@ import { PageLoadingSkeleton } from '@/components/feedback'
 export default function ScholarshipsPage() {
   return (
     <>
-      {/* ScholarshipListingPage reads useSearchParams() to sync filters/sort
-          with the URL, which Next.js requires to sit inside a Suspense boundary. */}
+      {
+ }
       <Suspense fallback={<PageLoadingSkeleton />}>
         <ScholarshipListingPage />
       </Suspense>

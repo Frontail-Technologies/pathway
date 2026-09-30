@@ -12,16 +12,16 @@ import type { CoachingProvider } from '../data/coaching'
 type CoachingEnquiryFormProps = {
   provider: CoachingProvider
   onSubmitted?: () => void
-  /** Compact/inline sidebar variant omits the optional message field to stay short. */
+   
   compact?: boolean
 }
 
-/**
- * Shared enquiry fields + submit behavior used both inline (desktop sidebar)
- * and inside the enquiry Dialog (mobile / hero / closing CTA) — frontend-only
- * (no backend/API); a valid submission shows Sonner success feedback and
- * never claims the enquiry reached a real provider.
- */
+
+
+
+
+
+ 
 export function CoachingEnquiryForm({ provider, onSubmitted, compact = false }: CoachingEnquiryFormProps) {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')

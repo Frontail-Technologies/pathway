@@ -3,7 +3,7 @@
 import { Check } from 'lucide-react'
 import { RESUME_STEPS, type ResumeStepId } from '../../data/types'
 
-/** Vertical workflow rail replacing the old horizontal 8-step desktop stepper — fixed width, no unnecessary internal scroll at normal desktop heights. */
+ 
 export function BuilderSidebar({ activeStep, onStepClick }: { activeStep: ResumeStepId; onStepClick: (step: ResumeStepId) => void }) {
   const sections = RESUME_STEPS.filter((step) => step.id !== 'review')
   const activeIndex = RESUME_STEPS.findIndex((step) => step.id === activeStep)

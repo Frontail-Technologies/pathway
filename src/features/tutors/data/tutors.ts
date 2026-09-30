@@ -1,7 +1,7 @@
-// UI-phase fixtures for INDIVIDUAL tutors only (TUT-01 listing + TUT-02 detail share this one source).
-// Coaching institutes/academies live in `features/coaching` and must never appear here.
-// All people below are fictional demo records. Deliberately no ratings, review counts, prices, years of
-// experience, students taught, credentials or success claims — none of that is backed by data yet.
+
+
+
+
 
 export type TutorSubject = 'Physics' | 'Chemistry' | 'Mathematics' | 'Biology' | 'English' | 'Computer Science'
 export type TutorExam = 'JEE Main' | 'JEE Advanced' | 'NEET UG' | 'CUET UG' | 'Board Exams'
@@ -9,14 +9,14 @@ export type TutorMode = 'Online' | 'In-person'
 export type TutorLevel = 'Class 6–8' | 'Class 9–10' | 'Class 11–12' | 'Undergraduate'
 export type TutorLanguage = 'English' | 'Hindi' | 'Bengali' | 'Tamil'
 
-/** Colours for the fallback illustrated bust, used only when `portrait` is not set. */
+ 
 export type TutorAvatarSpec = { skin: string; hair: string; shirt: string; style: 'short' | 'long' | 'bun'; glasses?: boolean }
 
 export type TutorDetail = {
   longBio: string
-  /** Three short teaching traits drawn from the bio — no metrics or guarantees. */
+   
   traits: string[]
-  /** Student profiles this tutor supports — fixture-backed. */
+   
   whoHelps: string[]
 }
 
@@ -24,17 +24,17 @@ export type Tutor = {
   id: string
   slug: string
   name: string
-  /** Local portrait under `public/tutors/` (e.g. `/tutors/arjun-sharma.jpg`, 4:5, neutral background). Optional until assets are added; the illustrated `avatar` is the fallback. */
+   
   portrait?: string
   avatar: TutorAvatarSpec
-  /** e.g. "Physics tutor for JEE & NEET" */
+   
   headline: string
   subjects: TutorSubject[]
   exams: TutorExam[]
   studyLevels: TutorLevel[]
   languages: TutorLanguage[]
   modes: TutorMode[]
-  /** One line, never a result/rank/guarantee claim. */
+   
   intro: string
   featured: boolean
   hasDetailPage: boolean
@@ -101,7 +101,7 @@ export function getTutorBySlug(slug: string): Tutor | undefined {
   return tutors.find((tutor) => tutor.slug === slug && tutor.hasDetailPage && tutor.detail)
 }
 
-/** Related by shared subjects (heaviest), then study levels, then languages; excludes the current tutor. */
+ 
 export function getRelatedTutors(tutor: Tutor, limit = 3): Tutor[] {
   const overlap = (a: readonly string[], b: readonly string[]) => a.filter((item) => b.includes(item)).length
   const score = (other: Tutor) => overlap(other.subjects, tutor.subjects) * 4 + overlap(other.studyLevels, tutor.studyLevels) * 2 + overlap(other.languages, tutor.languages)
@@ -111,7 +111,7 @@ export function getRelatedTutors(tutor: Tutor, limit = 3): Tutor[] {
     .slice(0, limit)
 }
 
-// --- Filters / sort / search ------------------------------------------------------
+
 export type FilterKey = 'subjects' | 'exams' | 'modes' | 'levels' | 'languages'
 export type FilterState = Record<FilterKey, string[]>
 export const emptyFilters: FilterState = { subjects: [], exams: [], modes: [], levels: [], languages: [] }
@@ -140,7 +140,7 @@ export const sortOptions: { value: SortValue; label: string }[] = [
 
 const slugify = (value: string) => value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
 
-/** URL convention (same family as the other listings): `q`, comma-separated slug params, default sort omitted, invalid values dropped. */
+ 
 export function serializeTutorFilters(filters: FilterState, sort: SortValue, query: string): string {
   const params = new URLSearchParams()
   if (query.trim()) params.set('q', query.trim())
@@ -167,7 +167,7 @@ export const countActiveFilters = (filters: FilterState) => Object.values(filter
 
 const normalize = (value: string) => value.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim()
 
-/** Searches tutor name, headline, subjects and exams (e.g. "physics", "neet", "arjun"). */
+ 
 export function matchesSearch(tutor: Tutor, query: string) {
   const terms = normalize(query).split(' ').filter(Boolean)
   if (terms.length === 0) return true
@@ -175,7 +175,7 @@ export function matchesSearch(tutor: Tutor, query: string) {
   return terms.every((term) => haystack.includes(term))
 }
 
-/** OR within a group, AND across groups. */
+ 
 export function matchesFilters(tutor: Tutor, filters: FilterState) {
   return (Object.keys(filters) as FilterKey[]).every((key) => filters[key].length === 0 || filters[key].some((value) => recordField[key](tutor).includes(value)))
 }

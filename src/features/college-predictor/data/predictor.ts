@@ -1,11 +1,11 @@
 import { colleges, type CollegeListItem } from '@/features/colleges/data/colleges'
 import { getCollegeDetail } from '@/features/colleges/data/college-detail'
 
-// UI-phase only: no prediction engine, no cutoff data, no backend. Everything here
-// is local, typed, and replaceable. Validation deliberately assumes no official
-// exam maximums (rank >= 1, percentile 0-100, score >= 0) until real exam data exists.
 
-// Exams already present in the Pathway top-exams fixture (engineering, medical, CUET). Adding more later means adding entries here only.
+
+
+
+
 export type PredictorExam = 'JEE Main' | 'JEE Advanced' | 'BITSAT' | 'WBJEE' | 'NEET UG' | 'CUET UG'
 export type CourseId = 'engineering' | 'medical' | 'undergraduate'
 export type ScoreType = 'Rank' | 'Percentile' | 'Score'
@@ -17,7 +17,7 @@ export type ExamPerformance = { inputType: ScoreType; value: string }
 export type CollegePredictorDraft = {
   course: CourseId | ''
   exams: PredictorExam[]
-  /** One entry per selected exam — each exam has its own Rank / Percentile / Score input. */
+   
   performance: Partial<Record<PredictorExam, ExamPerformance>>
   category: string
   homeState: string
@@ -59,7 +59,7 @@ export function courseForExam(exam: PredictorExam): CourseOption {
   return courseOptions.find((course) => course.exams.includes(exam)) ?? courseOptions[0]
 }
 
-/** Maps the `?exam=` slugs already used by the homepage predictor entry points. */
+ 
 export const examFromSlug: Record<string, PredictorExam> = {
   'jee-main': 'JEE Main',
   'jee-advanced': 'JEE Advanced',
@@ -101,7 +101,7 @@ export function validateCourseStep(draft: CollegePredictorDraft): PredictorError
   return errors
 }
 
-// No official exam maximums are assumed until real exam data exists: rank >= 1, percentile 0-100, score >= 0.
+
 export function validatePerformanceValue(inputType: ScoreType, raw: string): string | undefined {
   const value = raw.trim()
   const label = inputType.toLowerCase()
@@ -124,10 +124,10 @@ export function validatePerformanceStep(draft: CollegePredictorDraft): Predictor
   return Object.keys(performance).length > 0 ? { performance } : {}
 }
 
-// --- Result preview fixtures -------------------------------------------------
-// Layout placeholders only: these are real Pathway fixture colleges reused to
-// show what result cards will look like. They are NOT predictions and do not
-// depend on the student's inputs.
+
+
+
+
 
 export type PreviewBucket = { id: 'reach' | 'match' | 'safer'; title: string; description: string; slugs: string[] }
 

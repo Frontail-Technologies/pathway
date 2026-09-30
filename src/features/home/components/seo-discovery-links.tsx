@@ -7,7 +7,7 @@ import { seoDiscoveryLinkGroups } from '../data/seo-discovery-links'
 export function SeoDiscoveryLinks() {
   return (
     <section className="border-b bg-muted py-8 sm:py-9 lg:py-10">
-      <div className="container-shell px-4">
+      <div className="container-shell mx-auto px-4">
         <div className="hidden gap-6 md:grid md:grid-cols-4">
           {seoDiscoveryLinkGroups.map((group) => (
             <div key={group.title} className="flex flex-col gap-3">

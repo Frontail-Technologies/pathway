@@ -31,6 +31,18 @@
   --color-success-surface: var(--success-surface);
   --color-warning: var(--warning);
   --color-warning-surface: var(--warning-surface);
+  --color-admin-sidebar: var(--admin-sidebar);
+  --color-admin-sidebar-foreground: var(--admin-sidebar-foreground);
+  --color-admin-sidebar-muted: var(--admin-sidebar-muted);
+  --color-admin-sidebar-hover: var(--admin-sidebar-hover);
+  --color-admin-sidebar-active: var(--admin-sidebar-active);
+  --color-admin-sidebar-border: var(--admin-sidebar-border);
+  --color-admin-canvas: var(--admin-canvas);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -66,6 +78,59 @@
   --warning: #f59e0b;
   --success-surface: color-mix(in srgb, var(--success) 12%, transparent);
   --warning-surface: color-mix(in srgb, var(--warning) 14%, transparent);
+  --admin-sidebar: #0f172a;
+  --admin-sidebar-foreground: #f8fafc;
+  --admin-sidebar-muted: #94a3b8;
+  --admin-sidebar-hover: rgba(255, 255, 255, 0.06);
+  --admin-sidebar-active: rgba(255, 255, 255, 0.12);
+  --admin-sidebar-border: rgba(255, 255, 255, 0.08);
+  --admin-canvas: #f8fafc;
+  --chart-1: #1d4ed8;
+  --chart-2: #f97316;
+  --chart-3: #10b981;
+  --chart-4: #8b5cf6;
+  --chart-5: #06b6d4;
+}
+
+[data-theme='admin'] {
+  --background: #f5f7fb;
+  --foreground: #17233a;
+  --card: #ffffff;
+  --card-foreground: #17233a;
+  --popover: #ffffff;
+  --popover-foreground: #17233a;
+  --primary: #2498dd;
+  --primary-foreground: #ffffff;
+  --secondary: #eaf7ff;
+  --secondary-foreground: #1879b6;
+  --muted: #f3f6fa;
+  --muted-foreground: #73839a;
+  --accent: #e5f6ff;
+  --accent-foreground: #1879b6;
+  --destructive: #e75d62;
+  --border: #e6ebf2;
+  --input: #dce4ee;
+  --ring: #2498dd;
+  --radius: 0.5rem;
+  --brand-blue: #2498dd;
+  --brand-blue-dark: #1879b6;
+  --brand-blue-light: #eaf7ff;
+  --success: #62be35;
+  --warning: #f08a00;
+  --success-surface: #edf9e8;
+  --warning-surface: #fff8e8;
+  --admin-sidebar: #ffffff;
+  --admin-sidebar-foreground: #48576d;
+  --admin-sidebar-muted: #94a3b8;
+  --admin-sidebar-hover: #f1f8fc;
+  --admin-sidebar-active: #dff4ff;
+  --admin-sidebar-border: #e9eef4;
+  --admin-canvas: #f5f7fb;
+  --chart-1: #2498dd;
+  --chart-2: #f5ae38;
+  --chart-3: #62be35;
+  --chart-4: #8b7cf6;
+  --chart-5: #f07882;
 }
 
 @layer base {
@@ -78,6 +143,7 @@ h1, h2, h3, h4, h5, h6 { font-family: var(--font-manrope), sans-serif; letter-sp
   :focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
 }
 ::selection { background: var(--brand-blue-light); color: var(--brand-blue-dark); }
+@keyframes nav-progress { from { transform: scaleX(0); } to { transform: scaleX(0.75); } }
 .container-shell { width: 100%; max-width: 1536px; margin-inline: auto; padding-inline: 1rem; }
 @media (min-width: 640px) { .container-shell { padding-inline: 1.5rem; } }
 @media (min-width: 1024px) { .container-shell { padding-inline: 2rem; } }
@@ -105,13 +171,13 @@ h1, h2, h3, h4, h5, h6 { font-family: var(--font-manrope), sans-serif; letter-sp
   }
 }
 
-/*
- * Targeted print styles for the CMP-01 "Download PDF" flow (window.print()
- * as the frontend-only first version — see CollegeComparePage). Hides the
- * global chrome and any interactive/decorative page furniture so only the
- * comparison content prints; forces a light background regardless of the
- * viewer's OS theme. Does not touch normal screen styles.
- */
+
+
+
+
+
+
+ 
 @media print {
   header,
   footer,
@@ -124,13 +190,13 @@ h1, h2, h3, h4, h5, h6 { font-family: var(--font-manrope), sans-serif; letter-sp
   }
 }
 
-/*
- * Shared chevron progress loader (`LoadingState`, `src/components/feedback`).
- * Same conic-gradient mask + sweeping fill technique as supplied — retuned to
- * the locked palette (Primary Blue fill on a neutral border-tone track,
- * see docs/DESIGN_SYSTEM.md) instead of its original teal/grey, so it never
- * introduces an off-brand color. Respects reduced motion.
- */
+
+
+
+
+
+
+ 
 .pw-loader {
   width: 124px;
   height: 24px;

@@ -7,7 +7,7 @@ function monogram(exam: Exam) {
   return exam.shortName.split(' ')[0].slice(0, 4).toUpperCase()
 }
 
-/** Compact "Popular Exams" tile. Links to the detail page only when the record has one; otherwise a non-link "Details soon". */
+ 
 export function PopularExamTile({ exam }: { exam: Exam }) {
   const tileClass = 'flex flex-col items-center rounded-[12px] border bg-card p-4 text-center shadow-[0_2px_10px_rgba(15,23,42,0.04)]'
   const body = (

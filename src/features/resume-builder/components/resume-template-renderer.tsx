@@ -6,14 +6,14 @@ import { useExecutiveTimelineDocument } from './templates/resume-template-execut
 
 export type ResumeDocument = { pages: ReactNode[]; pageCount: number; measureNode: ReactNode }
 
-/**
- * Data stays separate from design — this is the only place that maps a
- * `ResumeTemplateId` to its rendering. All three template hooks are called
- * unconditionally (React's rules of hooks don't allow calling only one based
- * on a runtime value) and each does its own off-screen measurement/pagination
- * independently; only the active template's result is returned, but all
- * three keep working if the user switches templates mid-session.
- */
+
+
+
+
+
+
+
+ 
 export function useResumeDocument(templateId: ResumeTemplateId, data: ResumeData): ResumeDocument {
   const classic = useClassicAtsDocument(data)
   const modernSidebar = useModernSidebarDocument(data)

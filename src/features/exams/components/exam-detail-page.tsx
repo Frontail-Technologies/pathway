@@ -23,7 +23,7 @@ const monogram = (exam: Exam) => exam.shortName.split(' ')[0].slice(0, 4).toUppe
 
 function Section({ id, title, children }: { id: string; title: string; children: ReactNode }) {
   return (
-    <section id={id} className="scroll-mt-43 border-b py-7 lg:scroll-mt-40 lg:py-9">
+    <section id={id} className="scroll-mt-43 border-b py-7 lg:scroll-mt-44 lg:py-9">
       <h2 className="font-heading text-xl font-bold text-foreground sm:text-[22px]">{title}</h2>
       <div className="mt-4">{children}</div>
     </section>
@@ -39,7 +39,7 @@ function PendingNote({ children }: { children: ReactNode }) {
   )
 }
 
-/** Predictor deep links carry only the exam slug — never scores, ranks or category. */
+ 
 function predictorLinks(exam: Exam) {
   return {
     college: examFromSlug[exam.slug] ? `/college-predictor?exam=${exam.slug}` : null,
@@ -236,7 +236,7 @@ function CollegesSection({ exam }: { exam: DetailedExam }) {
   )
 }
 
-/** Courses whose own fixture lists this exam as an entrance exam — a real relationship in the data. */
+ 
 function CoursesSection({ exam }: { exam: DetailedExam }) {
   const list = courses.filter((course) => course.entranceExams.includes(exam.shortName))
   if (list.length === 0) return null
@@ -267,7 +267,7 @@ function CoursesSection({ exam }: { exam: DetailedExam }) {
 
 function FaqSection({ exam }: { exam: DetailedExam }) {
   return (
-    <section id="faqs" className="scroll-mt-43 py-7 lg:scroll-mt-40 lg:py-9">
+    <section id="faqs" className="scroll-mt-43 py-7 lg:scroll-mt-44 lg:py-9">
       <h2 className="font-heading text-xl font-bold text-foreground sm:text-[22px]">Frequently Asked Questions</h2>
       <div className="mt-4 rounded-[10px] border bg-card px-4">
         <Accordion multiple={false}>

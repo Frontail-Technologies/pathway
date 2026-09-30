@@ -9,17 +9,17 @@ export type ProgramOverride = { degree: Degree; course: string }
 type PopularComparisonCardProps = {
   slugA: string
   slugB: string
-  /** Overrides the college's own default program (e.g. to build an "M.Tech" comparison for colleges whose stored default is a UG programme) — falls back to `defaultPrograms` when omitted. */
+   
   programA?: ProgramOverride
   programB?: ProgramOverride
 }
 
-/**
- * Shared, feature-owned "College A vs College B" discovery card — used by
- * both the root `/compare` landing page and the detail page's own Popular
- * Comparisons block. Always links to the real `/compare/colleges` route,
- * never a duplicate comparison page.
- */
+
+
+
+
+
+ 
 export function PopularComparisonCard({ slugA, slugB, programA, programB }: PopularComparisonCardProps) {
   const collegeA = getCollegeComparisonItem(slugA)
   const collegeB = getCollegeComparisonItem(slugB)
@@ -33,7 +33,7 @@ export function PopularComparisonCard({ slugA, slugB, programA, programB }: Popu
   }).toString()
 
   return (
-    <div className="group rounded-xl border bg-card p-4 transition-all hover:border-primary/40 hover:shadow-sm">
+    <div className="group rounded-xl border bg-card p-4 shadow-[0_2px_10px_rgba(15,23,42,0.04)] transition-all hover:border-primary/40 hover:shadow-sm">
       <div className="flex items-center justify-center gap-3">
         <CollegeMini college={collegeA} />
         <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-secondary text-[11px] font-bold text-primary">VS</span>

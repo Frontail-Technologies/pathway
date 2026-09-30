@@ -6,10 +6,10 @@ import { MessagesSquare } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { DashboardSection } from './dashboard-parts'
 
-/**
- * Shape a future enquiry will take once a CRM/enquiry backend exists. Nothing creates these yet — no counsellor,
- * call, ticket number or status is ever invented — so the list below stays empty.
- */
+
+
+
+ 
 export type Enquiry = {
   id: string
   entity: { kind: 'college' | 'course' | 'coaching' | 'tutor' | 'counselling'; name: string }
@@ -19,7 +19,7 @@ export type Enquiry = {
   nextAction?: string
 }
 
-/** Card for one enquiry. Unused until enquiries exist; kept so the eventual data drops straight in. */
+ 
 export function EnquiryCard({ enquiry }: { enquiry: Enquiry }) {
   return (
     <li className="rounded-[10px] border p-4">
@@ -37,7 +37,7 @@ export function EnquiryCard({ enquiry }: { enquiry: Enquiry }) {
   )
 }
 
-// No enquiry backend (and no local enquiry creation) exists, so there is nothing to list.
+
 const activeEnquiries: Enquiry[] = []
 const pastEnquiries: Enquiry[] = []
 

@@ -1,9 +1,9 @@
-// Form-side helpers for STU-02 (My Profile): option lists, draft <-> profile mapping and validation.
-// Frontend demo only — there is no backend; the shared profile lives in the Student Account provider.
+
+
 
 import type { StudentProfile, WorkExperience, WorkExperienceType } from './student'
 
-/** localStorage key for the NON-SENSITIVE demo profile. Never store passwords, tokens or security data here. */
+ 
 export const STUDENT_PROFILE_STORAGE_KEY = 'pathway.studentProfile.demo.v1'
 
 export const studyLevelOptions = ['Class 10', 'Class 11', 'Class 12', 'Undergraduate', 'Postgraduate']
@@ -11,7 +11,7 @@ export const streamOptions = ['Science (PCM)', 'Science (PCB)', 'Commerce', 'Art
 export const careerGoalOptions = ['Software Engineering', 'Medicine', 'Business & Management', 'Design', 'Still exploring']
 export const OTHER_GOAL = 'Other'
 export const experienceTypeOptions: WorkExperienceType[] = ['Internship', 'Part-time', 'Volunteer', 'Project / Practical Experience']
-/** A sensible fixed window (no clock dependency, so server and client agree). */
+ 
 export const graduationYearOptions = Array.from({ length: 21 }, (_, index) => String(2015 + index))
 
 export type ProfileDraft = {
@@ -49,7 +49,7 @@ export function toDraft(profile: StudentProfile): ProfileDraft {
   }
 }
 
-/** Applies a validated draft onto the shared profile; preference fields are left untouched (STU-03 owns them). */
+ 
 export function applyDraft(profile: StudentProfile, draft: ProfileDraft): StudentProfile {
   const goal = draft.goalChoice === OTHER_GOAL ? draft.goalOther.trim() : draft.goalChoice
   return {
@@ -99,7 +99,7 @@ export function validateDraft(draft: ProfileDraft): DraftErrors {
 
 export const hasErrors = (errors: DraftErrors) => Object.keys(errors).length > 0
 
-/** Cheap shape check for data read back from localStorage. */
+ 
 export function isStoredProfile(value: unknown): value is StudentProfile {
   const v = value as Partial<StudentProfile> | null
   return !!v && typeof v.name === 'string' && typeof v.email === 'string' && Array.isArray(v.preferredCourses) && Array.isArray(v.preferredExams) && Array.isArray(v.preferredLocations) && Array.isArray(v.workExperience)

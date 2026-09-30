@@ -1,7 +1,7 @@
 import { CircleCheck } from 'lucide-react'
 import type { ScholarshipDetailData } from '../data/scholarship-detail'
 
-/** "Eligibility at a Glance" — a short, scannable pre-check shown near the top, distinct from the full Eligibility Checklist section further down (`ScholarshipEligibilitySection`). */
+ 
 export function ScholarshipEligibilitySnapshot({ scholarship }: { scholarship: ScholarshipDetailData }) {
   return (
     <div className="mt-4">

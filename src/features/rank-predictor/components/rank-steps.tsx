@@ -80,7 +80,7 @@ function ResultCard({ label, className = '' }: { label: string; className?: stri
   )
 }
 
-/** No rank engine exists: every result value is a literal "— —" placeholder — never a sample number, range, confidence or gauge. */
+ 
 export function RankPreviewStep({ draft }: { draft: RankPredictorDraft }) {
   const rows = [
     { label: 'Exam', value: draft.exam },

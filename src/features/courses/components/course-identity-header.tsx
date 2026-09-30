@@ -1,30 +1,43 @@
 'use client'
 
 import Link from 'next/link'
-import { Bookmark, GraduationCap } from 'lucide-react'
+import { Bookmark, BookOpen, CalendarClock, GraduationCap, School } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { DetailQuickFacts, type DetailQuickFact } from '@/components/shared/detail-quick-facts'
 import { useSavedItem } from '@/features/saved/saved-items-provider'
 import type { CourseDetailData } from '../data/course-detail'
 
+
+
+
+
+
+ 
 export function CourseIdentityHeader({ course }: { course: CourseDetailData }) {
   const { saved, toggleSaved } = useSavedItem('course', course.slug, 'Course')
+
+  const facts: DetailQuickFact[] = [
+    { icon: CalendarClock, label: 'Duration', value: course.duration },
+    { icon: GraduationCap, label: 'Study Level', value: course.level },
+    { icon: School, label: 'Course Type', value: course.mode },
+    { icon: BookOpen, label: 'Relevant Exams', value: course.examsSummary },
+  ]
 
   return (
     <div className="border-b pb-5 sm:pb-6">
       <div className="flex items-start gap-3 sm:gap-4">
-        <div className="flex size-14 shrink-0 items-center justify-center rounded-xl bg-secondary text-primary sm:size-16">
-          <GraduationCap className="size-6 sm:size-7" aria-hidden="true" />
-        </div>
+        <span className="flex size-14 shrink-0 items-center justify-center rounded-xl bg-secondary text-primary sm:size-16" aria-hidden="true">
+          <GraduationCap className="size-6 sm:size-7" />
+        </span>
 
         <div className="min-w-0 flex-1">
           <h1 className="font-heading text-xl font-bold text-foreground sm:text-3xl">{course.name}</h1>
           <p className="mt-1 text-sm text-muted-foreground sm:text-[15px]">{course.fullName}</p>
-          <p className="mt-2.5 text-[13px] text-muted-foreground sm:text-sm">
-            {course.level} · {course.mode} · {course.duration}
-          </p>
-          <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
-            <span className="rounded-md bg-secondary px-2 py-0.5 text-xs font-medium text-primary">{course.stream}</span>
-            <span className="rounded-md bg-secondary px-2 py-0.5 text-xs font-medium text-primary">{course.specialization}</span>
+          <p className="mt-2.5 max-w-2xl text-sm leading-6 text-foreground">{course.overviewCopy.split('. ')[0]}.</p>
+          <div className="mt-2.5 flex flex-wrap items-center gap-1.5">
+            <span className="rounded-md bg-secondary px-2 py-0.5 text-xs font-semibold text-primary">{course.stream}</span>
+            <span className="rounded-md bg-muted px-2 py-0.5 text-xs font-medium text-foreground">{course.specialization}</span>
+            <span className="rounded-md bg-muted px-2 py-0.5 text-xs font-medium text-foreground">{course.degree}</span>
           </div>
         </div>
 
@@ -39,39 +52,19 @@ export function CourseIdentityHeader({ course }: { course: CourseDetailData }) {
         </button>
       </div>
 
-      <div className="mt-4 grid grid-cols-2 gap-x-4 gap-y-3 sm:grid-cols-4">
-        <div>
-          <p className="text-xs tracking-wide text-muted-foreground uppercase">Eligibility</p>
-          <p className="mt-0.5 text-sm font-semibold text-foreground sm:text-[15px]">{course.eligibilitySummary}</p>
-        </div>
-        <div>
-          <p className="text-xs tracking-wide text-muted-foreground uppercase">Entrance Exams</p>
-          <p className="mt-0.5 text-sm font-semibold text-foreground sm:text-[15px]">{course.examsSummary}</p>
-        </div>
-        <div>
-          <p className="text-xs tracking-wide text-muted-foreground uppercase">Typical Fees</p>
-          <p className="mt-0.5 text-sm font-semibold text-foreground sm:text-[15px]">{course.feesSummary}</p>
-        </div>
-        <div>
-          <p className="text-xs tracking-wide text-muted-foreground uppercase">Colleges</p>
-          <p className="mt-0.5 text-sm font-semibold text-foreground sm:text-[15px]">{course.collegesCount}</p>
-        </div>
-      </div>
-
       <div className="mt-4 flex flex-col gap-2 sm:mt-5 sm:flex-row sm:items-center">
-        {/* /colleges does not yet support a course-filter query param — COL-01 predates
-            the URL-filter-state rule (see docs/PAGE_PATTERNS.md and CourseCollegesSection's
-            own note) — link to the plain listing rather than inventing an unsupported
-            query contract. */}
+        { }
         <Button className="h-11 px-6 text-sm font-semibold sm:h-10" nativeButton={false} render={<Link href="/colleges" />}>
           View Colleges
         </Button>
-        {/* Course Compare is explicitly not built (only College Compare/CMP-01 exists) —
-            disabled rather than knowingly routing to the wrong compare tool or an
-            unimplemented route. */}
+        { }
         <Button variant="outline" className="h-11 px-6 text-sm font-semibold sm:h-10" disabled title="Course comparison is coming soon">
           Compare Courses
         </Button>
+      </div>
+
+      <div className="mt-5">
+        <DetailQuickFacts facts={facts} />
       </div>
     </div>
   )

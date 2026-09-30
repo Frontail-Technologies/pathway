@@ -3,17 +3,17 @@ import { Button } from '@/components/ui/button'
 import { DetailSectionHeader } from '@/components/shared/detail-section-header'
 import type { CoachingProvider } from '../data/coaching'
 
-/** City/state only — never a fabricated street address or a fake map screenshot. No map integration exists yet, so "View on Maps" stays disabled rather than pointing at a fake destination. */
+ 
 export function CoachingLocationSection({ provider }: { provider: CoachingProvider }) {
   const cityLabel = provider.state ? `${provider.location}, ${provider.state}` : provider.location
 
   return (
-    <section id="location" className="scroll-mt-43 border-b py-8 lg:scroll-mt-40 lg:py-12">
+    <section id="location" className="scroll-mt-43 border-b py-8 lg:scroll-mt-44 lg:py-12">
       <DetailSectionHeader icon={MapPin} title="Location" />
 
       <div className="mt-4 overflow-hidden rounded-[10px] border bg-card">
-        {/* Illustrative map-style surface — faint road lines + a pin + a
-            subtle city label, never a fabricated/screenshotted live map. */}
+        {
+ }
         <div className="relative h-40 overflow-hidden bg-[color-mix(in_srgb,var(--secondary)_55%,var(--background))]">
           <svg className="absolute inset-0 size-full" viewBox="0 0 400 160" preserveAspectRatio="none" aria-hidden="true">
             <path d="M0 40 H400" stroke="var(--border)" strokeWidth="2" />

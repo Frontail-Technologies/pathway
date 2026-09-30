@@ -6,7 +6,7 @@ import { StartScreen } from './start-screen'
 import { DesktopWorkspace } from './workspace/desktop-workspace'
 import { MobileWorkspace } from './workspace/mobile-workspace'
 
-/** Root of the Resume Builder tool — see `src/app/(tools)/layout.tsx` for why this doesn't inherit the public Header/Footer shell. */
+ 
 export function ResumeBuilderPage() {
   const draft = useResumeDraft()
 
@@ -41,10 +41,10 @@ export function ResumeBuilderPage() {
 
   return (
     <div className="h-full w-full">
-      {/* `lg:flex`'s default row direction does not stretch a child's WIDTH on
-          its own (only height, via cross-axis stretch) — the child needs its
-          own `w-full`/`flex-1` too, which is what previously left a large
-          unused blank area on the right of the viewport. */}
+      {
+
+
+ }
       <div className="hidden h-full w-full lg:flex">
         <DesktopWorkspace {...workspaceProps} />
       </div>

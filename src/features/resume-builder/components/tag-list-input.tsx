@@ -5,7 +5,7 @@ import { X } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 
-/** Simple flat chip list (Languages/Extracurricular/Volunteer/Interests) — grouped skill chips have their own component. */
+ 
 export function TagListInput({ label, placeholder, values, onChange }: { label: string; placeholder: string; values: string[]; onChange: (values: string[]) => void }) {
   const [draft, setDraft] = useState('')
 

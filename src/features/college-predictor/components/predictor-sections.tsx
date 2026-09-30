@@ -8,7 +8,7 @@ const benefits = [
   { icon: BarChart3, label: 'Plan your next steps' },
 ]
 
-/** Local decorative illustration — cap, books and a soft "result groups" card. No data, charts or statistics; the card labels are decorative only. */
+ 
 function HeroArtwork() {
   return (
     <div className="relative hidden h-52 w-120 shrink-0 lg:block" aria-hidden="true">

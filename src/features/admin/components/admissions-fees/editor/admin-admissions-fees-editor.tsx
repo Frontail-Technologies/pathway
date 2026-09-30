@@ -1,0 +1,175 @@
+'use client'
+
+import * as React from 'react'
+import { useRouter } from 'next/navigation'
+import { Info } from 'lucide-react'
+import { type AdminProgramOffering } from '@/features/admin/data/admin-admissions-fees'
+import { AdminEditorSectionNav } from '@/features/admin/components/admin-editor-section-nav'
+import { AdminEditorLayout } from '@/features/admin/components/shared/admin-editor-layout'
+import { admissionsFeesEditorNavSections } from '../shared/admissions-fees-constants'
+import { useAdmissionsFeesEditor } from './use-admissions-fees-editor'
+import { AdmissionsFeesEditorHeader } from './admissions-fees-editor-header'
+import { AdmissionsFeesEditorMobileActions } from './admissions-fees-editor-mobile-actions'
+import { OfferingIdentitySection } from './sections/offering-identity-section'
+import { FeesEditorSection } from './sections/fees-editor-section'
+import { EligibilityEditorSection } from './sections/eligibility-editor-section'
+import { ExamsEditorSection } from './sections/exams-editor-section'
+import { ProcessEditorSection } from './sections/process-editor-section'
+import { DocumentsEditorSection } from './sections/documents-editor-section'
+import { SourceReviewSection } from './sections/source-review-section'
+
+export function AdminAdmissionsFeesEditor({
+  offering,
+  mode = 'create',
+}: {
+  offering?: AdminProgramOffering | null
+  mode?: 'create' | 'edit'
+}) {
+  const router = useRouter()
+  const editor = useAdmissionsFeesEditor(offering, mode)
+
+  const scrollToSection = (id: string) => {
+    editor.setActiveSection(id)
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+
+  const backHref = editor.isEdit ? `/admin/admissions-fees/${offering?.id}` : '/admin/admissions-fees'
+
+  return (
+    <div className="space-y-6 pb-20 sm:pb-8">
+      <AdmissionsFeesEditorHeader
+        isEdit={editor.isEdit}
+        offeringTitle={offering ? `${offering.programName} @ ${offering.institutionName}` : undefined}
+        backHref={backHref}
+        onCancel={() => router.push(backHref)}
+        onSave={editor.handleSubmit}
+      />
+
+      {editor.submitNotice && (
+        <div className="p-4 rounded-xl bg-blue-50/90 text-blue-900 flex items-start gap-3 border border-blue-200/90 shadow-xs">
+          <Info className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
+          <div className="text-xs font-medium leading-relaxed">
+            {editor.submitNotice}
+          </div>
+        </div>
+      )}
+
+      <AdminEditorLayout
+        navigation={
+          <AdminEditorSectionNav
+            sections={[...admissionsFeesEditorNavSections]}
+            activeSectionId={editor.activeSection}
+            onSectionChange={scrollToSection}
+            title="Admissions Form Sections"
+          />
+        }
+        mobileActions={
+          <AdmissionsFeesEditorMobileActions
+            onCancel={() => router.push(backHref)}
+            onSave={editor.handleSubmit}
+          />
+        }
+      >
+          <OfferingIdentitySection
+            institutionId={editor.institutionId}
+            onInstitutionIdChange={editor.setInstitutionId}
+            programId={editor.programId}
+            onProgramIdChange={editor.setProgramId}
+            degree={editor.degree}
+            onDegreeChange={editor.setDegree}
+            level={editor.level}
+            onLevelChange={editor.setLevel}
+            stream={editor.stream}
+            onStreamChange={editor.setStream}
+            duration={editor.duration}
+            onDurationChange={editor.setDuration}
+            studyMode={editor.studyMode}
+            onStudyModeChange={editor.setStudyMode}
+            academicSession={editor.academicSession}
+            onAcademicSessionChange={editor.setAcademicSession}
+            admissionMode={editor.admissionMode}
+            onAdmissionModeChange={editor.setAdmissionMode}
+            isEdit={editor.isEdit}
+            errors={editor.errors}
+          />
+
+          <FeesEditorSection
+            annualFee={editor.annualFee}
+            onAnnualFeeChange={editor.setAnnualFee}
+            totalProgrammeFee={editor.totalProgrammeFee}
+            onTotalProgrammeFeeChange={editor.setTotalProgrammeFee}
+            feePeriod={editor.feePeriod}
+            onFeePeriodChange={editor.setFeePeriod}
+            feeComponents={editor.feeComponents}
+            newCompLabel={editor.newCompLabel}
+            onNewCompLabelChange={editor.setNewCompLabel}
+            newCompAmount={editor.newCompAmount}
+            onNewCompAmountChange={editor.setNewCompAmount}
+            newCompPeriod={editor.newCompPeriod}
+            onNewCompPeriodChange={editor.setNewCompPeriod}
+            newCompType={editor.newCompType}
+            onNewCompTypeChange={editor.setNewCompType}
+            onAddFeeComponent={editor.handleAddFeeComponent}
+            onRemoveFeeComponent={editor.handleRemoveFeeComponent}
+            errors={editor.errors}
+          />
+
+          <EligibilityEditorSection
+            eligibilitySummary={editor.eligibilitySummary}
+            onEligibilitySummaryChange={editor.setEligibilitySummary}
+            academicQualification={editor.academicQualification}
+            onAcademicQualificationChange={editor.setAcademicQualification}
+            mandatorySubjects={editor.mandatorySubjects}
+            onMandatorySubjectsChange={editor.setMandatorySubjects}
+            minimumMarks={editor.minimumMarks}
+            onMinimumMarksChange={editor.setMinimumMarks}
+            importantRequirements={editor.importantRequirements}
+            newReqInput={editor.newReqInput}
+            onNewReqInputChange={editor.setNewReqInput}
+            onAddRequirement={editor.handleAddRequirement}
+            onRemoveRequirement={editor.handleRemoveRequirement}
+          />
+
+          <ExamsEditorSection
+            selectedExams={editor.selectedExams}
+            examSelectValue={editor.examSelectValue}
+            customExamInput={editor.customExamInput}
+            onCustomExamInputChange={editor.setCustomExamInput}
+            onAddExam={editor.handleAddExam}
+            onAddCustomExam={editor.handleAddCustomExam}
+            onRemoveExam={editor.handleRemoveExam}
+            counsellingBody={editor.counsellingBody}
+            onCounsellingBodyChange={editor.setCounsellingBody}
+            selectionProcess={editor.selectionProcess}
+            onSelectionProcessChange={editor.setSelectionProcess}
+          />
+
+          <ProcessEditorSection
+            applicationSteps={editor.applicationSteps}
+            newStepTitle={editor.newStepTitle}
+            onNewStepTitleChange={editor.setNewStepTitle}
+            newStepDesc={editor.newStepDesc}
+            onNewStepDescChange={editor.setNewStepDesc}
+            onAddStep={editor.handleAddStep}
+            onRemoveStep={editor.handleRemoveStep}
+          />
+
+          <DocumentsEditorSection
+            documents={editor.documents}
+            newDocTitle={editor.newDocTitle}
+            onNewDocTitleChange={editor.setNewDocTitle}
+            newDocType={editor.newDocType}
+            onNewDocTypeChange={editor.setNewDocType}
+            newDocUrl={editor.newDocUrl}
+            onNewDocUrlChange={editor.setNewDocUrl}
+            selectedFileMeta={editor.selectedFileMeta}
+            onFileChange={editor.handleFileChange}
+            onAddDocument={editor.handleAddDocument}
+            onRemoveDocument={editor.handleRemoveDocument}
+          />
+
+          <SourceReviewSection isEdit={editor.isEdit} />
+      </AdminEditorLayout>
+    </div>
+  )
+}

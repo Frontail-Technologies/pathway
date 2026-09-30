@@ -1,16 +1,16 @@
 import { CircleCheck } from 'lucide-react'
 import type { ScholarshipDetailData } from '../data/scholarship-detail'
 
-/**
- * Reads as a qualification checklist (green checks), never a plain
- * label/value table — that visual language is reserved for Documents
- * (neutral file rows) so the two sections stay clearly distinct. Applicable
- * Programs/Location live here rather than as their own long-form section,
- * since they're really part of "who this is for."
- */
+
+
+
+
+
+
+ 
 export function ScholarshipEligibilitySection({ scholarship }: { scholarship: ScholarshipDetailData }) {
   return (
-    <section id="eligibility" className="scroll-mt-43 border-b py-7 lg:scroll-mt-40 lg:py-9">
+    <section id="eligibility" className="scroll-mt-43 border-b py-7 lg:scroll-mt-44 lg:py-9">
       <h2 className="font-heading text-xl font-bold text-foreground sm:text-[22px]">Eligibility Criteria</h2>
 
       <div className="mt-4 flex flex-col gap-3">

@@ -4,11 +4,11 @@ import { maxComparisonSlots } from '../data/college-compare'
 import { facilityRowIcons, highlightedIndex, type ComparisonEntry, type ComparisonRowConfig } from '../data/comparison-sections'
 import { MOBILE_COMPARE_GRID_COLS } from './compare-grid'
 
-/**
- * Mobile-only row — no shared attribute column (see `compare-grid.ts`).
- * Each cell carries its own small muted label above the value, so the row
- * reads correctly even with only two columns visible at once.
- */
+
+
+
+
+ 
 export function MobileComparisonRow({ row, entries }: { row: ComparisonRowConfig; entries: ComparisonEntry[] }) {
   const bestIndex = highlightedIndex(row, entries)
   const slots = Array.from({ length: maxComparisonSlots }, (_, index) => entries[index])

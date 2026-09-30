@@ -14,7 +14,7 @@ const facilityIcons: Record<string, LucideIcon> = {
 
 export function CollegeFacilitiesSection({ college }: { college: CollegeDetailData }) {
   return (
-    <section id="facilities" className="scroll-mt-[172px] border-b py-7 lg:scroll-mt-40 lg:py-9">
+    <section id="facilities" className="scroll-mt-[172px] border-b py-7 lg:scroll-mt-44 lg:py-9">
       <h2 className="font-heading text-xl font-bold text-foreground sm:text-[22px]">Facilities</h2>
 
       <div className="mt-4 grid grid-cols-2 gap-2.5 sm:grid-cols-4 lg:grid-cols-8">

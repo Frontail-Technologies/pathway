@@ -9,10 +9,10 @@ import { Input } from '@/components/ui/input'
 import { Field, softInputClass } from '@/components/shared/student-tool/tool-fields'
 import { useDemoAuth } from '@/features/student/state/demo-auth-provider'
 
-/**
- * AUTH-01 — FRONTEND DEMO sign-in. No request is made and no credential is checked or stored: a valid-looking
- * email and any password just set the local demo sign-in flag. The password lives only in this component's state.
- */
+
+
+
+ 
 export function LoginForm() {
   const router = useRouter()
   const { signedIn, hydrated, signIn } = useDemoAuth()

@@ -9,18 +9,18 @@ export type DetailGalleryImage = { src: string; alt: string; position?: string }
 
 type DetailMediaGalleryProps = {
   images: DetailGalleryImage[]
-  /** Used only for the viewer dialog title and alt-text fallbacks — no other domain copy belongs in this primitive. */
+   
   name: string
 }
 
-/**
- * Shared "large image + thumbnail row" gallery (desktop) / horizontal
- * scroll-snap strip with a counter (mobile), with a shared Dialog-based
- * viewer (Prev/Next, Escape/arrow keys, thumbnail strip). Currently used by
- * Coaching Detail; College Detail's gallery uses a different desktop layout
- * (2x2 asymmetric grid + Embla carousel) and was intentionally NOT migrated
- * to this primitive in this pass — see `docs/COMPONENT_REGISTRY.md` for why.
- */
+
+
+
+
+
+
+
+ 
 export function DetailMediaGallery({ images, name }: DetailMediaGalleryProps) {
   const [viewerOpen, setViewerOpen] = useState(false)
   const [viewerIndex, setViewerIndex] = useState(0)
@@ -35,7 +35,7 @@ export function DetailMediaGallery({ images, name }: DetailMediaGalleryProps) {
 
   return (
     <div>
-      {/* Desktop: large image + thumbnail row */}
+      { }
       <div className="hidden sm:block">
         <button
           type="button"
@@ -62,7 +62,7 @@ export function DetailMediaGallery({ images, name }: DetailMediaGalleryProps) {
         )}
       </div>
 
-      {/* Mobile: horizontal scroll-snap strip */}
+      { }
       <div className="relative sm:hidden">
         <div className="flex snap-x snap-mandatory gap-2 overflow-x-auto" onScroll={(event) => setMobileIndex(Math.round(event.currentTarget.scrollLeft / event.currentTarget.clientWidth))}>
           {images.map((image, index) => (

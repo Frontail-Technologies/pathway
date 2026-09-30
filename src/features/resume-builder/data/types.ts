@@ -1,6 +1,6 @@
-// Resume content is kept strictly separate from template/design — a template
-// only ever receives this data shape and renders it differently. No backend
-// contract exists yet; this is local, typed, UI-phase fixture state.
+
+
+
 
 export type ResumeStepId =
   | 'personal'

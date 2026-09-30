@@ -6,14 +6,14 @@ type CoachingDetailNavProps = {
   sections: { id: string; label: string }[]
 }
 
-/**
- * Sticky horizontal section nav with scroll-spy — same mechanics already
- * established by `CourseDetailNav`/College Detail/Scholarship Detail (117px
- * mobile / 104px desktop sticky offsets, `IntersectionObserver` scroll-spy,
- * active tab kept visible via the tab strip's own `scrollLeft` only). Only
- * sections that actually exist for this provider are passed in — no empty
- * Results/Reviews tabs.
- */
+
+
+
+
+
+
+
+ 
 export function CoachingDetailNav({ sections }: CoachingDetailNavProps) {
   const [active, setActive] = useState(sections[0]?.id)
   const scrollerRef = useRef<HTMLDivElement>(null)
@@ -53,7 +53,7 @@ export function CoachingDetailNav({ sections }: CoachingDetailNavProps) {
   if (sections.length === 0) return null
 
   return (
-    <div className="sticky top-[117px] z-20 border-y bg-card md:top-26">
+    <div className="sticky top-[117px] lg:top-30 z-20 border-y bg-card lg:top-30">
       <div className="container-shell px-4">
         <div ref={scrollerRef} className="flex gap-1 overflow-x-auto">
           {sections.map((section) => (

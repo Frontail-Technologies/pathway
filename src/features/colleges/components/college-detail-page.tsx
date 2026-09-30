@@ -1,7 +1,10 @@
+import Link from 'next/link'
+import { ArrowRight } from 'lucide-react'
 import { Container } from '@/components/shared/container'
 import { Breadcrumbs } from '@/components/shared/breadcrumbs'
 import { DetailSectionNav } from '@/components/shared/detail-section-nav'
 import { DetailStickySidebar } from '@/components/shared/detail-sticky-sidebar'
+import { Button } from '@/components/ui/button'
 import type { CollegeDetailData } from '../data/college-detail'
 import { CollegeIdentityHeader } from './college-identity-header'
 import { CollegeOverviewSection } from './college-overview-section'
@@ -56,6 +59,24 @@ export function CollegeDetailPage({ college }: { college: CollegeDetailData }) {
           <DetailStickySidebar>
             <CollegeEnquirySidebar college={college} />
           </DetailStickySidebar>
+        </div>
+      </Container>
+
+      <Container className="px-4 pb-10">
+        <div className="flex flex-col gap-4 rounded-[12px] border bg-primary/5 p-5 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="font-heading text-lg font-bold text-foreground">Planning your application to {college.name}?</p>
+            <p className="mt-0.5 text-sm text-muted-foreground">Preview colleges that may suit your profile, or explore more institutions on Pathway.</p>
+          </div>
+          <div className="flex flex-col gap-2 sm:flex-row">
+            <Button variant="cta" className="h-11 gap-2 px-5 text-sm font-semibold" nativeButton={false} render={<Link href="/college-predictor" />}>
+              Try College Predictor
+              <ArrowRight className="size-4" aria-hidden="true" />
+            </Button>
+            <Button variant="outline" className="h-11 px-5 text-sm font-semibold" nativeButton={false} render={<Link href="/colleges" />}>
+              Explore More Colleges
+            </Button>
+          </div>
         </div>
       </Container>
     </div>

@@ -3,12 +3,12 @@ import { DetailSectionHeader } from '@/components/shared/detail-section-header'
 import { HorizontalContentRail } from '@/components/shared/horizontal-content-rail'
 import type { CoachingProgram, CoachingProvider } from '../data/coaching'
 
-/** Program cards show only mode/course-type facts that exist on the record — never an invented duration or price. Mobile uses the shared horizontal rail; desktop uses a static grid. */
+ 
 export function CoachingProgramsSection({ provider }: { provider: CoachingProvider }) {
   if (!provider.programs?.length) return null
 
   return (
-    <section id="programs" className="scroll-mt-43 border-b py-8 lg:scroll-mt-40 lg:py-12">
+    <section id="programs" className="scroll-mt-43 border-b py-8 lg:scroll-mt-44 lg:py-12">
       <DetailSectionHeader icon={BookOpen} title="Popular Courses" />
 
       <div className="mt-4 hidden grid-cols-1 gap-3 sm:grid sm:grid-cols-2 lg:grid-cols-3">
@@ -17,7 +17,8 @@ export function CoachingProgramsSection({ provider }: { provider: CoachingProvid
         ))}
       </div>
 
-      <HorizontalContentRail ariaLabel={`${provider.name} programs`} className="mt-4 sm:hidden" trackClassName="snap-x">
+      { }
+      <HorizontalContentRail ariaLabel={`${provider.name} programs`} edgeBleed className="mt-4 sm:hidden">
         {provider.programs.map((program) => (
           <div key={program.name} className="w-[78vw] shrink-0 snap-start">
             <ProgramCard program={program} />

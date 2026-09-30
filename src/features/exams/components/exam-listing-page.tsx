@@ -57,7 +57,7 @@ export function ExamListingPage() {
       <ExamHero query={query} onSearch={(value) => updateUrl(filters, sort, value)} />
 
       <Container className="px-4 pb-10">
-        <div className="mx-auto max-w-340">
+        <div>
           <section className="pt-8" aria-labelledby="popular-exams">
             <h2 id="popular-exams" className="font-heading text-xl font-bold text-foreground">
               Popular Exams
@@ -86,7 +86,7 @@ export function ExamListingPage() {
             </div>
 
             <div className="mt-5 flex flex-col gap-5 lg:flex-row lg:items-start lg:gap-7">
-              <div className="sticky top-30 hidden lg:block">
+              <div className="sticky top-34 hidden lg:block">
                 <ExamFilterSidebar filters={filters} onToggle={toggleFilter} onClearAll={() => updateUrl(emptyFilters, sort, query)} />
               </div>
 

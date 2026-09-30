@@ -1,11 +1,11 @@
 import { scholarshipStatusStyles } from '../data/scholarships'
 import type { ScholarshipDetailData } from '../data/scholarship-detail'
 
-/**
- * The scholarship-specific "opportunity summary" panel — deliberately its
- * own restrained bordered surface rather than the plain 4-column fact grid
- * Course Detail uses, so the page reads as an opportunity snapshot first.
- */
+
+
+
+
+ 
 export function ScholarshipOpportunitySnapshot({ scholarship }: { scholarship: ScholarshipDetailData }) {
   const status = scholarshipStatusStyles[scholarship.status]
 

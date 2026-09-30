@@ -174,12 +174,12 @@ export const colleges: CollegeListItem[] = [
   },
 ]
 
-/**
- * UI-only infinite-scroll demo feed: cycles the 8 authored records to
- * simulate a larger listing without hand-authoring hundreds of records.
- * Each cycle gets a unique `id` suffix so list keys and per-card state
- * (e.g. compare selection) stay distinct.
- */
+
+
+
+
+
+ 
 export const collegeFeedSize = 40
 
 export function getCollegeFeed(): CollegeListItem[] {

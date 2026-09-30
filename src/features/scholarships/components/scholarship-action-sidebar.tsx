@@ -9,11 +9,11 @@ type ScholarshipActionSidebarProps = {
   onToggleSaved: () => void
 }
 
-/**
- * "Application Summary" — deliberately titled and shaped around applying
- * (status/deadline/benefit/eligible level + apply/save), not Course Detail's
- * "Explore Colleges" discovery-sidebar pattern.
- */
+
+
+
+
+ 
 export function ScholarshipActionSidebar({ scholarship, saved, onToggleSaved }: ScholarshipActionSidebarProps) {
   const status = scholarshipStatusStyles[scholarship.status]
 

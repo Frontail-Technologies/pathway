@@ -9,7 +9,7 @@ type CoachingDetailCtaProps = {
   onToggleSaved: () => void
 }
 
-/** Restrained closing CTA — a light brand-tinted strip with real vertical presence (not another plain white card), no exaggerated conversion language. */
+ 
 export function CoachingDetailCta({ provider, saved, onToggleSaved }: CoachingDetailCtaProps) {
   return (
     <div className="my-6 flex flex-col items-start gap-4 rounded-[12px] border border-primary/15 bg-secondary/50 p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6">

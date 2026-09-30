@@ -22,7 +22,7 @@ function SaveButton({ tutor, className = '' }: { tutor: Tutor; className?: strin
   )
 }
 
-/** Real link only when the record has a detail route; otherwise a disabled "Profile Soon". */
+ 
 function ProfileAction({ tutor, className = 'h-9 px-4 text-sm', variant = 'cta' }: { tutor: Tutor; className?: string; variant?: 'cta' | 'outline' }) {
   return tutor.hasDetailPage ? (
     <Button variant={variant} className={className} nativeButton={false} render={<Link href={`/tutor/${tutor.slug}`} />}>
@@ -35,7 +35,7 @@ function ProfileAction({ tutor, className = 'h-9 px-4 text-sm', variant = 'cta' 
   )
 }
 
-/** Labelled Save action for the detail hero. */
+ 
 function SaveAction({ tutor }: { tutor: Tutor }) {
   const { saved, toggleSaved } = useSavedItem('tutor', tutor.slug, 'Tutor')
   return (
@@ -49,7 +49,7 @@ function SaveAction({ tutor }: { tutor: Tutor }) {
 
 const chip = 'rounded-md bg-secondary px-2 py-0.5 text-xs font-semibold text-primary'
 
-/** Compact portrait-led card for the Featured Tutors rail/grid. */
+ 
 export function FeaturedTutorCard({ tutor }: { tutor: Tutor }) {
   return (
     <article className="flex h-full w-72 shrink-0 snap-start flex-col rounded-[12px] border bg-card p-4 shadow-[0_2px_10px_rgba(15,23,42,0.04)] lg:w-auto">

@@ -22,7 +22,7 @@ type MobileWorkspaceProps = {
   onStepChange: (step: ResumeStepId) => void
 }
 
-/** Mobile app shell — compact app bar, one-line step progress, scrollable form, sticky bottom actions, and a full-screen preview Sheet. No public header/search/footer. */
+ 
 export function MobileWorkspace({ savedAt, step, data, onChange, templateId, onTemplateChange, onStepChange }: MobileWorkspaceProps) {
   const [previewOpen, setPreviewOpen] = useState(false)
   const stepIndex = RESUME_STEPS.findIndex((entry) => entry.id === step)
@@ -98,9 +98,12 @@ export function MobileWorkspace({ savedAt, step, data, onChange, templateId, onT
               </Button>
             </div>
           </SheetHeader>
-          <div className="min-h-0 flex-1">
-            <ResumeDocumentViewport document={resumeDocument} resetKey={templateId} />
-          </div>
+          {
+
+
+
+ }
+          <div className="min-h-0 flex-1">{previewOpen && <ResumeDocumentViewport document={resumeDocument} resetKey={templateId} />}</div>
         </SheetContent>
       </Sheet>
     </div>

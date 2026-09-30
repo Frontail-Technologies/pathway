@@ -6,9 +6,9 @@ import { demoStudent, type StudentProfile } from '../data/student'
 
 type StudentProfileContextValue = {
   profile: StudentProfile
-  /** False until the stored demo profile (if any) has been read, so forms never seed from stale defaults. */
+   
   hydrated: boolean
-  /** Session-local preview URL for the chosen photo. Never persisted or uploaded. */
+   
   photoUrl: string | null
   setPhotoUrl: (url: string | null) => void
   updateProfile: (next: StudentProfile) => void
@@ -16,11 +16,11 @@ type StudentProfileContextValue = {
 
 const StudentProfileContext = createContext<StudentProfileContextValue | null>(null)
 
-/**
- * Single source of truth for the student profile across STU-01 and STU-02.
- * Frontend DEMO persistence only: non-sensitive profile fields are mirrored to localStorage so edits survive a
- * reload on this device. There is no backend, sign-in or sync, and the photo is deliberately never stored.
- */
+
+
+
+
+ 
 export function StudentProfileProvider({ children }: { children: React.ReactNode }) {
   const [profile, setProfile] = useState<StudentProfile>(demoStudent)
   const [hydrated, setHydrated] = useState(false)
@@ -33,7 +33,7 @@ export function StudentProfileProvider({ children }: { children: React.ReactNode
       const parsed: unknown = raw ? JSON.parse(raw) : null
       if (isStoredProfile(parsed)) setProfile(parsed)
     } catch {
-      // Storage unavailable or corrupt — fall back to the demo fixture.
+      
     }
     setHydrated(true)
   }, [])
@@ -43,7 +43,7 @@ export function StudentProfileProvider({ children }: { children: React.ReactNode
     try {
       window.localStorage.setItem(STUDENT_PROFILE_STORAGE_KEY, JSON.stringify(next))
     } catch {
-      // Private mode / quota — the edit still applies for this session.
+      
     }
   }, [])
 

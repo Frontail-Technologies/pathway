@@ -6,12 +6,12 @@ export type DetailQuickFact = {
   value: string
 }
 
-/**
- * Presentational-only quick-facts grid shared across Detail screens —
- * responsive (2-col mobile, up to 4-col desktop). Carries no domain
- * semantics: callers decide which facts exist and whether each is safe to
- * show (never a fabricated stat).
- */
+
+
+
+
+
+ 
 export function DetailQuickFacts({ facts }: { facts: DetailQuickFact[] }) {
   if (facts.length === 0) return null
 

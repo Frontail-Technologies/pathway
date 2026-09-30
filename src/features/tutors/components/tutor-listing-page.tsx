@@ -29,7 +29,7 @@ import { TutorPortrait } from './tutor-avatar'
 import { FeaturedTutorCard, TutorResultCard } from './tutor-cards'
 import { TutorFilterSidebar, TutorResultsHeader } from './tutor-filters'
 
-/** Decorative hero art: a tutor portrait with a laptop and a speech bubble. Local SVG, no data. */
+ 
 function TutorHeroArt() {
   return (
     <div className="relative hidden h-52 w-96 shrink-0 lg:block" aria-hidden="true">
@@ -112,7 +112,7 @@ export function TutorListingPage() {
       <TutorHero query={query} onSearch={(value) => updateUrl(filters, sort, value)} />
 
       <Container className="px-4 pb-10">
-        <div className="mx-auto max-w-340">
+        <div>
           <section className="pt-8" aria-labelledby="featured-tutors">
             <h2 id="featured-tutors" className="font-heading text-xl font-bold text-foreground">
               Featured Tutors
@@ -141,7 +141,7 @@ export function TutorListingPage() {
             </div>
 
             <div className="mt-5 flex flex-col gap-5 lg:flex-row lg:items-start lg:gap-7">
-              <div className="sticky top-30 hidden max-h-[calc(100dvh-8.5rem)] overflow-y-auto lg:block">
+              <div className="sticky top-34 hidden max-h-[calc(100dvh-9.5rem)] overflow-y-auto lg:block">
                 <TutorFilterSidebar filters={filters} onToggle={toggleFilter} onClearAll={() => updateUrl(emptyFilters, sort, query)} />
               </div>
 

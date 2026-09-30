@@ -1,6 +1,6 @@
-// `/coaching` is coaching institutes/academies only (product decision — individual
-// tutors belong to the separate future `/tutors` module, TUT-01/TUT-02). Never add
-// a tutor-oriented type or record back into this union/dataset.
+
+
+
 export type CoachingProviderType = 'Coaching Institute' | 'Online Platform'
 export type LearningMode = 'Online' | 'Offline' | 'Hybrid'
 
@@ -22,21 +22,21 @@ export type CoachingProvider = {
   highlights: string[]
   featured?: boolean
 
-  // ---- Detail-only fields (COA-02) ----
-  // Optional and populated only for providers with an implemented detail
-  // page — the same listing record is reused for both COA-01 and COA-02
-  // rather than duplicated into a separate lookup. `hasDetailPage` is the
-  // explicit signal both `getCoachingDetail` and COA-01's route-integrity
-  // check use; everything below it is only ever fixture-derived, never a
-  // fabricated marketing claim (no ratings, review counts, ranks, or student
-  // counts unless a real field exists to back them).
+  
+  
+  
+  
+  
+  
+  
+  
   hasDetailPage?: boolean
   state?: string
   aboutCopy?: string
-  /** Additional gallery images shown alongside the primary listing photo (see `getCoachingVisual`) — category-appropriate stock imagery, not claimed as verified institute photographs. */
+   
   gallery?: string[]
   programs?: CoachingProgram[]
-  /** Generic teaching-approach content, not fabricated faculty names/credentials (see rule in COA-02 build notes). */
+   
   facultyNotes?: CoachingFacultyNote[]
   faqs?: CoachingFaq[]
 }
@@ -206,28 +206,28 @@ export const coachingProviders: CoachingProvider[] = [
   },
 ]
 
-/**
- * Returns the active coaching feed. Fixture mode must stay truthful — no
- * artificial repetition to pad the count or simulate a bigger catalog (a
- * listing must never report more results than genuinely exist). Each unique
- * provider appears exactly once; `CoachingListingPage`'s infinite-scroll
- * batching still applies on top of this, it just won't have more than 9
- * unique cards to reveal until real data replaces this function.
- */
+
+
+
+
+
+
+
+ 
 export function getCoachingFeed(): CoachingProvider[] {
   return coachingProviders
 }
 
-/** COA-02: returns the full provider record only when it has an implemented detail page — never a partial/placeholder record. */
+ 
 export function getCoachingDetail(slug: string): CoachingProvider | undefined {
   return coachingProviders.find((provider) => provider.slug === slug && provider.hasDetailPage)
 }
 
-/**
- * COA-02 "Similar Coaching Institutes": a simple, fully data-derived
- * similarity score (shared exams/subjects weigh more than a matching
- * provider type) — no fabricated ranking, no fake editorial curation.
- */
+
+
+
+
+ 
 export function getSimilarCoachingProviders(provider: CoachingProvider, limit = 3): CoachingProvider[] {
   const score = (candidate: CoachingProvider) => {
     const sharedExams = candidate.exams.filter((exam) => provider.exams.includes(exam)).length

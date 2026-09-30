@@ -19,6 +19,13 @@ export function CollegeEnquirySidebar({ college }: { college: CollegeDetailData 
       </div>
 
       <div className="mt-4 border-t pt-4">
+        <p className="text-xs text-muted-foreground">Know your exam score?</p>
+        <Button variant="outline" className="mt-2 h-10 w-full text-sm font-semibold" nativeButton={false} render={<Link href="/college-predictor" />}>
+          Try College Predictor
+        </Button>
+      </div>
+
+      <div className="mt-4 border-t pt-4">
         <p className="text-xs text-muted-foreground">Need guidance?</p>
         <Link
           href="/counselling"

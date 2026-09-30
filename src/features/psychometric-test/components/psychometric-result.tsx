@@ -33,7 +33,7 @@ function CareerDirectionCard({ score }: { score: DimensionScore }) {
   )
 }
 
-/** Everything here is derived from the student's own local answers via `scoreDraft` — no random or canned result. */
+ 
 export function PsychometricResult({ draft }: { draft: PsychometricDraft }) {
   const scores = scoreDraft(draft)
   const top = scores.slice(0, 3)

@@ -93,13 +93,13 @@ export function sortScholarships(list: ScholarshipListItem[], sort: SortValue): 
   if (sort === 'closing-soon') return copy.sort((a, b) => new Date(a.deadline).getTime() - new Date(b.deadline).getTime())
   if (sort === 'highest-benefit') return copy.sort((a, b) => b.benefitValue - a.benefitValue)
   if (sort === 'recently-added') return copy.sort((a, b) => (a.id < b.id ? 1 : -1))
-  // Recommended: the authored/cycled feed order (see `getScholarshipFeed`), with
-  // closed scholarships pushed to the end so they don't dominate default results
-  // (rule 9). Deliberately does NOT also promote `featured` records ahead of the
-  // rest here — doing so across a cycled demo feed would cluster every repeated
-  // copy of the same one or two featured records at the very front, defeating
-  // the mock-feed-variety correction below. `featured` still surfaces visually
-  // via `SponsoredBadge` on the card itself.
+  
+  
+  
+  
+  
+  
+  
   return copy.sort((a, b) => {
     if ((a.status === 'closed') !== (b.status === 'closed')) return a.status === 'closed' ? 1 : -1
     return 0
@@ -110,26 +110,26 @@ export function countActiveFilters(filters: FilterState): number {
   return Object.values(filters).reduce((total, values) => total + values.length, 0)
 }
 
-/**
- * ==================================================================
- * URL query-state convention (Scholarship Listing)
- * ==================================================================
- *
- * Follows the same convention as `features/courses/data/filters.ts` (the
- * `CRS-01` reference implementation) exactly — see that file's header
- * comment for the full rationale. Summary:
- *
- * - The URL is the single source of truth; `filters`/`sort` are derived
- *   from `useSearchParams()` via `useMemo`, never a parallel `useState`.
- * - One query param per filter group, stable hand-authored slugs (never
- *   human labels), comma-separated for multi-select
- *   (`provider=government,private`).
- * - Empty groups and the default sort (`recommended`) are omitted from
- *   the URL entirely.
- * - Params are written in the stable order `filterGroups` is defined in,
- *   with `sort` last, so generated URLs are deterministic.
- * - Unknown/invalid slugs are silently dropped during parsing.
- */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
 
 export const filterKeyToParam: Record<FilterKey, string> = {
   providerTypes: 'provider',
@@ -244,9 +244,10 @@ const filterSlugReverseMaps: Record<FilterKey, Record<string, string>> = Object.
   (Object.keys(filterSlugMaps) as FilterKey[]).map((key) => [key, invert(filterSlugMaps[key])])
 ) as Record<FilterKey, Record<string, string>>
 
-/** Builds a deterministic, minimal query string for the given filters/sort — omits empty groups and a default sort. */
-export function serializeScholarshipFilters(filters: FilterState, sort: SortValue): string {
+ 
+export function serializeScholarshipFilters(filters: FilterState, sort: SortValue, query = ''): string {
   const params = new URLSearchParams()
+  if (query.trim()) params.set('q', query.trim())
   filterGroups.forEach((group) => {
     const values = filters[group.key]
     if (!values.length) return
@@ -259,7 +260,7 @@ export function serializeScholarshipFilters(filters: FilterState, sort: SortValu
   return params.toString()
 }
 
-/** Parses filters from URL search params. Unknown/invalid slugs are silently dropped. */
+ 
 export function parseScholarshipFilters(searchParams: URLSearchParams): FilterState {
   const result: FilterState = { ...emptyFilters }
   filterGroups.forEach((group) => {
@@ -274,9 +275,23 @@ export function parseScholarshipFilters(searchParams: URLSearchParams): FilterSt
   return result
 }
 
-/** Parses sort from URL search params. Falls back to `recommended` for a missing/invalid value. */
+ 
 export function parseScholarshipSort(searchParams: URLSearchParams): SortValue {
   const raw = searchParams.get('sort')
   const match = sortOptions.find((option) => option.value === raw)
   return match ? match.value : 'recommended'
+}
+
+ 
+export function parseScholarshipSearch(searchParams: URLSearchParams): string {
+  return searchParams.get('q') ?? ''
+}
+
+const normalizeScholarshipQuery = (value: string) => value.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim()
+
+export function matchesScholarshipQuery(scholarship: ScholarshipListItem, query: string): boolean {
+  const terms = normalizeScholarshipQuery(query).split(' ').filter(Boolean)
+  if (terms.length === 0) return true
+  const haystack = normalizeScholarshipQuery([scholarship.name, scholarship.provider, ...scholarship.streams].join(' '))
+  return terms.every((term) => haystack.includes(term))
 }

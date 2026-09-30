@@ -4,7 +4,7 @@ import type { ComponentType } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { toast } from 'sonner'
-import { Bookmark, FileText, LayoutDashboard, LogOut, MessagesSquare, SlidersHorizontal, UserRound } from 'lucide-react'
+import { Bookmark, BookOpen, FileText, LayoutDashboard, LogOut, MessagesSquare, SlidersHorizontal, UserRound } from 'lucide-react'
 import { studentNavigation } from '@/config/navigation'
 import { useDemoAuth } from '@/features/student/state/demo-auth-provider'
 
@@ -13,17 +13,18 @@ const icons: Record<(typeof studentNavigation)[number]['id'], ComponentType<{ cl
   profile: UserRound,
   preferences: SlidersHorizontal,
   saved: Bookmark,
+  notes: BookOpen,
   enquiries: MessagesSquare,
   resume: FileText,
 }
 
-/** Student account navigation (desktop sidebar + mobile Sheet). Routes that don't exist yet are disabled "Soon" items, never links. */
+ 
 export function StudentNavigation({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname()
   const router = useRouter()
   const { signOut } = useDemoAuth()
 
-  // Demo sign-out clears only the local sign-in flag; profile, saved items and drafts are kept.
+  
   const logOut = () => {
     signOut()
     onNavigate?.()

@@ -16,12 +16,12 @@ export function groupSkills(skills: ResumeData['skills']) {
     .filter((group) => group.items.length > 0)
 }
 
-/**
- * Classic ATS — single column, plain hierarchy, no color, no icons: the
- * safest template for automated parsing. Photo is intentionally never
- * rendered here, even if one was uploaded. Print-proportioned typography
- * (13.5px body / 15px section titles / 30px name) — see docs/COMPONENT_REGISTRY.md.
- */
+
+
+
+
+
+ 
 export function useClassicAtsDocument(data: ResumeData) {
   const { personal, education, experience, projects, skills, achievements, additional } = data
   const fullName = [personal.firstName, personal.lastName].filter(Boolean).join(' ') || 'Your Name'
@@ -173,11 +173,11 @@ export function useClassicAtsDocument(data: ResumeData) {
     })
   }
 
-  // Memoized on `data` alone: `headerBlock`/`sections` are freshly built every
-  // render, but `usePagedBlocks` re-measures whenever its `blocks` argument's
-  // *reference* changes — without this, a brand-new array every render (even
-  // when the resume data hasn't changed) re-triggers measurement -> setState
-  // -> re-render -> new array, forever.
+  
+  
+  
+  
+  
   const blocks = useMemo(() => [{ id: 'header', node: headerBlock }, ...buildBlocksFromSections(sections)], [data])
   const { pages, measureNode } = usePagedBlocks(blocks, { width: CONTENT_WIDTH, usableHeight: USABLE_HEIGHT, gap: BLOCK_GAP })
 

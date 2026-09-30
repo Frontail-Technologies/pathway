@@ -7,7 +7,7 @@ import { ChevronLeft, ChevronRight, X } from 'lucide-react'
 import { Dialog, DialogClose, DialogContent, DialogTitle } from '@/components/ui/dialog'
 import type { CollegeGalleryImage } from '../data/college-detail'
 
-export function CollegeGallery({ images, collegeName }: { images: CollegeGalleryImage[]; collegeName: string }) {
+export function CollegeGallery({ images, collegeName, className = 'mt-5 sm:mt-6' }: { images: CollegeGalleryImage[]; collegeName: string; className?: string }) {
   const [viewerOpen, setViewerOpen] = useState(false)
   const [viewerIndex, setViewerIndex] = useState(0)
 
@@ -17,7 +17,7 @@ export function CollegeGallery({ images, collegeName }: { images: CollegeGallery
   }
 
   return (
-    <div className="mt-5 sm:mt-6">
+    <div className={className}>
       <DesktopGalleryPreview images={images} name={collegeName} onOpen={openViewer} />
       <MobileGallerySlider images={images} name={collegeName} onOpen={openViewer} />
 

@@ -33,21 +33,21 @@ const SCHOLARSHIP_NAV_SECTIONS = [
 ]
 
 export function ScholarshipDetailPage({ scholarship }: { scholarship: ScholarshipDetailData }) {
-  // Lifted here (rather than local to one component) because the top action
-  // row's and the desktop sidebar's "Save Scholarship" controls must reflect
-  // the same underlying state.
+  
+  
+  
   const { saved, toggleSaved } = useSavedItem('scholarship', scholarship.slug, 'Scholarship')
 
   return (
     <div className="bg-background">
-      {/*
-        Top-of-page order (identical on mobile and desktop, per the domain-
-        identity correction pass): identity -> opportunity snapshot ->
-        eligibility-at-a-glance -> save/apply actions. This is what gives
-        Scholarship Detail its own "opportunity + eligibility check +
-        application guide" shape instead of Course Detail's identity+facts+
-        actions block.
-      */}
+      {
+
+
+
+
+
+
+ }
       <Container className="px-4 pt-5 lg:pt-6">
         <Breadcrumbs items={['Home', { label: 'Scholarships', href: '/scholarships' }, scholarship.name]} />
         <div className="mt-4 border-b pb-5 sm:pb-6">
@@ -74,9 +74,9 @@ export function ScholarshipDetailPage({ scholarship }: { scholarship: Scholarshi
             <ScholarshipFaqSection scholarship={scholarship} />
           </div>
 
-          {/* Desktop-only single sticky action card — no second sticky mobile
-              conversion bar (Mobile Detail Rule reused from COL-02/CRS-02).
-              Mobile gets its action summary once, at the top of the page. */}
+          {
+
+ }
           <DetailStickySidebar>
             <ScholarshipActionSidebar scholarship={scholarship} saved={saved} onToggleSaved={toggleSaved} />
           </DetailStickySidebar>

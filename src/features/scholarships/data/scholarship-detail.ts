@@ -11,14 +11,14 @@ export type RelatedScholarshipPreview = {
   benefitLabel: string
   deadlineDisplay: string
   status: ApplicationStatus
-  /**
-   * Where "View Scholarship" navigates. Only a scholarship with an
-   * implemented `SCH-02` detail record links straight to
-   * `/scholarship/[slug]`; every other mock preview falls back to a
-   * SCH-01-supported filtered `/scholarships` URL (or plain `/scholarships`
-   * when no valid filter combination applies) — never a knowing link to a
-   * detail page that doesn't exist.
-   */
+  
+
+
+
+
+
+
+ 
   href: string
 }
 
@@ -36,7 +36,7 @@ export type ScholarshipDetailData = {
   deadline: string
   deadlineDisplay: string
   overviewCopy: string
-  /** 3–4 concise "Eligibility at a Glance" checks shown near the top — a distinct, shorter list from the full `eligibility.rows` table further down the page. */
+   
   eligibilitySnapshot: string[]
   benefits: {
     amount: string
@@ -56,7 +56,7 @@ export type ScholarshipDetailData = {
   applicationSteps: string[]
   selectionProcess: string[]
   importantNotes: string[]
-  /** Real official top-level domain only (never a fabricated deep application link). */
+   
   officialApplyUrl?: string
   relatedScholarships: RelatedScholarshipPreview[]
   faqs: Faq[]
@@ -129,10 +129,10 @@ const scholarshipDetails: Record<string, ScholarshipDetailData> = {
       'Applicants should verify final details on the official provider website before applying.',
     ],
     officialApplyUrl: 'https://www.aicte-india.org/',
-    // None of these related scholarships have an implemented SCH-02 detail
-    // record yet (only `aicte-pragati-scholarship-girls` does) — each `href`
-    // below points to a SCH-01-supported filtered `/scholarships` URL using
-    // only valid slugs from `features/scholarships/data/filters.ts`.
+    
+    
+    
+    
     relatedScholarships: [
       { slug: 'aicte-saksham-scholarship', name: 'AICTE Saksham Scholarship', provider: 'AICTE', benefitLabel: '₹50,000/year', deadlineDisplay: '15 Oct 2026', status: 'open', href: '/scholarships?provider=government&type=disability' },
       { slug: 'central-sector-scheme-scholarship', name: 'Central Sector Scheme of Scholarship', provider: 'Government of India', benefitLabel: '₹12,000/year', deadlineDisplay: '10 Sep 2026', status: 'closing-soon', href: '/scholarships?provider=government&type=merit' },

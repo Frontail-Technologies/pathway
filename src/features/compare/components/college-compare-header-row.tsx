@@ -2,7 +2,6 @@
 
 import Image from 'next/image'
 import { Plus, X } from 'lucide-react'
-import { Rating } from '@/components/shared/rating'
 import { VerifiedBadge } from '@/components/shared/verified-badge'
 import { maxComparisonSlots } from '../data/college-compare'
 import type { ComparisonEntry } from '../data/comparison-sections'
@@ -14,7 +13,7 @@ type CollegeCompareHeaderRowProps = {
   onRemove: (slug: string) => void
   onAdd: (selection: Selection) => void
   onModify: (previousSlug: string, selection: Selection) => void
-  /** Mirrors the comparison body's horizontal `scrollLeft` — see the note on `COMPARE_GRID_COLS_DATA`. */
+   
   scrollLeft: number
 }
 
@@ -23,18 +22,18 @@ export function CollegeCompareHeaderRow({ entries, onRemove, onAdd, onModify, sc
   const slots = Array.from({ length: maxComparisonSlots }, (_, index) => entries[index])
 
   return (
-    // Sticky beneath the global header/nav. Mobile top offset (117px) is the
-    // measured height of the sticky mobile app header + its compact search
-    // row (56px primary row + 1px border + 60px search row) — same figure
-    // used by CollegeDetailNav/CourseDetailNav. Desktop/tablet uses the
-    // header's own 104px height (64px primary row + 40px nav row) at `md:`.
-    //
-    // This row deliberately sits OUTSIDE the body's `overflow-x-auto`
-    // scroll container (see `compare-grid.ts`) so it can actually stick to
-    // the viewport; `overflow-hidden` here is safe (it's this element's
-    // own overflow, not an ancestor's) and clips the transformed inner
-    // grid to the visible header-bar width.
-    <div className="sticky top-[117px] z-20 flex overflow-hidden rounded-t-[10px] border border-b-0 bg-card md:top-26 print:static print:overflow-visible print:rounded-none">
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div className="sticky top-[117px] lg:top-30 z-20 flex overflow-hidden rounded-t-[10px] border border-b-0 bg-card lg:top-30 print:static print:overflow-visible print:rounded-none">
       <div className={`sticky left-0 z-10 flex shrink-0 items-center bg-muted/40 px-3 py-3 text-xs font-semibold text-muted-foreground print:static ${COMPARE_ATTR_COL_WIDTH}`}>
         College
       </div>
@@ -91,10 +90,8 @@ function FilledHeaderCell({
         {program.degree} · {program.course}
       </p>
       <p className="truncate text-xs text-muted-foreground">{college.location}</p>
-      <div className="flex flex-wrap items-center gap-1.5">
-        <Rating value={college.rating} />
-        {college.verified && <VerifiedBadge />}
-      </div>
+      { }
+      {college.verified && <div className="flex flex-wrap items-center gap-1.5"><VerifiedBadge /></div>}
       <CollegeCoursePickerDialog
         excludeSlugs={excludeSlugs.filter((slug) => slug !== college.slug)}
         initial={{ collegeSlug: college.slug, degree: program.degree, course: program.course }}

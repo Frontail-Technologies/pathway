@@ -1,7 +1,10 @@
+import Link from 'next/link'
+import { ArrowRight } from 'lucide-react'
 import { Container } from '@/components/shared/container'
 import { Breadcrumbs } from '@/components/shared/breadcrumbs'
 import { DetailSectionNav } from '@/components/shared/detail-section-nav'
 import { DetailStickySidebar } from '@/components/shared/detail-sticky-sidebar'
+import { Button } from '@/components/ui/button'
 import type { CourseDetailData } from '../data/course-detail'
 import { CourseIdentityHeader } from './course-identity-header'
 import { CourseOverviewSection } from './course-overview-section'
@@ -59,6 +62,24 @@ export function CourseDetailPage({ course }: { course: CourseDetailData }) {
           <DetailStickySidebar>
             <CourseDiscoverySidebar course={course} />
           </DetailStickySidebar>
+        </div>
+      </Container>
+
+      <Container className="px-4 pb-10">
+        <div className="flex flex-col gap-4 rounded-[12px] border bg-primary/5 p-5 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="font-heading text-lg font-bold text-foreground">Ready to shortlist colleges for {course.name}?</p>
+            <p className="mt-0.5 text-sm text-muted-foreground">Browse colleges offering this course, or explore more courses on Pathway.</p>
+          </div>
+          <div className="flex flex-col gap-2 sm:flex-row">
+            <Button variant="cta" className="h-11 gap-2 px-5 text-sm font-semibold" nativeButton={false} render={<Link href="/colleges" />}>
+              View Colleges
+              <ArrowRight className="size-4" aria-hidden="true" />
+            </Button>
+            <Button variant="outline" className="h-11 px-5 text-sm font-semibold" nativeButton={false} render={<Link href="/courses" />}>
+              Explore More Courses
+            </Button>
+          </div>
         </div>
       </Container>
     </div>

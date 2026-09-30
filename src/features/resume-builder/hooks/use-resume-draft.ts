@@ -32,10 +32,10 @@ function readDraft(): DraftShape | null {
   }
 }
 
-/**
- * Real localStorage persistence (not a fake "cloud autosave" claim) — the
- * only local-state behavior this UI phase needs, since no backend exists yet.
- */
+
+
+
+ 
 export function useResumeDraft() {
   const [draft, setDraft] = useState<DraftShape>(DEFAULT_DRAFT)
   const [restored, setRestored] = useState(false)
@@ -48,16 +48,16 @@ export function useResumeDraft() {
   }, [])
 
   useEffect(() => {
-    // `restored` and any loaded `draft` are set together (batched) in the
-    // effect above, so this always sees the freshly-hydrated draft on the
-    // render where `restored` first flips true — never the pre-hydration
-    // default, which would otherwise silently overwrite a real saved draft.
+    
+    
+    
+    
     if (!restored) return
     try {
       window.localStorage.setItem(STORAGE_KEY, JSON.stringify(draft))
       setSavedAt(Date.now())
     } catch {
-      // localStorage unavailable (private mode, quota) — draft simply stays in-memory for this session.
+      
     }
   }, [draft, restored])
 

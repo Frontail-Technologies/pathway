@@ -94,36 +94,36 @@ export function countActiveFilters(filters: FilterState): number {
   return Object.values(filters).reduce((total, values) => total + values.length, 0)
 }
 
-/**
- * ==================================================================
- * URL query-state convention (Course Listing)
- * ==================================================================
- *
- * The URL is the single source of truth for applied filters/sort — the
- * page derives `filters`/`sort` from `useSearchParams()` via `useMemo`
- * rather than keeping a separate, parallel `useState` that could drift
- * out of sync with Back/Forward navigation.
- *
- * - One query param per filter group, using the stable keys below
- *   (`level`, `stream`, `degree`, `specialization`, `duration`, `fees`,
- *   `studyMode`, `exam`) plus `sort`.
- * - Multi-select values within one group are comma-separated in a single
- *   param (e.g. `stream=engineering,science`) — chosen over repeated
- *   params (`stream=engineering&stream=science`) for simplicity with the
- *   plain `URLSearchParams` API. Every group uses this same convention.
- * - Every value is a short, stable, hand-authored slug (e.g. `btech`,
- *   `1-3-lakh`) — never the human-readable label. Slugs are explicit
- *   per-option maps below (not a generic auto-slugify), so the mapping
- *   stays exact and reversible even for labels like "B.Tech" -> `btech`.
- * - Only active filters appear in the URL; an empty group's param is
- *   omitted entirely, and `sort` is omitted when it's the default
- *   (`popularity`).
- * - Params are always written in the stable order the filter groups are
- *   defined in above, with `sort` last, so generated URLs are
- *   deterministic and easy to read/debug.
- * - Unknown/invalid slugs are silently dropped during parsing (never
- *   shown in the UI, never crash) — see `parseCourseFilters`/`parseCourseSort`.
- */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
 
 export const filterKeyToParam: Record<FilterKey, string> = {
   levels: 'level',
@@ -227,9 +227,10 @@ const filterSlugReverseMaps: Record<FilterKey, Record<string, string>> = Object.
   (Object.keys(filterSlugMaps) as FilterKey[]).map((key) => [key, invert(filterSlugMaps[key])])
 ) as Record<FilterKey, Record<string, string>>
 
-/** Builds a deterministic, minimal query string for the given filters/sort — omits empty groups and a default sort. */
-export function serializeCourseFilters(filters: FilterState, sort: SortValue): string {
+ 
+export function serializeCourseFilters(filters: FilterState, sort: SortValue, query = ''): string {
   const params = new URLSearchParams()
+  if (query.trim()) params.set('q', query.trim())
   filterGroups.forEach((group) => {
     const values = filters[group.key]
     if (!values.length) return
@@ -242,7 +243,21 @@ export function serializeCourseFilters(filters: FilterState, sort: SortValue): s
   return params.toString()
 }
 
-/** Parses filters from URL search params. Unknown/invalid slugs are silently dropped. */
+ 
+export function parseCourseSearch(searchParams: URLSearchParams): string {
+  return searchParams.get('q') ?? ''
+}
+
+const normalize = (value: string) => value.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim()
+
+export function matchesQuery(course: CourseListItem, query: string): boolean {
+  const terms = normalize(query).split(' ').filter(Boolean)
+  if (terms.length === 0) return true
+  const haystack = normalize([course.name, course.degree, course.stream, course.specialization].join(' '))
+  return terms.every((term) => haystack.includes(term))
+}
+
+ 
 export function parseCourseFilters(searchParams: URLSearchParams): FilterState {
   const result: FilterState = { levels: [], streams: [], degrees: [], specializations: [], durations: [], fees: [], studyModes: [], exams: [] }
   filterGroups.forEach((group) => {
@@ -257,7 +272,7 @@ export function parseCourseFilters(searchParams: URLSearchParams): FilterState {
   return result
 }
 
-/** Parses sort from URL search params. Falls back to `popularity` for a missing/invalid value. */
+ 
 export function parseCourseSort(searchParams: URLSearchParams): SortValue {
   const raw = searchParams.get('sort')
   const match = sortOptions.find((option) => option.value === raw)

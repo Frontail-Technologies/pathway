@@ -1,5 +1,5 @@
-// UI-phase only. A small, transparent, deterministic local model for career-interest *exploration*.
-// Not a validated psychological or clinical assessment; answers never leave the browser.
+
+
 
 export type Dimension = 'Analytical' | 'Creative' | 'Social' | 'Practical' | 'Organising' | 'Enterprising'
 export const dimensions: Dimension[] = ['Analytical', 'Creative', 'Social', 'Practical', 'Organising', 'Enterprising']
@@ -9,7 +9,7 @@ export const likertLabels: Record<Likert, string> = { 1: 'Strongly dislike', 2: 
 
 export type InterestQuestion = { id: string; dimension: Dimension; text: string }
 
-// 12 interest statements — two per dimension, in an interleaved order so a page never shows one theme only.
+
 export const interestQuestions: InterestQuestion[] = [
   { id: 'i1', dimension: 'Analytical', text: 'Solving technical or logical problems step by step' },
   { id: 'i2', dimension: 'Social', text: 'Working with people and understanding what they need' },
@@ -28,7 +28,7 @@ export const INTEREST_PAGE_SIZE = 4
 
 export type WorkStyleQuestion = { id: string; prompt: string; options: [{ label: string; dimension: Dimension }, { label: string; dimension: Dimension }] }
 
-// Balanced wording — neither option is presented as better.
+
 export const workStyleQuestions: WorkStyleQuestion[] = [
   { id: 'w1', prompt: 'When I work on something, I usually prefer to…', options: [{ label: 'Work independently and focus deeply', dimension: 'Analytical' }, { label: 'Collaborate and bounce ideas around with others', dimension: 'Social' }] },
   { id: 'w2', prompt: 'I am more comfortable when the task is…', options: [{ label: 'Clearly structured with defined steps', dimension: 'Organising' }, { label: 'Open-ended, so I can explore my own approach', dimension: 'Creative' }] },
@@ -36,9 +36,9 @@ export const workStyleQuestions: WorkStyleQuestion[] = [
   { id: 'w4', prompt: 'In a group, I naturally…', options: [{ label: 'Take the lead and make decisions', dimension: 'Enterprising' }, { label: 'Support the plan and help it get done', dimension: 'Organising' }] },
 ]
 
-// --- About You ---------------------------------------------------------------
+
 export const studyLevels = ['Class 9–10', 'Class 11–12', 'Undergraduate', 'Postgraduate']
-// Streams mirror the course-listing stream filter, plus two neutral options.
+
 export const studyAreas = ['Science', 'Commerce', 'Arts & Humanities', 'Engineering', 'Medical', 'Management', 'Law', 'Design', 'Not sure yet']
 export const exploringOptions = ['Career options', 'College / course direction', 'My strengths', 'My interests', 'Not sure yet']
 
@@ -52,12 +52,12 @@ export type PsychometricDraft = {
 
 export const emptyPsychometricDraft: PsychometricDraft = { studyLevel: '', studyArea: '', exploring: [], interests: {}, workStyle: {} }
 
-// --- Scoring -------------------------------------------------------------------
-// Per dimension: interest answers score 1–5 each (two statements), and each work-style
-// choice adds 2 points to the dimension it favours. A dimension's strength is its points
-// divided by the maximum points *that dimension could have earned* — so dimensions with
-// fewer work-style opportunities aren't penalised. Ties are broken by the fixed
-// `dimensions` order, keeping the result fully deterministic.
+
+
+
+
+
+
 const WORK_STYLE_POINTS = 2
 
 export type DimensionScore = { dimension: Dimension; points: number; max: number; strength: number }
@@ -82,7 +82,7 @@ export function topDimensions(draft: PsychometricDraft, count = 3): DimensionSco
   return scoreDraft(draft).slice(0, count)
 }
 
-// --- Validation ----------------------------------------------------------------
+
 export function isAboutYouComplete(draft: PsychometricDraft) {
   return Boolean(draft.studyLevel && draft.studyArea && draft.exploring.length > 0)
 }
@@ -97,8 +97,8 @@ export function unansweredWorkStyleIds(draft: PsychometricDraft) {
   return workStyleQuestions.filter((q) => !draft.workStyle[q.id]).map((q) => q.id)
 }
 
-// --- Career exploration copy ----------------------------------------------------
-export type ExploreArea = { label: string; /** Course-listing stream slug — only set where Pathway has a matching listing. */ stream?: string }
+
+export type ExploreArea = { label: string;   stream?: string }
 
 export type DimensionInfo = { summary: string; environments: string; areas: ExploreArea[] }
 

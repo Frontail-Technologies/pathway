@@ -3,11 +3,11 @@ import { Logo } from '@/components/shared/logo'
 import { StudentMobileMenu } from './student-mobile-menu'
 import { StudentNavigation } from './student-navigation'
 
-/**
- * Student account shell (app-style, deliberately not the public shell): solid Blue compact header, sidebar on
- * desktop, menu Sheet on mobile, and a slim account footer instead of the public marketing footer.
- * Frontend demo state only — there is no real authentication yet.
- */
+
+
+
+
+ 
 export function StudentDashboardLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-dvh flex-col bg-background">

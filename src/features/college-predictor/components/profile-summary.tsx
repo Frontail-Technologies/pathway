@@ -4,7 +4,7 @@ import { getCourse, type CollegePredictorDraft } from '../data/predictor'
 
 type Row = { label: string; value: string }
 
-/** Progressive: only groups/rows that actually have content render — no wall of empty dashes. */
+ 
 export function ProfileSummary({ draft, onEdit }: { draft: CollegePredictorDraft; onEdit: (step: number) => void }) {
   const course = getCourse(draft.course)
 

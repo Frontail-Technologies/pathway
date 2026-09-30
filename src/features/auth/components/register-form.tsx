@@ -15,10 +15,10 @@ import { useStudentProfile } from '@/features/student/state/student-profile-prov
 type Errors = Partial<Record<'firstName' | 'lastName' | 'email' | 'password' | 'confirm', string>>
 const MIN_PASSWORD = 8
 
-/**
- * AUTH-02 — FRONTEND DEMO registration. It creates a fresh local demo profile on this device and sets the demo
- * sign-in flag. Nothing is sent anywhere, and the password is validated in memory then discarded — never stored.
- */
+
+
+
+ 
 export function RegisterForm() {
   const router = useRouter()
   const { signedIn, hydrated, signIn } = useDemoAuth()

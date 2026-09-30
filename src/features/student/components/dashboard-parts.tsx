@@ -2,7 +2,7 @@ import type { ReactNode } from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 
-/** Grouped profile section: heading row (+ optional trailing action) over a white, softly shadowed body. */
+ 
 export function DashboardSection({ id, title, description, action, children, className = '' }: { id?: string; title: string; description?: string; action?: ReactNode; children: ReactNode; className?: string }) {
   return (
     <section id={id} className={`rounded-[12px] border bg-card p-4 shadow-[0_2px_10px_rgba(15,23,42,0.04)] sm:p-5 ${className}`}>
@@ -18,7 +18,7 @@ export function DashboardSection({ id, title, description, action, children, cla
   )
 }
 
-/** Action whose target account screen does not exist yet — disabled, never a dead link. */
+ 
 export function SoonButton({ children, className = '' }: { children: ReactNode; className?: string }) {
   return (
     <Button variant="outline" disabled title="Coming soon" className={`h-8 shrink-0 px-3 text-xs ${className}`}>
@@ -27,7 +27,7 @@ export function SoonButton({ children, className = '' }: { children: ReactNode; 
   )
 }
 
-/** Live link to an existing account screen when `href` is given; otherwise the disabled "coming soon" action. */
+ 
 export function ActionButton({ href, children, variant = 'outline', className = '' }: { href?: string; children: ReactNode; variant?: 'outline' | 'cta'; className?: string }) {
   if (!href) return <SoonButton className={className}>{children}</SoonButton>
   return (
@@ -37,7 +37,7 @@ export function ActionButton({ href, children, variant = 'outline', className = 
   )
 }
 
-/** Label + value pair; a missing value renders as a muted "Not added". */
+ 
 export function ProfileField({ label, value }: { label: string; value?: string }) {
   return (
     <div className="min-w-0">
@@ -47,7 +47,7 @@ export function ProfileField({ label, value }: { label: string; value?: string }
   )
 }
 
-/** Chip group with an explicit empty state. */
+ 
 export function ChipField({ label, values, emptyText = 'Not added yet' }: { label: string; values: string[]; emptyText?: string }) {
   return (
     <div className="min-w-0">

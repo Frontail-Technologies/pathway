@@ -27,7 +27,7 @@ export type ComparisonRowConfig = {
   label: string
   type: 'text' | 'rating' | 'boolean' | 'chips'
   getValue: (entry: ComparisonEntry) => ComparisonRowValue
-  /** Restrained difference highlight — only applied to genuinely comparable numeric rows. */
+   
   highlight?: 'lowest' | 'highest'
 }
 
@@ -37,7 +37,7 @@ export type ComparisonSectionConfig = {
   rows: ComparisonRowConfig[]
 }
 
-/** Strips non-numeric characters so fee/package strings like "₹2.2L / year" can be compared. */
+ 
 function toComparableNumber(value: ComparisonRowValue): number {
   if (typeof value === 'number') return value
   if (typeof value !== 'string') return NaN
@@ -130,7 +130,7 @@ export const comparisonSections: ComparisonSectionConfig[] = [
   },
 ]
 
-/** Semantic icon per facility row label, for the Infrastructure & Facilities section only. */
+ 
 export const facilityRowIcons: Record<string, LucideIcon> = {
   Hostel: BedDouble,
   Library: Library,
@@ -141,7 +141,7 @@ export const facilityRowIcons: Record<string, LucideIcon> = {
   Cafeteria: Utensils,
 }
 
-/** Index (within `entries`) of the cell that should receive the restrained highlight for this row, or -1 if not applicable (fewer than 2 comparable values). */
+ 
 export function highlightedIndex(row: ComparisonRowConfig, entries: ComparisonEntry[]): number {
   if (!row.highlight || entries.length < 2) return -1
   const numbers = entries.map((entry) => toComparableNumber(row.getValue(entry)))

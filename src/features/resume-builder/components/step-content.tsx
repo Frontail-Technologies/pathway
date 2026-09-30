@@ -8,7 +8,7 @@ import { AchievementsStep } from './steps/achievements-step'
 import { AdditionalStep } from './steps/additional-step'
 import { ReviewStep } from './steps/review-step'
 
-/** Single switch shared by the desktop editor panel and the mobile workspace, so the two shells never drift into two different step implementations. */
+ 
 export function StepContent({
   step,
   data,

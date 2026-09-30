@@ -8,7 +8,6 @@ import {
   BookOpen,
   Briefcase,
   Building2,
-  CalendarCheck,
   ChevronRight,
   FileText,
   Globe,
@@ -17,10 +16,8 @@ import {
   Landmark,
   Library,
   Menu,
-  MessagesSquare,
   Presentation,
   Search,
-  Star,
   UserRound,
   X,
 } from 'lucide-react'
@@ -35,7 +32,6 @@ const navGroups = [
       { label: 'Colleges', href: '/colleges', icon: Landmark },
       { label: 'Courses', href: '/courses', icon: BookOpen },
       { label: 'Exams', href: '/exams', icon: FileText },
-      { label: 'Admissions', href: '/admissions', icon: CalendarCheck },
       { label: 'Scholarships', href: '/scholarships', icon: Award },
       { label: 'Study Abroad', href: '/study-abroad', icon: Globe },
     ],
@@ -43,16 +39,14 @@ const navGroups = [
   {
     title: 'Guidance',
     items: [
-      { label: 'Counselling', href: '/counselling', icon: MessagesSquare },
       { label: 'Tutors & Coaching', href: '/tutors', icon: Presentation },
-      { label: 'Reviews', href: '/reviews', icon: Star },
       { label: 'Careers', href: '/careers', icon: Briefcase },
     ],
   },
   {
     title: 'More',
     items: [
-      { label: 'Resources', href: '/resources', icon: Library },
+      { label: 'Resources', href: '/notes', icon: Library },
       { label: 'About', href: '/about', icon: Info },
     ],
   },
@@ -142,8 +136,8 @@ export function MobileBottomNavigation() {
     { label: 'Home', href: '/', icon: House },
     { label: 'Colleges', href: '/colleges', icon: Building2 },
     { label: 'Courses', href: '/courses', icon: BookOpen },
-    { label: 'Saved', href: '/saved', icon: Bookmark },
-    { label: 'Profile', href: '/profile', icon: UserRound },
+    { label: 'Saved', href: '/student/saved', icon: Bookmark },
+    { label: 'Profile', href: '/student/profile', icon: UserRound },
   ]
   return (
     <nav aria-label="Mobile navigation" className="fixed inset-x-0 bottom-0 z-20 border-t bg-card pt-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] md:hidden">

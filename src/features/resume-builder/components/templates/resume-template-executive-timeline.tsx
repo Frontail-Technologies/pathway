@@ -16,12 +16,12 @@ const CONTENT_WIDTH = RESUME_PAGE_WIDTH - SIDEBAR_WIDTH - MAIN_PADDING_X * 2
 const USABLE_HEIGHT = RESUME_PAGE_HEIGHT - HEADER_HEIGHT - MAIN_PADDING_Y * 2
 const BLOCK_GAP = 20
 
-/**
- * Executive Timeline — a dark charcoal/navy header and a light sidebar
- * (contact/skills/languages/additional) repeat on every page (short,
- * constant content); the main column reads as a vertical timeline
- * (icon + connecting line) and is the only part that's paginated.
- */
+
+
+
+
+
+ 
 export function useExecutiveTimelineDocument(data: ResumeData) {
   const { personal, education, experience, projects, skills, achievements, additional } = data
   const fullName = [personal.firstName, personal.lastName].filter(Boolean).join(' ') || 'Your Name'
@@ -30,7 +30,7 @@ export function useExecutiveTimelineDocument(data: ResumeData) {
   const header = (
     <header className="flex shrink-0 items-center gap-5 text-white" style={{ backgroundColor: DARK, height: HEADER_HEIGHT, paddingInline: 28 }}>
       {personal.photo ? (
-        // eslint-disable-next-line @next/next/no-img-element
+        
         <img src={personal.photo} alt="" className="size-20 shrink-0 rounded-full object-cover ring-4 ring-white/20" />
       ) : (
         <div className="size-20 shrink-0 rounded-full bg-white/10" />
@@ -173,11 +173,11 @@ export function useExecutiveTimelineDocument(data: ResumeData) {
     })
   }
 
-  // Each section's items already carry their own inline title (`heading: null`
-  // above) since the timeline's title sits inside the first item of a section,
-  // not above it — `buildBlocksFromSections` still gives us "never split a
-  // heading from its first entry" for free because `heading` is simply empty.
-  // Memoized on `data` — see the identical comment in resume-template-classic.tsx.
+  
+  
+  
+  
+  
   const blocks = useMemo(() => buildBlocksFromSections(sections), [data])
   const { pages, measureNode } = usePagedBlocks(blocks, { width: CONTENT_WIDTH, usableHeight: USABLE_HEIGHT, gap: BLOCK_GAP })
 

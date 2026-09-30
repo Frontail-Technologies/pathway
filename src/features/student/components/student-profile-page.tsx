@@ -28,7 +28,7 @@ import { DashboardSection } from './dashboard-parts'
 
 const MAX_PHOTO_BYTES = 5 * 1024 * 1024
 
-/** Where each missing field is edited on this page. Preferences belong to a later screen, so they have no anchor. */
+ 
 const fieldSection: Partial<Record<ProfileFieldKey, string>> = {
   name: 'personal',
   email: 'personal',
@@ -55,7 +55,7 @@ const fieldLabels: Record<ProfileFieldKey, string> = {
 
 export function StudentProfilePage() {
   const { hydrated } = useStudentProfile()
-  // The form seeds from the stored demo profile, so wait until it has been read.
+  
   return hydrated ? <ProfileEditor /> : <div className="h-96 w-full" aria-hidden="true" />
 }
 
@@ -67,7 +67,7 @@ function ProfileEditor() {
   const fileInput = useRef<HTMLInputElement>(null)
   const formRef = useRef<HTMLFormElement>(null)
 
-  // The form mounts after the stored profile is read, so the browser's own #anchor scroll has already missed it.
+  
   useEffect(() => {
     const id = window.location.hash.slice(1)
     if (id) document.getElementById(id)?.scrollIntoView()
@@ -118,7 +118,7 @@ function ProfileEditor() {
             <div className="flex items-center gap-4">
               <span className="flex size-18 shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary text-xl font-bold text-primary-foreground">
                 {photoUrl ? (
-                  // eslint-disable-next-line @next/next/no-img-element
+                  
                   <img src={photoUrl} alt="Your profile photo preview" className="size-full object-cover" />
                 ) : (
                   <span aria-hidden="true">{initialsOf(`${draft.firstName} ${draft.lastName}`) || initialsOf(profile.name)}</span>
@@ -247,7 +247,7 @@ function ProfileEditor() {
             </Button>
           </DashboardSection>
 
-          {/* Sticky inside the content on small screens (the student shell has no bottom bar); inline on desktop. */}
+          { }
           <div className="sticky bottom-0 z-20 -mx-4 flex items-center gap-2 border-t bg-card px-4 pt-2.5 pb-[max(0.625rem,env(safe-area-inset-bottom))] sm:gap-3 lg:static lg:mx-0 lg:justify-between lg:border-0 lg:bg-transparent lg:p-0">
             <Button
               type="button"

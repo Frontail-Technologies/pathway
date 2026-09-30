@@ -8,15 +8,15 @@ type StudentToolHeroProps = {
   titleAccent: string
   description: string
   benefits?: StudentToolBenefit[]
-  /** Defaults to "Student Tool". */
+   
   eyebrow?: string
-  /** Optional content under the description (e.g. a search field). */
+   
   children?: React.ReactNode
-  /** Decorative right-side artwork (desktop only) — supplied by each tool, never data or charts. */
+   
   artwork: React.ReactNode
 }
 
-/** Shared Student Tool hero: light blue-white gradient, blue accent word in the H1, optional benefit chips, tool-specific artwork slot. */
+ 
 export function StudentToolHero({ titleLead, titleAccent, description, benefits, eyebrow = 'Student Tool', children, artwork }: StudentToolHeroProps) {
   return (
     <section className="relative overflow-hidden bg-[radial-gradient(circle_at_85%_20%,rgba(59,130,246,0.16),transparent_45%),linear-gradient(180deg,var(--brand-blue-light),var(--background))]">

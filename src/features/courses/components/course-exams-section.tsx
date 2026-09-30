@@ -3,7 +3,7 @@ import type { CourseDetailData } from '../data/course-detail'
 
 export function CourseExamsSection({ course }: { course: CourseDetailData }) {
   return (
-    <section id="exams" className="scroll-mt-43 border-b py-7 lg:scroll-mt-40 lg:py-9">
+    <section id="exams" className="scroll-mt-43 border-b py-7 lg:scroll-mt-44 lg:py-9">
       <h2 className="font-heading text-xl font-bold text-foreground sm:text-[22px]">Entrance Exams for {course.name}</h2>
 
       <div className="mt-4 rounded-[10px] border bg-card">
@@ -16,8 +16,8 @@ export function CourseExamsSection({ course }: { course: CourseDetailData }) {
                   {exam.level} · {exam.purpose}
                 </p>
               </div>
-              {/* No exam detail/listing screen exists yet — disabled rather than an
-                  active-looking button that does nothing. */}
+              {
+ }
               <Button variant="outline" className="h-9 w-fit px-4 text-sm" disabled title="Exam details are coming soon">
                 View Exam
               </Button>

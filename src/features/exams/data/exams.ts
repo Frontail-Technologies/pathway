@@ -1,28 +1,28 @@
-// UI-phase fixtures for exam discovery (EXM-01) and detail (EXM-02). Detail-only content lives in the
-// optional `detail` field of the same record — never a duplicate lookup. Deliberately no dates,
-// deadlines, fees, seats, cutoffs, percentile/rank mappings or acceptance rates — none of that is
-// backed by data yet. Sections without verified data are omitted (or shown as pending).
-// Exams are limited to those already present in Pathway's top-exams/coaching fixtures.
+
+
+
+
+
 
 export type StudyArea = 'Engineering' | 'Medical' | 'Management' | 'Law' | 'Undergraduate / General'
 export type ExamScope = 'National' | 'State' | 'University / Institute'
 export type ExamLevel = 'Undergraduate' | 'Postgraduate'
 
 export type ExamDetail = {
-  /** Two or three sentences shown under the overview points. */
+   
   longDescription: string
-  /** Four short overview points (label + one line). */
+   
   overview: { label: string; text: string }[]
-  /** Omit until verified — the page then shows an honest "not connected yet" state. */
+   
   eligibility?: { label: string; text: string }[]
-  /** Only fixture-backed facts. Omit until verified exam data is connected. */
+   
   pattern?: { label: string; value: string }[]
-  /** Subject areas only. `topics` stays omitted until verified exam data is connected — never invent chapter lists. */
+   
   syllabusGroups?: { title: string; topics?: string[] }[]
-  /** Generic stages that never imply registration is currently open. */
+   
   processSteps: { title: string; text: string }[]
   faqs: { question: string; answer: string }[]
-  /** Pathway college slugs to *explore* — not a verified participating-college list. */
+   
   collegeSlugs?: string[]
 }
 
@@ -35,10 +35,10 @@ export type Exam = {
   scope: ExamScope
   level: ExamLevel
   conductingBody?: string
-  /** One concise context line — never dates, eligibility paragraphs, syllabus or cutoffs. */
+   
   description: string
   popular: boolean
-  /** True only for records whose `detail` is implemented; drives the live "View Details" link. */
+   
   hasDetailPage: boolean
   detail?: ExamDetail
 }
@@ -87,7 +87,7 @@ export function getExamBySlug(slug: string): Exam | undefined {
   return exams.find((exam) => exam.slug === slug && exam.hasDetailPage && exam.detail)
 }
 
-/** Related by study area first, then level, then scope; excludes the current exam. */
+ 
 export function getRelatedExams(exam: Exam, limit = 4): Exam[] {
   const score = (other: Exam) => Number(other.studyArea === exam.studyArea) * 4 + Number(other.level === exam.level) * 2 + Number(other.scope === exam.scope)
   return exams
@@ -96,7 +96,7 @@ export function getRelatedExams(exam: Exam, limit = 4): Exam[] {
     .slice(0, limit)
 }
 
-// --- Filters / sort / search ------------------------------------------------------
+
 export const studyAreaOptions: StudyArea[] = ['Engineering', 'Medical', 'Management', 'Law', 'Undergraduate / General']
 export const scopeOptions: ExamScope[] = ['National', 'State', 'University / Institute']
 
@@ -122,7 +122,7 @@ export const filterKeyToParam: Record<FilterKey, string> = { studyAreas: 'area',
 
 const reverse = (map: Record<string, string>) => Object.fromEntries(Object.entries(map).map(([value, slug]) => [slug, value]))
 
-/** URL convention (same family as the other listings): `q`, comma-separated slug params per filter group, default sort omitted, invalid values silently dropped. */
+ 
 export function serializeExamFilters(filters: FilterState, sort: SortValue, query: string): string {
   const params = new URLSearchParams()
   if (query.trim()) params.set('q', query.trim())
@@ -150,7 +150,7 @@ export function parseExamSort(searchParams: URLSearchParams): SortValue {
   return sortOptions.find((option) => option.value === raw)?.value ?? 'popular'
 }
 
-/** `q` wins; otherwise a known `?exam=<slug>` (used by existing homepage links) prefills the search with that exam. Unknown slugs are ignored. */
+ 
 export function parseExamSearch(searchParams: URLSearchParams): string {
   const q = searchParams.get('q')
   if (q !== null) return q
@@ -164,7 +164,7 @@ export function countActiveFilters(filters: FilterState) {
 
 const normalize = (value: string) => value.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim()
 
-/** Searches exam name, abbreviation, full name and study area / scope (e.g. "jee", "medical", "engineering"). */
+ 
 export function matchesSearch(exam: Exam, query: string) {
   const terms = normalize(query).split(' ').filter(Boolean)
   if (terms.length === 0) return true

@@ -11,10 +11,10 @@ const btechPairs: ComparisonPairSpec[] = [
   { slugA: 'bits-pilani', slugB: 'vit-vellore' },
 ]
 
-// None of the mock colleges have an MBA programme in `programs.ts` — using an
-// M.Tech override here (which the IITs/VIT genuinely offer) rather than
-// mislabel a UG comparison as MBA, per the "no impossible combinations" rule
-// already established for CMP-01's course-selection flow.
+
+
+
+
 const mtechPairs: ComparisonPairSpec[] = [
   {
     slugA: 'iit-delhi',

@@ -22,13 +22,13 @@ type DesktopWorkspaceProps = {
   onStepChange: (step: ResumeStepId) => void
 }
 
-/**
- * Application-shell layout: compact tool header, a fixed vertical step
- * sidebar, and a resizable Editor|Preview split. No public header/footer —
- * see docs/PAGE_PATTERNS.md's "Student Tool Workspace" pattern. Only the
- * editor's own ScrollArea and the preview panel scroll; the page/body never
- * does, so the Pathway footer can never be reached from here.
- */
+
+
+
+
+
+
+ 
 export function DesktopWorkspace({ savedAt, step, data, onChange, templateId, onTemplateChange, onStepChange }: DesktopWorkspaceProps) {
   const stepIndex = RESUME_STEPS.findIndex((entry) => entry.id === step)
   const resumeDocument = useResumeDocument(templateId, data)

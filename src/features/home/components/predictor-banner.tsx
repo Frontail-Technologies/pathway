@@ -2,26 +2,26 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 
+ 
 export function PredictorBanner() {
   return (
-    <section className="py-5 sm:py-7 lg:py-8">
-      <div className="container-shell px-4">
-        <div className="flex flex-col overflow-hidden rounded-xl border bg-card sm:min-h-42.5 sm:flex-row">
-          <div className="relative h-24 w-full shrink-0 overflow-hidden sm:h-auto sm:w-[40%]">
-            <Image
-              src="https://images.unsplash.com/photo-1519452575417-564c1401ecc0?auto=format&fit=crop&w=900&q=75"
-              alt="An empty lecture hall used for examinations"
-              fill
-              sizes="(min-width: 640px) 40vw, 100vw"
-              loading="lazy"
-              className="object-cover"
-            />
-          </div>
-          <div className="flex flex-1 flex-col justify-center gap-1.5 p-4 sm:gap-2 sm:p-6">
-            <p className="hidden text-xs font-semibold tracking-wider text-primary uppercase sm:block">Admission Chances</p>
-            <h2 className="font-heading text-base font-bold text-foreground sm:text-2xl">Know your admission chances</h2>
-            <p className="max-w-md text-xs leading-5 text-muted-foreground sm:text-sm sm:leading-6">Use your exam score or rank to discover colleges you may qualify for.</p>
-            <Button variant="cta" className="h-10 w-fit px-5 sm:h-11 sm:px-6" nativeButton={false} render={<Link href="/college-predictor" />}>
+    <section className="bg-background pt-1 pb-7 sm:pb-9 lg:pb-12">
+      <div className="container-shell">
+        <div className="relative flex min-h-40 items-center overflow-hidden rounded-[14px] sm:min-h-44">
+          <Image
+            src="https://images.unsplash.com/photo-1519452575417-564c1401ecc0?auto=format&fit=crop&w=1600&q=72"
+            alt="An empty lecture hall used for examinations"
+            fill
+            sizes="100vw"
+            loading="lazy"
+            className="object-cover"
+          />
+          <div className="absolute inset-0 bg-[linear-gradient(95deg,rgba(30,58,138,0.92)_0%,rgba(30,58,138,0.75)_50%,rgba(30,58,138,0.2)_100%)]" />
+          <div className="relative flex flex-col gap-1.5 p-5 sm:max-w-xl sm:p-8">
+            <p className="text-xs font-bold tracking-[0.14em] text-white/80 uppercase">Admission Chances</p>
+            <h2 className="font-heading text-xl font-bold text-white sm:text-2xl">Know your admission chances</h2>
+            <p className="max-w-md text-sm leading-6 text-white/85">Use your exam score or rank to discover colleges you may qualify for.</p>
+            <Button variant="cta" className="mt-1.5 h-10 w-fit px-5 font-semibold" nativeButton={false} render={<Link href="/college-predictor" />}>
               Try College Predictor
             </Button>
           </div>

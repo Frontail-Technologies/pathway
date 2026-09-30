@@ -13,14 +13,14 @@ type CoachingIdentityHeroProps = {
   onToggleSaved: () => void
 }
 
-/**
- * One integrated profile header — gallery (~43%) beside a single compact
- * identity block (~57%) on desktop; quick facts span full-width below both.
- * The identity block (badge -> name -> location -> description -> tags ->
- * actions) is one natural top-packed flex column with `self-start` so it
- * never stretches to the gallery's height — that stretch was what pushed
- * Save/Enquire visually far from the tags above them in the previous pass.
- */
+
+
+
+
+
+
+
+ 
 export function CoachingIdentityHero({ provider, saved, onToggleSaved }: CoachingIdentityHeroProps) {
   const facts: DetailQuickFact[] = [
     { icon: MonitorPlay, label: 'Learning Mode', value: provider.modes.join(' & ') },
@@ -29,9 +29,9 @@ export function CoachingIdentityHero({ provider, saved, onToggleSaved }: Coachin
     { icon: Layers, label: 'Course Type', value: provider.courseTypes.join(' & ') },
   ]
 
-  // First (primary) image is biased toward the top of the frame so a
-  // standing subject's face/upper body stays in view instead of an
-  // accidental mid-torso crop — the rest use a plain center crop.
+  
+  
+  
   const galleryImages = (provider.gallery ?? []).map((src, index) => ({
     src,
     alt: `${provider.name} photo ${index + 1}`,

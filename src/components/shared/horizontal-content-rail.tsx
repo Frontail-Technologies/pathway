@@ -7,19 +7,29 @@ type HorizontalContentRailProps = {
   children: ReactNode
   ariaLabel: string
   className?: string
-  /** Applied to the scrollable track itself — put per-item width/snap classes on the items, not here. */
+   
   trackClassName?: string
-  /** Show desktop Prev/Next buttons (hidden on touch/mobile widths, where swipe is the primary interaction). */
+   
   showControls?: boolean
+  
+
+
+
+
+
+
+
+ 
+  edgeBleed?: boolean
 }
 
-/**
- * Shared horizontal scroll-snap rail for compact card collections (related/
- * recommended/similar items, mobile program cards, etc.) — owns only
- * overflow/snap/scroll-button mechanics. Card content and per-card width
- * stay entirely up to the caller (pass width classes on the children).
- */
-export function HorizontalContentRail({ children, ariaLabel, className = '', trackClassName = '', showControls = false }: HorizontalContentRailProps) {
+
+
+
+
+
+ 
+export function HorizontalContentRail({ children, ariaLabel, className = '', trackClassName = '', showControls = false, edgeBleed = false }: HorizontalContentRailProps) {
   const trackRef = useRef<HTMLDivElement>(null)
   const [canScrollPrev, setCanScrollPrev] = useState(false)
   const [canScrollNext, setCanScrollNext] = useState(false)
@@ -35,7 +45,7 @@ export function HorizontalContentRail({ children, ariaLabel, className = '', tra
     updateScrollState()
     window.addEventListener('resize', updateScrollState)
     return () => window.removeEventListener('resize', updateScrollState)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    
   }, [children])
 
   const scrollBy = (direction: 1 | -1) => {
@@ -46,13 +56,13 @@ export function HorizontalContentRail({ children, ariaLabel, className = '', tra
   }
 
   return (
-    <div className={`relative ${className}`}>
+    <div className={`relative ${edgeBleed ? '-mx-4 ' : ''}${className}`}>
       <div
         ref={trackRef}
         role="group"
         aria-label={ariaLabel}
         onScroll={updateScrollState}
-        className={`flex snap-x snap-mandatory gap-3 overflow-x-auto pb-1 ${trackClassName}`}
+        className={`flex snap-x snap-mandatory gap-3 overflow-x-auto py-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden ${edgeBleed ? 'px-4 scroll-px-4 ' : ''}${trackClassName}`}
       >
         {children}
       </div>

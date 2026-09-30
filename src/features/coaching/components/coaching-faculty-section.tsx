@@ -4,12 +4,12 @@ import type { CoachingProvider } from '../data/coaching'
 
 const NOTE_ICONS = [Users, ShieldCheck, GraduationCap]
 
-/** Compact icon/title/description feature grid — deliberately not fabricated faculty names/credentials (no data model supports individual faculty records). */
+ 
 export function CoachingFacultySection({ provider }: { provider: CoachingProvider }) {
   if (!provider.facultyNotes?.length) return null
 
   return (
-    <section id="faculty" className="scroll-mt-43 border-b py-8 lg:scroll-mt-40 lg:py-12">
+    <section id="faculty" className="scroll-mt-43 border-b py-8 lg:scroll-mt-44 lg:py-12">
       <DetailSectionHeader icon={GraduationCap} title="Faculty & Learning Support" />
 
       <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">

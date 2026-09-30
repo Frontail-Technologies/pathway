@@ -8,6 +8,8 @@ export function generateStaticParams() {
   return [{ slug: 'iit-delhi' }]
 }
 
+export const dynamicParams = false
+
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params
   const college = getCollegeDetail(slug)

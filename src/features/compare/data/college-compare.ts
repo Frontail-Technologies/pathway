@@ -30,9 +30,9 @@ export type CollegeComparisonFacilities = {
 
 export type CollegeComparisonItem = {
   slug: string
-  /** Where "View College" navigates — only implemented College Detail slugs point at /college/[slug]; everything else falls back to /colleges. */
+   
   href: string
-  /** Local mock logo asset — see public/compare-logos/. Not a real institution logo, no dynamic fetch. */
+   
   logo: string
   name: string
   shortName: string
@@ -189,14 +189,14 @@ export function getCollegeComparisonItem(slug: string): CollegeComparisonItem | 
   return collegeComparisonItems.find((item) => item.slug === slug)
 }
 
-/** Short 2-letter identity fallback derived from the college's short name (e.g. "IIT Delhi" -> "ID") — only used if a logo asset ever fails to load. */
+ 
 export function getCollegeInitials(shortName: string): string {
   const words = shortName.split(' ').filter(Boolean)
   if (words.length === 1) return words[0].slice(0, 2).toUpperCase()
   return (words[0][0] + words[1][0]).toUpperCase()
 }
 
-/** Parses the `colleges` URL param into valid, deduped, max-3 slugs — unknown slugs are silently dropped. */
+ 
 export function parseComparisonSlugs(searchParams: URLSearchParams): string[] {
   const raw = searchParams.get('colleges')
   if (!raw) return []
@@ -212,7 +212,7 @@ export function parseComparisonSlugs(searchParams: URLSearchParams): string[] {
   return result
 }
 
-/** Builds the `colleges` query string for a given slug order — empty when no colleges are selected. */
+ 
 export function serializeComparisonSlugs(slugs: string[]): string {
   if (slugs.length === 0) return ''
   const params = new URLSearchParams()

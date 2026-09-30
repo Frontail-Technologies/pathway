@@ -27,10 +27,10 @@ export function Container({
 }) {
   return <div className={`container-shell ${className}`}>{children}</div>;
 }
-export function Logo({ inverted = false }: { inverted?: boolean }) {
+export function Logo({ inverted = false, className = "" }: { inverted?: boolean; className?: string }) {
   return (
     <span
-      className={`font-heading text-xl font-extrabold tracking-tight ${inverted ? "text-primary-foreground" : "text-primary"}`}
+      className={`font-heading text-xl font-extrabold tracking-tight ${inverted ? "text-primary-foreground" : "text-primary"} ${className}`}
     >
       Pathway
     </span>
@@ -46,29 +46,30 @@ export function GlobalSearch({
   quiet?: boolean;
 }) {
   if (quiet) {
+    
     return (
       <form
         action="/search"
-        className="flex h-10 w-full items-center gap-2 rounded-lg bg-card pl-3 pr-1 transition-colors focus-within:ring-2 focus-within:ring-primary/30"
+        className="flex h-[52px] w-full items-center gap-2 rounded-[14px] bg-card pl-4 pr-1.5 shadow-[0_6px_20px_rgba(15,23,42,0.18)] transition-shadow focus-within:ring-2 focus-within:ring-white/60"
       >
         <Search
-          className="size-3.5 shrink-0 text-muted-foreground"
+          className="size-[18px] shrink-0 text-muted-foreground"
           aria-hidden="true"
         />
         <input
           name="q"
           aria-label={placeholder}
           placeholder={placeholder}
-          className="h-full min-w-0 flex-1 bg-transparent px-1 text-xs outline-none placeholder:text-muted-foreground"
+          className="h-full min-w-0 flex-1 bg-transparent px-1 text-[15px] outline-none placeholder:text-muted-foreground"
         />
         <Button
           type="submit"
           variant="cta"
           size="icon"
-          className="size-8 shrink-0"
+          className="size-10 shrink-0 rounded-[11px]"
           aria-label="Search"
         >
-          <Search className="size-4" aria-hidden="true" />
+          <Search className="size-[18px]" aria-hidden="true" />
         </Button>
       </form>
     );
@@ -149,14 +150,14 @@ export function PageHeader({
 }
 export type BreadcrumbItemInput = string | { label: string; href: string };
 
-/**
- * Never a dead `href="#"` crumb. The current page (last item) is always
- * plain text. Any earlier item is a real link only when the caller supplies
- * one (`{ label, href }`) or when it's literally "Home" (universally `/`
- * sitewide) — every other plain-string intermediate crumb renders as
- * non-interactive text rather than a fake link, since we don't know its
- * route without the caller telling us.
- */
+
+
+
+
+
+
+
+ 
 export function Breadcrumbs({ items }: { items: BreadcrumbItemInput[] }) {
   return (
     <Breadcrumb>

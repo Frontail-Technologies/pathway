@@ -28,12 +28,12 @@ function getStepCompletion(step: ResumeStepId, data: ResumeData): StepCompletion
   }
 }
 
-/**
- * "Review" is deliberately not another preview — the canonical live preview
- * always lives in the dedicated preview panel/Sheet. This step is a
- * completion checklist + template switch + a way to jump back into any
- * section, so a desktop user is never shown two resume previews at once.
- */
+
+
+
+
+
+ 
 export function ReviewStep({
   data,
   templateId,

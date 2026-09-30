@@ -236,11 +236,11 @@ export const courses: CourseListItem[] = [
   },
 ]
 
-/**
- * UI-only infinite-scroll demo feed: cycles the authored records to
- * simulate a larger listing without hand-authoring hundreds of records.
- * Each cycle gets a unique `id` suffix so list keys stay distinct.
- */
+
+
+
+
+ 
 export const courseFeedSize = 42
 
 export function getCourseFeed(): CourseListItem[] {

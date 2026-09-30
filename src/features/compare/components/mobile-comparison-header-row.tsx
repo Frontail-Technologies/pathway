@@ -2,7 +2,6 @@
 
 import Image from 'next/image'
 import { Plus, X } from 'lucide-react'
-import { Rating } from '@/components/shared/rating'
 import { VerifiedBadge } from '@/components/shared/verified-badge'
 import { maxComparisonSlots } from '../data/college-compare'
 import type { ComparisonEntry } from '../data/comparison-sections'
@@ -14,7 +13,7 @@ type MobileComparisonHeaderRowProps = {
   onRemove: (slug: string) => void
   onAdd: (selection: Selection) => void
   onModify: (previousSlug: string, selection: Selection) => void
-  /** Mirrors the mobile comparison body's own horizontal `scrollLeft` — kept separate from the desktop header's sync value since the two layouts are never visible at the same time. */
+   
   scrollLeft: number
 }
 
@@ -23,12 +22,12 @@ export function MobileComparisonHeaderRow({ entries, onRemove, onAdd, onModify, 
   const slots = Array.from({ length: maxComparisonSlots }, (_, index) => entries[index])
 
   return (
-    // Sticky beneath the mobile app header (117px, same measured offset used
-    // throughout CMP-01/COL-02/CRS-02). `overflow-hidden` here is this
-    // element's own overflow (safe), clipping the transformed inner grid to
-    // the visible two-column width — see `compare-grid.ts` for why this row
-    // sits outside the body's own `overflow-x-auto` scroll container.
-    <div className="sticky top-[117px] z-20 overflow-hidden rounded-t-[10px] border border-b-0 bg-card print:hidden">
+    
+    
+    
+    
+    
+    <div className="sticky top-[117px] lg:top-30 z-20 overflow-hidden rounded-t-[10px] border border-b-0 bg-card print:hidden">
       <div className={`grid ${MOBILE_COMPARE_GRID_COLS}`} style={{ transform: `translateX(${-scrollLeft}px)` }}>
         {slots.map((entry, index) =>
           entry ? (
@@ -79,9 +78,7 @@ function FilledCell({
       <p className="truncate text-[11px] text-muted-foreground">
         {program.degree} · {program.course}
       </p>
-      <div className="flex flex-wrap items-center gap-1">
-        <Rating value={college.rating} />
-      </div>
+      { }
       {college.verified && <VerifiedBadge />}
       <CollegeCoursePickerDialog
         excludeSlugs={excludeSlugs.filter((slug) => slug !== college.slug)}

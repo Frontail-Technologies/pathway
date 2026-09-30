@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { StudentToolHero } from '@/components/shared/student-tool/student-tool-hero'
 
-/** Local decorative illustration: a blank answer sheet with tick rows and a pencil. No dates, scores or data. */
+ 
 function ExamArtwork() {
   return (
     <div className="relative hidden h-52 w-120 shrink-0 lg:block" aria-hidden="true">

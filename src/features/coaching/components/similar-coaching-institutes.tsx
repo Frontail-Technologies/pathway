@@ -9,16 +9,16 @@ import { getCoachingVisual } from '../data/visuals'
 
 type SimilarCoachingInstitutesProps = {
   provider: CoachingProvider
-  /** Compact vertical rows for the desktop sidebar column, instead of the grid/rail treatment used in normal (mobile) page flow. */
+   
   compact?: boolean
 }
 
-/**
- * Deliberately not a detail-nav tab. Route-integrity: only links straight to
- * `/coaching/[slug]` for a provider that actually has a detail page; every
- * other similar provider falls back to the plain `/coaching` listing rather
- * than a knowing dead link.
- */
+
+
+
+
+
+ 
 export function SimilarCoachingInstitutes({ provider, compact = false }: SimilarCoachingInstitutesProps) {
   const similar = getSimilarCoachingProviders(provider, 3)
   if (similar.length === 0) return null
@@ -46,7 +46,8 @@ export function SimilarCoachingInstitutes({ provider, compact = false }: Similar
         ))}
       </div>
 
-      <HorizontalContentRail ariaLabel="Similar coaching institutes" className="mt-4 sm:hidden">
+      { }
+      <HorizontalContentRail ariaLabel="Similar coaching institutes" edgeBleed className="mt-4 sm:hidden">
         {similar.map((item) => (
           <div key={item.slug} className="w-[72vw] shrink-0 snap-start">
             <SimilarCard item={item} />

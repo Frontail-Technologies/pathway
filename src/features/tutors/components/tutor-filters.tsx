@@ -1,11 +1,10 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { ArrowUpDown, SlidersHorizontal, X } from 'lucide-react'
+import { SlidersHorizontal, X } from 'lucide-react'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet'
 import { countActiveFilters, emptyFilters, filterGroups, sortOptions, type FilterKey, type FilterState, type SortValue } from '../data/tutors'
 
@@ -95,21 +94,15 @@ function MobileTutorFilters({ open, onOpenChange, filters, onApply }: { open: bo
   )
 }
 
+const sortSel = 'h-10 rounded-md border border-input bg-background px-2.5 text-sm text-foreground shadow-xs cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring/40'
+
 function SortSelect({ sort, onSortChange, className = '' }: { sort: SortValue; onSortChange: (value: SortValue) => void; className?: string }) {
   return (
-    <Select value={sort} onValueChange={(value) => onSortChange(value as SortValue)} items={sortOptions}>
-      <SelectTrigger className={`gap-2 px-3 text-sm data-[size=default]:h-10 ${className}`}>
-        <ArrowUpDown className="size-4 text-muted-foreground" aria-hidden="true" />
-        <SelectValue placeholder="Sort by" />
-      </SelectTrigger>
-      <SelectContent side="bottom" align="start" sideOffset={6} alignItemWithTrigger={false}>
-        {sortOptions.map((option) => (
-          <SelectItem key={option.value} value={option.value}>
-            {option.label}
-          </SelectItem>
-        ))}
-      </SelectContent>
-    </Select>
+    <select value={sort} onChange={(e) => onSortChange(e.target.value as SortValue)} className={`${sortSel} ${className}`}>
+      {sortOptions.map((option) => (
+        <option key={option.value} value={option.value}>{option.label}</option>
+      ))}
+    </select>
   )
 }
 

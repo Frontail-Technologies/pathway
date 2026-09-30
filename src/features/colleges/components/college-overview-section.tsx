@@ -2,7 +2,7 @@ import type { CollegeDetailData } from '../data/college-detail'
 
 export function CollegeOverviewSection({ college }: { college: CollegeDetailData }) {
   return (
-    <section id="overview" className="scroll-mt-[172px] border-b py-7 lg:scroll-mt-40 lg:py-9">
+    <section id="overview" className="scroll-mt-[172px] border-b py-7 lg:scroll-mt-44 lg:py-9">
       <h2 className="font-heading text-xl font-bold text-foreground sm:text-[22px]">Overview</h2>
       <p className="mt-2.5 max-w-3xl text-sm leading-6 text-muted-foreground sm:text-[15px]">{college.overviewCopy}</p>
 

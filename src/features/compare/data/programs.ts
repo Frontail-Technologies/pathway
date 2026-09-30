@@ -1,6 +1,6 @@
 export type Degree = 'B.Tech' | 'M.Tech' | 'B.Sc' | 'M.Sc' | 'B.E.' | 'M.E.' | 'B.Pharm'
 
-/** Degrees each mock college genuinely offers — no impossible generic combinations. */
+ 
 export const collegeDegrees: Record<string, Degree[]> = {
   'iit-delhi': ['B.Tech', 'M.Tech', 'B.Sc', 'M.Sc'],
   'iit-bombay': ['B.Tech', 'M.Tech', 'B.Sc', 'M.Sc'],
@@ -10,7 +10,7 @@ export const collegeDegrees: Record<string, Degree[]> = {
   'vit-vellore': ['B.Tech', 'M.Tech', 'B.Sc', 'M.Sc'],
 }
 
-/** Courses available once a Degree is selected — the Course select stays disabled until then. */
+ 
 export const coursesByDegree: Record<Degree, string[]> = {
   'B.Tech': ['Computer Science & Engineering', 'Electrical Engineering', 'Mechanical Engineering', 'Civil Engineering'],
   'M.Tech': ['Computer Science & Engineering', 'Electrical Engineering', 'Mechanical Engineering'],
@@ -44,7 +44,7 @@ const collegeExamProfile: Record<string, ExamProfile> = {
   'vit-vellore': { ugExam: 'VITEEE', ugRoute: 'VITEEE Score-based', pgExam: 'VITMEE', pgRoute: 'VITMEE Counselling' },
 }
 
-/** Approximate per-year tuition (in Lakh) by degree tier — a mock, college-specific rate, not authoritative pricing. */
+ 
 const collegeTuitionLakh: Record<string, { ug: number; pg: number }> = {
   'iit-delhi': { ug: 2.2, pg: 1.4 },
   'iit-bombay': { ug: 2.3, pg: 1.5 },
@@ -66,7 +66,7 @@ export type ProgramSnapshot = {
   tuition: string
 }
 
-/** Composes the course-dependent comparison fields for a college + degree + course selection from small typed lookup tables — still local mock data, no backend. */
+ 
 export function getProgramSnapshot(collegeSlug: string, degree: Degree, course: string): ProgramSnapshot {
   const defaults = degreeDefaults[degree]
   const examProfile = collegeExamProfile[collegeSlug]
@@ -117,7 +117,7 @@ const courseSlugs: Record<string, string> = {
 
 const courseSlugsReverse: Record<string, string> = Object.fromEntries(Object.entries(courseSlugs).map(([course, slug]) => [slug, course]))
 
-/** Default degree/course per college — used for the default comparison view and whenever a URL program slug is missing/invalid for that slot. */
+ 
 export const defaultPrograms: Record<string, { degree: Degree; course: string }> = {
   'iit-delhi': { degree: 'B.Tech', course: 'Computer Science & Engineering' },
   'iit-bombay': { degree: 'B.Tech', course: 'Computer Science & Engineering' },
@@ -133,7 +133,7 @@ export function serializeProgramSlug(degree: Degree, course: string): string {
   return `${degreeSlug}-${courseSlug}`
 }
 
-/** Parses one `programs=` slug for a given college — falls back to that college's default program on any invalid/missing/impossible combination. */
+ 
 export function parseProgramSlug(collegeSlug: string, slug: string | undefined): { degree: Degree; course: string } {
   const fallback = defaultPrograms[collegeSlug]
   if (!slug) return fallback
@@ -146,7 +146,7 @@ export function parseProgramSlug(collegeSlug: string, slug: string | undefined):
   const course = courseSlugsReverse[courseSlug]
   if (!course) return fallback
 
-  // Guard against an impossible combination (e.g. a course slug valid elsewhere but not offered under this degree, or a degree this college doesn't actually offer).
+  
   if (!collegeDegrees[collegeSlug]?.includes(degree)) return fallback
   if (!coursesByDegree[degree].includes(course)) return fallback
 

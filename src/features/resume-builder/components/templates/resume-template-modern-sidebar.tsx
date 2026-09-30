@@ -14,14 +14,14 @@ const CONTENT_WIDTH = RESUME_PAGE_WIDTH - SIDEBAR_WIDTH - MAIN_PADDING_X * 2
 const USABLE_HEIGHT = RESUME_PAGE_HEIGHT - MAIN_PADDING_Y * 2
 const BLOCK_GAP = 18
 
-/**
- * Modern Sidebar — a restrained deep-green two-column document (this is the
- * resume's own design language, deliberately not Pathway blue/orange). The
- * sidebar (photo/contact/education/skills/languages) repeats on every page —
- * it's short by nature and keeping the column proportions constant is
- * simpler and more consistent than reflowing it. Only the main column
- * (summary/experience/projects/achievements) is paginated.
- */
+
+
+
+
+
+
+
+ 
 export function useModernSidebarDocument(data: ResumeData) {
   const { personal, education, experience, projects, skills, achievements, additional } = data
   const fullName = [personal.firstName, personal.lastName].filter(Boolean).join(' ') || 'Your Name'
@@ -30,7 +30,7 @@ export function useModernSidebarDocument(data: ResumeData) {
   const sidebar = (
     <aside className="flex shrink-0 flex-col gap-4 border-r-4 py-7" style={{ width: SIDEBAR_WIDTH, borderColor: ACCENT, paddingInline: 18 }}>
       {personal.photo ? (
-        // eslint-disable-next-line @next/next/no-img-element
+        
         <img src={personal.photo} alt="" className="size-20 self-center rounded-full object-cover" />
       ) : (
         <div className="size-20 self-center rounded-full" style={{ backgroundColor: `${ACCENT}1a` }} />
@@ -167,13 +167,18 @@ export function useModernSidebarDocument(data: ResumeData) {
     })
   }
 
-  // Memoized on `data` — see the identical comment in resume-template-classic.tsx.
+  
   const blocks = useMemo(() => [{ id: 'header', node: headerBlock }, ...buildBlocksFromSections(sections)], [data])
   const { pages, measureNode } = usePagedBlocks(blocks, { width: CONTENT_WIDTH, usableHeight: USABLE_HEIGHT, gap: BLOCK_GAP })
 
+  
+  
+  
+  const sidebarSpacer = <aside aria-hidden="true" className="shrink-0" style={{ width: SIDEBAR_WIDTH }} />
+
   const pageNodes = pages.map((pageBlocks, index) => (
     <div key={index} className="flex min-h-full font-sans text-neutral-800">
-      {sidebar}
+      {index === 0 ? sidebar : sidebarSpacer}
       <main className="flex-1 overflow-hidden break-words" style={{ paddingInline: MAIN_PADDING_X, paddingBlock: MAIN_PADDING_Y }}>
         <div className="flex flex-col" style={{ gap: BLOCK_GAP }}>
           {pageBlocks.map((block) => (

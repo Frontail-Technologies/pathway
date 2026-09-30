@@ -36,7 +36,7 @@ type Icon = ComponentType<{
   "aria-hidden"?: boolean | "true" | "false";
 }>;
 
-/** One prompt per profile field; only the fields the profile is actually missing are shown. */
+ 
 const missingPrompts: Record<
   ProfileFieldKey,
   { icon: Icon; title: string; text: string; href?: string }
@@ -109,10 +109,10 @@ const missingPrompts: Record<
   },
 };
 
-/**
- * STU-01 — Student Profile Overview / Account Dashboard. Every edit action links to its account screen
- * (My Profile / Preferences). Frontend demo account state only.
- */
+
+
+
+ 
 export function StudentDashboardPage() {
   const { profile, photoUrl } = useStudentProfile();
   const completion = getProfileCompletion(profile);
@@ -138,7 +138,7 @@ export function StudentDashboardPage() {
           <div className="flex min-w-0 items-center gap-4">
             <span className="flex size-16 shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary text-xl font-bold text-primary-foreground">
               {photoUrl ? (
-                // eslint-disable-next-line @next/next/no-img-element
+                
                 <img src={photoUrl} alt="" className="size-full object-cover" />
               ) : (
                 <span aria-hidden="true">{initialsOf(profile.name)}</span>
@@ -197,7 +197,7 @@ export function StudentDashboardPage() {
         </div>
       </section>
 
-      {/* Below xl the two column wrappers dissolve (`contents`) so cards can follow the mobile order. */}
+      { }
       <div className="flex min-w-0 flex-col gap-5 max-xl:contents">
         <DashboardSection
           className="max-xl:order-4"

@@ -7,12 +7,12 @@ export function ScholarshipRelatedSection({ scholarship }: { scholarship: Schola
   if (scholarship.relatedScholarships.length === 0) return null
 
   return (
-    // Deliberately no `id`/scroll-spy entry — Related Scholarships sits in the
-    // page flow between Selection Process and FAQs but is not one of the
-    // sticky detail-nav tabs (see `ScholarshipDetailNav`'s section list).
-    // Preview shape is opportunity-focused (status + benefit + deadline),
-    // deliberately not the name+level/duration+Explore shape Course Detail's
-    // Related Courses uses.
+    
+    
+    
+    
+    
+    
     <section className="border-b py-7 lg:py-9">
       <h2 className="font-heading text-xl font-bold text-foreground sm:text-[22px]">Related Scholarships</h2>
 

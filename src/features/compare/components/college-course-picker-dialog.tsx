@@ -16,7 +16,7 @@ type CollegeCoursePickerDialogProps = {
   excludeSlugs: string[]
   onApply: (selection: Selection) => void
   trigger: ReactElement
-  /** Pre-fills the picker for "Modify Selection" — undefined for a fresh "Add College". */
+   
   initial?: Selection
 }
 
@@ -28,7 +28,7 @@ export function CollegeCoursePickerDialog({ excludeSlugs, onApply, trigger, init
   const [course, setCourse] = useState<string | undefined>(initial?.course)
   const [step, setStep] = useState<'college' | 'program'>(initial ? 'program' : 'college')
 
-  // Re-seed every time the dialog opens, so "Modify Selection" always starts from that slot's current selection.
+  
   useEffect(() => {
     if (!open) return
     setCollegeSlug(initial?.collegeSlug)

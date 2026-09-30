@@ -5,14 +5,15 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { Loader2 } from 'lucide-react'
 import { Container } from '@/components/shared/container'
 import { Breadcrumbs } from '@/components/shared/breadcrumbs'
-import { PageHeader } from '@/components/shared/page-header'
 import { EmptyState } from '@/components/feedback'
 import { Button } from '@/components/ui/button'
 import { getScholarshipFeed } from '../data/scholarships'
 import {
   emptyFilters,
   matchesFilters,
+  matchesScholarshipQuery,
   parseScholarshipFilters,
+  parseScholarshipSearch,
   parseScholarshipSort,
   serializeScholarshipFilters,
   sortScholarships,
@@ -23,6 +24,7 @@ import {
 import { ScholarshipFilterSidebar } from './scholarship-filter-sidebar'
 import { ScholarshipResultsToolbar } from './scholarship-results-toolbar'
 import { ScholarshipResultCard } from './scholarship-result-card'
+import { ScholarshipHero } from './scholarship-hero'
 
 const BATCH_SIZE = 8
 
@@ -31,25 +33,29 @@ export function ScholarshipListingPage() {
   const pathname = usePathname()
   const searchParams = useSearchParams()
 
-  // The URL is the single source of truth for applied filters/sort — same
-  // convention as CRS-01 (see the "URL query-state convention" note in
-  // `data/filters.ts`). Deriving instead of mirroring into a separate
-  // `useState` is what makes browser Back/Forward restore the correct state.
+  
+  
+  
+  
   const filters = useMemo(() => parseScholarshipFilters(searchParams), [searchParams])
   const sort = useMemo(() => parseScholarshipSort(searchParams), [searchParams])
+  const query = useMemo(() => parseScholarshipSearch(searchParams), [searchParams])
 
   const [visibleCount, setVisibleCount] = useState(BATCH_SIZE)
   const [loadingMore, setLoadingMore] = useState(false)
 
   const feed = useMemo(() => getScholarshipFeed(), [])
-  const allResults = useMemo(() => sortScholarships(feed.filter((scholarship) => matchesFilters(scholarship, filters)), sort), [feed, filters, sort])
+  const allResults = useMemo(
+    () => sortScholarships(feed.filter((scholarship) => matchesFilters(scholarship, filters) && matchesScholarshipQuery(scholarship, query)), sort),
+    [feed, filters, query, sort],
+  )
   const visibleResults = allResults.slice(0, visibleCount)
   const hasMore = visibleCount < allResults.length
 
-  // Reset the loaded batch whenever the active query (filters/sort) changes.
+  
   useEffect(() => {
     setVisibleCount(BATCH_SIZE)
-  }, [filters, sort])
+  }, [filters, sort, query])
 
   const sentinelRef = useRef<HTMLDivElement>(null)
   const loadingRef = useRef(false)
@@ -77,44 +83,45 @@ export function ScholarshipListingPage() {
     return () => observer.disconnect()
   }, [hasMore, allResults.length])
 
-  // Pushes a new history entry so Back/Forward step through each committed
-  // filter/sort change, without scrolling the page back to the top.
-  const updateUrl = (nextFilters: FilterState, nextSort: SortValue) => {
-    const query = serializeScholarshipFilters(nextFilters, nextSort)
-    router.push(query ? `${pathname}?${query}` : pathname, { scroll: false })
+  
+  
+  const updateUrl = (nextFilters: FilterState, nextSort: SortValue, nextQuery: string) => {
+    const queryString = serializeScholarshipFilters(nextFilters, nextSort, nextQuery)
+    router.push(queryString ? `${pathname}?${queryString}` : pathname, { scroll: false })
   }
 
   const toggleFilter = (key: FilterKey, value: string) => {
     const current = filters[key]
     const nextValues = current.includes(value) ? current.filter((item) => item !== value) : [...current, value]
-    updateUrl({ ...filters, [key]: nextValues }, sort)
+    updateUrl({ ...filters, [key]: nextValues }, sort, query)
   }
 
   const removeFilter = (key: FilterKey, value: string) => {
-    updateUrl({ ...filters, [key]: filters[key].filter((item) => item !== value) }, sort)
+    updateUrl({ ...filters, [key]: filters[key].filter((item) => item !== value) }, sort, query)
   }
 
-  const clearAllFilters = () => updateUrl(emptyFilters, sort)
+  const clearAllFilters = () => updateUrl(emptyFilters, sort, query)
 
-  // Mobile Sheet applies its own local draft state — the URL only updates
-  // once here, on Apply, never while the user is merely toggling checkboxes
-  // inside the still-open Sheet.
-  const applyMobileFilters = (nextFilters: FilterState) => updateUrl(nextFilters, sort)
+  
+  
+  
+  const applyMobileFilters = (nextFilters: FilterState) => updateUrl(nextFilters, sort, query)
 
-  const handleSortChange = (nextSort: SortValue) => updateUrl(filters, nextSort)
+  const handleSortChange = (nextSort: SortValue) => updateUrl(filters, nextSort, query)
 
   return (
-    <div className="bg-background pt-5 pb-9 lg:pt-8 lg:pb-14">
-      <Container className="px-4">
+    <div className="bg-background pb-9 lg:pb-14">
+      <Container className="px-4 py-3">
         <Breadcrumbs items={['Home', 'Scholarships']} />
-        <div className="mt-3">
-          <PageHeader title="Scholarships" description="Find government and private scholarships by eligibility, course, location and benefit." />
-          <p className="mt-2 text-sm font-semibold text-primary">250+ Scholarships available</p>
-        </div>
+      </Container>
+      <ScholarshipHero query={query} onSearch={(value) => updateUrl(filters, sort, value)} />
 
-        <div className="mt-6 flex flex-col gap-6 lg:flex-row lg:items-start lg:gap-8">
-          {/* Sticky top offset = PublicHeader's actual height at lg+ (64px primary row + 40px nav row = 104px) plus 16px breathing room. */}
-          <div className="sticky top-30 hidden max-h-[calc(100dvh-7.5rem-1rem)] overflow-y-auto lg:block">
+      <Container className="px-4 pt-8">
+        <div>
+        <p className="text-sm font-semibold text-primary">250+ Scholarships available</p>
+        <div className="mt-5 flex flex-col gap-6 lg:flex-row lg:items-start lg:gap-8">
+          { }
+          <div className="sticky top-34 hidden max-h-[calc(100dvh-8.5rem-1rem)] overflow-y-auto lg:block">
             <ScholarshipFilterSidebar filters={filters} onToggle={toggleFilter} onClearAll={clearAllFilters} />
           </div>
 
@@ -133,9 +140,16 @@ export function ScholarshipListingPage() {
             {allResults.length === 0 ? (
               <div className="flex flex-col items-center gap-4">
                 <EmptyState title="No scholarships found. Try adjusting your filters." />
-                <Button variant="outline" onClick={clearAllFilters}>
-                  Clear Filters
-                </Button>
+                <div className="flex flex-wrap justify-center gap-2">
+                  <Button variant="outline" onClick={clearAllFilters}>
+                    Clear Filters
+                  </Button>
+                  {query && (
+                    <Button variant="outline" onClick={() => updateUrl(filters, sort, '')}>
+                      Clear Search
+                    </Button>
+                  )}
+                </div>
               </div>
             ) : (
               <>
@@ -160,6 +174,7 @@ export function ScholarshipListingPage() {
               </>
             )}
           </div>
+        </div>
         </div>
       </Container>
     </div>

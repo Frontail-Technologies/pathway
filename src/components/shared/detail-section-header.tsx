@@ -6,7 +6,7 @@ type DetailSectionHeaderProps = {
   action?: ReactNode
 }
 
-/** Standardized section heading used across Detail-page sections — icon optional, title required, an optional trailing action (e.g. "View all"). The section body itself stays feature-local. */
+ 
 export function DetailSectionHeader({ icon: Icon, title, action }: DetailSectionHeaderProps) {
   return (
     <div className="flex items-center justify-between gap-3">

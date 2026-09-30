@@ -1,6 +1,6 @@
 import type { CoachingProvider, CoachingProviderType } from './coaching'
 
-/** Badge label/color still follows provider type — only the photo is per-provider (see below). */
+ 
 const providerTypeBadge: Record<CoachingProviderType, { label: string; accentClass: string }> = {
   'Coaching Institute': { label: 'Institute', accentClass: 'bg-secondary text-primary' },
   'Online Platform': { label: 'Online', accentClass: 'bg-accent text-accent-foreground' },
@@ -8,13 +8,13 @@ const providerTypeBadge: Record<CoachingProviderType, { label: string; accentCla
 
 type ProviderPhoto = { src: string; alt: string; objectPosition: string }
 
-/**
- * Each of the 9 coaching providers gets a deliberately assigned photo (keyed
- * by slug, not by `providerType`) — visual polish pass. Reusing one shared
- * image per type was what made the Recommended strip and result list look
- * duplicated even though the underlying records are unique. No image implies
- * a private tutor/one-person setup (see `/coaching` scope rule).
- */
+
+
+
+
+
+
+ 
 const providerPhotosBySlug: Record<string, ProviderPhoto> = {
   'apex-jee-academy-kota': { src: '/coaching/apex-jee-academy.jpg', alt: 'Students in a classroom taking notes', objectPosition: 'center 30%' },
   'medprep-institute-delhi': { src: '/coaching/coaching-institute.png', alt: 'Classroom setup with study materials', objectPosition: 'center center' },

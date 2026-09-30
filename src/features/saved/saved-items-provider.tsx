@@ -7,7 +7,7 @@ export type SavedKind = 'college' | 'course' | 'scholarship' | 'coaching' | 'tut
 export const savedKinds: SavedKind[] = ['college', 'course', 'scholarship', 'coaching', 'tutor']
 type SavedState = Record<SavedKind, string[]>
 
-/** localStorage key for the frontend-demo saved list (record slugs only — no personal data). */
+ 
 export const SAVED_ITEMS_STORAGE_KEY = 'pathway.savedItems.demo.v1'
 const empty: SavedState = { college: [], course: [], scholarship: [], coaching: [], tutor: [] }
 
@@ -31,10 +31,10 @@ function readStored(): SavedState {
   }
 }
 
-/**
- * Shared frontend-only saved-items store for every Save/Bookmark button and the Saved Items screen.
- * Frontend DEMO persistence: slugs are mirrored to localStorage on this device. No backend, no sync.
- */
+
+
+
+ 
 export function SavedItemsProvider({ children }: { children: React.ReactNode }) {
   const [saved, setSaved] = useState<SavedState>(empty)
   const [hydrated, setHydrated] = useState(false)
@@ -48,7 +48,7 @@ export function SavedItemsProvider({ children }: { children: React.ReactNode }) 
     try {
       window.localStorage.setItem(SAVED_ITEMS_STORAGE_KEY, JSON.stringify(next))
     } catch {
-      // Storage unavailable — the change still applies for this session.
+      
     }
   }
 
@@ -84,10 +84,10 @@ export function useSavedItems() {
   return context
 }
 
-/**
- * Drop-in for the per-button `saved` / `toggleSaved` pair. Same Sonner wording as the original
- * (`<Label> saved to your list.` / `<Label> removed from saved items.`), now backed by the shared store.
- */
+
+
+
+ 
 export function useSavedItem(kind: SavedKind, id: string, entityLabel: string) {
   const store = useSavedItems()
   const saved = store.isSaved(kind, id)
