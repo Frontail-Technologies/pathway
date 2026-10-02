@@ -11,3 +11,8 @@ node_modules
 .next/
 .DS_Store
 *.tsbuildinfo
+
+# Ignore non-bun lockfiles
+pnpm-lock.yaml
+package-lock.json
+yarn.lock
