@@ -13,7 +13,7 @@ export function NotePricingSection({
 }: {
   formData: NoteFormData
   errors: Record<string, string>
-  onFieldChange: (key: keyof NoteFormData, value: any) => void
+  onFieldChange: (key: keyof NoteFormData, value: NoteFormData[keyof NoteFormData]) => void
 }) {
   const isPaid = formData.pricingType === 'paid'
 

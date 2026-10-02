@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { Camera, CircleCheck, Plus, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
@@ -116,10 +117,9 @@ function ProfileEditor() {
         <form ref={formRef} onSubmit={onSubmit} noValidate className="flex min-w-0 flex-col gap-5">
           <DashboardSection id="personal" className="scroll-mt-20" title="Personal Information">
             <div className="flex items-center gap-4">
-              <span className="flex size-18 shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary text-xl font-bold text-primary-foreground">
+              <span className="relative flex size-18 shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary text-xl font-bold text-primary-foreground">
                 {photoUrl ? (
-                  
-                  <img src={photoUrl} alt="Your profile photo preview" className="size-full object-cover" />
+                  <Image src={photoUrl} alt="Your profile photo preview" fill className="object-cover" />
                 ) : (
                   <span aria-hidden="true">{initialsOf(`${draft.firstName} ${draft.lastName}`) || initialsOf(profile.name)}</span>
                 )}

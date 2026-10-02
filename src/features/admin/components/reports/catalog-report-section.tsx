@@ -166,7 +166,7 @@ export function CatalogReportSection({ data }: { data: PlatformReportsData['cata
                     ))}
                   </Pie>
                   <Tooltip
-                    formatter={(val: any, name: any) => [`${val} institutions`, name]}
+                    formatter={(val, name) => [`${val ?? ''} institutions`, name ?? '']}
                     contentStyle={{
                       backgroundColor: 'hsl(var(--card))',
                       borderColor: 'hsl(var(--border))',

@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import Image from 'next/image'
 import { Mail, MapPin, Phone, GraduationCap, Briefcase, User } from 'lucide-react'
 import type { ResumeData } from '../../data/types'
 import { RESUME_PAGE_HEIGHT, RESUME_PAGE_WIDTH } from '../../data/page-size'
@@ -31,7 +32,7 @@ export function useExecutiveTimelineDocument(data: ResumeData) {
     <header className="flex shrink-0 items-center gap-5 text-white" style={{ backgroundColor: DARK, height: HEADER_HEIGHT, paddingInline: 28 }}>
       {personal.photo ? (
         
-        <img src={personal.photo} alt="" className="size-20 shrink-0 rounded-full object-cover ring-4 ring-white/20" />
+        <Image src={personal.photo} alt="" width={80} height={80} className="size-20 shrink-0 rounded-full object-cover ring-4 ring-white/20" />
       ) : (
         <div className="size-20 shrink-0 rounded-full bg-white/10" />
       )}

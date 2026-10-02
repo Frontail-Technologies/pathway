@@ -1,6 +1,7 @@
 'use client'
 
 import { useRef } from 'react'
+import Image from 'next/image'
 import { Camera } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -27,7 +28,7 @@ export function PersonalDetailsStep({ personal, onChange }: { personal: ResumePe
         <div className="relative flex size-16 shrink-0 items-center justify-center overflow-hidden rounded-full bg-muted">
           {personal.photo ? (
             
-            <img src={personal.photo} alt="" className="size-full object-cover" />
+            <Image src={personal.photo} alt="" fill className="object-cover" />
           ) : (
             <Camera className="size-6 text-muted-foreground" aria-hidden="true" />
           )}

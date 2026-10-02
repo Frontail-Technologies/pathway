@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import type { Tutor, TutorAvatarSpec } from '../data/tutors'
 
  
@@ -33,10 +34,9 @@ export function TutorAvatar({ spec, className = 'size-16' }: { spec: TutorAvatar
  
 export function TutorPortrait({ tutor, className = 'size-20 rounded-xl' }: { tutor: Pick<Tutor, 'name' | 'portrait' | 'avatar'>; className?: string }) {
   return (
-    <div className={`shrink-0 overflow-hidden bg-[#e8effd] ring-1 ring-black/5 ${className}`}>
+    <div className={`relative shrink-0 overflow-hidden bg-[#e8effd] ring-1 ring-black/5 ${className}`}>
       {tutor.portrait ? (
-        
-        <img src={tutor.portrait} alt={`Portrait of ${tutor.name}`} loading="lazy" decoding="async" className="size-full object-cover object-[50%_20%]" />
+        <Image src={tutor.portrait} alt={`Portrait of ${tutor.name}`} fill className="object-cover object-[50%_20%]" />
       ) : (
         <TutorAvatar spec={tutor.avatar} className="size-full" />
       )}

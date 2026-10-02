@@ -5,6 +5,7 @@ import Link from 'next/link'
 import {
   type AdminScholarship,
 } from '@/features/admin/data/admin-scholarships'
+import type { EducationLevel } from '@/features/scholarships/data/scholarships'
 import { AdminDataTable } from '@/features/admin/components/admin-data-table'
 import { scholarshipTableColumns } from './scholarship-table-columns'
 import {
@@ -68,7 +69,7 @@ export function AdminScholarshipsView({
       if (
         filters.educationLevel !== 'all' &&
         item.educationLevels.length > 0 &&
-        !item.educationLevels.includes(filters.educationLevel as any)
+        !item.educationLevels.includes(filters.educationLevel as EducationLevel)
       ) {
         return false
       }

@@ -3,6 +3,7 @@
 import { useState, useMemo } from 'react'
 import { AdminDataTable } from '@/features/admin/components/admin-data-table'
 import type { AdminTutor } from '@/features/admin/data/admin-tutors'
+import type { TutorSubject, TutorExam, TutorMode, TutorLevel, TutorLanguage } from '@/features/tutors/data/tutors'
 import { tutorColumns } from './tutor-table-columns'
 import { TutorFilters, type TutorFilterValues } from './tutor-filters'
 import { TutorMobileCard } from './tutor-mobile-card'
@@ -42,23 +43,23 @@ export function AdminTutorsTableView({ tutors }: { tutors: AdminTutor[] }) {
       }
 
       if (filters.subject !== 'All') {
-        if (!tutor.subjects.includes(filters.subject as any)) return false
+        if (!tutor.subjects.includes(filters.subject as TutorSubject)) return false
       }
 
       if (filters.exam !== 'All') {
-        if (!tutor.exams.includes(filters.exam as any)) return false
+        if (!tutor.exams.includes(filters.exam as TutorExam)) return false
       }
 
       if (filters.mode !== 'All') {
-        if (!tutor.modes.includes(filters.mode as any)) return false
+        if (!tutor.modes.includes(filters.mode as TutorMode)) return false
       }
 
       if (filters.level !== 'All') {
-        if (!tutor.studyLevels.includes(filters.level as any)) return false
+        if (!tutor.studyLevels.includes(filters.level as TutorLevel)) return false
       }
 
       if (filters.language !== 'All') {
-        if (!tutor.languages.includes(filters.language as any)) return false
+        if (!tutor.languages.includes(filters.language as TutorLanguage)) return false
       }
 
       if (filters.portrait !== 'All') {

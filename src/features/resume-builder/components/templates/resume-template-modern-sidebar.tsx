@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import Image from 'next/image'
 import { Globe, Link2, Mail, MapPin, Phone } from 'lucide-react'
 import type { ResumeData } from '../../data/types'
 import { RESUME_PAGE_HEIGHT, RESUME_PAGE_WIDTH } from '../../data/page-size'
@@ -31,7 +32,7 @@ export function useModernSidebarDocument(data: ResumeData) {
     <aside className="flex shrink-0 flex-col gap-4 border-r-4 py-7" style={{ width: SIDEBAR_WIDTH, borderColor: ACCENT, paddingInline: 18 }}>
       {personal.photo ? (
         
-        <img src={personal.photo} alt="" className="size-20 self-center rounded-full object-cover" />
+        <Image src={personal.photo} alt="" width={80} height={80} className="size-20 self-center rounded-full object-cover" />
       ) : (
         <div className="size-20 self-center rounded-full" style={{ backgroundColor: `${ACCENT}1a` }} />
       )}

@@ -24,7 +24,7 @@ export function NoteBasicsSection({
   errors: Record<string, string>
   onTitleChange: (title: string) => void
   onSlugChange: (slug: string) => void
-  onFieldChange: (key: keyof NoteFormData, value: any) => void
+  onFieldChange: (key: keyof NoteFormData, value: NoteFormData[keyof NoteFormData]) => void
 }) {
   return (
     <div id="basics" className="bg-card rounded-xl p-5 sm:p-6 border-0 shadow-xs space-y-5">

@@ -3,6 +3,7 @@
 import { useState, useMemo } from 'react'
 import { AdminDataTable } from '@/features/admin/components/admin-data-table'
 import type { AdminCoachingProvider } from '@/features/admin/data/admin-coaching'
+import type { LearningMode } from '@/features/coaching/data/coaching'
 import { coachingColumns } from './coaching-table-columns'
 import { CoachingFilters, type CoachingFilterValues } from './coaching-filters'
 import { CoachingMobileCard } from './coaching-mobile-card'
@@ -54,7 +55,7 @@ export function AdminCoachingTableView({ providers }: { providers: AdminCoaching
       }
 
       if (filters.mode !== 'All') {
-        if (!provider.modes.includes(filters.mode as any)) return false
+        if (!provider.modes.includes(filters.mode as LearningMode)) return false
       }
 
       if (filters.exam !== 'All') {

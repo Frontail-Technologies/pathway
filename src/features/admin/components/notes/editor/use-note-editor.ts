@@ -196,7 +196,7 @@ export function useNoteEditor(initialNote?: Note | null) {
     }
   }
 
-  const handleFieldChange = (key: keyof NoteFormData, value: any) => {
+  const handleFieldChange = (key: keyof NoteFormData, value: NoteFormData[keyof NoteFormData]) => {
     setFormData((prev) => ({ ...prev, [key]: value }))
     if (errors[key]) {
       setErrors((prev) => {

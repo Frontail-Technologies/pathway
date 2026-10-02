@@ -17,6 +17,7 @@ import {
   UserRound,
 } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import {
   getProfileCompletion,
@@ -136,10 +137,9 @@ export function StudentDashboardPage() {
       >
         <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between md:gap-8">
           <div className="flex min-w-0 items-center gap-4">
-            <span className="flex size-16 shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary text-xl font-bold text-primary-foreground">
+            <span className="relative flex size-16 shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary text-xl font-bold text-primary-foreground">
               {photoUrl ? (
-                
-                <img src={photoUrl} alt="" className="size-full object-cover" />
+                <Image src={photoUrl} alt="" fill className="object-cover" />
               ) : (
                 <span aria-hidden="true">{initialsOf(profile.name)}</span>
               )}

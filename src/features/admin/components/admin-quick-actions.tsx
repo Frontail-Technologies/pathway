@@ -1,12 +1,12 @@
 import Link from 'next/link'
-import { GraduationCap, BookOpen, Award, Users } from 'lucide-react'
+import { GraduationCap, BookOpen, Award, Users, type LucideIcon } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 
 type QuickActionItem = {
   id: string
   label: string
   description: string
-  icon: any
+  icon: LucideIcon
   href?: string
   available: boolean
   badge?: string
