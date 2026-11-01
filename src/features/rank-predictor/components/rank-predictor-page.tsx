@@ -95,7 +95,7 @@ export function RankPredictorPage() {
               </ToolActionBar>
             </div>
 
-            <div className="lg:sticky lg:top-6">
+            <div className="lg:sticky lg:top-header-gap">
               <ToolSummaryCard title="Your Input">
                 {groups.length === 0 ? (
                   <p className="mt-3 text-sm text-muted-foreground">Your selections will appear here as you go.</p>

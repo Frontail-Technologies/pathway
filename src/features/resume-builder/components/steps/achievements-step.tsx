@@ -34,9 +34,9 @@ export function AchievementsStep({ achievements, onChange }: { achievements: Ach
       {achievements.map((entry, index) => (
         <RepeatableEntryCard key={entry.id} title={entry.title || `${entry.type} ${index + 1}`} onRemove={() => removeEntry(entry.id)}>
           <div className="flex flex-col gap-1.5">
-            <Label>Type</Label>
+            <Label htmlFor={`${entry.id}-type`}>Type</Label>
             <Select value={entry.type} onValueChange={(value) => updateEntry(entry.id, { type: value as AchievementType })} items={TYPES.map((type) => ({ value: type, label: type }))}>
-              <SelectTrigger className="w-full">
+              <SelectTrigger id={`${entry.id}-type`} className="w-full">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent alignItemWithTrigger={false} side="bottom" align="start" sideOffset={4}>
@@ -54,8 +54,8 @@ export function AchievementsStep({ achievements, onChange }: { achievements: Ach
           <LabeledInput label="Credential Link" value={entry.link ?? ''} onChange={(value) => updateEntry(entry.id, { link: value })} placeholder="Optional" />
 
           <div className="sm:col-span-2">
-            <Label>Description</Label>
-            <Textarea className="mt-1.5 min-h-16" value={entry.description ?? ''} onChange={(event) => updateEntry(entry.id, { description: event.target.value })} placeholder="Optional" />
+            <Label htmlFor={`${entry.id}-description`}>Description</Label>
+            <Textarea id={`${entry.id}-description`} className="mt-1.5 min-h-16" value={entry.description ?? ''} onChange={(event) => updateEntry(entry.id, { description: event.target.value })} placeholder="Optional" />
           </div>
         </RepeatableEntryCard>
       ))}

@@ -64,7 +64,7 @@ export function TemplatePicker({ data, templateId, onSelect, trigger }: Template
       ) : (
         
         <Sheet open={open} onOpenChange={setOpen}>
-          <SheetContent side="bottom" className="flex h-dvh max-w-none flex-col gap-0 p-0">
+          <SheetContent side="bottom" className="flex max-w-none flex-col gap-0 p-0 pt-[env(safe-area-inset-top)] data-[side=bottom]:h-dvh">
             <SheetHeader className="shrink-0 border-b p-4">
               <SheetTitle>Choose a Template</SheetTitle>
             </SheetHeader>

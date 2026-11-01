@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useId, useState } from 'react'
 import { X } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label'
  
 export function TagListInput({ label, placeholder, values, onChange }: { label: string; placeholder: string; values: string[]; onChange: (values: string[]) => void }) {
   const [draft, setDraft] = useState('')
+  const inputId = useId()
 
   const addTag = () => {
     const value = draft.trim()
@@ -21,7 +22,7 @@ export function TagListInput({ label, placeholder, values, onChange }: { label: 
 
   return (
     <div className="flex flex-col gap-1.5">
-      <Label>{label}</Label>
+      <Label htmlFor={inputId}>{label}</Label>
       {values.length > 0 && (
         <div className="flex flex-wrap gap-1.5">
           {values.map((value) => (
@@ -35,6 +36,7 @@ export function TagListInput({ label, placeholder, values, onChange }: { label: 
         </div>
       )}
       <Input
+        id={inputId}
         value={draft}
         onChange={(event) => setDraft(event.target.value)}
         onKeyDown={(event) => {

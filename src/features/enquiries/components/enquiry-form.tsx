@@ -120,9 +120,9 @@ export function EnquiryForm({ intent = 'enquiry', entityName, interestOptions = 
 
       {interestOptions.length > 0 && (
         <div className="flex flex-col gap-1.5">
-          <Label>{interestLabel}</Label>
+          <Label htmlFor={field('interest')}>{interestLabel}</Label>
           <Select value={interest} onValueChange={(value) => setInterest(value ?? undefined)} items={interestOptions.map((option) => ({ value: option, label: option }))}>
-            <SelectTrigger className="w-full">
+            <SelectTrigger id={field('interest')} className="w-full">
               <SelectValue placeholder="Select one" />
             </SelectTrigger>
             <SelectContent>

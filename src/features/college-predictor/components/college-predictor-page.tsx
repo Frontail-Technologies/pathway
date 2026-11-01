@@ -125,7 +125,7 @@ export function CollegePredictorPage() {
             </ToolActionBar>
           </div>
 
-          <div className="lg:sticky lg:top-6">
+          <div className="lg:sticky lg:top-header-gap">
             <ProfileSummary draft={draft} onEdit={goToStep} />
           </div>
         </div>

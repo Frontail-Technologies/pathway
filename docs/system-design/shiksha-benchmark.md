@@ -183,3 +183,13 @@ All three entity types now share one model, `src/lib/detail-tabs.ts`. Each featu
 - **`/contact`**: the shared form with a Topic picker (general, report incorrect information, feedback, list/update an institution, privacy request…), plus shortcuts to counselling and the privacy policy. The legal pages already send people to "the Pathway contact page", which now exists. No email or address is shown because none is defined yet. **Add real contact details before launch.**
 - **Footer**: dead links (`/reviews`, `/admissions`, `/faq`, `/resources…`) now point to real pages. "Popular Categories" links to the stream hubs instead of `/colleges?stream=…` filters, which the colleges listing ignores.
 - **Verification**: a BFS crawl of the server-rendered site (231 URLs) and a browser pass over client-rendered listing cards both report **0 broken internal links**.
+
+## 11. Student tools audit (delivered)
+
+Each tool was driven end to end in phone web, app-shell and desktop with Playwright: college predictor (with and without `?exam=`), rank predictor, psychometric test, resume builder (from scratch and with sample data, through every step and the preview) and compare (remove, and swap a college through the picker). The results: no page errors, no horizontal overflow, and every result link loads.
+
+Fixed:
+- **Resume preview on phones was unusable.** The full-screen preview and template sheets grew to the resume's height (≈1300px), which pushed their header, including **Close**, off screen. The shared sheet sets `data-[side=bottom]:h-auto`, which overrode a plain `h-dvh`; the sheets now use `data-[side=bottom]:h-dvh` plus top safe-area padding.
+- **Desktop sidebars hidden under the header**: the predictor and psychometric summaries used `lg:top-6` (24px) under the 120px sticky header. They now use `lg:top-header-gap`.
+- **Labels not linked to inputs**: across the resume builder (shared input, personal details, descriptions, type selects, tag and skill inputs), the coaching enquiry form and the shared enquiry form. Screen readers can now announce each field, and tapping a label focuses it.
+- **Tool layout**: the student-tools layout reserved bottom-nav space without rendering the nav; it now matches the public pages. The tool page frame's minimum height uses `--pw-header-h` instead of a hard-coded 117px (wrong in app mode).

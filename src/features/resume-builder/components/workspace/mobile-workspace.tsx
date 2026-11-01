@@ -88,7 +88,7 @@ export function MobileWorkspace({ savedAt, step, data, onChange, templateId, onT
       </div>
 
       <Sheet open={previewOpen} onOpenChange={setPreviewOpen}>
-        <SheetContent side="bottom" showCloseButton={false} className="flex h-dvh max-w-none flex-col gap-0 border-0 p-0 sm:max-w-none">
+        <SheetContent side="bottom" showCloseButton={false} className="flex max-w-none flex-col gap-0 border-0 p-0 pt-[env(safe-area-inset-top)] data-[side=bottom]:h-dvh sm:max-w-none">
           <SheetHeader className="flex-row items-center justify-between gap-2 border-b p-3">
             <SheetTitle>Resume Preview</SheetTitle>
             <div className="flex items-center gap-2">

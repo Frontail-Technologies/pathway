@@ -129,7 +129,7 @@ export function PsychometricTestPage() {
               </ToolActionBar>
             </div>
 
-            <div className="lg:sticky lg:top-6">
+            <div className="lg:sticky lg:top-header-gap">
               <ToolSummaryCard title="Your Progress">
                 {rows.length === 0 ? (
                   <p className="mt-3 text-sm text-muted-foreground">Your answers will appear here as you go.</p>

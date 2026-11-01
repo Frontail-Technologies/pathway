@@ -41,9 +41,9 @@ export function ExperienceStep({ experience, onChange }: { experience: Experienc
           <LabeledInput label="Role" required value={entry.role} onChange={(value) => updateEntry(entry.id, { role: value })} />
 
           <div className="flex flex-col gap-1.5">
-            <Label>Type</Label>
+            <Label htmlFor={`${entry.id}-type`}>Type</Label>
             <Select value={entry.type} onValueChange={(value) => updateEntry(entry.id, { type: value as ExperienceType })} items={EXPERIENCE_TYPES.map((type) => ({ value: type, label: type }))}>
-              <SelectTrigger className="w-full">
+              <SelectTrigger id={`${entry.id}-type`} className="w-full">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent alignItemWithTrigger={false} side="bottom" align="start" sideOffset={4}>
@@ -68,8 +68,9 @@ export function ExperienceStep({ experience, onChange }: { experience: Experienc
           </label>
 
           <div className="sm:col-span-2">
-            <Label>Description / Responsibilities</Label>
+            <Label htmlFor={`${entry.id}-description`}>Description / Responsibilities</Label>
             <Textarea
+              id={`${entry.id}-description`}
               className="mt-1.5 min-h-20"
               value={entry.description}
               onChange={(event) => updateEntry(entry.id, { description: event.target.value })}

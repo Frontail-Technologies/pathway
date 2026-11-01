@@ -62,9 +62,9 @@ export function CoachingEnquiryForm({ provider, onSubmitted, compact = false }: 
       </div>
       {programOptions.length > 0 && (
         <div className="flex flex-col gap-1.5">
-          <Label>Interested In</Label>
+          <Label htmlFor={`enquiry-interest-${provider.slug}`}>Interested In</Label>
           <Select value={interestedIn} onValueChange={(value) => setInterestedIn(value ?? undefined)} items={programOptions.map((option) => ({ value: option, label: option }))}>
-            <SelectTrigger className="w-full">
+            <SelectTrigger id={`enquiry-interest-${provider.slug}`} className="w-full">
               <SelectValue placeholder="Select a program" />
             </SelectTrigger>
             <SelectContent>

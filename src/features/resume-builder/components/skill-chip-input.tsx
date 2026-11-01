@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useId, useState } from 'react'
 import { X } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -21,6 +21,7 @@ export function SkillChipInput({ skills, onChange }: { skills: SkillEntry[]; onC
 
 function SkillGroupInput({ group, skills, onChange }: { group: SkillGroupId; skills: SkillEntry[]; onChange: (skills: SkillEntry[]) => void }) {
   const [draft, setDraft] = useState('')
+  const inputId = useId()
   const groupSkills = skills.filter((skill) => skill.group === group)
 
   const addSkill = () => {
@@ -36,7 +37,7 @@ function SkillGroupInput({ group, skills, onChange }: { group: SkillGroupId; ski
 
   return (
     <div className="flex flex-col gap-1.5">
-      <Label>{group}</Label>
+      <Label htmlFor={inputId}>{group}</Label>
       {groupSkills.length > 0 && (
         <div className="flex flex-wrap gap-1.5">
           {groupSkills.map((skill) => (
@@ -55,6 +56,7 @@ function SkillGroupInput({ group, skills, onChange }: { group: SkillGroupId; ski
         </div>
       )}
       <Input
+        id={inputId}
         value={draft}
         onChange={(event) => setDraft(event.target.value)}
         onKeyDown={(event) => {

@@ -42,8 +42,9 @@ export function ProjectsStep({ projects, onChange }: { projects: ProjectEntry[];
           <LabeledInput label="GitHub Link" value={entry.githubLink ?? ''} onChange={(value) => updateEntry(entry.id, { githubLink: value })} placeholder="Optional" />
 
           <div className="sm:col-span-2">
-            <Label>Short Description</Label>
+            <Label htmlFor={`${entry.id}-description`}>Short Description</Label>
             <Textarea
+              id={`${entry.id}-description`}
               className="mt-1.5 min-h-20"
               value={entry.description}
               onChange={(event) => updateEntry(entry.id, { description: event.target.value })}

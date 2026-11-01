@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef } from 'react'
+import { cloneElement, isValidElement, useId, useRef, type ReactElement } from 'react'
 import Image from 'next/image'
 import { Camera } from 'lucide-react'
 import { Input } from '@/components/ui/input'
@@ -85,13 +85,17 @@ export function PersonalDetailsStep({ personal, onChange }: { personal: ResumePe
 }
 
 function Field({ label, required, children }: { label: string; required?: boolean; children: React.ReactNode }) {
+  // Link the label to the wrapped control so it is announced and tapping the label focuses it.
+  const generatedId = useId()
+  const control = isValidElement<{ id?: string; required?: boolean }>(children) ? children : null
+  const id = control?.props.id ?? generatedId
   return (
     <div className="flex flex-col gap-1.5">
-      <Label>
+      <Label htmlFor={id}>
         {label}
         {required && <span className="text-destructive"> *</span>}
       </Label>
-      {children}
+      {control ? cloneElement(control as ReactElement<{ id?: string; required?: boolean }>, { id, required: control.props.required ?? required }) : children}
     </div>
   )
 }
