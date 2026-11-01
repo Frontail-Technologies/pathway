@@ -34,7 +34,7 @@ Goal: give Pathway the clean, mobile-first structure that Shiksha.com is known f
 | College / course / exam detail | One long page with `#anchor` tabs (`/college/[slug]#placements`) | Not deep-linkable per topic, one large payload, and anchors don't get their own SEO pages. |
 | Mobile conversion | Enquiry sidebar is `hidden lg:block`, so **phones have no enquiry CTA** on detail pages | ✅ Fixed in phase 1: `MobileActionBar` on every detail page |
 | Data | Mock data in `features/*/data`; `services/api/client.ts` is a stub | Needs a real API layer before native and web can share data. |
-| Broken links | `/counselling`, `/search`, `/about`, `/contact` are linked but have no pages (404 on prefetch). Header search submitted to the missing `/search` | ✅ `/search` and `/counselling` built in phase 1. `/about` and `/contact` still missing |
+| Broken links | `/counselling`, `/search`, `/about`, `/contact` are linked but have no pages (404 on prefetch). Header search submitted to the missing `/search` | ✅ All fixed: `/search` and `/counselling` (phase 1), `/about` and `/contact` (§10). A full crawl of 231 URLs finds no broken internal links |
 | WebView readiness | *Fixed in this change (see §4)* | — |
 
 ## 3. Target structure
@@ -176,3 +176,10 @@ All three entity types now share one model, `src/lib/detail-tabs.ts`. Each featu
 - **"View all"** links reuse each listing's own filter serializer (e.g. `/courses?stream=engineering`, `/exams?area=medical`, `/coaching?exam=cat,xat`). The colleges listing has no URL filters yet, so it links unfiltered.
 - **Entry points**: a "What do you want to study?" picker on the home page, a Streams group at the top of the mobile menu, and streams as the first result type in `/search`.
 - **Bug fix**: the mobile menu stayed open after tapping a link. It now closes on navigation, including taps on the current page.
+
+## 10. About, Contact and a dead-link sweep (delivered)
+
+- **`/about`**: what Pathway offers (linked to each area) and how information is handled: self-reported figures are labelled, official sources come first, and previews are marked as previews. It has no invented statistics, team or company details.
+- **`/contact`**: the shared form with a Topic picker (general, report incorrect information, feedback, list/update an institution, privacy request…), plus shortcuts to counselling and the privacy policy. The legal pages already send people to "the Pathway contact page", which now exists. No email or address is shown because none is defined yet. **Add real contact details before launch.**
+- **Footer**: dead links (`/reviews`, `/admissions`, `/faq`, `/resources…`) now point to real pages. "Popular Categories" links to the stream hubs instead of `/colleges?stream=…` filters, which the colleges listing ignores.
+- **Verification**: a BFS crawl of the server-rendered site (231 URLs) and a browser pass over client-rendered listing cards both report **0 broken internal links**.
