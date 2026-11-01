@@ -5,7 +5,6 @@ import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import {
   Award,
-  Bookmark,
   BookOpen,
   Briefcase,
   Building2,
@@ -160,14 +159,19 @@ export function MobileNavigation() {
   )
 }
 
+/**
+ * Rule: every tab must open a top-level page that renders this bar (the public
+ * or student-tools layouts). Tabs into nested areas with their own layout,
+ * such as /student/* or /tutor-dashboard/*, make the bar disappear.
+ */
 export function MobileBottomNavigation() {
   const pathname = usePathname()
   const items = [
     { label: 'Home', href: '/', icon: House },
     { label: 'Colleges', href: '/colleges', icon: Building2 },
     { label: 'Courses', href: '/courses', icon: BookOpen },
-    { label: 'Saved', href: '/student/saved', icon: Bookmark },
-    { label: 'Profile', href: '/student/profile', icon: UserRound },
+    { label: 'Exams', href: '/exams', icon: FileText },
+    { label: 'Search', href: '/search', icon: Search },
   ]
   return (
     <nav aria-label="Mobile navigation" className="web-chrome fixed inset-x-0 bottom-0 z-20 border-t bg-card pt-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] md:hidden">
