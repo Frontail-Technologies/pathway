@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useEffect, useState } from 'react'
 import {
   Award,
   Bookmark,
@@ -24,6 +25,7 @@ import {
 import { Sheet, SheetClose, SheetContent, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
 import { Button } from '@/components/ui/button'
 import { Logo } from '@/components/shared/logo'
+import { streams } from '@/features/streams/data/stream-taxonomy'
 
 const navGroups = [
   {
@@ -54,9 +56,15 @@ const navGroups = [
 
 export function MobileNavigation() {
   const pathname = usePathname()
+  const [open, setOpen] = useState(false)
+
+  // Close the menu once a link navigates; otherwise it stays over the new page.
+  useEffect(() => {
+    setOpen(false)
+  }, [pathname])
 
   return (
-    <Sheet>
+    <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger
         render={
           <Button
@@ -69,7 +77,7 @@ export function MobileNavigation() {
       >
         <Menu className="size-5" />
       </SheetTrigger>
-      <SheetContent side="left" showCloseButton={false} className="flex w-[min(86vw,350px)] flex-col gap-0 p-0">
+      <SheetContent side="left" showCloseButton={false} onClick={(event) => { if ((event.target as Element).closest("a[href]")) setOpen(false) }} className="flex w-[min(86vw,350px)] flex-col gap-0 p-0">
         <SheetTitle className="sr-only">Navigation menu</SheetTitle>
 
         <div className="flex h-14 shrink-0 items-center justify-between border-b px-4">
@@ -86,6 +94,26 @@ export function MobileNavigation() {
             <Search className="size-4 shrink-0" aria-hidden="true" />
             Search colleges, courses...
           </Link>
+
+          <div className="mb-5">
+            <p className="mb-1.5 px-3 text-xs font-semibold tracking-wider text-muted-foreground uppercase">Streams</p>
+            <nav aria-label="Streams" className="grid grid-cols-2 gap-1.5 px-1">
+              {streams.map((stream) => {
+                const isActive = pathname === `/${stream.slug}`
+                return (
+                  <Link
+                    key={stream.slug}
+                    href={`/${stream.slug}`}
+                    aria-current={isActive ? 'page' : undefined}
+                    className={`flex h-11 items-center gap-2 rounded-md border px-2.5 text-[13px] outline-none transition-colors focus-visible:ring-2 focus-visible:ring-primary/40 ${isActive ? 'border-primary bg-secondary font-semibold text-primary' : 'bg-card font-medium text-foreground hover:border-primary hover:text-primary'}`}
+                  >
+                    <stream.icon className="size-4 shrink-0 text-primary" aria-hidden="true" />
+                    {stream.name}
+                  </Link>
+                )
+              })}
+            </nav>
+          </div>
 
           {navGroups.map((group) => (
             <div key={group.title} className="mb-5 last:mb-0">

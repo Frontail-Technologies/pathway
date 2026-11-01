@@ -8,10 +8,13 @@ import { getScholarshipDetail } from '@/features/scholarships/data/scholarship-d
 import { coachingProviders } from '@/features/coaching/data/coaching'
 import { tutors } from '@/features/tutors/data/tutors'
 import { getPublishedNotes } from '@/features/notes/data/notes'
+// Taxonomy only (not stream-hub): the hub builder reads this index, so importing it here would recurse.
+import { streams } from '@/features/streams/data/stream-taxonomy'
 
-export type SearchKind = 'college' | 'course' | 'exam' | 'scholarship' | 'coaching' | 'tutor' | 'note' | 'tool'
+export type SearchKind = 'stream' | 'college' | 'course' | 'exam' | 'scholarship' | 'coaching' | 'tutor' | 'note' | 'tool'
 
 export const searchKinds: { kind: SearchKind; label: string; plural: string }[] = [
+  { kind: 'stream', label: 'Stream', plural: 'Streams' },
   { kind: 'college', label: 'College', plural: 'Colleges' },
   { kind: 'course', label: 'Course', plural: 'Courses' },
   { kind: 'exam', label: 'Exam', plural: 'Exams' },
@@ -49,6 +52,14 @@ let cached: SearchEntry[] | null = null
 export function getSearchIndex(): SearchEntry[] {
   if (cached) return cached
   cached = [
+    ...streams.map((s) => ({
+      id: `stream-${s.slug}`,
+      kind: 'stream' as const,
+      title: s.name,
+      subtitle: `${s.tagline} · colleges, courses, exams`,
+      href: `/${s.slug}`,
+      keywords: s.examKeywords.join(' '),
+    })),
     ...colleges.map((c) => ({
       id: c.id,
       kind: 'college' as const,

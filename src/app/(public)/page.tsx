@@ -1,4 +1,5 @@
 import { HeroSection } from '@/features/home/components/hero-section'
+import { StreamPickerSection } from '@/features/home/components/stream-picker-section'
 import { DiscoveryToolsSection } from '@/features/home/components/discovery-tools-section'
 import { AdmissionsBanner } from '@/features/home/components/admissions-banner'
 import { TopExamsSection } from '@/features/home/components/top-exams-section'
@@ -14,6 +15,7 @@ export default function PublicHomePage() {
   return (
     <>
       <HeroSection />
+      <StreamPickerSection />
       <DiscoveryToolsSection />
       <AdmissionsBanner />
       <TopExamsSection />

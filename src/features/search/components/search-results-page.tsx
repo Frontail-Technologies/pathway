@@ -1,19 +1,9 @@
 import Link from 'next/link'
-import { Award, BookOpen, ChevronRight, FileText, Landmark, Library, Presentation, Search, UserRound, Wrench, type LucideIcon } from 'lucide-react'
+import { Award, BookOpen, ChevronRight, FileText, Landmark, Search } from 'lucide-react'
+import { SearchResultRow } from './search-result-row'
 import { Button } from '@/components/ui/button'
 import { Container } from '@/components/shared/container'
-import { popularSearches, searchEntries, searchKinds, type SearchEntry, type SearchKind } from '../data/search-index'
-
-const kindIcons: Record<SearchKind, LucideIcon> = {
-  college: Landmark,
-  course: BookOpen,
-  exam: FileText,
-  scholarship: Award,
-  coaching: Presentation,
-  tutor: UserRound,
-  note: Library,
-  tool: Wrench,
-}
+import { popularSearches, searchEntries, searchKinds, type SearchKind } from '../data/search-index'
 
 const GROUP_PREVIEW = 4
 
@@ -21,24 +11,6 @@ function searchHref(q: string, type?: SearchKind) {
   const params = new URLSearchParams({ q })
   if (type) params.set('type', type)
   return `/search?${params.toString()}`
-}
-
-function ResultRow({ entry }: { entry: SearchEntry }) {
-  const Icon = kindIcons[entry.kind]
-  return (
-    <li>
-      <Link href={entry.href} className="group flex min-h-16 items-center gap-3 px-4 py-3 outline-none transition-colors hover:bg-secondary/60 focus-visible:bg-secondary active:bg-secondary">
-        <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-secondary text-primary">
-          <Icon className="size-5" aria-hidden="true" />
-        </span>
-        <span className="min-w-0 flex-1">
-          <span className="block truncate text-sm font-semibold text-foreground group-hover:text-primary">{entry.title}</span>
-          <span className="block truncate text-xs text-muted-foreground">{entry.subtitle}</span>
-        </span>
-        <ChevronRight className="size-4 shrink-0 text-muted-foreground/60" aria-hidden="true" />
-      </Link>
-    </li>
-  )
 }
 
 function SuggestionChips({ title }: { title: string }) {
@@ -137,7 +109,7 @@ export function SearchResultsPage({ query, type }: { query: string; type?: Searc
                     </h2>
                     <ul className="divide-y">
                       {shown.map((entry) => (
-                        <ResultRow key={entry.id} entry={entry} />
+                        <SearchResultRow key={entry.id} entry={entry} />
                       ))}
                     </ul>
                     {shown.length < group.length && (

@@ -30,7 +30,7 @@ Goal: give Pathway the clean, mobile-first structure that Shiksha.com is known f
 
 | Area | Today | Gap |
 |------|-------|-----|
-| Information architecture | Entity first: `/colleges`, `/courses`, `/exams` | No **stream** layer, so users can't land on a focused "Engineering" or "MBA" hub. |
+| Information architecture | Entity first: `/colleges`, `/courses`, `/exams` | ✅ Stream hubs added in phase 3 |
 | College / course / exam detail | One long page with `#anchor` tabs (`/college/[slug]#placements`) | Not deep-linkable per topic, one large payload, and anchors don't get their own SEO pages. |
 | Mobile conversion | Enquiry sidebar is `hidden lg:block`, so **phones have no enquiry CTA** on detail pages | ✅ Fixed in phase 1: `MobileActionBar` on every detail page |
 | Data | Mock data in `features/*/data`; `services/api/client.ts` is a stub | Needs a real API layer before native and web can share data. |
@@ -111,7 +111,7 @@ Implement the college sub-pages with one shared **`app/(public)/college/[slug]/l
 | 0 | WebView foundation | ✅ This change |
 | 1 | Mobile sticky action bar on every detail page; shared enquiry / brochure / counselling form; `/search` and `/counselling` | ✅ Done — see §6 |
 | 2 | College sub-routes (`/college/[slug]/…`) with a shared layout and tab bar; then exam and course | ✅ Colleges, exams and courses done (§7–8) |
-| 3 | Stream layer (`/[stream]` hubs, stream-scoped listings, stream-aware nav and home) | Needs a stream taxonomy in the data model |
+| 3 | Stream layer (`/[stream]` hubs, stream-aware nav and home) | ✅ Done (§9). Stream-scoped listing routes not built; hubs link to filtered listings instead |
 | 4 | Real API in `services/api` (shared by web and native), ISR on detail pages | Replace mock `features/*/data` |
 | 5 | Two-way bridge: native → web (auth token handoff, save/shortlist sync, share sheet) | Extend `NativeMessage` and add a `window.PathwayWeb` receiver |
 
@@ -167,3 +167,12 @@ All three entity types now share one model, `src/lib/detail-tabs.ts`. Each featu
 - **Shared components**: `DetailTabNav`, `DetailTabBreadcrumbs`, `DetailTabLinks`, `LegacyAnchorRedirect`.
 - **Legacy anchors**: `#syllabus` goes to `/pattern` (exam). For courses, `#specializations` goes to `/syllabus`, `#exams` to `/eligibility`, and `#related` to the overview.
 - Scholarship, coaching and tutor pages stay single-page (short content), and still use `DetailSectionNav`.
+
+## 9. Phase 3 — stream hubs (delivered)
+
+- **Taxonomy** (`features/streams/data/stream-taxonomy.ts`): Engineering, Management, Medical, Law, Science and Commerce. Each source tags subject area differently, so each stream maps explicitly to `course.stream`, `exam.studyArea`, `college.degree`, `scholarship.streams`, and the exam names used to match coaching and tutors. The file holds no data, so client components (the mobile menu) can import it cheaply.
+- **Hub builder** (`stream-hub.ts`) assembles the sections: courses, entrance exams, colleges, predictors & tools, scholarships, coaching and tutors. It reuses search-index entries, so titles and links match search results and never point at a 404. Empty sections are dropped. **A stream is published only with content in ≥ 2 sections** (all six qualify today; Design was left out for lack of data).
+- **Route** `/[stream]` (`app/(public)/[stream]/page.tsx`): statically generated with `dynamicParams = false`. Existing static routes (`/colleges`, `/search` …) take precedence, and any other top-level path still 404s. **Never add a static route named after a stream slug.**
+- **"View all"** links reuse each listing's own filter serializer (e.g. `/courses?stream=engineering`, `/exams?area=medical`, `/coaching?exam=cat,xat`). The colleges listing has no URL filters yet, so it links unfiltered.
+- **Entry points**: a "What do you want to study?" picker on the home page, a Streams group at the top of the mobile menu, and streams as the first result type in `/search`.
+- **Bug fix**: the mobile menu stayed open after tapping a link. It now closes on navigation, including taps on the current page.
