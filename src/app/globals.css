@@ -171,7 +171,7 @@ h1, h2, h3, h4, h5, h6 { font-family: var(--font-manrope), sans-serif; letter-sp
 @utility scroll-mt-section { scroll-margin-top: calc(var(--pw-header-h) + var(--pw-section-nav-h)); }
 .pw-bottom-nav-space { padding-bottom: var(--pw-bottom-nav-h); }
 /* Student space has its own 56px header (no search row). */
-.pw-student-shell { --pw-header-h: 56px; }
+.pw-student-shell, .pw-dashboard-shell { --pw-header-h: 56px; }
 
 /*
  * App-shell (native WebView) mode — see src/lib/app-shell.
@@ -188,7 +188,8 @@ h1, h2, h3, h4, h5, h6 { font-family: var(--font-manrope), sans-serif; letter-sp
   -webkit-text-size-adjust: 100%;
   overscroll-behavior-y: none;
 }
-:root[data-app-shell] .pw-student-shell { --pw-header-h: env(safe-area-inset-top); }
+:root[data-app-shell] .pw-student-shell,
+:root[data-app-shell] .pw-dashboard-shell { --pw-header-h: env(safe-area-inset-top); }
 :root[data-app-shell] body { padding-top: env(safe-area-inset-top); }
 :root[data-app-shell] a,
 :root[data-app-shell] button { touch-action: manipulation; -webkit-touch-callout: none; }

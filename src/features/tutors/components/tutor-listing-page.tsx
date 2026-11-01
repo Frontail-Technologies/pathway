@@ -193,6 +193,15 @@ export function TutorListingPage() {
                 <ArrowRight className="size-4" aria-hidden="true" />
               </Button>
             </div>
+            <div className="mt-3 flex flex-wrap items-center gap-3 rounded-[12px] border bg-card p-5">
+              <div className="min-w-0 flex-1">
+                <p className="text-sm font-semibold text-foreground">Are you a tutor?</p>
+                <p className="mt-0.5 text-xs leading-5 text-muted-foreground">Manage your profile, weekly availability and session requests in Tutor Space.</p>
+              </div>
+              <Button variant="outline" className="h-10 px-5 font-semibold" nativeButton={false} render={<Link href="/tutor-dashboard" />}>
+                Open Tutor Space
+              </Button>
+            </div>
           </section>
         </div>
       </Container>

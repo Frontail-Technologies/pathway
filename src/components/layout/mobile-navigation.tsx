@@ -12,6 +12,7 @@ import {
   ChevronRight,
   FileText,
   Globe,
+  GraduationCap,
   House,
   Info,
   Landmark,
@@ -50,6 +51,7 @@ const navGroups = [
     items: [
       { label: 'Resources', href: '/notes', icon: Library },
       { label: 'About', href: '/about', icon: Info },
+      { label: 'Tutor Space', href: '/tutor-dashboard', icon: GraduationCap },
     ],
   },
 ] as const

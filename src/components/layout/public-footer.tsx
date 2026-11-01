@@ -9,6 +9,7 @@ const footerGroups = [
     links: [
       { label: 'About', href: '/about' },
       { label: 'Contact', href: '/contact' },
+      { label: 'For Tutors', href: '/tutor-dashboard' },
       { label: 'Careers', href: '/careers' },
       { label: 'Privacy', href: '/privacy' },
       { label: 'Terms', href: '/terms' },

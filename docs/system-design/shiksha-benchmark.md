@@ -193,3 +193,19 @@ Fixed:
 - **Desktop sidebars hidden under the header**: the predictor and psychometric summaries used `lg:top-6` (24px) under the 120px sticky header. They now use `lg:top-header-gap`.
 - **Labels not linked to inputs**: across the resume builder (shared input, personal details, descriptions, type selects, tag and skill inputs), the coaching enquiry form and the shared enquiry form. Screen readers can now announce each field, and tapping a label focuses it.
 - **Tool layout**: the student-tools layout reserved bottom-nav space without rendering the nav; it now matches the public pages. The tool page frame's minimum height uses `--pw-header-h` instead of a hard-coded 117px (wrong in app mode).
+
+## 12. Tutor Space — tutor dashboard (delivered, frontend demo)
+
+`/tutor-dashboard` is the signed-in area where a tutor manages their Pathway presence. Like the student space it is frontend-only: a separate demo sign-in, with everything stored on the device (`pathway.tutorAuth.demo.v1`, `pathway.tutorSpace.demo.v1`). The demo account is the existing public tutor **Arjun Sharma**, so "View public profile" opens a real page.
+
+| Page | What it does |
+|------|--------------|
+| Overview | Welcome, an "Accepting new students" switch, stats (new requests, active students, weekly slots) computed from local state, a profile-strength checklist linking to what's missing, and the latest new requests |
+| Profile | Name, city, headline, introduction, subjects, exam prep, class levels, modes and languages, with validation, a sticky Save/Discard bar and a **live preview** of the tutor's listing card (`TutorResultCard`, made `inert`) |
+| Availability | A 7-day × morning/afternoon/evening grid of toggles with presets; it saves automatically and fits a 320px phone |
+| Session requests | New / Accepted / Declined / All filters, with Accept, Decline and Undo. Requests are **labelled sample data**, because public session requests are not live yet |
+| Settings | Notification switches, account details, Reset demo data, Log out |
+
+- **Layout** (`features/tutor-space/components/tutor-space-layout.tsx`) mirrors the student space: a 56px header (hidden in app-shell mode), a sticky phone tab strip (`DetailTabNav`), a desktop sidebar with a new-request badge, and `.pw-dashboard-shell` scoping the header token.
+- **Entry points**: "Open Tutor Space" on `/tutors`, "For Tutors" in the footer, and "Tutor Space" in the mobile menu.
+- **Not built (needs a backend)**: real tutor accounts and onboarding, publishing profile edits to the public page, real requests from students, and messaging.

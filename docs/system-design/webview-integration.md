@@ -76,7 +76,7 @@ webView.addJavascriptInterface(object {
 - **Log out** is on the dashboard's Account card, because the header menu that also holds it is hidden in the app.
 - `.pw-student-shell` scopes `--pw-header-h` to the 56px student header (safe area only in the app), so sticky tabs and section jumps line up.
 - Sign-in is still a local demo (`localStorage`). Real auth handoff from the native app is phase 5.
-- **There is no tutor dashboard.** Tutors exist as public profiles and in the admin area only.
+- **Tutor Space (`/tutor-dashboard/*`)** works the same way: its header is hidden in the app, a sticky tab strip appears on phones, and Log out is on the Settings page. It has its own demo sign-in, separate from the student account.
 
 ## 6. Planned (not yet implemented)
 Native → web messages (auth token handoff, shortlist sync, theme), sticky action bar events (`apply`, `brochure`), and a share-sheet request. Add new types to `NativeMessage` and bump `BRIDGE_PROTOCOL_VERSION` for breaking changes.
