@@ -5,6 +5,9 @@ import { Breadcrumbs } from '@/components/shared/breadcrumbs'
 import { DetailSectionNav } from '@/components/shared/detail-section-nav'
 import { DetailStickySidebar } from '@/components/shared/detail-sticky-sidebar'
 import { useSavedItem } from '@/features/saved/saved-items-provider'
+import { MobileActionBar, MobileActionBarSave } from '@/components/shared/mobile-action-bar'
+import { EnquiryDialog } from '@/features/enquiries/components/enquiry-dialog'
+import { Button } from '@/components/ui/button'
 import type { ScholarshipDetailData } from '../data/scholarship-detail'
 import { ScholarshipIdentityHeader } from './scholarship-identity-header'
 import { ScholarshipOpportunitySnapshot } from './scholarship-opportunity-snapshot'
@@ -82,6 +85,21 @@ export function ScholarshipDetailPage({ scholarship }: { scholarship: Scholarshi
           </DetailStickySidebar>
         </div>
       </Container>
+
+      <MobileActionBar label={`${scholarship.name} actions`}>
+        <MobileActionBarSave saved={saved} onToggle={toggleSaved} entityLabel="scholarship" />
+        <EnquiryDialog
+          intent="counselling"
+          entityName={scholarship.name}
+          description={`Get help checking eligibility and applying for ${scholarship.name}.`}
+          trigger={<Button variant={scholarship.officialApplyUrl ? 'outline' : 'cta'} className="h-11 flex-1 px-3 text-sm font-semibold">Get Help</Button>}
+        />
+        {scholarship.officialApplyUrl && (
+          <Button variant="cta" className="h-11 flex-1 px-3 text-sm font-semibold" nativeButton={false} render={<a href={scholarship.officialApplyUrl} target="_blank" rel="noopener noreferrer" />}>
+            Official Apply
+          </Button>
+        )}
+      </MobileActionBar>
     </div>
   )
 }

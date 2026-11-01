@@ -32,9 +32,9 @@ Goal: give Pathway the clean, mobile-first structure that Shiksha.com is known f
 |------|-------|-----|
 | Information architecture | Entity first: `/colleges`, `/courses`, `/exams` | No **stream** layer, so users can't land on a focused "Engineering" or "MBA" hub. |
 | College / course / exam detail | One long page with `#anchor` tabs (`/college/[slug]#placements`) | Not deep-linkable per topic, one large payload, and anchors don't get their own SEO pages. |
-| Mobile conversion | Enquiry sidebar is `hidden lg:block`, so **phones have no enquiry CTA** on detail pages | Needs a Shiksha-style sticky bottom action bar. |
+| Mobile conversion | Enquiry sidebar is `hidden lg:block`, so **phones have no enquiry CTA** on detail pages | ✅ Fixed in phase 1: `MobileActionBar` on every detail page |
 | Data | Mock data in `features/*/data`; `services/api/client.ts` is a stub | Needs a real API layer before native and web can share data. |
-| Broken links | `/counselling`, `/search`, `/about`, `/contact` are linked but have no pages (404 on prefetch) | Build these pages or remove the links. |
+| Broken links | `/counselling`, `/search`, `/about`, `/contact` are linked but have no pages (404 on prefetch). Header search submitted to the missing `/search` | ✅ `/search` and `/counselling` built in phase 1. `/about` and `/contact` still missing |
 | WebView readiness | *Fixed in this change (see §4)* | — |
 
 ## 3. Target structure
@@ -109,8 +109,25 @@ Implement the college sub-pages with one shared **`app/(public)/college/[slug]/l
 | Phase | Scope | Notes |
 |-------|-------|-------|
 | 0 | WebView foundation | ✅ This change |
-| 1 | Mobile sticky action bar on college / course / exam / scholarship detail; build `/counselling` and `/search` | Biggest conversion gap on phones |
+| 1 | Mobile sticky action bar on every detail page; shared enquiry / brochure / counselling form; `/search` and `/counselling` | ✅ Done — see §6 |
 | 2 | College sub-routes (`/college/[slug]/…`) with a shared layout and tab bar; then exam and course | Deep links + SEO; reuses existing sections |
 | 3 | Stream layer (`/[stream]` hubs, stream-scoped listings, stream-aware nav and home) | Needs a stream taxonomy in the data model |
 | 4 | Real API in `services/api` (shared by web and native), ISR on detail pages | Replace mock `features/*/data` |
 | 5 | Two-way bridge: native → web (auth token handoff, save/shortlist sync, share sheet) | Extend `NativeMessage` and add a `window.PathwayWeb` receiver |
+
+## 6. Phase 1 — delivered
+
+- **`MobileActionBar`** (`components/shared/mobile-action-bar.tsx`): sticky below `lg`, directly above the bottom nav (or the safe area in app mode), with a spacer so content isn't hidden.
+
+  | Page | Actions |
+  |------|---------|
+  | College | Save · Brochure · **Enquire Now** |
+  | Course | Save · View Colleges · **Free Counselling** |
+  | Exam | Predict Rank · **Predict Colleges** (falls back to counselling) |
+  | Scholarship | Save · Get Help · **Official Apply** |
+  | Coaching | Save · **Enquire Now** |
+  | Tutor | Save · Request Session (coming soon, same as desktop) |
+
+- **Shared lead form** (`features/enquiries/components/enquiry-form.tsx` and `enquiry-dialog.tsx`) with three intents: `enquiry`, `brochure` (email required) and `counselling`. It validates a 10-digit Indian mobile number (accepting a +91 prefix) and shows inline errors. It is demo only: nothing is sent and a toast confirms. The college page's previously inert desktop "Enquire Now" / "Download Brochure" buttons now open it.
+- **`/search`**: one index across colleges, courses, exams, scholarships, coaching, tutors, notes and tools, with word-prefix matching and title-weighted ranking. It has type chips with counts, groups of 4 with "See all", and empty/no-result states. Results link to a detail page when one exists, otherwise to the listing pre-filtered with `?q=` (never a 404). The page is `noindex`.
+- **`/counselling`**: hero with the call-back form, how it works, topics and FAQs.

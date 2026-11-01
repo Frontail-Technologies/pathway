@@ -5,6 +5,9 @@ import { Breadcrumbs } from '@/components/shared/breadcrumbs'
 import { DetailSectionNav } from '@/components/shared/detail-section-nav'
 import { DetailStickySidebar } from '@/components/shared/detail-sticky-sidebar'
 import { useSavedItem } from '@/features/saved/saved-items-provider'
+import { MobileActionBar, MobileActionBarSave } from '@/components/shared/mobile-action-bar'
+import { Button } from '@/components/ui/button'
+import { CoachingEnquiryDialog } from './coaching-enquiry-dialog'
 import type { CoachingProvider } from '../data/coaching'
 import { CoachingIdentityHero } from './coaching-identity-hero'
 import { CoachingAboutSection } from './coaching-about-section'
@@ -86,6 +89,11 @@ export function CoachingDetailPage({ provider }: { provider: CoachingProvider })
       <Container className="px-4">
         <CoachingDetailCta provider={provider} saved={saved} onToggleSaved={toggleSaved} />
       </Container>
+
+      <MobileActionBar label={`${provider.name} actions`}>
+        <MobileActionBarSave saved={saved} onToggle={toggleSaved} entityLabel="provider" />
+        <CoachingEnquiryDialog provider={provider} trigger={<Button variant="cta" className="h-11 flex-1 px-3 text-sm font-semibold">Enquire Now</Button>} />
+      </MobileActionBar>
     </div>
   )
 }

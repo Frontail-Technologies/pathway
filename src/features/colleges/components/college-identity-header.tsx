@@ -8,6 +8,7 @@ import { SponsoredBadge } from '@/components/shared/sponsored-badge'
 import { DetailIdentityHero } from '@/components/shared/detail-identity-hero'
 import { DetailQuickFacts, type DetailQuickFact } from '@/components/shared/detail-quick-facts'
 import { useSavedItem } from '@/features/saved/saved-items-provider'
+import { EnquiryDialog } from '@/features/enquiries/components/enquiry-dialog'
 import type { CollegeDetailData } from '../data/college-detail'
 import { CollegeGallery } from './college-gallery'
 
@@ -57,12 +58,19 @@ export function CollegeIdentityHeader({ college }: { college: CollegeDetailData 
       }
       actions={
         <>
-          <Button variant="cta" className="h-11 px-6 text-sm font-semibold sm:h-10">
-            Enquire Now
-          </Button>
-          <Button variant="outline" className="h-11 px-6 text-sm font-semibold sm:h-10">
-            Download Brochure
-          </Button>
+          <EnquiryDialog
+            entityName={college.name}
+            interestOptions={college.courses.map((course) => course.name)}
+            interestLabel="Course"
+            trigger={<Button variant="cta" className="h-11 px-6 text-sm font-semibold sm:h-10">Enquire Now</Button>}
+          />
+          <EnquiryDialog
+            intent="brochure"
+            entityName={college.name}
+            interestOptions={college.courses.map((course) => course.name)}
+            interestLabel="Course"
+            trigger={<Button variant="outline" className="h-11 px-6 text-sm font-semibold sm:h-10">Download Brochure</Button>}
+          />
           <div className="flex items-center gap-1 sm:ml-1">
             <button
               type="button"

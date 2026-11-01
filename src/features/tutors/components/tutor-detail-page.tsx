@@ -6,6 +6,7 @@ import { Breadcrumbs } from '@/components/shared/breadcrumbs'
 import { DetailQuickFacts, type DetailQuickFact } from '@/components/shared/detail-quick-facts'
 import { DetailSectionNav, type DetailSectionNavItem } from '@/components/shared/detail-section-nav'
 import { DetailStickySidebar } from '@/components/shared/detail-sticky-sidebar'
+import { TutorActionBar } from './tutor-action-bar'
 import { HorizontalContentRail } from '@/components/shared/horizontal-content-rail'
 import { Button } from '@/components/ui/button'
 import { getRelatedTutors, teachingSteps, type Tutor, type TutorDetail } from '../data/tutors'
@@ -346,6 +347,7 @@ export function TutorDetailPage({ tutor }: { tutor: DetailedTutor }) {
 
       <RelatedTutorsSection tutor={tutor} />
       <FinalCta />
+      <TutorActionBar tutorSlug={tutor.slug} tutorName={tutor.name} />
     </div>
   )
 }

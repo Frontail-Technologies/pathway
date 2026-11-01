@@ -1,0 +1,158 @@
+import Link from 'next/link'
+import { Award, BookOpen, ChevronRight, FileText, Landmark, Library, Presentation, Search, UserRound, Wrench, type LucideIcon } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Container } from '@/components/shared/container'
+import { popularSearches, searchEntries, searchKinds, type SearchEntry, type SearchKind } from '../data/search-index'
+
+const kindIcons: Record<SearchKind, LucideIcon> = {
+  college: Landmark,
+  course: BookOpen,
+  exam: FileText,
+  scholarship: Award,
+  coaching: Presentation,
+  tutor: UserRound,
+  note: Library,
+  tool: Wrench,
+}
+
+const GROUP_PREVIEW = 4
+
+function searchHref(q: string, type?: SearchKind) {
+  const params = new URLSearchParams({ q })
+  if (type) params.set('type', type)
+  return `/search?${params.toString()}`
+}
+
+function ResultRow({ entry }: { entry: SearchEntry }) {
+  const Icon = kindIcons[entry.kind]
+  return (
+    <li>
+      <Link href={entry.href} className="group flex min-h-16 items-center gap-3 px-4 py-3 outline-none transition-colors hover:bg-secondary/60 focus-visible:bg-secondary active:bg-secondary">
+        <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-secondary text-primary">
+          <Icon className="size-5" aria-hidden="true" />
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className="block truncate text-sm font-semibold text-foreground group-hover:text-primary">{entry.title}</span>
+          <span className="block truncate text-xs text-muted-foreground">{entry.subtitle}</span>
+        </span>
+        <ChevronRight className="size-4 shrink-0 text-muted-foreground/60" aria-hidden="true" />
+      </Link>
+    </li>
+  )
+}
+
+function SuggestionChips({ title }: { title: string }) {
+  return (
+    <div>
+      <p className="text-sm font-semibold text-foreground">{title}</p>
+      <div className="mt-3 flex flex-wrap gap-2">
+        {popularSearches.map((term) => (
+          <Link key={term} href={searchHref(term)} className="rounded-full border bg-card px-3.5 py-2 text-sm font-medium text-foreground outline-none transition-colors hover:border-primary hover:text-primary focus-visible:ring-2 focus-visible:ring-primary/40">
+            {term}
+          </Link>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+export function SearchResultsPage({ query, type }: { query: string; type?: SearchKind }) {
+  const results = searchEntries(query)
+  const counts = new Map<SearchKind, number>()
+  for (const entry of results) counts.set(entry.kind, (counts.get(entry.kind) ?? 0) + 1)
+  const activeType = type && counts.has(type) ? type : undefined
+  const visibleKinds = searchKinds.filter(({ kind }) => counts.has(kind))
+
+  return (
+    <Container className="px-4 py-5 lg:py-8">
+      <div className="mx-auto max-w-3xl">
+        <h1 className="font-heading text-xl font-bold text-foreground sm:text-2xl">{query ? <>Results for &ldquo;{query}&rdquo;</> : 'Search Pathway'}</h1>
+
+        <form action="/search" role="search" className="mt-4 flex h-12 items-center gap-2 rounded-[12px] border bg-card pr-1 pl-3.5 transition-colors focus-within:border-primary">
+          <Search className="size-4.5 shrink-0 text-muted-foreground" aria-hidden="true" />
+          <input name="q" type="search" defaultValue={query} autoFocus={!query} enterKeyHint="search" aria-label="Search colleges, courses, exams and more" placeholder="Colleges, courses, exams…" className="h-full min-w-0 flex-1 bg-transparent text-[15px] outline-none placeholder:text-muted-foreground" />
+          <Button type="submit" variant="cta" className="h-10 px-5 text-sm font-semibold">
+            Search
+          </Button>
+        </form>
+
+        {!query && (
+          <div className="mt-8 flex flex-col gap-8">
+            <SuggestionChips title="Popular searches" />
+            <div>
+              <p className="text-sm font-semibold text-foreground">Browse by category</p>
+              <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
+                {[
+                  { label: 'Colleges', href: '/colleges', icon: Landmark },
+                  { label: 'Courses', href: '/courses', icon: BookOpen },
+                  { label: 'Exams', href: '/exams', icon: FileText },
+                  { label: 'Scholarships', href: '/scholarships', icon: Award },
+                ].map(({ label, href, icon: Icon }) => (
+                  <Link key={href} href={href} className="flex h-14 items-center gap-2.5 rounded-[10px] border bg-card px-3.5 text-sm font-semibold text-foreground outline-none transition-colors hover:border-primary hover:text-primary focus-visible:ring-2 focus-visible:ring-primary/40">
+                    <Icon className="size-4.5 text-primary" aria-hidden="true" />
+                    {label}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {query && results.length === 0 && (
+          <div className="mt-8 flex flex-col gap-8">
+            <div className="rounded-[12px] border border-dashed bg-card p-6 text-center">
+              <p className="font-heading font-bold text-foreground">No matches for &ldquo;{query}&rdquo;</p>
+              <p className="mt-1 text-sm text-muted-foreground">Check the spelling, try a shorter term, or ask a counsellor for help.</p>
+              <Button variant="outline" className="mt-4 h-10 px-5 text-sm font-semibold" nativeButton={false} render={<Link href="/counselling" />}>
+                Get Free Counselling
+              </Button>
+            </div>
+            <SuggestionChips title="Try a popular search" />
+          </div>
+        )}
+
+        {results.length > 0 && (
+          <>
+            <nav aria-label="Filter results by type" className="-mx-4 mt-4 overflow-x-auto px-4">
+              <div className="flex w-max gap-2">
+                <Link href={searchHref(query)} aria-current={!activeType ? 'page' : undefined} className={`rounded-full border px-3.5 py-1.5 text-sm font-medium whitespace-nowrap outline-none focus-visible:ring-2 focus-visible:ring-primary/40 ${!activeType ? 'border-primary bg-primary text-primary-foreground' : 'bg-card text-foreground hover:border-primary'}`}>
+                  All · {results.length}
+                </Link>
+                {visibleKinds.map(({ kind, plural }) => (
+                  <Link key={kind} href={searchHref(query, kind)} aria-current={activeType === kind ? 'page' : undefined} className={`rounded-full border px-3.5 py-1.5 text-sm font-medium whitespace-nowrap outline-none focus-visible:ring-2 focus-visible:ring-primary/40 ${activeType === kind ? 'border-primary bg-primary text-primary-foreground' : 'bg-card text-foreground hover:border-primary'}`}>
+                    {plural} · {counts.get(kind)}
+                  </Link>
+                ))}
+              </div>
+            </nav>
+
+            <div className="mt-5 flex flex-col gap-5">
+              {(activeType ? visibleKinds.filter(({ kind }) => kind === activeType) : visibleKinds).map(({ kind, plural }) => {
+                const group = results.filter((entry) => entry.kind === kind)
+                const shown = activeType ? group : group.slice(0, GROUP_PREVIEW)
+                return (
+                  <section key={kind} aria-labelledby={`results-${kind}`} className="overflow-hidden rounded-[12px] border bg-card">
+                    <h2 id={`results-${kind}`} className="border-b px-4 py-3 text-sm font-bold text-foreground">
+                      {plural}
+                    </h2>
+                    <ul className="divide-y">
+                      {shown.map((entry) => (
+                        <ResultRow key={entry.id} entry={entry} />
+                      ))}
+                    </ul>
+                    {shown.length < group.length && (
+                      <Link href={searchHref(query, kind)} className="flex h-11 items-center justify-center gap-1 border-t text-sm font-semibold text-primary outline-none hover:bg-secondary/60 focus-visible:bg-secondary">
+                        See all {group.length} {plural.toLowerCase()}
+                        <ChevronRight className="size-4" aria-hidden="true" />
+                      </Link>
+                    )}
+                  </section>
+                )
+              })}
+            </div>
+          </>
+        )}
+      </div>
+    </Container>
+  )
+}

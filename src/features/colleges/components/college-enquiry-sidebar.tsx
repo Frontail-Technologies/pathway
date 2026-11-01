@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { ChevronRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { EnquiryDialog } from '@/features/enquiries/components/enquiry-dialog'
 import type { CollegeDetailData } from '../data/college-detail'
 
 export function CollegeEnquirySidebar({ college }: { college: CollegeDetailData }) {
@@ -10,12 +11,19 @@ export function CollegeEnquirySidebar({ college }: { college: CollegeDetailData 
       <p className="mt-1 text-xs text-muted-foreground">Get course, fees and admission details.</p>
 
       <div className="mt-4 flex flex-col gap-2">
-        <Button variant="cta" className="h-10 w-full text-sm font-semibold">
-          Enquire Now
-        </Button>
-        <Button variant="outline" className="h-10 w-full text-sm font-semibold">
-          Download Brochure
-        </Button>
+        <EnquiryDialog
+          entityName={college.name}
+          interestOptions={college.courses.map((course) => course.name)}
+          interestLabel="Course"
+          trigger={<Button variant="cta" className="h-10 w-full text-sm font-semibold">Enquire Now</Button>}
+        />
+        <EnquiryDialog
+          intent="brochure"
+          entityName={college.name}
+          interestOptions={college.courses.map((course) => course.name)}
+          interestLabel="Course"
+          trigger={<Button variant="outline" className="h-10 w-full text-sm font-semibold">Download Brochure</Button>}
+        />
       </div>
 
       <div className="mt-4 border-t pt-4">

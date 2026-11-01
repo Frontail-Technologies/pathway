@@ -17,6 +17,7 @@ import { CollegeScholarshipsSection } from './college-scholarships-section'
 import { CollegeReviewsSection } from './college-reviews-section'
 import { CollegeFaqSection } from './college-faq-section'
 import { CollegeEnquirySidebar } from './college-enquiry-sidebar'
+import { CollegeActionBar } from './college-action-bar'
 
 const COLLEGE_NAV_SECTIONS = [
   { id: 'overview', label: 'Overview' },
@@ -79,6 +80,8 @@ export function CollegeDetailPage({ college }: { college: CollegeDetailData }) {
           </div>
         </div>
       </Container>
+
+      <CollegeActionBar college={college} />
     </div>
   )
 }

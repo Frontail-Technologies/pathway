@@ -18,6 +18,7 @@ import { CourseCollegesSection } from './course-colleges-section'
 import { RelatedCoursesSection } from './related-courses-section'
 import { CourseFaqSection } from './course-faq-section'
 import { CourseDiscoverySidebar } from './course-discovery-sidebar'
+import { CourseActionBar } from './course-action-bar'
 
 const COURSE_NAV_SECTIONS = [
   { id: 'overview', label: 'Overview' },
@@ -82,6 +83,8 @@ export function CourseDetailPage({ course }: { course: CourseDetailData }) {
           </div>
         </div>
       </Container>
+
+      <CourseActionBar course={course} />
     </div>
   )
 }

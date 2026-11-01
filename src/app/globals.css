@@ -167,6 +167,7 @@ h1, h2, h3, h4, h5, h6 { font-family: var(--font-manrope), sans-serif; letter-sp
 @utility top-header { top: var(--pw-header-h); }
 @utility top-header-gap { top: calc(var(--pw-header-h) + 1rem); }
 @utility top-section { top: calc(var(--pw-header-h) + var(--pw-section-nav-h)); }
+@utility scroll-mt-header { scroll-margin-top: calc(var(--pw-header-h) + 1rem); }
 @utility scroll-mt-section { scroll-margin-top: calc(var(--pw-header-h) + var(--pw-section-nav-h)); }
 .pw-bottom-nav-space { padding-bottom: var(--pw-bottom-nav-h); }
 

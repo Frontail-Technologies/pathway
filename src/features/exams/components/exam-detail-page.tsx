@@ -6,6 +6,7 @@ import { Breadcrumbs } from '@/components/shared/breadcrumbs'
 import { DetailQuickFacts, type DetailQuickFact } from '@/components/shared/detail-quick-facts'
 import { DetailSectionNav, type DetailSectionNavItem } from '@/components/shared/detail-section-nav'
 import { DetailStickySidebar } from '@/components/shared/detail-sticky-sidebar'
+import { ExamActionBar } from './exam-action-bar'
 import { HorizontalContentRail } from '@/components/shared/horizontal-content-rail'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
 import { Button } from '@/components/ui/button'
@@ -429,6 +430,7 @@ export function ExamDetailPage({ exam }: { exam: DetailedExam }) {
 
       <RelatedExamsSection exam={exam} />
       <FinalCta exam={exam} />
+      <ExamActionBar examName={exam.shortName} collegePredictorHref={predictorLinks(exam).college} rankPredictorHref={predictorLinks(exam).rank} />
     </div>
   )
 }
