@@ -1,8 +1,9 @@
 import type { Metadata } from 'next'
-import { LoginForm } from '@/features/auth/components/login-form'
+import { AuthFlow } from '@/features/auth/components/auth-flow'
 
-export const metadata: Metadata = { title: 'Sign in', description: 'Sign in to your Pathway student account (frontend demo).', robots: { index: false } }
+export const metadata: Metadata = { title: 'Sign in', description: 'Sign in to Pathway with your mobile number or email.', robots: { index: false } }
 
-export default function Page() {
-  return <LoginForm />
+export default async function Page({ searchParams }: { searchParams: Promise<{ next?: string | string[] }> }) {
+  const { next } = await searchParams
+  return <AuthFlow mode="login" next={typeof next === 'string' ? next : undefined} />
 }
