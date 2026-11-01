@@ -6,11 +6,12 @@ import { DetailTabNav } from '@/components/shared/detail-tab-nav'
 import { DetailStickySidebar } from '@/components/shared/detail-sticky-sidebar'
 import { Button } from '@/components/ui/button'
 import type { CollegeDetailData } from '../data/college-detail'
-import { collegeTabHref, collegeTabs } from '../config/college-tabs'
+import { DetailTabBreadcrumbs } from '@/components/shared/detail-tab-breadcrumbs'
+import { tabLinks } from '@/lib/detail-tabs'
+import { collegeBase, collegeTabs } from '../config/college-tabs'
 import { CollegeIdentityHeader } from './college-identity-header'
 import { CollegeEnquirySidebar } from './college-enquiry-sidebar'
 import { CollegeActionBar } from './college-action-bar'
-import { CollegeBreadcrumbs } from './college-breadcrumbs'
 
 /**
  * Shared frame for every /college/[slug]/* page: breadcrumbs, identity header,
@@ -18,18 +19,19 @@ import { CollegeBreadcrumbs } from './college-breadcrumbs'
  * Only `children` (the active tab) changes between sub-pages.
  */
 export function CollegeDetailShell({ college, children }: { college: CollegeDetailData; children: ReactNode }) {
-  const tabs = collegeTabs.map((tab) => ({ href: collegeTabHref(college.slug, tab.segment), label: tab.label }))
+  const base = collegeBase(college.slug)
+  const tabs = tabLinks(collegeTabs, college, base)
 
   return (
     <div className="bg-background">
       <Container className="px-4 pt-5 lg:pt-6">
-        <CollegeBreadcrumbs college={college} />
+        <DetailTabBreadcrumbs trail={['Home', { label: 'Colleges', href: '/colleges' }]} entityLabel={college.name} base={base} tabs={tabs} />
         <div className="mt-4">
           <CollegeIdentityHeader college={college} />
         </div>
       </Container>
 
-      <DetailTabNav items={tabs} label={`${college.name} sections`} />
+      <DetailTabNav items={tabs.map(({ href, label }) => ({ href, label }))} label={`${college.name} sections`} />
 
       <Container className="px-4">
         <div className="flex flex-col gap-8 lg:flex-row lg:items-start lg:gap-6">

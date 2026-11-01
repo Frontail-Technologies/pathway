@@ -2,23 +2,23 @@ import type { ReactNode } from 'react'
 import Link from 'next/link'
 import { ArrowRight, Building2, Check, Flag, GraduationCap, Info, Layers } from 'lucide-react'
 import { Container } from '@/components/shared/container'
-import { Breadcrumbs } from '@/components/shared/breadcrumbs'
 import { DetailQuickFacts, type DetailQuickFact } from '@/components/shared/detail-quick-facts'
-import { DetailSectionNav, type DetailSectionNavItem } from '@/components/shared/detail-section-nav'
+import { DetailTabNav } from '@/components/shared/detail-tab-nav'
+import { DetailTabBreadcrumbs } from '@/components/shared/detail-tab-breadcrumbs'
+import { DetailTabLinks } from '@/components/shared/detail-tab-links'
+import { LegacyAnchorRedirect } from '@/components/shared/legacy-anchor-redirect'
+import { tabLinks } from '@/lib/detail-tabs'
 import { DetailStickySidebar } from '@/components/shared/detail-sticky-sidebar'
 import { ExamActionBar } from './exam-action-bar'
 import { HorizontalContentRail } from '@/components/shared/horizontal-content-rail'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
 import { Button } from '@/components/ui/button'
-import { colleges } from '@/features/colleges/data/colleges'
 import { getCollegeDetail } from '@/features/colleges/data/college-detail'
-import { courses } from '@/features/courses/data/courses'
 import { getCourseDetail } from '@/features/courses/data/course-detail'
 import { examFromSlug } from '@/features/college-predictor/data/predictor'
 import { rankExamFromSlug } from '@/features/rank-predictor/data/rank'
-import { getRelatedExams, type Exam, type ExamDetail } from '../data/exams'
-
-type DetailedExam = Exam & { detail: ExamDetail }
+import { getRelatedExams, type Exam } from '../data/exams'
+import { examBase, examColleges, examCourses, examTabHref, examTabs, legacyExamAnchors, type DetailedExam } from '../config/exam-tabs'
 
 const monogram = (exam: Exam) => exam.shortName.split(' ')[0].slice(0, 4).toUpperCase()
 
@@ -94,7 +94,7 @@ function ExamHeader({ exam }: { exam: DetailedExam }) {
   )
 }
 
-function OverviewSection({ exam }: { exam: DetailedExam }) {
+export function OverviewSection({ exam }: { exam: DetailedExam }) {
   return (
     <Section id="overview" title={`About ${exam.shortName}`}>
       <p className="text-sm leading-6 text-foreground">{exam.detail.longDescription}</p>
@@ -110,7 +110,7 @@ function OverviewSection({ exam }: { exam: DetailedExam }) {
   )
 }
 
-function EligibilitySection({ exam }: { exam: DetailedExam }) {
+export function EligibilitySection({ exam }: { exam: DetailedExam }) {
   const { eligibility } = exam.detail
   return (
     <Section id="eligibility" title="Eligibility">
@@ -130,7 +130,7 @@ function EligibilitySection({ exam }: { exam: DetailedExam }) {
   )
 }
 
-function PatternSection({ exam }: { exam: DetailedExam }) {
+export function PatternSection({ exam }: { exam: DetailedExam }) {
   const { pattern } = exam.detail
   return (
     <Section id="pattern" title="Exam Pattern">
@@ -153,7 +153,7 @@ function PatternSection({ exam }: { exam: DetailedExam }) {
   )
 }
 
-function SyllabusSection({ exam }: { exam: DetailedExam }) {
+export function SyllabusSection({ exam }: { exam: DetailedExam }) {
   const groups = exam.detail.syllabusGroups
   if (!groups?.length) return null
   return (
@@ -182,7 +182,7 @@ function SyllabusSection({ exam }: { exam: DetailedExam }) {
   )
 }
 
-function ProcessSection({ exam }: { exam: DetailedExam }) {
+export function ProcessSection({ exam }: { exam: DetailedExam }) {
   return (
     <Section id="process" title="Exam & Admission Process">
       <ol className="grid gap-3 sm:grid-cols-2">
@@ -201,8 +201,8 @@ function ProcessSection({ exam }: { exam: DetailedExam }) {
   )
 }
 
-function CollegesSection({ exam }: { exam: DetailedExam }) {
-  const list = (exam.detail.collegeSlugs ?? []).map((slug) => colleges.find((college) => college.slug === slug)).filter((college) => !!college)
+export function CollegesSection({ exam }: { exam: DetailedExam }) {
+  const list = examColleges(exam)
   if (list.length === 0) return null
   return (
     <Section id="colleges" title="Colleges to Explore">
@@ -238,8 +238,8 @@ function CollegesSection({ exam }: { exam: DetailedExam }) {
 }
 
  
-function CoursesSection({ exam }: { exam: DetailedExam }) {
-  const list = courses.filter((course) => course.entranceExams.includes(exam.shortName))
+export function CoursesSection({ exam }: { exam: DetailedExam }) {
+  const list = examCourses(exam)
   if (list.length === 0) return null
   return (
     <Section id="courses" title={`Courses Accepting ${exam.shortName}`}>
@@ -266,7 +266,7 @@ function CoursesSection({ exam }: { exam: DetailedExam }) {
   )
 }
 
-function FaqSection({ exam }: { exam: DetailedExam }) {
+export function FaqSection({ exam }: { exam: DetailedExam }) {
   return (
     <section id="faqs" className="scroll-mt-section py-7 lg:py-9">
       <h2 className="font-heading text-xl font-bold text-foreground sm:text-[22px]">Frequently Asked Questions</h2>
@@ -385,43 +385,42 @@ function FinalCta({ exam }: { exam: DetailedExam }) {
   )
 }
 
-export function ExamDetailPage({ exam }: { exam: DetailedExam }) {
-  const hasColleges = (exam.detail.collegeSlugs ?? []).length > 0
-  const hasCourses = courses.some((course) => course.entranceExams.includes(exam.shortName))
-  const navItems: DetailSectionNavItem[] = [
-    { id: 'overview', label: 'Overview' },
-    { id: 'eligibility', label: 'Eligibility' },
-    { id: 'pattern', label: 'Pattern' },
-    ...(exam.detail.syllabusGroups?.length ? [{ id: 'syllabus', label: 'Syllabus' }] : []),
-    { id: 'process', label: 'Process' },
-    ...(hasColleges ? [{ id: 'colleges', label: 'Colleges' }] : []),
-    ...(hasCourses ? [{ id: 'courses', label: 'Courses' }] : []),
-    { id: 'faqs', label: 'FAQs' },
-  ]
+/** /exam/[slug]: about the exam plus tiles into every other sub-page. */
+export function ExamOverviewTab({ exam }: { exam: DetailedExam }) {
+  const tiles = examTabs
+    .filter((tab) => tab.segment && (!tab.available || tab.available(exam)))
+    .map((tab) => ({ href: examTabHref(exam.slug, tab.segment), label: tab.label, teaser: tab.teaser?.(exam) }))
+  return (
+    <>
+      <LegacyAnchorRedirect base={examBase(exam.slug)} anchors={legacyExamAnchors} />
+      <OverviewSection exam={exam} />
+      <DetailTabLinks title={`Explore ${exam.shortName}`} items={tiles} />
+    </>
+  )
+}
+
+/**
+ * Shared frame for every /exam/[slug]/* page: breadcrumbs, header, sticky tab
+ * bar, desktop sidebar, related exams, closing CTA and the mobile action bar.
+ */
+export function ExamDetailShell({ exam, children }: { exam: DetailedExam; children: ReactNode }) {
+  const base = examBase(exam.slug)
+  const tabs = tabLinks(examTabs, exam, base)
 
   return (
     <div className="bg-background">
       <Container className="px-4 pt-5 lg:pt-6">
-        <Breadcrumbs items={['Home', { label: 'Exams', href: '/exams' }, exam.shortName]} />
+        <DetailTabBreadcrumbs trail={['Home', { label: 'Exams', href: '/exams' }]} entityLabel={exam.shortName} base={base} tabs={tabs} />
         <div className="mt-4">
           <ExamHeader exam={exam} />
         </div>
       </Container>
 
-      <DetailSectionNav items={navItems} />
+      <DetailTabNav items={tabs.map(({ href, label }) => ({ href, label }))} label={`${exam.shortName} sections`} />
 
       <Container className="px-4">
         <div className="flex flex-col gap-8 lg:flex-row lg:items-start lg:gap-6">
-          <div className="min-w-0 flex-1">
-            <OverviewSection exam={exam} />
-            <EligibilitySection exam={exam} />
-            <PatternSection exam={exam} />
-            <SyllabusSection exam={exam} />
-            <ProcessSection exam={exam} />
-            <CollegesSection exam={exam} />
-            <CoursesSection exam={exam} />
-            <FaqSection exam={exam} />
-          </div>
+          <div className="min-w-0 flex-1">{children}</div>
           <DetailStickySidebar>
             <ExamSidebar exam={exam} />
           </DetailStickySidebar>

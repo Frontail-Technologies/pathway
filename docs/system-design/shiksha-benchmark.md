@@ -110,7 +110,7 @@ Implement the college sub-pages with one shared **`app/(public)/college/[slug]/l
 |-------|-------|-------|
 | 0 | WebView foundation | ✅ This change |
 | 1 | Mobile sticky action bar on every detail page; shared enquiry / brochure / counselling form; `/search` and `/counselling` | ✅ Done — see §6 |
-| 2 | College sub-routes (`/college/[slug]/…`) with a shared layout and tab bar; then exam and course | ✅ Colleges done (§7). Exam and course still single-page |
+| 2 | College sub-routes (`/college/[slug]/…`) with a shared layout and tab bar; then exam and course | ✅ Colleges, exams and courses done (§7–8) |
 | 3 | Stream layer (`/[stream]` hubs, stream-scoped listings, stream-aware nav and home) | Needs a stream taxonomy in the data model |
 | 4 | Real API in `services/api` (shared by web and native), ISR on detail pages | Replace mock `features/*/data` |
 | 5 | Two-way bridge: native → web (auth token handoff, save/shortlist sync, share sheet) | Extend `NativeMessage` and add a `window.PathwayWeb` receiver |
@@ -146,8 +146,24 @@ Implement the college sub-pages with one shared **`app/(public)/college/[slug]/l
 | `/college/[slug]/faqs` | FAQs |
 
 - **Shared layout** (`app/(public)/college/[slug]/layout.tsx` → `CollegeDetailShell`): breadcrumbs, identity header, tab bar, desktop sidebar, closing CTA and the mobile action bar. Only the tab content re-renders on navigation, so it feels like an app.
-- **`DetailTabNav`** (`components/shared/detail-tab-nav.tsx`) is reusable for exam and course. Its tabs are real `<Link>`s. When the reader has already scrolled past the tab bar, switching tabs puts the new content right under it; otherwise scroll position is kept.
+- **`DetailTabNav`** (`components/shared/detail-tab-nav.tsx`) is shared by colleges, exams and courses. Its tabs are real `<Link>`s. When the reader has already scrolled past the tab bar, switching tabs puts the new content right under it; otherwise scroll position is kept.
 - **Tab config** (`features/colleges/config/college-tabs.ts`) gives each tab its own `<title>`, description and canonical URL. Static params come from `getCollegeDetailSlugs()`, and every tab is pre-rendered.
 - **Legacy links**: `/college/x#placements` (and `#fees`, `#admissions`, …) forward to the matching sub-page.
 - The per-course **Enquire** buttons now open the enquiry form with that course pre-selected.
 - `metadataBase` is set from `NEXT_PUBLIC_SITE_URL`. **Set this env var in production**, or canonical URLs fall back to `http://localhost:3000`.
+
+## 8. Phase 2 — exam and course sub-pages (delivered)
+
+All three entity types now share one model, `src/lib/detail-tabs.ts`. Each feature declares its tabs once (`features/*/config/*-tabs.ts`), and the layout, pages, tab bar, breadcrumbs, `<title>`, description, canonical URL and legacy-anchor forwarding all derive from that list.
+
+| Entity | Tabs |
+|--------|------|
+| Exam (`/exam/[slug]`) | Overview · Eligibility · Pattern & Syllabus · Process · Colleges* · Courses* · FAQs |
+| Course (`/course/[slug]`) | Overview · Eligibility & Exams · Fees · Syllabus (incl. specializations) · Careers · Colleges · FAQs |
+
+\* A tab with `available()` is shown only when the entity has data for it. Without data, its URL returns 404, so there are no empty pages.
+
+- **Overview tabs** for exams and courses show the summary plus "Explore" tiles (`DetailTabLinks`), each with a one-line teaser for its sub-page. The course overview also keeps Related Courses.
+- **Shared components**: `DetailTabNav`, `DetailTabBreadcrumbs`, `DetailTabLinks`, `LegacyAnchorRedirect`.
+- **Legacy anchors**: `#syllabus` goes to `/pattern` (exam). For courses, `#specializations` goes to `/syllabus`, `#exams` to `/eligibility`, and `#related` to the overview.
+- Scholarship, coaching and tutor pages stay single-page (short content), and still use `DetailSectionNav`.

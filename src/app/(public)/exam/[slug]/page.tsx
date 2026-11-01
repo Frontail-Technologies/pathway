@@ -1,28 +1,23 @@
-import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
-import { exams, getExamBySlug } from '@/features/exams/data/exams'
-import { ExamDetailPage } from '@/features/exams/components/exam-detail-page'
+import { notFound } from 'next/navigation'
+import { findTab } from '@/lib/detail-tabs'
+import { examTabMetadata, examTabs, getDetailedExam } from '@/features/exams/config/exam-tabs'
+import { ExamOverviewTab } from '@/features/exams/components/exam-detail'
 
-export function generateStaticParams() {
-  return exams.filter((exam) => exam.hasDetailPage).map((exam) => ({ slug: exam.slug }))
+type Props = { params: Promise<{ slug: string }> }
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params
+  return examTabMetadata(getDetailedExam(slug), '')
 }
 
-export const dynamicParams = false
-
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+export default async function ExamOverviewRoute({ params }: Props) {
   const { slug } = await params
-  const exam = getExamBySlug(slug)
-  return { title: exam ? exam.shortName : 'Exam Not Found', description: exam?.description }
-}
-
-export default async function ExamDetailRoute({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params
-  const exam = getExamBySlug(slug)
-  if (!exam?.detail) notFound()
-
+  const exam = getDetailedExam(slug)
+  if (!exam || !findTab(examTabs, exam, '')) notFound()
   return (
     <>
-      <ExamDetailPage exam={{ ...exam, detail: exam.detail }} />
+      <ExamOverviewTab exam={exam} />
     </>
   )
 }

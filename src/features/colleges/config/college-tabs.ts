@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { tabHref, tabMetadata, type DetailTab } from '@/lib/detail-tabs'
 import type { CollegeDetailData } from '../data/college-detail'
 
 /**
@@ -6,14 +7,7 @@ import type { CollegeDetailData } from '../data/college-detail'
  * /college/[slug], sharing one header + tab bar layout. `segment: ''` is the
  * overview at /college/[slug].
  */
-export type CollegeTab = {
-  segment: '' | 'courses' | 'admission' | 'placement' | 'reviews' | 'facilities' | 'scholarships' | 'faqs'
-  label: string
-  heading: (college: CollegeDetailData) => string
-  description: (college: CollegeDetailData) => string
-}
-
-export const collegeTabs: CollegeTab[] = [
+export const collegeTabs: DetailTab<CollegeDetailData>[] = [
   {
     segment: '',
     label: 'Overview',
@@ -64,27 +58,18 @@ export const collegeTabs: CollegeTab[] = [
   },
 ]
 
-export const collegeTabHref = (slug: string, segment: CollegeTab['segment']) => (segment ? `/college/${slug}/${segment}` : `/college/${slug}`)
+export const collegeBase = (slug: string) => `/college/${slug}`
+export const collegeTabHref = (slug: string, segment: string) => tabHref(collegeBase(slug), segment)
 
-export function getCollegeTab(segment: CollegeTab['segment']): CollegeTab {
-  return collegeTabs.find((tab) => tab.segment === segment)!
-}
-
-export function collegeTabMetadata(college: CollegeDetailData | undefined, segment: CollegeTab['segment']): Metadata {
-  if (!college) return { title: 'College Not Found' }
-  const tab = getCollegeTab(segment)
-  return {
-    title: tab.heading(college),
-    description: tab.description(college),
-    alternates: { canonical: collegeTabHref(college.slug, segment) },
-  }
+export function collegeTabMetadata(college: CollegeDetailData | undefined, segment: string): Metadata {
+  return tabMetadata(collegeTabs, college, segment, (c) => collegeBase(c.slug), 'College Not Found')
 }
 
 /**
  * Old single-page anchors (/college/x#placements) → new sub-page segment.
  * Used to forward legacy links and bookmarks.
  */
-export const legacyCollegeAnchors: Record<string, CollegeTab['segment']> = {
+export const legacyCollegeAnchors: Record<string, string> = {
   overview: '',
   courses: 'courses',
   fees: 'courses',

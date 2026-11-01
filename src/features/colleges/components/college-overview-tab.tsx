@@ -1,9 +1,9 @@
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
 import type { CollegeDetailData } from '../data/college-detail'
-import { collegeTabHref } from '../config/college-tabs'
+import { LegacyAnchorRedirect } from '@/components/shared/legacy-anchor-redirect'
+import { collegeBase, collegeTabHref, legacyCollegeAnchors } from '../config/college-tabs'
 import { CollegeOverviewSection } from './college-overview-section'
 import { CollegePreviewCard } from './college-preview-card'
-import { CollegeLegacyAnchorRedirect } from './college-legacy-anchor-redirect'
 
 const PREVIEW_ROWS = 3
 
@@ -12,11 +12,11 @@ const PREVIEW_ROWS = 3
  * linking into its sub-page (Shiksha's summary-then-drill-down pattern).
  */
 export function CollegeOverviewTab({ college }: { college: CollegeDetailData }) {
-  const href = (segment: Parameters<typeof collegeTabHref>[1]) => collegeTabHref(college.slug, segment)
+  const href = (segment: string) => collegeTabHref(college.slug, segment)
 
   return (
     <>
-      <CollegeLegacyAnchorRedirect slug={college.slug} />
+      <LegacyAnchorRedirect base={collegeBase(college.slug)} anchors={legacyCollegeAnchors} />
       <CollegeOverviewSection college={college} />
 
       <CollegePreviewCard title="Courses & Fees" href={href('courses')} linkLabel={`View all ${college.courses.length} courses`}>
