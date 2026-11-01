@@ -70,5 +70,13 @@ webView.addJavascriptInterface(object {
 - Lay the WebView out below your app bar and above your tab bar, *or* full-screen with `viewport-fit=cover` (the page pads itself with safe-area insets).
 - Keep `tel:`, `mailto:` and `whatsapp:` links for the native layer to intercept. The bridge only handles `http(s)`.
 
-## 5. Planned (not yet implemented)
+## 5. Student space (`/student/*`) in the app
+
+- The student header (logo, menu, "Back to Pathway") is hidden like the public header. A sticky tab strip (Dashboard · Profile · Preferences · Saved · Notes · Enquiries) is shown on phones in both web and app, so you can still move between student pages.
+- **Log out** is on the dashboard's Account card, because the header menu that also holds it is hidden in the app.
+- `.pw-student-shell` scopes `--pw-header-h` to the 56px student header (safe area only in the app), so sticky tabs and section jumps line up.
+- Sign-in is still a local demo (`localStorage`). Real auth handoff from the native app is phase 5.
+- **There is no tutor dashboard.** Tutors exist as public profiles and in the admin area only.
+
+## 6. Planned (not yet implemented)
 Native → web messages (auth token handoff, shortlist sync, theme), sticky action bar events (`apply`, `brochure`), and a share-sheet request. Add new types to `NativeMessage` and bump `BRIDGE_PROTOCOL_VERSION` for breaking changes.

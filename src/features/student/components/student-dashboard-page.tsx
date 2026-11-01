@@ -17,6 +17,10 @@ import {
   UserRound,
 } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import { LogOut } from "lucide-react";
+import { useDemoAuth } from "@/features/student/state/demo-auth-provider";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import {
@@ -114,6 +118,26 @@ const missingPrompts: Record<
 
 
  
+/** Also reachable in the app, where the header menu (and its Log out) is hidden. */
+function LogOutButton() {
+  const { signOut } = useDemoAuth();
+  const router = useRouter();
+  return (
+    <button
+      type="button"
+      onClick={() => {
+        signOut();
+        toast.success("Signed out of the demo account.");
+        router.push("/login");
+      }}
+      className="mt-3 flex h-11 w-full cursor-pointer items-center justify-center gap-2 rounded-lg border text-sm font-semibold text-destructive outline-none transition-colors hover:bg-destructive/5 focus-visible:ring-2 focus-visible:ring-destructive/40"
+    >
+      <LogOut className="size-4" aria-hidden="true" />
+      Log out
+    </button>
+  );
+}
+
 export function StudentDashboardPage() {
   const { profile, photoUrl } = useStudentProfile();
   const completion = getProfileCompletion(profile);
@@ -393,6 +417,7 @@ export function StudentDashboardPage() {
             <School className="mt-0.5 size-3.5 shrink-0" aria-hidden="true" />
             Frontend demo account — sign-in is not connected yet.
           </p>
+          <LogOutButton />
         </DashboardSection>
       </div>
     </div>

@@ -115,7 +115,7 @@ function ProfileEditor() {
 
       <div className="mt-5 grid grid-cols-1 gap-5 xl:grid-cols-[minmax(0,1fr)_20rem] xl:items-start">
         <form ref={formRef} onSubmit={onSubmit} noValidate className="flex min-w-0 flex-col gap-5">
-          <DashboardSection id="personal" className="scroll-mt-20" title="Personal Information">
+          <DashboardSection id="personal" className="scroll-mt-section" title="Personal Information">
             <div className="flex items-center gap-4">
               <span className="relative flex size-18 shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary text-xl font-bold text-primary-foreground">
                 {photoUrl ? (
@@ -166,7 +166,7 @@ function ProfileEditor() {
             </div>
           </DashboardSection>
 
-          <DashboardSection id="education" className="scroll-mt-20" title="Education">
+          <DashboardSection id="education" className="scroll-mt-section" title="Education">
             <div className="grid gap-4 sm:grid-cols-2">
               <Field label="Current study level">
                 <OptionSelect value={draft.studyLevel} onChange={(value) => set('studyLevel', value)} options={studyLevelOptions} placeholder="Select level" />
@@ -183,7 +183,7 @@ function ProfileEditor() {
             </div>
           </DashboardSection>
 
-          <DashboardSection id="career-goal" className="scroll-mt-20" title="Career Goal">
+          <DashboardSection id="career-goal" className="scroll-mt-section" title="Career Goal">
             <div className="grid gap-4 sm:grid-cols-2">
               <Field label="Career goal / direction">
                 <OptionSelect value={draft.goalChoice} onChange={(value) => set('goalChoice', value)} options={[...careerGoalOptions, OTHER_GOAL]} placeholder="Select a direction" />
@@ -196,7 +196,7 @@ function ProfileEditor() {
             </div>
           </DashboardSection>
 
-          <DashboardSection id="experience" className="scroll-mt-20" title="Experience" description="Optional — work, internship, volunteering or project experience.">
+          <DashboardSection id="experience" className="scroll-mt-section" title="Experience" description="Optional — work, internship, volunteering or project experience.">
             {draft.experience.length === 0 ? (
               <p className="text-sm text-muted-foreground">No experience yet. You can skip this if it does not apply.</p>
             ) : (

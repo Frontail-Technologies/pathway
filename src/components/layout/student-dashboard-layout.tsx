@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { Logo } from '@/components/shared/logo'
 import { StudentMobileMenu } from './student-mobile-menu'
 import { StudentNavigation } from './student-navigation'
+import { StudentSectionTabs } from './student-section-tabs'
 
 
 
@@ -10,8 +11,9 @@ import { StudentNavigation } from './student-navigation'
  
 export function StudentDashboardLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex min-h-dvh flex-col bg-background">
-      <header className="sticky top-0 z-30 bg-primary text-primary-foreground">
+    // pw-student-shell scopes --pw-header-h to this 56px header (safe area only in app-shell mode).
+    <div className="pw-student-shell flex min-h-dvh flex-col bg-background">
+      <header className="web-chrome sticky top-0 z-30 bg-primary text-primary-foreground">
         <div className="mx-auto flex h-14 w-full max-w-[1680px] items-center gap-2 px-4 sm:gap-3 sm:px-6">
           <StudentMobileMenu />
           <Link href="/student" aria-label="Pathway student dashboard" className="outline-none focus-visible:ring-2 focus-visible:ring-white/60">
@@ -24,6 +26,8 @@ export function StudentDashboardLayout({ children }: { children: React.ReactNode
           </Link>
         </div>
       </header>
+
+      <StudentSectionTabs />
 
       <div className="mx-auto flex w-full max-w-[1680px] flex-1 gap-6 px-4 py-4 sm:px-6 lg:py-6">
         <aside className="hidden w-56 shrink-0 lg:block">

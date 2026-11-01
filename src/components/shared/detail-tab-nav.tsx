@@ -16,7 +16,7 @@ export type DetailTabNavItem = { href: string; label: string }
  * moved so the new content starts right under the tab bar, but only when the
  * reader had already scrolled past it.
  */
-export function DetailTabNav({ items, label }: { items: DetailTabNavItem[]; label: string }) {
+export function DetailTabNav({ items, label, className = '' }: { items: DetailTabNavItem[]; label: string; className?: string }) {
   const pathname = usePathname()
   const sentinelRef = useRef<HTMLDivElement>(null)
   const navRef = useRef<HTMLElement>(null)
@@ -50,7 +50,7 @@ export function DetailTabNav({ items, label }: { items: DetailTabNavItem[]; labe
   return (
     <>
       <div ref={sentinelRef} aria-hidden="true" />
-      <nav ref={navRef} aria-label={label} className="sticky top-header z-20 border-y bg-card">
+      <nav ref={navRef} aria-label={label} className={`sticky top-header z-20 border-y bg-card ${className}`}>
         <div className="container-shell px-4">
           <div ref={scrollerRef} className="flex gap-1 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {items.map((item) => {
