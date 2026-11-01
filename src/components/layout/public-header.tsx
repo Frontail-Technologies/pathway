@@ -33,7 +33,7 @@ export function PublicHeader() {
             <Button variant="ghost" className={`hidden sm:inline-flex ${iconButtonClass}`} nativeButton={false} render={<Link href="/login" />}>
               Sign in
             </Button>
-            <Button size="icon" variant="ghost" aria-label="Sign in" className={`size-11 ${iconButtonClass}`} nativeButton={false} render={<Link href="/login" />}>
+            <Button size="icon" variant="ghost" aria-label="Account" className={`size-11 ${iconButtonClass}`} nativeButton={false} render={<Link href="/account" />}>
               <UserRound className="size-5" />
             </Button>
           </div>
@@ -55,7 +55,7 @@ export function PublicHeader() {
             <Button variant="ghost" className={`text-[15px] font-semibold ${iconButtonClass}`} nativeButton={false} render={<Link href="/login" />}>
               Sign in
             </Button>
-            <Button size="icon" variant="ghost" aria-label="Sign in" className={`size-10 rounded-full bg-primary-foreground/12 ${iconButtonClass}`} nativeButton={false} render={<Link href="/login" />}>
+            <Button size="icon" variant="ghost" aria-label="Account" className={`size-10 rounded-full bg-primary-foreground/12 ${iconButtonClass}`} nativeButton={false} render={<Link href="/account" />}>
               <UserRound className="size-5" />
             </Button>
           </div>

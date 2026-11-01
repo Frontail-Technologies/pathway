@@ -64,7 +64,19 @@ webView.addJavascriptInterface(object {
 }, "PathwayAndroid")
 ```
 
-## 4. Native checklist
+## 4. Native tab bar
+
+The web bottom bar is hidden in the app. To keep the two in sync, the native tab bar should open the same top-level routes, all of which are self-contained screens:
+
+| Tab | Route |
+|-----|-------|
+| Home | `/` |
+| Colleges | `/colleges` |
+| Courses | `/courses` |
+| Search | `/search` |
+| Account | `/account` (sign-in, or links into the student space, Tutor Space and help) |
+
+## 4b. Native checklist
 - Enable DOM storage (saved items, profile and demo auth use `localStorage`) and cookies (`pw_app`).
 - Back button: if the web side has history (`route` count > 1), call `webView.goBack()`. Otherwise let the native stack handle it.
 - Lay the WebView out below your app bar and above your tab bar, *or* full-screen with `viewport-fit=cover` (the page pads itself with safe-area insets).

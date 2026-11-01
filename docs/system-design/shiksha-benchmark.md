@@ -90,7 +90,7 @@ Implement the college sub-pages with one shared **`app/(public)/college/[slug]/l
 ### 3.3 Design-system rules for WebView-safe UI
 - Never hard-code header offsets. Use `top-header`, `top-header-gap`, `top-section`, `scroll-mt-section` (tokens in `globals.css`).
 - Mark anything the native app replaces with `web-chrome`. Mark app-only UI with `app-only`.
-- **Bottom tabs only open top-level pages that show the bottom bar** (Home · Colleges · Courses · Exams · Search). Never point a tab into a nested area with its own layout (`/student/*`, `/tutor-dashboard/*`, `/resume-builder`), because the bar disappears there.
+- **Bottom tabs only open top-level pages that show the bottom bar** (Home · Colleges · Courses · Search · Account). Never point a tab into a nested area with its own layout (`/student/*`, `/tutor-dashboard/*`, `/resume-builder`), because the bar disappears there.
 - Use `100dvh`, not `100vh`. Pad fixed bottom elements with `env(safe-area-inset-bottom)`.
 - Touch targets must be ≥ 44px, and no feature may depend on hover.
 - Open external links through the bridge (this is automatic for `target="_blank"` and off-site links).

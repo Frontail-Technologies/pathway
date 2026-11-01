@@ -170,8 +170,8 @@ export function MobileBottomNavigation() {
     { label: 'Home', href: '/', icon: House },
     { label: 'Colleges', href: '/colleges', icon: Building2 },
     { label: 'Courses', href: '/courses', icon: BookOpen },
-    { label: 'Exams', href: '/exams', icon: FileText },
     { label: 'Search', href: '/search', icon: Search },
+    { label: 'Account', href: '/account', icon: UserRound },
   ]
   return (
     <nav aria-label="Mobile navigation" className="web-chrome fixed inset-x-0 bottom-0 z-20 border-t bg-card pt-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] md:hidden">
