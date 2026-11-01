@@ -44,6 +44,8 @@ type EnquiryFormProps = {
   /** Options for the "Interested in" select (courses, programmes, streams…). */
   interestOptions?: readonly string[]
   interestLabel?: string
+  /** Pre-selected interest, e.g. the course row the visitor tapped. */
+  defaultInterest?: string
   onSubmitted?: () => void
 }
 
@@ -51,7 +53,8 @@ type EnquiryFormProps = {
  * Shared lead form used by every detail page and the counselling page.
  * Demo only: nothing is sent; a toast confirms the request.
  */
-export function EnquiryForm({ intent = 'enquiry', entityName, interestOptions = [], interestLabel = 'Interested in', onSubmitted }: EnquiryFormProps) {
+export function EnquiryForm({ intent = 'enquiry', entityName, interestOptions = [], interestLabel = 'Interested in', defaultInterest, onSubmitted }: EnquiryFormProps) {
+  const initialInterest = defaultInterest && interestOptions.includes(defaultInterest) ? defaultInterest : interestOptions[0]
   const id = useId()
   const copy = enquiryIntentCopy[intent]
   const emailRequired = intent === 'brochure'
@@ -60,7 +63,7 @@ export function EnquiryForm({ intent = 'enquiry', entityName, interestOptions = 
   const [phone, setPhone] = useState('')
   const [email, setEmail] = useState('')
   const [city, setCity] = useState('')
-  const [interest, setInterest] = useState<string | undefined>(interestOptions[0])
+  const [interest, setInterest] = useState<string | undefined>(initialInterest)
   const [message, setMessage] = useState('')
   const [errors, setErrors] = useState<Partial<Record<'name' | 'phone' | 'email', string>>>({})
 
@@ -81,7 +84,7 @@ export function EnquiryForm({ intent = 'enquiry', entityName, interestOptions = 
     setEmail('')
     setCity('')
     setMessage('')
-    setInterest(interestOptions[0])
+    setInterest(initialInterest)
     onSubmitted?.()
   }
 

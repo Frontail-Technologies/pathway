@@ -10,11 +10,12 @@ type EnquiryDialogProps = {
   entityName?: string
   interestOptions?: readonly string[]
   interestLabel?: string
+  defaultInterest?: string
   description?: string
 }
 
 /** Opens the shared enquiry / brochure / counselling form in a dialog. */
-export function EnquiryDialog({ trigger, intent = 'enquiry', entityName, interestOptions, interestLabel, description }: EnquiryDialogProps) {
+export function EnquiryDialog({ trigger, intent = 'enquiry', entityName, interestOptions, interestLabel, defaultInterest, description }: EnquiryDialogProps) {
   const [open, setOpen] = useState(false)
   const copy = enquiryIntentCopy[intent]
 
@@ -27,7 +28,7 @@ export function EnquiryDialog({ trigger, intent = 'enquiry', entityName, interes
           {description && <DialogDescription>{description}</DialogDescription>}
         </DialogHeader>
         <div className="min-h-0 flex-1 overflow-y-auto p-4">
-          <EnquiryForm intent={intent} entityName={entityName} interestOptions={interestOptions} interestLabel={interestLabel} onSubmitted={() => setOpen(false)} />
+          <EnquiryForm intent={intent} entityName={entityName} interestOptions={interestOptions} interestLabel={interestLabel} defaultInterest={defaultInterest} onSubmitted={() => setOpen(false)} />
         </div>
       </DialogContent>
     </Dialog>

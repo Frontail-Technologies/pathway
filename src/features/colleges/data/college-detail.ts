@@ -189,3 +189,8 @@ const collegeDetails: Record<string, CollegeDetailData> = {
 export function getCollegeDetail(slug: string): CollegeDetailData | undefined {
   return collegeDetails[slug]
 }
+
+/** Slugs that have a detail page, for generateStaticParams. */
+export function getCollegeDetailSlugs(): string[] {
+  return Object.keys(collegeDetails)
+}

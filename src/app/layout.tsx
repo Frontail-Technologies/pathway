@@ -8,12 +8,13 @@ import { StudentProfileProvider } from '@/features/student/state/student-profile
 import { NavigationLoader } from '@/components/shared/navigation-loader'
 import { AppShellBridge } from '@/components/app-shell/app-shell-bridge'
 import { appShellBootScript } from '@/lib/app-shell'
+import { siteConfig } from '@/config/site'
 import './globals.css'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
 const manrope = Manrope({ subsets: ['latin'], variable: '--font-manrope' })
 
-export const metadata: Metadata = { title: { default: 'Pathway — Education discovery, made clearer', template: '%s | Pathway' }, description: 'A trusted education discovery platform for finding the right colleges, courses, exams, and opportunities.', generator: 'v0.app' }
+export const metadata: Metadata = { metadataBase: new URL(siteConfig.url), title: { default: 'Pathway — Education discovery, made clearer', template: '%s | Pathway' }, description: 'A trusted education discovery platform for finding the right colleges, courses, exams, and opportunities.', generator: 'v0.app' }
 export const viewport: Viewport = { colorScheme: 'light', themeColor: '#1D4ED8', width: 'device-width', initialScale: 1, viewportFit: 'cover' }
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

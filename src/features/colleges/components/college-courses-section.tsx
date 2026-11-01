@@ -1,4 +1,5 @@
 import { Button } from '@/components/ui/button'
+import { EnquiryDialog } from '@/features/enquiries/components/enquiry-dialog'
 import type { CollegeDetailData } from '../data/college-detail'
 
 export function CollegeCoursesSection({ college }: { college: CollegeDetailData }) {
@@ -25,9 +26,13 @@ export function CollegeCoursesSection({ college }: { college: CollegeDetailData 
                   <Button variant="link" className="h-auto p-0 text-sm font-semibold">
                     View Course
                   </Button>
-                  <Button variant="cta" className="h-9 px-4 text-xs font-semibold">
-                    Enquire
-                  </Button>
+                  <EnquiryDialog
+                    entityName={college.name}
+                    interestOptions={college.courses.map((c) => c.name)}
+                    interestLabel="Course"
+                    defaultInterest={course.name}
+                    trigger={<Button variant="cta" className="h-9 px-4 text-xs font-semibold">Enquire</Button>}
+                  />
                 </div>
               </div>
 
@@ -59,9 +64,13 @@ export function CollegeCoursesSection({ college }: { college: CollegeDetailData 
                   <Button variant="outline" className="h-10 px-4 text-sm">
                     View Course
                   </Button>
-                  <Button variant="cta" className="h-10 px-4 text-sm">
-                    Enquire
-                  </Button>
+                  <EnquiryDialog
+                    entityName={college.name}
+                    interestOptions={college.courses.map((c) => c.name)}
+                    interestLabel="Course"
+                    defaultInterest={course.name}
+                    trigger={<Button variant="cta" className="h-10 px-4 text-sm">Enquire</Button>}
+                  />
                 </div>
               </div>
             </div>

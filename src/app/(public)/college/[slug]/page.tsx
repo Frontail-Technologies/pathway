@@ -1,28 +1,23 @@
-import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
+import { notFound } from 'next/navigation'
 import { getCollegeDetail } from '@/features/colleges/data/college-detail'
-import { CollegeDetailPage } from '@/features/colleges/components/college-detail-page'
+import { collegeTabMetadata } from '@/features/colleges/config/college-tabs'
+import { CollegeOverviewTab } from '@/features/colleges/components/college-overview-tab'
 
-export function generateStaticParams() {
-  return [{ slug: 'iit-delhi' }]
-}
+type Props = { params: Promise<{ slug: string }> }
 
-export const dynamicParams = false
-
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
-  const college = getCollegeDetail(slug)
-  return { title: college ? college.name : 'College Not Found' }
+  return collegeTabMetadata(getCollegeDetail(slug), '')
 }
 
-export default async function CollegeDetailRoute({ params }: { params: Promise<{ slug: string }> }) {
+export default async function CollegeOverviewRoute({ params }: Props) {
   const { slug } = await params
   const college = getCollegeDetail(slug)
   if (!college) notFound()
-
   return (
     <>
-      <CollegeDetailPage college={college} />
+      <CollegeOverviewTab college={college} />
     </>
   )
 }

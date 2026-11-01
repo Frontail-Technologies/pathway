@@ -110,7 +110,7 @@ Implement the college sub-pages with one shared **`app/(public)/college/[slug]/l
 |-------|-------|-------|
 | 0 | WebView foundation | ✅ This change |
 | 1 | Mobile sticky action bar on every detail page; shared enquiry / brochure / counselling form; `/search` and `/counselling` | ✅ Done — see §6 |
-| 2 | College sub-routes (`/college/[slug]/…`) with a shared layout and tab bar; then exam and course | Deep links + SEO; reuses existing sections |
+| 2 | College sub-routes (`/college/[slug]/…`) with a shared layout and tab bar; then exam and course | ✅ Colleges done (§7). Exam and course still single-page |
 | 3 | Stream layer (`/[stream]` hubs, stream-scoped listings, stream-aware nav and home) | Needs a stream taxonomy in the data model |
 | 4 | Real API in `services/api` (shared by web and native), ISR on detail pages | Replace mock `features/*/data` |
 | 5 | Two-way bridge: native → web (auth token handoff, save/shortlist sync, share sheet) | Extend `NativeMessage` and add a `window.PathwayWeb` receiver |
@@ -131,3 +131,23 @@ Implement the college sub-pages with one shared **`app/(public)/college/[slug]/l
 - **Shared lead form** (`features/enquiries/components/enquiry-form.tsx` and `enquiry-dialog.tsx`) with three intents: `enquiry`, `brochure` (email required) and `counselling`. It validates a 10-digit Indian mobile number (accepting a +91 prefix) and shows inline errors. It is demo only: nothing is sent and a toast confirms. The college page's previously inert desktop "Enquire Now" / "Download Brochure" buttons now open it.
 - **`/search`**: one index across colleges, courses, exams, scholarships, coaching, tutors, notes and tools, with word-prefix matching and title-weighted ranking. It has type chips with counts, groups of 4 with "See all", and empty/no-result states. Results link to a detail page when one exists, otherwise to the listing pre-filtered with `?q=` (never a 404). The page is `noindex`.
 - **`/counselling`**: hero with the call-back form, how it works, topics and FAQs.
+
+## 7. Phase 2 — college sub-pages (delivered)
+
+| URL | Content |
+|-----|---------|
+| `/college/[slug]` | Overview, plus a summary of every other tab with a "View all" link |
+| `/college/[slug]/courses` | Courses & fees |
+| `/college/[slug]/admission` | Exams, eligibility, selection, important dates |
+| `/college/[slug]/placement` | Placement metrics, recruiters |
+| `/college/[slug]/reviews` | Reviews (data source not connected yet) |
+| `/college/[slug]/facilities` | Facilities |
+| `/college/[slug]/scholarships` | Scholarships |
+| `/college/[slug]/faqs` | FAQs |
+
+- **Shared layout** (`app/(public)/college/[slug]/layout.tsx` → `CollegeDetailShell`): breadcrumbs, identity header, tab bar, desktop sidebar, closing CTA and the mobile action bar. Only the tab content re-renders on navigation, so it feels like an app.
+- **`DetailTabNav`** (`components/shared/detail-tab-nav.tsx`) is reusable for exam and course. Its tabs are real `<Link>`s. When the reader has already scrolled past the tab bar, switching tabs puts the new content right under it; otherwise scroll position is kept.
+- **Tab config** (`features/colleges/config/college-tabs.ts`) gives each tab its own `<title>`, description and canonical URL. Static params come from `getCollegeDetailSlugs()`, and every tab is pre-rendered.
+- **Legacy links**: `/college/x#placements` (and `#fees`, `#admissions`, …) forward to the matching sub-page.
+- The per-course **Enquire** buttons now open the enquiry form with that course pre-selected.
+- `metadataBase` is set from `NEXT_PUBLIC_SITE_URL`. **Set this env var in production**, or canonical URLs fall back to `http://localhost:3000`.
