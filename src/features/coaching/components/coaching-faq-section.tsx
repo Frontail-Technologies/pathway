@@ -12,7 +12,7 @@ export function CoachingFaqSection({ provider }: { provider: CoachingProvider })
   if (!provider.faqs?.length) return null
 
   return (
-    <section id="faqs" className="scroll-mt-43 py-8 lg:scroll-mt-44 lg:py-12">
+    <section id="faqs" className="scroll-mt-section py-8 lg:py-12">
       <DetailSectionHeader title="Frequently Asked Questions" />
       <div className="mt-4 rounded-[10px] border bg-card px-4">
         <Accordion multiple={false}>

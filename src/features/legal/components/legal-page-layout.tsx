@@ -16,7 +16,7 @@ export function LegalPageLayout({ document }: { document: LegalDocument }) {
           <p className="mt-3 text-sm text-muted-foreground">Last updated: {LEGAL_LAST_UPDATED}</p>
         </header>
         <div className="mt-8 flex gap-12 lg:items-start">
-          <nav aria-label="On this page" className="sticky top-34 hidden w-60 shrink-0 lg:block">
+          <nav aria-label="On this page" className="sticky top-header-gap hidden w-60 shrink-0 lg:block">
             <p className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">On this page</p>
             <ol className="mt-3 flex flex-col gap-1.5 border-l">
               {document.sections.map((section, index) => (

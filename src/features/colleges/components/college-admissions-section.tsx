@@ -2,7 +2,7 @@ import type { CollegeDetailData } from '../data/college-detail'
 
 export function CollegeAdmissionsSection({ college }: { college: CollegeDetailData }) {
   return (
-    <section id="admissions" className="scroll-mt-[172px] border-b py-7 lg:scroll-mt-44 lg:py-9">
+    <section id="admissions" className="scroll-mt-section border-b py-7 lg:py-9">
       <h2 className="font-heading text-xl font-bold text-foreground sm:text-[22px]">{college.name} Admissions 2026</h2>
 
       <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">

@@ -61,7 +61,7 @@ const footerGroups = [
 
 export function PublicFooter() {
   return (
-    <footer className="bg-brand-blue-dark text-primary-foreground">
+    <footer className="web-chrome bg-brand-blue-dark text-primary-foreground">
       <div className="container-shell border-b border-primary-foreground/10 px-4 py-6 sm:py-8">
         <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex max-w-sm flex-col gap-2">

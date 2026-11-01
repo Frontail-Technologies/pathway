@@ -27,7 +27,7 @@ export function MobileComparisonHeaderRow({ entries, onRemove, onAdd, onModify, 
     
     
     
-    <div className="sticky top-[117px] lg:top-30 z-20 overflow-hidden rounded-t-[10px] border border-b-0 bg-card print:hidden">
+    <div className="sticky top-header z-20 overflow-hidden rounded-t-[10px] border border-b-0 bg-card print:hidden">
       <div className={`grid ${MOBILE_COMPARE_GRID_COLS}`} style={{ transform: `translateX(${-scrollLeft}px)` }}>
         {slots.map((entry, index) =>
           entry ? (

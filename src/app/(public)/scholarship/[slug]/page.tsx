@@ -2,7 +2,6 @@ import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import { getScholarshipDetail } from '@/features/scholarships/data/scholarship-detail'
 import { ScholarshipDetailPage } from '@/features/scholarships/components/scholarship-detail-page'
-import { MobileBottomNavigation } from '@/components/layout/mobile-navigation'
 
 export function generateStaticParams() {
   return [{ slug: 'aicte-pragati-scholarship-girls' }]
@@ -24,7 +23,6 @@ export default async function ScholarshipDetailRoute({ params }: { params: Promi
   return (
     <>
       <ScholarshipDetailPage scholarship={scholarship} />
-      <MobileBottomNavigation />
     </>
   )
 }

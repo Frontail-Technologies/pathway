@@ -2,7 +2,6 @@ import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import { exams, getExamBySlug } from '@/features/exams/data/exams'
 import { ExamDetailPage } from '@/features/exams/components/exam-detail-page'
-import { MobileBottomNavigation } from '@/components/layout/mobile-navigation'
 
 export function generateStaticParams() {
   return exams.filter((exam) => exam.hasDetailPage).map((exam) => ({ slug: exam.slug }))
@@ -24,7 +23,6 @@ export default async function ExamDetailRoute({ params }: { params: Promise<{ sl
   return (
     <>
       <ExamDetailPage exam={{ ...exam, detail: exam.detail }} />
-      <MobileBottomNavigation />
     </>
   )
 }

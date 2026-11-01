@@ -144,6 +144,51 @@ h1, h2, h3, h4, h5, h6 { font-family: var(--font-manrope), sans-serif; letter-sp
 }
 ::selection { background: var(--brand-blue-light); color: var(--brand-blue-dark); }
 @keyframes nav-progress { from { transform: scaleX(0); } to { transform: scaleX(0.75); } }
+/*
+ * Layout tokens. Everything that sticks below the public header reads these
+ * instead of hard-coding pixel offsets, so app-shell mode (no web header) and
+ * future header changes only need to touch this block.
+ *   mobile header: 56px bar + 61px search row   desktop: 72px bar + 48px nav
+ */
+:root {
+  --pw-header-h: calc(117px + env(safe-area-inset-top));
+  --pw-section-nav-h: 55px;
+  --pw-bottom-nav-h: calc(60px + env(safe-area-inset-bottom));
+}
+@media (min-width: 1024px) {
+  :root {
+    --pw-header-h: calc(120px + env(safe-area-inset-top));
+    --pw-section-nav-h: 56px;
+  }
+}
+@media (min-width: 768px) {
+  :root { --pw-bottom-nav-h: 0px; }
+}
+@utility top-header { top: var(--pw-header-h); }
+@utility top-header-gap { top: calc(var(--pw-header-h) + 1rem); }
+@utility top-section { top: calc(var(--pw-header-h) + var(--pw-section-nav-h)); }
+@utility scroll-mt-section { scroll-margin-top: calc(var(--pw-header-h) + var(--pw-section-nav-h)); }
+.pw-bottom-nav-space { padding-bottom: var(--pw-bottom-nav-h); }
+
+/*
+ * App-shell (native WebView) mode — see src/lib/app-shell.
+ * The native app owns the top bar and tab bar, so web chrome is removed and
+ * the layout tokens collapse to the device safe areas.
+ */
+.app-only { display: none !important; }
+:root[data-app-shell] .app-only { display: revert !important; }
+:root[data-app-shell] .web-chrome { display: none !important; }
+:root[data-app-shell] {
+  --pw-header-h: env(safe-area-inset-top);
+  --pw-bottom-nav-h: env(safe-area-inset-bottom);
+  -webkit-tap-highlight-color: transparent;
+  -webkit-text-size-adjust: 100%;
+  overscroll-behavior-y: none;
+}
+:root[data-app-shell] body { padding-top: env(safe-area-inset-top); }
+:root[data-app-shell] a,
+:root[data-app-shell] button { touch-action: manipulation; -webkit-touch-callout: none; }
+
 .container-shell { width: 100%; max-width: 1536px; margin-inline: auto; padding-inline: 1rem; }
 @media (min-width: 640px) { .container-shell { padding-inline: 1.5rem; } }
 @media (min-width: 1024px) { .container-shell { padding-inline: 2rem; } }

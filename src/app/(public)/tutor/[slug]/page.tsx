@@ -2,7 +2,6 @@ import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import { getTutorBySlug, tutors } from '@/features/tutors/data/tutors'
 import { TutorDetailPage } from '@/features/tutors/components/tutor-detail-page'
-import { MobileBottomNavigation } from '@/components/layout/mobile-navigation'
 
 export function generateStaticParams() {
   return tutors.filter((tutor) => tutor.hasDetailPage).map((tutor) => ({ slug: tutor.slug }))
@@ -24,7 +23,6 @@ export default async function TutorDetailRoute({ params }: { params: Promise<{ s
   return (
     <>
       <TutorDetailPage tutor={{ ...tutor, detail: tutor.detail }} />
-      <MobileBottomNavigation />
     </>
   )
 }

@@ -14,7 +14,7 @@ export function ScholarshipBenefitsSection({ scholarship }: { scholarship: Schol
   ]
 
   return (
-    <section id="benefits" className="scroll-mt-43 border-b py-7 lg:scroll-mt-44 lg:py-9">
+    <section id="benefits" className="scroll-mt-section border-b py-7 lg:py-9">
       <h2 className="font-heading text-xl font-bold text-foreground sm:text-[22px]">Benefit Breakdown</h2>
 
       <div className="mt-4 flex items-center gap-3 rounded-[10px] border bg-secondary/40 p-4">

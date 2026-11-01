@@ -9,7 +9,7 @@ export function CoachingAboutSection({ provider }: { provider: CoachingProvider 
   const features = [...provider.highlights, `${provider.modes.join(' + ')} learning`].slice(0, 4)
 
   return (
-    <section id="overview" className="scroll-mt-43 border-b py-8 lg:scroll-mt-44 lg:py-12">
+    <section id="overview" className="scroll-mt-section border-b py-8 lg:py-12">
       <DetailSectionHeader title={`About ${provider.name}`} />
       <p className="mt-2.5 max-w-3xl text-sm leading-6 text-muted-foreground sm:text-[15px]">{provider.aboutCopy}</p>
 

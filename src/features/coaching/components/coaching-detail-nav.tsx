@@ -53,7 +53,7 @@ export function CoachingDetailNav({ sections }: CoachingDetailNavProps) {
   if (sections.length === 0) return null
 
   return (
-    <div className="sticky top-[117px] lg:top-30 z-20 border-y bg-card lg:top-30">
+    <div className="sticky top-header z-20 border-y bg-card">
       <div className="container-shell px-4">
         <div ref={scrollerRef} className="flex gap-1 overflow-x-auto">
           {sections.map((section) => (

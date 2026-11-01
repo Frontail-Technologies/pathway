@@ -3,7 +3,7 @@ import type { CollegeDetailData } from '../data/college-detail'
 
 export function CollegeFaqSection({ college }: { college: CollegeDetailData }) {
   return (
-    <section id="faqs" className="scroll-mt-[172px] py-7 lg:scroll-mt-44 lg:py-9">
+    <section id="faqs" className="scroll-mt-section py-7 lg:py-9">
       <h2 className="font-heading text-xl font-bold text-foreground sm:text-[22px]">Frequently Asked Questions</h2>
 
       <div className="mt-4 rounded-[10px] border bg-card px-4">

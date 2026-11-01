@@ -33,7 +33,7 @@ export function CollegeCompareHeaderRow({ entries, onRemove, onAdd, onModify, sc
     
     
     
-    <div className="sticky top-[117px] lg:top-30 z-20 flex overflow-hidden rounded-t-[10px] border border-b-0 bg-card lg:top-30 print:static print:overflow-visible print:rounded-none">
+    <div className="sticky top-header z-20 flex overflow-hidden rounded-t-[10px] border border-b-0 bg-card print:static print:overflow-visible print:rounded-none">
       <div className={`sticky left-0 z-10 flex shrink-0 items-center bg-muted/40 px-3 py-3 text-xs font-semibold text-muted-foreground print:static ${COMPARE_ATTR_COL_WIDTH}`}>
         College
       </div>

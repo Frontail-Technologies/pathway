@@ -8,7 +8,7 @@ import type { CollegeDetailData } from '../data/college-detail'
  
 export function CollegePlacementsSection({ college }: { college: CollegeDetailData }) {
   return (
-    <section id="placements" className="scroll-mt-[172px] border-b py-7 lg:scroll-mt-44 lg:py-9">
+    <section id="placements" className="scroll-mt-section border-b py-7 lg:py-9">
       <h2 className="font-heading text-xl font-bold text-foreground sm:text-[22px]">{college.name} Placements</h2>
 
       <dl className="mt-4 grid grid-cols-2 gap-x-6 gap-y-3 rounded-[10px] border bg-card p-4 sm:grid-cols-4">

@@ -86,7 +86,7 @@ export function ExamListingPage() {
             </div>
 
             <div className="mt-5 flex flex-col gap-5 lg:flex-row lg:items-start lg:gap-7">
-              <div className="sticky top-34 hidden lg:block">
+              <div className="sticky top-header-gap hidden lg:block">
                 <ExamFilterSidebar filters={filters} onToggle={toggleFilter} onClearAll={() => updateUrl(emptyFilters, sort, query)} />
               </div>
 

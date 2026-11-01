@@ -2,7 +2,6 @@ import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import { getCourseDetail } from '@/features/courses/data/course-detail'
 import { CourseDetailPage } from '@/features/courses/components/course-detail-page'
-import { MobileBottomNavigation } from '@/components/layout/mobile-navigation'
 
 export function generateStaticParams() {
   return [{ slug: 'btech-computer-science' }]
@@ -24,7 +23,6 @@ export default async function CourseDetailRoute({ params }: { params: Promise<{ 
   return (
     <>
       <CourseDetailPage course={course} />
-      <MobileBottomNavigation />
     </>
   )
 }

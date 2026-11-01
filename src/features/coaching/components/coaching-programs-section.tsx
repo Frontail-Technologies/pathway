@@ -8,7 +8,7 @@ export function CoachingProgramsSection({ provider }: { provider: CoachingProvid
   if (!provider.programs?.length) return null
 
   return (
-    <section id="programs" className="scroll-mt-43 border-b py-8 lg:scroll-mt-44 lg:py-12">
+    <section id="programs" className="scroll-mt-section border-b py-8 lg:py-12">
       <DetailSectionHeader icon={BookOpen} title="Popular Courses" />
 
       <div className="mt-4 hidden grid-cols-1 gap-3 sm:grid sm:grid-cols-2 lg:grid-cols-3">

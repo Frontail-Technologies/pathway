@@ -3,7 +3,7 @@ import type { CollegeDetailData } from '../data/college-detail'
 
 export function CollegeCoursesSection({ college }: { college: CollegeDetailData }) {
   return (
-    <section id="courses" className="scroll-mt-[172px] border-b py-7 lg:scroll-mt-44 lg:py-9">
+    <section id="courses" className="scroll-mt-section border-b py-7 lg:py-9">
       <h2 className="font-heading text-xl font-bold text-foreground sm:text-[22px]">Courses at {college.name}</h2>
       <p className="mt-1 text-sm text-muted-foreground">{college.courses.length} programmes across UG and PG levels</p>
 

@@ -4,7 +4,7 @@ import type { ScholarshipDetailData } from '../data/scholarship-detail'
  
 export function ScholarshipSelectionSection({ scholarship }: { scholarship: ScholarshipDetailData }) {
   return (
-    <section id="selection" className="scroll-mt-43 border-b py-7 lg:scroll-mt-44 lg:py-9">
+    <section id="selection" className="scroll-mt-section border-b py-7 lg:py-9">
       <h2 className="font-heading text-xl font-bold text-foreground sm:text-[22px]">Selection Process</h2>
 
       <div className="mt-4 flex flex-col items-start gap-1.5">

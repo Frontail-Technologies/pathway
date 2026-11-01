@@ -2,7 +2,6 @@ import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import { getCoachingDetail } from '@/features/coaching/data/coaching'
 import { CoachingDetailPage } from '@/features/coaching/components/coaching-detail-page'
-import { MobileBottomNavigation } from '@/components/layout/mobile-navigation'
 
 export function generateStaticParams() {
   return [{ slug: 'apex-jee-academy-kota' }]
@@ -24,7 +23,6 @@ export default async function CoachingDetailRoute({ params }: { params: Promise<
   return (
     <>
       <CoachingDetailPage provider={provider} />
-      <MobileBottomNavigation />
     </>
   )
 }

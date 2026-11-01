@@ -122,7 +122,7 @@ export function CourseListingPage() {
           <p className="text-sm font-semibold text-primary">2,400+ Courses</p>
           <div className="mt-5 flex flex-col gap-6 lg:flex-row lg:items-start lg:gap-8">
             { }
-            <div className="sticky top-34 hidden max-h-[calc(100dvh-8.5rem-1rem)] overflow-y-auto lg:block">
+            <div className="sticky top-header-gap hidden max-h-[calc(100dvh-var(--pw-header-h)-2rem)] overflow-y-auto lg:block">
               <CourseFilterSidebar filters={filters} onToggle={toggleFilter} onClearAll={clearAllFilters} />
             </div>
 

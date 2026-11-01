@@ -2,7 +2,7 @@ import type { CollegeDetailData } from '../data/college-detail'
 
 export function CollegeFeesSection({ college }: { college: CollegeDetailData }) {
   return (
-    <section id="fees" className="scroll-mt-[172px] border-b py-7 lg:scroll-mt-44 lg:py-9">
+    <section id="fees" className="scroll-mt-section border-b py-7 lg:py-9">
       <h2 className="font-heading text-xl font-bold text-foreground sm:text-[22px]">{college.name} Fees</h2>
       <p className="mt-1 text-sm text-muted-foreground">Approximate tuition and total fee by programme.</p>
 

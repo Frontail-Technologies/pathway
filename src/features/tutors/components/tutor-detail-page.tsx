@@ -18,7 +18,7 @@ const chip = 'rounded-md bg-secondary px-2 py-0.5 text-xs font-semibold text-pri
 
 function Section({ id, title, children }: { id: string; title: string; children: ReactNode }) {
   return (
-    <section id={id} className="scroll-mt-43 border-b py-7 lg:scroll-mt-44 lg:py-9">
+    <section id={id} className="scroll-mt-section border-b py-7 lg:py-9">
       <h2 className="font-heading text-xl font-bold text-foreground sm:text-[22px]">{title}</h2>
       <div className="mt-4">{children}</div>
     </section>
@@ -221,7 +221,7 @@ function LanguagesSection({ tutor }: { tutor: DetailedTutor }) {
 
 function AvailabilitySection() {
   return (
-    <section id="availability" className="scroll-mt-43 py-7 lg:scroll-mt-44 lg:py-9">
+    <section id="availability" className="scroll-mt-section py-7 lg:py-9">
       <h2 className="font-heading text-xl font-bold text-foreground sm:text-[22px]">Availability</h2>
       <div className="mt-4 flex items-start gap-3 rounded-[10px] border border-dashed bg-muted/40 p-4">
         <Info className="mt-0.5 size-4 shrink-0 text-primary" aria-hidden="true" />

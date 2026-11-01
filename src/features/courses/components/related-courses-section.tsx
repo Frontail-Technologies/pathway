@@ -4,7 +4,7 @@ import type { CourseDetailData } from '../data/course-detail'
 
 export function RelatedCoursesSection({ course }: { course: CourseDetailData }) {
   return (
-    <section id="related" className="scroll-mt-43 border-b py-7 lg:scroll-mt-44 lg:py-9">
+    <section id="related" className="scroll-mt-section border-b py-7 lg:py-9">
       <h2 className="font-heading text-xl font-bold text-foreground sm:text-[22px]">Related Courses</h2>
 
       <div className="mt-4 rounded-[10px] border bg-card">

@@ -19,7 +19,7 @@ const iconButtonClass = 'text-primary-foreground hover:bg-primary-foreground/10 
  
 export function PublicHeader() {
   return (
-    <header className="sticky top-0 z-30 bg-[linear-gradient(180deg,var(--brand-blue)_0%,var(--brand-blue-dark)_100%)] shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_2px_8px_rgba(15,23,42,0.12)]">
+    <header className="web-chrome sticky top-0 z-30 pt-[env(safe-area-inset-top)] bg-[linear-gradient(180deg,var(--brand-blue)_0%,var(--brand-blue-dark)_100%)] shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_2px_8px_rgba(15,23,42,0.12)]">
       { }
       <div className="lg:hidden">
         <div className="container-shell flex h-14 items-center gap-3">

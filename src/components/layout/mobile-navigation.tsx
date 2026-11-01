@@ -140,7 +140,7 @@ export function MobileBottomNavigation() {
     { label: 'Profile', href: '/student/profile', icon: UserRound },
   ]
   return (
-    <nav aria-label="Mobile navigation" className="fixed inset-x-0 bottom-0 z-20 border-t bg-card pt-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] md:hidden">
+    <nav aria-label="Mobile navigation" className="web-chrome fixed inset-x-0 bottom-0 z-20 border-t bg-card pt-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] md:hidden">
       <div className="mx-auto grid max-w-md grid-cols-5">
         {items.map(({ label, href, icon: Icon }) => {
           const isActive = pathname === href

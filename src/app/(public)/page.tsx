@@ -9,7 +9,6 @@ import { TrendingCollegesSection } from '@/features/home/components/trending-col
 import { TutorsCoachingSection } from '@/features/home/components/tutors-coaching-section'
 import { CounsellingCtaSection } from '@/features/home/components/counselling-cta-section'
 import { SeoDiscoveryLinks } from '@/features/home/components/seo-discovery-links'
-import { MobileBottomNavigation } from '@/components/layout/mobile-navigation'
 
 export default function PublicHomePage() {
   return (
@@ -25,7 +24,6 @@ export default function PublicHomePage() {
       <TutorsCoachingSection />
       <CounsellingCtaSection />
       <SeoDiscoveryLinks />
-      <MobileBottomNavigation />
     </>
   )
 }

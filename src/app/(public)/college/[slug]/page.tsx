@@ -2,7 +2,6 @@ import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import { getCollegeDetail } from '@/features/colleges/data/college-detail'
 import { CollegeDetailPage } from '@/features/colleges/components/college-detail-page'
-import { MobileBottomNavigation } from '@/components/layout/mobile-navigation'
 
 export function generateStaticParams() {
   return [{ slug: 'iit-delhi' }]
@@ -24,7 +23,6 @@ export default async function CollegeDetailRoute({ params }: { params: Promise<{
   return (
     <>
       <CollegeDetailPage college={college} />
-      <MobileBottomNavigation />
     </>
   )
 }

@@ -8,7 +8,7 @@ export function CoachingLocationSection({ provider }: { provider: CoachingProvid
   const cityLabel = provider.state ? `${provider.location}, ${provider.state}` : provider.location
 
   return (
-    <section id="location" className="scroll-mt-43 border-b py-8 lg:scroll-mt-44 lg:py-12">
+    <section id="location" className="scroll-mt-section border-b py-8 lg:py-12">
       <DetailSectionHeader icon={MapPin} title="Location" />
 
       <div className="mt-4 overflow-hidden rounded-[10px] border bg-card">

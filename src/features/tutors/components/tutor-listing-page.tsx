@@ -141,7 +141,7 @@ export function TutorListingPage() {
             </div>
 
             <div className="mt-5 flex flex-col gap-5 lg:flex-row lg:items-start lg:gap-7">
-              <div className="sticky top-34 hidden max-h-[calc(100dvh-9.5rem)] overflow-y-auto lg:block">
+              <div className="sticky top-header-gap hidden max-h-[calc(100dvh-var(--pw-header-h)-2rem)] overflow-y-auto lg:block">
                 <TutorFilterSidebar filters={filters} onToggle={toggleFilter} onClearAll={() => updateUrl(emptyFilters, sort, query)} />
               </div>
 

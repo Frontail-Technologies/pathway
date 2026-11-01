@@ -8,27 +8,6 @@ type DetailSectionNavProps = {
   items: DetailSectionNavItem[]
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
 export function DetailSectionNav({ items }: DetailSectionNavProps) {
   const [active, setActive] = useState(items[0]?.id)
   const navRef = useRef<HTMLDivElement>(null)
@@ -40,19 +19,15 @@ export function DetailSectionNav({ items }: DetailSectionNavProps) {
     const computeActive = () => {
       ticking = false
       if (items.length === 0) return
-      
-      
-      
-      
-      
-      
-      const isDesktop = window.matchMedia('(min-width: 1024px)').matches
-      const threshold = (isDesktop ? 160 : 172) + 2
 
       let current = items[0].id
       for (const item of items) {
         const node = document.getElementById(item.id)
         if (!node) continue
+        // A section is reached once its top is at its own scroll-margin, the
+        // exact spot a tab tap scrolls it to. Reading it from CSS keeps this
+        // in sync with the header-height tokens (web header vs app-shell).
+        const threshold = parseFloat(getComputedStyle(node).scrollMarginTop) + 2
         if (node.getBoundingClientRect().top <= threshold) {
           current = item.id
         } else {
@@ -77,8 +52,6 @@ export function DetailSectionNav({ items }: DetailSectionNavProps) {
     }
   }, [items])
 
-  
-  
   useEffect(() => {
     const container = scrollerRef.current
     const activeLink = container?.querySelector<HTMLAnchorElement>(`a[href="#${active}"]`)
@@ -97,11 +70,8 @@ export function DetailSectionNav({ items }: DetailSectionNavProps) {
   if (items.length === 0) return null
 
   return (
-    
-    
-    
-    
-    <div ref={navRef} className="sticky top-[117px] lg:top-30 z-20 border-y bg-card lg:top-30">
+
+    <div ref={navRef} className="sticky top-header z-20 border-y bg-card">
       <div className="container-shell px-4">
         <div ref={scrollerRef} className="flex gap-1 overflow-x-auto">
           {items.map((item) => (
