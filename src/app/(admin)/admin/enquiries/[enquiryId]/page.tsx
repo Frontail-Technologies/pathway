@@ -10,10 +10,10 @@ type Props = {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { enquiryId } = await params
   const enquiry = getAdminEnquiryById(enquiryId)
-  if (!enquiry) return { title: 'Enquiry Not Found | Pathway Admin' }
+  if (!enquiry) return { title: 'Enquiry not found | Pathway Admin' }
 
   return {
-    title: `${enquiry.subject || `Enquiry #${enquiry.id}`} | Enquiry Details | Pathway Admin`,
+    title: `${enquiry.subject || `Enquiry from ${enquiry.contactName}`} | Pathway Admin`,
     description: `Administrative overview and follow-up history for enquiry #${enquiry.id}.`,
   }
 }

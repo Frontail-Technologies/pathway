@@ -10,11 +10,11 @@ type Props = {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { promotionId } = await params
   const promo = getAdminPromotionById(promotionId)
-  if (!promo) return { title: 'Placement Not Found | Pathway Admin' }
+  if (!promo) return { title: 'Listing not found | Pathway admin' }
 
   return {
-    title: `${promo.label || `Placement #${promo.id}`} | Placement Details | Pathway Admin`,
-    description: `Administrative overview and schedule status for promotion placement #${promo.id}.`,
+    title: `${promo.label || promo.targetName || 'Featured listing'} | Featured listings | Pathway admin`,
+    description: `${promo.kind === 'sponsored' ? 'Sponsored' : 'Featured'} listing for ${promo.targetName ?? promo.targetId}.`,
   }
 }
 

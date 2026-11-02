@@ -1,142 +1,160 @@
 'use client'
 
 import * as React from 'react'
-import type { AdminContentEntry } from '@/features/admin/data/admin-content'
-import { AdminDataTable } from '@/features/admin/components/admin-data-table'
-import { contentTableColumns } from './content-table-columns'
-import { ContentFilters, type ContentFilterState } from './content-filters'
-import { ContentMobileCard } from './content-mobile-card'
-import { Badge } from '@/components/ui/badge'
-import { FileText, Plus } from 'lucide-react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import type { ColumnDef } from '@tanstack/react-table'
+import { Edit, Eye, MoreHorizontal, Plus } from 'lucide-react'
+import { Button, buttonVariants } from '@/components/ui/button'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import type { AdminContentEntry } from '@/features/admin/data/admin-content'
+import { useUrlFilters } from '@/features/admin/hooks/use-url-filters'
+import { AdminDataTable } from '../../admin-data-table'
+import { AdminFilterSelect, AdminPageHeader, AdminToolbar, SortHeader, StatusBadge, stopRowClick, Tag } from '../../kit'
+import { contentCategoryLabels, contentCategoryOptions, contentStatusLabels, contentStatusOptions, contentStatusTones, contentTypeLabels, contentTypeOptions, formatContentDate } from '../shared/content-constants'
 
-export function AdminContentView({
-  initialContent,
-}: {
-  initialContent: AdminContentEntry[]
-}) {
-  const [filters, setFilters] = React.useState<ContentFilterState>({
-    search: '',
-    type: 'all',
-    category: 'all',
-    status: 'all',
-  })
+const DEFAULT_FILTERS = { q: '', type: 'all', category: 'all', status: 'all' }
 
-  const handleFilterChange = (key: keyof ContentFilterState, value: string) => {
-    setFilters((prev) => ({ ...prev, [key]: value }))
-  }
+const lastChanged = (entry: AdminContentEntry) => entry.updatedAt || entry.publishedAt || entry.createdAt
 
-  const handleResetFilters = () => {
-    setFilters({
-      search: '',
-      type: 'all',
-      category: 'all',
-      status: 'all',
-    })
-  }
+function NewArticleLink() {
+  return (
+    <Link href="/admin/content/new" className={buttonVariants({ size: 'sm', className: 'gap-1.5' })}>
+      <Plus className="size-4" aria-hidden="true" />
+      New article
+    </Link>
+  )
+}
 
-  const filteredData = React.useMemo(() => {
+function RowActions({ entry }: { entry: AdminContentEntry }) {
+  return (
+    <div className="flex justify-end" onClick={stopRowClick} onKeyDown={stopRowClick}>
+      <DropdownMenu>
+        <DropdownMenuTrigger render={<Button variant="ghost" size="icon-sm" className="text-muted-foreground hover:text-foreground" aria-label={`Actions for ${entry.title}`} />}>
+          <MoreHorizontal className="size-4" />
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-40">
+          <DropdownMenuItem render={<Link href={`/admin/content/${entry.id}`} />}>
+            <Eye className="size-4" aria-hidden="true" />
+            View
+          </DropdownMenuItem>
+          <DropdownMenuItem render={<Link href={`/admin/content/${entry.id}/edit`} />}>
+            <Edit className="size-4" aria-hidden="true" />
+            Edit
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </div>
+  )
+}
+
+export function AdminContentView({ initialContent }: { initialContent: AdminContentEntry[] }) {
+  const router = useRouter()
+  const { values: f, set, reset, active } = useUrlFilters(DEFAULT_FILTERS)
+
+  const filtered = React.useMemo(() => {
+    const query = f.q.trim().toLowerCase()
     return initialContent.filter((entry) => {
-      if (filters.search) {
-        const query = filters.search.toLowerCase()
-        const matchTitle = entry.title.toLowerCase().includes(query)
-        const matchSlug = entry.slug.toLowerCase().includes(query)
-        const matchExcerpt = entry.excerpt?.toLowerCase().includes(query)
-        const matchAuthor = entry.authorName?.toLowerCase().includes(query)
-        if (!matchTitle && !matchSlug && !matchExcerpt && !matchAuthor) {
-          return false
-        }
-      }
-
-      if (filters.type !== 'all' && entry.type !== filters.type) {
-        return false
-      }
-
-      if (filters.category !== 'all' && entry.category !== filters.category) {
-        return false
-      }
-
-      if (filters.status !== 'all' && entry.status !== filters.status) {
-        return false
-      }
-
+      if (query && ![entry.title, entry.slug, entry.excerpt ?? '', entry.authorName ?? ''].some((value) => value.toLowerCase().includes(query))) return false
+      if (f.type !== 'all' && entry.type !== f.type) return false
+      if (f.category !== 'all' && entry.category !== f.category) return false
+      if (f.status !== 'all' && entry.status !== f.status) return false
       return true
     })
-  }, [initialContent, filters])
+  }, [initialContent, f])
 
-  return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <div className="flex items-center gap-2.5">
-            <h1 className="text-xl sm:text-2xl font-bold font-heading text-foreground">
-              Articles & Content Management
-            </h1>
-            <Badge
-              variant="secondary"
-              className="text-xs font-semibold px-2.5 py-0.5 bg-blue-50 text-blue-700 border-0"
-            >
-              {initialContent.length} Entries
-            </Badge>
+  const columns = React.useMemo<ColumnDef<AdminContentEntry>[]>(
+    () => [
+      {
+        accessorKey: 'title',
+        header: ({ column }) => <SortHeader label="Title" sorted={column.getIsSorted()} onToggle={() => column.toggleSorting(column.getIsSorted() === 'asc')} />,
+        cell: ({ row }) => (
+          <div className="max-w-[360px] min-w-[240px]">
+            <Link href={`/admin/content/${row.original.id}`} onClick={stopRowClick} className="line-clamp-1 font-medium text-foreground hover:text-primary hover:underline">
+              {row.original.title}
+            </Link>
+            {row.original.authorName ? <p className="text-[13px] text-muted-foreground">{row.original.authorName}</p> : null}
+          </div>
+        ),
+      },
+      { accessorKey: 'type', header: 'Type', cell: ({ row }) => <Tag>{contentTypeLabels[row.original.type]}</Tag> },
+      {
+        accessorKey: 'category',
+        header: 'Category',
+        cell: ({ row }) => <span className="text-muted-foreground">{row.original.category ? contentCategoryLabels[row.original.category] : '—'}</span>,
+      },
+      {
+        accessorKey: 'status',
+        header: 'Status',
+        cell: ({ row }) => <StatusBadge tone={contentStatusTones[row.original.status]}>{contentStatusLabels[row.original.status]}</StatusBadge>,
+      },
+      {
+        id: 'updated',
+        accessorFn: (entry) => lastChanged(entry) ?? '',
+        header: ({ column }) => <SortHeader label="Updated" sorted={column.getIsSorted()} onToggle={() => column.toggleSorting(column.getIsSorted() === 'asc')} />,
+        cell: ({ row }) => <span className="whitespace-nowrap text-muted-foreground tabular-nums">{formatContentDate(lastChanged(row.original)) ?? '—'}</span>,
+      },
+      { id: 'actions', header: () => <span className="sr-only">Actions</span>, cell: ({ row }) => <RowActions entry={row.original} /> },
+    ],
+    [],
+  )
+
+  if (initialContent.length === 0) {
+    return (
+      <div className="space-y-5">
+        <AdminPageHeader title="Articles" description="Guides, news and explainers written by the Pathway team." />
+        <div className="flex flex-col items-center rounded-lg border border-border bg-card px-6 py-14 text-center">
+          <p className="text-[15px] font-semibold text-foreground">No articles yet</p>
+          <p className="mt-1 max-w-sm text-sm text-muted-foreground">Write the first guide or news post. It stays a draft until you publish it.</p>
+          <div className="mt-5">
+            <NewArticleLink />
           </div>
         </div>
-
-        <Link
-          href="/admin/content/new"
-          className="inline-flex items-center justify-center gap-1.5 h-9 px-3.5 text-xs font-semibold rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors shadow-xs shrink-0 self-start sm:self-auto"
-        >
-          <Plus className="w-3.5 h-3.5" />
-          <span>Create Content</span>
-        </Link>
       </div>
+    )
+  }
 
-      <div className="bg-card rounded-xl p-4 sm:p-5 shadow-xs border-0 space-y-4">
-        <ContentFilters
-          filters={filters}
-          onFilterChange={handleFilterChange}
-          onResetFilters={handleResetFilters}
-        />
+  return (
+    <div className="space-y-5">
+      <AdminPageHeader title="Articles" count={`${initialContent.length} total`} description="Guides, news and explainers written by the Pathway team." actions={<NewArticleLink />} />
 
-        {initialContent.length === 0 ? (
-          <div className="p-12 text-center bg-muted/10 rounded-xl border border-dashed border-border/80 space-y-3">
-            <div className="w-10 h-10 rounded-full bg-muted/60 flex items-center justify-center mx-auto text-muted-foreground">
-              <FileText className="w-5 h-5" />
-            </div>
-            <h3 className="text-sm font-bold text-foreground">No editorial content yet.</h3>
-            <div className="pt-2">
-              <Link
-                href="/admin/content/new"
-                className="inline-flex items-center gap-1.5 h-8 px-3 text-xs font-medium rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
-              >
-                <Plus className="w-3.5 h-3.5" />
-                <span>Create Content</span>
-              </Link>
-            </div>
-          </div>
-        ) : (
-          <>
-            <div className="hidden md:block">
-              <AdminDataTable
-                columns={contentTableColumns}
-                data={filteredData}
-                pageSize={10}
-              />
-            </div>
+      <AdminToolbar
+        search={f.q}
+        onSearchChange={(q) => set({ q })}
+        searchPlaceholder="Search title, slug or author"
+        hasActiveFilters={active}
+        onReset={reset}
+        summary={active ? `${filtered.length} of ${initialContent.length} match` : undefined}
+      >
+        <AdminFilterSelect label="Type" value={f.type} onChange={(type) => set({ type })} options={contentTypeOptions} />
+        <AdminFilterSelect label="Category" value={f.category} onChange={(category) => set({ category })} options={contentCategoryOptions} />
+        <AdminFilterSelect label="Status" value={f.status} onChange={(status) => set({ status })} options={contentStatusOptions} />
+      </AdminToolbar>
 
-            <div className="md:hidden space-y-3">
-              {filteredData.length > 0 ? (
-                filteredData.map((entry) => (
-                  <ContentMobileCard key={entry.id} entry={entry} />
-                ))
-              ) : (
-                <div className="p-8 text-center bg-muted/20 rounded-xl border border-dashed border-border text-muted-foreground text-xs">
-                  No content found matching current filter criteria.
-                </div>
-              )}
-            </div>
-          </>
-        )}
-      </div>
+      <AdminDataTable
+        columns={columns}
+        data={filtered}
+        onRowClick={(entry) => router.push(`/admin/content/${entry.id}`)}
+        getRowAriaLabel={(entry) => `Open ${entry.title}`}
+        hasActiveFilters={active}
+        onResetFilters={reset}
+        emptyTitle="No articles match"
+        emptyDescription="Try a different search or clear the filters."
+        mobileCardRender={(row) => {
+          const entry = row.original
+          return (
+            <Link href={`/admin/content/${entry.id}`} className="block space-y-2 rounded-lg border border-border bg-card p-4">
+              <div className="flex items-start justify-between gap-3">
+                <p className="line-clamp-2 min-w-0 font-medium text-foreground">{entry.title}</p>
+                <StatusBadge tone={contentStatusTones[entry.status]}>{contentStatusLabels[entry.status]}</StatusBadge>
+              </div>
+              <p className="text-[13px] text-muted-foreground">
+                {[contentTypeLabels[entry.type], entry.category ? contentCategoryLabels[entry.category] : null, formatContentDate(lastChanged(entry))].filter(Boolean).join(' · ')}
+              </p>
+            </Link>
+          )
+        }}
+      />
     </div>
   )
 }

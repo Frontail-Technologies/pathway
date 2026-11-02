@@ -2,158 +2,200 @@
 
 import * as React from 'react'
 import Link from 'next/link'
-import {
-  type AdminScholarship,
-} from '@/features/admin/data/admin-scholarships'
+import { useRouter } from 'next/navigation'
+import type { ColumnDef } from '@tanstack/react-table'
+import { Edit, ExternalLink, Eye, MoreHorizontal, Plus } from 'lucide-react'
+import { Button, buttonVariants } from '@/components/ui/button'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import type { AdminScholarship } from '@/features/admin/data/admin-scholarships'
 import type { EducationLevel } from '@/features/scholarships/data/scholarships'
-import { AdminDataTable } from '@/features/admin/components/admin-data-table'
-import { scholarshipTableColumns } from './scholarship-table-columns'
-import {
-  ScholarshipFilters,
-  type ScholarshipFilterState,
-} from './scholarship-filters'
-import { ScholarshipMobileCard } from './scholarship-mobile-card'
-import { buttonVariants } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Plus, Award } from 'lucide-react'
+import { useUrlFilters } from '@/features/admin/hooks/use-url-filters'
+import { AdminDataTable } from '../../admin-data-table'
+import { AdminFilterSelect, AdminPageHeader, AdminToolbar, CompletenessMeter, SortHeader, StatusBadge, stopRowClick, Tag } from '../../kit'
+import { applicationStatusOptions, educationLevels, providerTypes, qualityBadgeStyles, scholarshipTypes } from '../shared/scholarship-constants'
+import { ScholarshipApplicationStatusBadge, ScholarshipQualityBadge } from '../shared/scholarship-status-badge'
 
-export function AdminScholarshipsView({
-  initialScholarships,
-}: {
-  initialScholarships: AdminScholarship[]
-}) {
-  const [filters, setFilters] = React.useState<ScholarshipFilterState>({
-    search: '',
-    providerType: 'all',
-    educationLevel: 'all',
-    scholarshipType: 'all',
-    applicationStatus: 'all',
-    qualityStatus: 'all',
-    detailStatus: 'all',
-  })
+const DEFAULT_FILTERS = { q: '', provider: 'all', level: 'all', type: 'all', window: 'all', quality: 'all', page: 'all' }
 
-  const handleFilterChange = (key: keyof ScholarshipFilterState, value: string) => {
-    setFilters((prev) => ({ ...prev, [key]: value }))
-  }
+const qualityOptions = (Object.keys(qualityBadgeStyles) as (keyof typeof qualityBadgeStyles)[]).map((value) => ({ value, label: qualityBadgeStyles[value].label }))
 
-  const handleResetFilters = () => {
-    setFilters({
-      search: '',
-      providerType: 'all',
-      educationLevel: 'all',
-      scholarshipType: 'all',
-      applicationStatus: 'all',
-      qualityStatus: 'all',
-      detailStatus: 'all',
-    })
-  }
+function RowActions({ item }: { item: AdminScholarship }) {
+  return (
+    <div className="flex justify-end" onClick={stopRowClick} onKeyDown={stopRowClick}>
+      <DropdownMenu>
+        <DropdownMenuTrigger render={<Button variant="ghost" size="icon-sm" className="text-muted-foreground hover:text-foreground" aria-label={`Actions for ${item.name}`} />}>
+          <MoreHorizontal className="size-4" />
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-44">
+          <DropdownMenuItem render={<Link href={`/admin/scholarships/${item.id}`} />}>
+            <Eye className="size-4" aria-hidden="true" />
+            View
+          </DropdownMenuItem>
+          <DropdownMenuItem render={<Link href={`/admin/scholarships/${item.id}/edit`} />}>
+            <Edit className="size-4" aria-hidden="true" />
+            Edit
+          </DropdownMenuItem>
+          {item.hasDetailPage ? (
+            <>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem render={<Link href={`/scholarship/${item.slug}`} target="_blank" rel="noreferrer" />}>
+                <ExternalLink className="size-4" aria-hidden="true" />
+                Open public page
+              </DropdownMenuItem>
+            </>
+          ) : null}
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </div>
+  )
+}
 
-  const filteredData = React.useMemo(() => {
-    return initialScholarships.filter((item) => {
-      if (filters.search) {
-        const query = filters.search.toLowerCase()
-        const matchName = item.name.toLowerCase().includes(query)
-        const matchProvider = item.provider.toLowerCase().includes(query)
-        const matchType = item.scholarshipType.toLowerCase().includes(query)
-        const matchStreams = item.streams.some((s) => s.toLowerCase().includes(query))
-        const matchCats = item.categories.some((c) => c.toLowerCase().includes(query))
-        if (!matchName && !matchProvider && !matchType && !matchStreams && !matchCats) {
-          return false
-        }
-      }
+export function AdminScholarshipsView({ initialScholarships }: { initialScholarships: AdminScholarship[] }) {
+  const router = useRouter()
+  const data = initialScholarships
+  const { values: f, set, reset, active } = useUrlFilters(DEFAULT_FILTERS)
 
-      if (filters.providerType !== 'all' && item.providerType !== filters.providerType) {
-        return false
-      }
-
-      if (
-        filters.educationLevel !== 'all' &&
-        item.educationLevels.length > 0 &&
-        !item.educationLevels.includes(filters.educationLevel as EducationLevel)
-      ) {
-        return false
-      }
-
-      if (filters.scholarshipType !== 'all' && item.scholarshipType !== filters.scholarshipType) {
-        return false
-      }
-
-      if (filters.applicationStatus !== 'all' && item.applicationStatus !== filters.applicationStatus) {
-        return false
-      }
-
-      if (filters.qualityStatus !== 'all' && item.qualityStatus !== filters.qualityStatus) {
-        return false
-      }
-
-      if (filters.detailStatus === 'live' && !item.hasDetailPage) {
-        return false
-      }
-
-      if (filters.detailStatus === 'not_configured' && item.hasDetailPage) {
-        return false
-      }
-
+  const filtered = React.useMemo(() => {
+    const query = f.q.trim().toLowerCase()
+    return data.filter((item) => {
+      if (query && ![item.name, item.provider, item.scholarshipType, ...item.streams, ...item.categories].some((value) => value.toLowerCase().includes(query))) return false
+      if (f.provider !== 'all' && item.providerType !== f.provider) return false
+      if (f.level !== 'all' && item.educationLevels.length > 0 && !item.educationLevels.includes(f.level as EducationLevel)) return false
+      if (f.type !== 'all' && item.scholarshipType !== f.type) return false
+      if (f.window !== 'all' && item.applicationStatus !== f.window) return false
+      if (f.quality !== 'all' && item.qualityStatus !== f.quality) return false
+      if (f.page === 'live' && !item.hasDetailPage) return false
+      if (f.page === 'none' && item.hasDetailPage) return false
       return true
     })
-  }, [initialScholarships, filters])
+  }, [data, f])
+
+  const columns = React.useMemo<ColumnDef<AdminScholarship>[]>(
+    () => [
+      {
+        accessorKey: 'name',
+        header: ({ column }) => <SortHeader label="Scholarship" sorted={column.getIsSorted()} onToggle={() => column.toggleSorting(column.getIsSorted() === 'asc')} />,
+        cell: ({ row }) => (
+          <div className="max-w-[320px] min-w-[220px]">
+            <Link href={`/admin/scholarships/${row.original.id}`} onClick={stopRowClick} className="font-medium text-foreground hover:text-primary hover:underline">
+              {row.original.name}
+            </Link>
+            <p className="truncate text-[13px] text-muted-foreground">
+              {row.original.provider} · {row.original.providerType}
+            </p>
+          </div>
+        ),
+      },
+      { accessorKey: 'scholarshipType', header: 'Type', cell: ({ row }) => <Tag>{row.original.scholarshipType}</Tag> },
+      {
+        accessorKey: 'educationLevels',
+        header: 'Level',
+        enableSorting: false,
+        cell: ({ row }) => {
+          const levels = row.original.educationLevels
+          if (levels.length === 0) return <span className="text-[13px] text-muted-foreground">All levels</span>
+          return (
+            <div className="flex max-w-[180px] flex-wrap gap-1">
+              {levels.map((level) => (
+                <Tag key={level}>{level}</Tag>
+              ))}
+            </div>
+          )
+        },
+      },
+      {
+        accessorKey: 'benefitValue',
+        header: ({ column }) => <SortHeader label="Benefit" sorted={column.getIsSorted()} onToggle={() => column.toggleSorting(column.getIsSorted() === 'asc')} />,
+        cell: ({ row }) => (
+          <div className="min-w-[120px]">
+            <p className="font-medium text-foreground">{row.original.benefitLabel || '—'}</p>
+            <p className="text-[13px] text-muted-foreground">{row.original.benefitType}</p>
+          </div>
+        ),
+      },
+      {
+        accessorKey: 'deadline',
+        header: ({ column }) => <SortHeader label="Deadline" sorted={column.getIsSorted()} onToggle={() => column.toggleSorting(column.getIsSorted() === 'asc')} />,
+        cell: ({ row }) => (
+          <div className="min-w-[130px]">
+            <p className="text-foreground">{row.original.deadlineDisplay || '—'}</p>
+            <ScholarshipApplicationStatusBadge status={row.original.applicationStatus} />
+          </div>
+        ),
+      },
+      { accessorKey: 'qualityStatus', header: 'Data quality', cell: ({ row }) => <ScholarshipQualityBadge status={row.original.qualityStatus} /> },
+      {
+        accessorKey: 'completeness',
+        header: ({ column }) => <SortHeader label="Completeness" sorted={column.getIsSorted()} onToggle={() => column.toggleSorting(column.getIsSorted() === 'asc')} />,
+        cell: ({ row }) => <CompletenessMeter value={row.original.completeness} />,
+      },
+      {
+        accessorKey: 'hasDetailPage',
+        header: 'Public page',
+        cell: ({ row }) => (row.original.hasDetailPage ? <StatusBadge tone="success">Live</StatusBadge> : <StatusBadge>Listing only</StatusBadge>),
+      },
+      { id: 'actions', header: () => <span className="sr-only">Actions</span>, cell: ({ row }) => <RowActions item={row.original} /> },
+    ],
+    [],
+  )
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <div className="flex items-center gap-2.5">
-            <h1 className="text-xl sm:text-2xl font-bold font-heading text-foreground">
-              Scholarships
-            </h1>
-            <Badge
-              variant="secondary"
-              className="text-xs font-semibold px-2 py-0.5 bg-blue-50 text-blue-700 border-0"
-            >
-              {initialScholarships.length} Schemes
-            </Badge>
-          </div>
-        </div>
+    <div className="space-y-5">
+      <AdminPageHeader
+        title="Scholarships"
+        count={`${data.length} total`}
+        description="Government, private and university scholarships listed on Pathway."
+        actions={
+          <Link href="/admin/scholarships/new" className={buttonVariants({ size: 'sm', className: 'gap-1.5' })}>
+            <Plus className="size-4" aria-hidden="true" />
+            Add scholarship
+          </Link>
+        }
+      />
 
-        <Link
-          href="/admin/scholarships/new"
-          className={buttonVariants({
-            size: 'sm',
-            className: 'font-semibold text-xs gap-1.5 shadow-xs shrink-0 self-start sm:self-auto',
-          })}
-        >
-          <Plus className="w-4 h-4" />
-          Create Scholarship
-        </Link>
-      </div>
+      <AdminToolbar
+        search={f.q}
+        onSearchChange={(q) => set({ q })}
+        searchPlaceholder="Search name, provider or stream"
+        hasActiveFilters={active}
+        onReset={reset}
+        summary={active ? `${filtered.length} of ${data.length} match` : undefined}
+      >
+        <AdminFilterSelect label="Provider" value={f.provider} onChange={(provider) => set({ provider })} options={providerTypes} />
+        <AdminFilterSelect label="Level" value={f.level} onChange={(level) => set({ level })} options={educationLevels} />
+        <AdminFilterSelect label="Type" value={f.type} onChange={(type) => set({ type })} options={scholarshipTypes} />
+        <AdminFilterSelect label="Window" value={f.window} onChange={(window) => set({ window })} options={applicationStatusOptions} />
+        <AdminFilterSelect label="Quality" value={f.quality} onChange={(quality) => set({ quality })} options={qualityOptions} />
+        <AdminFilterSelect label="Public page" value={f.page} onChange={(page) => set({ page })} options={[{ value: 'live', label: 'Live' }, { value: 'none', label: 'Listing only' }]} />
+      </AdminToolbar>
 
-      <div className="bg-card rounded-xl p-4 sm:p-5 shadow-xs border-0 space-y-4">
-        <ScholarshipFilters
-          filters={filters}
-          onFilterChange={handleFilterChange}
-          onResetFilters={handleResetFilters}
-        />
-
-        <div className="hidden md:block">
-          <AdminDataTable
-            columns={scholarshipTableColumns}
-            data={filteredData}
-            pageSize={10}
-          />
-        </div>
-
-        <div className="md:hidden space-y-3">
-          {filteredData.length > 0 ? (
-            filteredData.map((sch) => (
-              <ScholarshipMobileCard key={sch.id} scholarship={sch} />
-            ))
-          ) : (
-            <div className="p-8 text-center bg-muted/20 rounded-xl border border-dashed border-border text-muted-foreground text-xs">
-              No scholarships found matching current filter criteria.
-            </div>
-          )}
-        </div>
-      </div>
+      <AdminDataTable
+        columns={columns}
+        data={filtered}
+        onRowClick={(item) => router.push(`/admin/scholarships/${item.id}`)}
+        getRowAriaLabel={(item) => `Open ${item.name}`}
+        hasActiveFilters={active}
+        onResetFilters={reset}
+        emptyTitle="No scholarships match"
+        emptyDescription="Try a different search or clear the filters."
+        mobileCardRender={(row) => {
+          const item = row.original
+          return (
+            <Link href={`/admin/scholarships/${item.id}`} className="block space-y-2.5 rounded-lg border border-border bg-card p-4">
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <p className="font-medium text-foreground">{item.name}</p>
+                  <p className="text-[13px] text-muted-foreground">
+                    {item.provider} · {item.benefitLabel || item.benefitType}
+                  </p>
+                </div>
+                <ScholarshipApplicationStatusBadge status={item.applicationStatus} />
+              </div>
+              <CompletenessMeter value={item.completeness} />
+            </Link>
+          )
+        }}
+      />
     </div>
   )
 }

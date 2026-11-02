@@ -1,47 +1,23 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { ArrowLeft } from 'lucide-react'
-import { AdminInstitutionForm } from './admin-institution-form'
 import type { AdminInstitution } from '@/features/admin/types/institutions'
-import { Button } from '@/components/ui/button'
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
+import { AdminPageHeader } from '../kit'
+import { AdminInstitutionForm } from './admin-institution-form'
 
-export function AdminInstitutionEditor({
-  institution,
-  mode,
-}: {
-  institution?: AdminInstitution
-  mode: 'add' | 'edit'
-}) {
+export function AdminInstitutionEditor({ institution, mode }: { institution?: AdminInstitution; mode: 'add' | 'edit' }) {
   const router = useRouter()
-  const destination = institution ? `/admin/institutions/${institution.id}` : '/admin/institutions'
+  const isEdit = mode === 'edit' && institution
+  const destination = isEdit ? `/admin/institutions/${institution.id}` : '/admin/institutions'
 
   return (
-    <div className="mx-auto w-full max-w-4xl space-y-3">
-      <Tooltip>
-        <TooltipTrigger
-          render={
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon-sm"
-              onClick={() => router.push(destination)}
-              aria-label={mode === 'edit' ? 'Back to institution details' : 'Back to institutions'}
-            />
-          }
-        >
-          <ArrowLeft />
-        </TooltipTrigger>
-        <TooltipContent>
-          {mode === 'edit' ? 'Back to institution details' : 'Back to institutions'}
-        </TooltipContent>
-      </Tooltip>
-      <AdminInstitutionForm
-        institution={institution}
-        mode={mode}
-        onCancel={() => router.push(destination)}
+    <div className="space-y-6">
+      <AdminPageHeader
+        back={isEdit ? { href: destination, label: institution.name } : { href: destination, label: 'Institutions' }}
+        title={isEdit ? 'Edit institution' : 'Add institution'}
+        description={isEdit ? undefined : 'Create a college or university listing. You can add courses, fees and admissions after saving.'}
       />
+      <AdminInstitutionForm institution={institution} mode={mode} onCancel={() => router.push(destination)} />
     </div>
   )
 }

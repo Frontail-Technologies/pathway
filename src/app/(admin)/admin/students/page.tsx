@@ -3,7 +3,7 @@ import { getAdminStudents } from '@/features/admin/data/admin-students'
 import { AdminStudentsView } from '@/features/admin/components/students/directory/admin-students-view'
 
 export const metadata: Metadata = {
-  title: 'Students | Admin Console',
+  title: 'Students | Pathway Admin',
   description: 'View student profiles, education preferences, and profile completeness.',
 }
 

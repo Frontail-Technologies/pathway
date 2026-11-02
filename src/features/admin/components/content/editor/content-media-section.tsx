@@ -1,8 +1,7 @@
 'use client'
 
-import * as React from 'react'
-import { Image as ImageIcon } from 'lucide-react'
 import { ImageAssetInput } from '@/features/admin/components/shared/image-asset-input'
+import { FormSection } from '../shared/content-form'
 
 export function ContentMediaSection({
   mode,
@@ -26,15 +25,7 @@ export function ContentMediaSection({
   onUrlChange: (url: string) => void
 }) {
   return (
-    <div id="media" className="bg-card rounded-xl p-5 border border-border/60 shadow-xs space-y-4">
-      <div className="flex items-center justify-between gap-2 border-b border-border/50 pb-3">
-        <div className="flex items-center gap-2">
-          <ImageIcon className="w-4 h-4 text-primary" />
-          <h2 className="text-sm font-bold text-foreground">Featured / Hero Media</h2>
-        </div>
-        <span className="text-[11px] text-muted-foreground font-medium">16:9 Landscape Recommended</span>
-      </div>
-
+    <FormSection id="media" title="Hero image" description="Landscape, 16:9 works best.">
       <ImageAssetInput
         mode={mode}
         onModeChange={onModeChange}
@@ -46,6 +37,6 @@ export function ContentMediaSection({
         urlValue={urlValue}
         onUrlChange={onUrlChange}
       />
-    </div>
+    </FormSection>
   )
 }

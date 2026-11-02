@@ -74,6 +74,10 @@ export function useNoteEditor(initialNote?: Note | null) {
   const [previewFileError, setPreviewFileError] = React.useState<string | null>(null)
 
   
+  const snapshot = JSON.stringify([formData, coverUrlValue, previewUrlValue, !!selectedCoverFile, !!selectedPdfFile, !!selectedPreviewFile])
+  const [initialSnapshot] = React.useState(snapshot)
+  const dirty = snapshot !== initialSnapshot
+
   const coverPreviewUrlRef = React.useRef<string | null>(null)
   coverPreviewUrlRef.current = coverPreviewUrl
   const previewAssetUrlRef = React.useRef<string | null>(null)
@@ -235,17 +239,17 @@ export function useNoteEditor(initialNote?: Note | null) {
     const errs: Record<string, string> = {}
 
     if (!formData.title.trim()) {
-      errs.title = 'Title is required for the study material.'
+      errs.title = 'Add a title.'
     }
 
     if (!formData.slug.trim()) {
-      errs.slug = 'Public URL slug is required.'
+      errs.slug = 'Add a URL slug.'
     }
 
     if (formData.pricingType === 'paid') {
       const priceNum = parseFloat(formData.priceRupees)
       if (isNaN(priceNum) || priceNum <= 0) {
-        errs.priceRupees = 'Please specify a valid purchase price greater than ₹0.'
+        errs.priceRupees = 'Enter a price above ₹0.'
       }
     }
 
@@ -262,16 +266,15 @@ export function useNoteEditor(initialNote?: Note | null) {
 
     const hasLocalFiles = !!selectedCoverFile || !!selectedPdfFile || !!selectedPreviewFile
     if (hasLocalFiles) {
-      setApiNotice(
-        'Saving notes requires the Admin API. File upload requires the Admin Storage API.'
-      )
+      setApiNotice('Saving and file upload aren’t connected yet, so these changes are not stored.')
     } else {
-      setApiNotice('Saving notes requires the Admin API.')
+      setApiNotice('Saving isn’t connected yet, so these changes are not stored.')
     }
   }
 
   return {
     isEditing,
+    dirty,
     formData,
     errors,
     apiNotice,

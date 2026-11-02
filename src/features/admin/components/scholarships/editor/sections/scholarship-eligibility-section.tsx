@@ -31,15 +31,15 @@ export function ScholarshipEligibilitySection({
   onRemoveEligRow: (idx: number) => void
 }) {
   return (
-    <section id="eligibility" className="bg-card rounded-xl p-5 sm:p-6 shadow-xs border-0 space-y-5 scroll-mt-20">
-      <h2 className="text-sm font-bold uppercase tracking-wider text-foreground">
-        Eligibility Criteria
+    <section id="eligibility" className="rounded-lg border border-border bg-card p-5 sm:p-6 space-y-5 scroll-mt-20">
+      <h2 className="text-[15px] font-semibold text-foreground">
+        Eligibility
       </h2>
 
       <div className="space-y-4">
         <div className="space-y-2">
-          <label className="text-xs font-semibold text-foreground block">
-            Key Qualification Bullet Points
+          <label className="text-sm font-medium text-foreground block">
+            Key requirements
           </label>
           <div className="flex gap-2">
             <Input
@@ -52,11 +52,11 @@ export function ScholarshipEligibilitySection({
                 }
               }}
               placeholder="e.g. Class 12 pass with 80%+ marks in board examination"
-              className="text-xs flex-1"
+              className="text-sm flex-1"
             />
-            <Button type="button" variant="outline" size="sm" onClick={onAddShortElig} className="text-xs">
+            <Button type="button" variant="outline" size="sm" onClick={onAddShortElig} className="text-sm">
               <Plus className="w-3.5 h-3.5 mr-1" />
-              Add Bullet
+              Add
             </Button>
           </div>
 
@@ -65,10 +65,10 @@ export function ScholarshipEligibilitySection({
               {shortEligibility.map((item, idx) => (
                 <div
                   key={idx}
-                  className="flex items-center justify-between gap-2 p-2.5 rounded-lg bg-muted/20 border border-border/60 text-xs"
+                  className="flex items-center justify-between gap-2 p-2.5 rounded-lg bg-muted/20 border border-border/60 text-sm"
                 >
                   <div className="flex items-start gap-2 min-w-0">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
+                    <CheckCircle2 className="w-3.5 h-3.5 text-muted-foreground shrink-0 mt-0.5" />
                     <span className="text-foreground leading-snug">{item}</span>
                   </div>
                   <Button
@@ -84,31 +84,31 @@ export function ScholarshipEligibilitySection({
               ))}
             </div>
           ) : (
-            <p className="text-[11px] text-muted-foreground italic">
-              No qualification summary bullets added yet.
+            <p className="text-[13px] text-muted-foreground">
+              No requirements added yet.
             </p>
           )}
         </div>
 
         <div className="space-y-2 pt-3 border-t border-border/60">
-          <label className="text-xs font-semibold text-foreground block">
-            Detailed Eligibility Table Rows
+          <label className="text-sm font-medium text-foreground block">
+            Criteria
           </label>
           <div className="grid grid-cols-1 sm:grid-cols-12 gap-2">
             <div className="sm:col-span-5">
               <Input
                 value={newRowLabel}
                 onChange={(e) => setNewRowLabel(e.target.value)}
-                placeholder="Criterion Label (e.g. Academic Score)"
-                className="text-xs"
+                placeholder="Criterion, e.g. Marks"
+                className="text-sm"
               />
             </div>
             <div className="sm:col-span-5">
               <Input
                 value={newRowValue}
                 onChange={(e) => setNewRowValue(e.target.value)}
-                placeholder="Specification (e.g. Minimum 75% in PCM)"
-                className="text-xs"
+                placeholder="Requirement, e.g. 75% in PCM"
+                className="text-sm"
               />
             </div>
             <div className="sm:col-span-2">
@@ -117,10 +117,10 @@ export function ScholarshipEligibilitySection({
                 variant="outline"
                 size="sm"
                 onClick={onAddEligRow}
-                className="w-full text-xs h-9"
+                className="w-full text-sm h-9"
               >
                 <Plus className="w-3.5 h-3.5 mr-1" />
-                Add Row
+                Add
               </Button>
             </div>
           </div>
@@ -130,7 +130,7 @@ export function ScholarshipEligibilitySection({
               {eligibilityRows.map((row, idx) => (
                 <div
                   key={idx}
-                  className="p-2.5 sm:px-3.5 flex items-center justify-between gap-3 text-xs"
+                  className="p-2.5 sm:px-3.5 flex items-center justify-between gap-3 text-sm"
                 >
                   <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 flex-1 min-w-0">
                     <span className="font-semibold text-foreground sm:w-1/3 truncate">
@@ -153,8 +153,8 @@ export function ScholarshipEligibilitySection({
               ))}
             </div>
           ) : (
-            <p className="text-[11px] text-muted-foreground italic">
-              No detailed criterion breakdown rows configured yet.
+            <p className="text-[13px] text-muted-foreground">
+              No criteria added yet.
             </p>
           )}
         </div>

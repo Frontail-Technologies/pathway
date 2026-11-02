@@ -2,14 +2,14 @@
 
 import * as React from 'react'
 import { useRouter } from 'next/navigation'
-import { Info } from 'lucide-react'
 import { type AdminProgramOffering } from '@/features/admin/data/admin-admissions-fees'
 import { AdminEditorSectionNav } from '@/features/admin/components/admin-editor-section-nav'
 import { AdminEditorLayout } from '@/features/admin/components/shared/admin-editor-layout'
+import { useUnsavedChanges } from '@/features/admin/hooks/use-unsaved-changes'
+import { AdminPageHeader, StatusBadge } from '../../kit'
+import { EditorActions, MobileEditorBar } from '../../programs/shared/section-kit'
 import { admissionsFeesEditorNavSections } from '../shared/admissions-fees-constants'
 import { useAdmissionsFeesEditor } from './use-admissions-fees-editor'
-import { AdmissionsFeesEditorHeader } from './admissions-fees-editor-header'
-import { AdmissionsFeesEditorMobileActions } from './admissions-fees-editor-mobile-actions'
 import { OfferingIdentitySection } from './sections/offering-identity-section'
 import { FeesEditorSection } from './sections/fees-editor-section'
 import { EligibilityEditorSection } from './sections/eligibility-editor-section'
@@ -33,26 +33,30 @@ export function AdminAdmissionsFeesEditor({
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
 
+  useUnsavedChanges(editor.isDirty)
+
   const backHref = editor.isEdit ? `/admin/admissions-fees/${offering?.id}` : '/admin/admissions-fees'
+  const back = editor.isEdit && offering ? { href: backHref, label: offering.programName } : { href: backHref, label: 'Admissions & fees' }
+  const saveLabel = editor.isEdit ? 'Save changes' : 'Create offering'
+
+  function handleCancel() {
+    if (editor.isDirty && !window.confirm('Discard your unsaved changes?')) return
+    router.push(backHref)
+  }
 
   return (
     <div className="space-y-6 pb-20 sm:pb-8">
-      <AdmissionsFeesEditorHeader
-        isEdit={editor.isEdit}
-        offeringTitle={offering ? `${offering.programName} @ ${offering.institutionName}` : undefined}
-        backHref={backHref}
-        onCancel={() => router.push(backHref)}
-        onSave={editor.handleSubmit}
-      />
-
-      {editor.submitNotice && (
-        <div className="p-4 rounded-xl bg-blue-50/90 text-blue-900 flex items-start gap-3 border border-blue-200/90 shadow-xs">
-          <Info className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
-          <div className="text-xs font-medium leading-relaxed">
-            {editor.submitNotice}
+      <AdminPageHeader
+        back={back}
+        title={editor.isEdit ? 'Edit offering' : 'Add offering'}
+        description={editor.isEdit && offering ? `${offering.programName} at ${offering.institutionName}` : 'Fees and admission rules for one course at one institution. Fields marked * are required.'}
+        meta={editor.isDirty ? <StatusBadge tone="warning">Unsaved changes</StatusBadge> : undefined}
+        actions={
+          <div className="hidden items-center gap-2 sm:flex">
+            <EditorActions onCancel={handleCancel} onSave={editor.handleSubmit} saveLabel={saveLabel} />
           </div>
-        </div>
-      )}
+        }
+      />
 
       <AdminEditorLayout
         navigation={
@@ -60,14 +64,11 @@ export function AdminAdmissionsFeesEditor({
             sections={[...admissionsFeesEditorNavSections]}
             activeSectionId={editor.activeSection}
             onSectionChange={scrollToSection}
-            title="Admissions Form Sections"
+            title="Sections"
           />
         }
         mobileActions={
-          <AdmissionsFeesEditorMobileActions
-            onCancel={() => router.push(backHref)}
-            onSave={editor.handleSubmit}
-          />
+          <MobileEditorBar onCancel={handleCancel} onSave={editor.handleSubmit} saveLabel={saveLabel} />
         }
       >
           <OfferingIdentitySection

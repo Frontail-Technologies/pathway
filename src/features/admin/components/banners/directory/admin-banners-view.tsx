@@ -1,137 +1,175 @@
 'use client'
 
 import * as React from 'react'
-import type { AdminBanner } from '@/features/admin/data/admin-banners'
-import { AdminDataTable } from '@/features/admin/components/admin-data-table'
-import { bannerTableColumns } from './banner-table-columns'
-import { BannerFilters, type BannerFilterState } from './banner-filters'
-import { BannerMobileCard } from './banner-mobile-card'
-import { Badge } from '@/components/ui/badge'
-import { Image as ImageIcon, Plus } from 'lucide-react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import type { ColumnDef } from '@tanstack/react-table'
+import { Edit, ExternalLink, Eye, MoreHorizontal, Plus } from 'lucide-react'
+import { Button, buttonVariants } from '@/components/ui/button'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import type { AdminBanner } from '@/features/admin/data/admin-banners'
+import { useUrlFilters } from '@/features/admin/hooks/use-url-filters'
+import { AdminDataTable } from '../../admin-data-table'
+import { AdminFilterSelect, AdminPageHeader, AdminToolbar, SortHeader, StatusBadge, stopRowClick, Tag } from '../../kit'
+import { bannerPlacementOptions, bannerStatusLabels, bannerStatusOptions, bannerStatusTones, formatBannerWindow, placementLabel } from '../shared/banner-constants'
 
-export function AdminBannersView({
-  initialBanners,
-}: {
-  initialBanners: AdminBanner[]
-}) {
-  const [filters, setFilters] = React.useState<BannerFilterState>({
-    search: '',
-    placement: 'all',
-    status: 'all',
-  })
+const DEFAULT_FILTERS = { q: '', placement: 'all', status: 'all' }
 
-  const handleFilterChange = (key: keyof BannerFilterState, value: string) => {
-    setFilters((prev) => ({ ...prev, [key]: value }))
-  }
+function NewBannerLink() {
+  return (
+    <Link href="/admin/banners/new" className={buttonVariants({ size: 'sm', className: 'gap-1.5' })}>
+      <Plus className="size-4" aria-hidden="true" />
+      New banner
+    </Link>
+  )
+}
 
-  const handleResetFilters = () => {
-    setFilters({
-      search: '',
-      placement: 'all',
-      status: 'all',
-    })
-  }
+function Thumb({ banner }: { banner: AdminBanner }) {
+  return banner.image ? (
+    // eslint-disable-next-line @next/next/no-img-element -- banner artwork can be any URL
+    <img src={banner.image} alt="" className="h-10 w-16 shrink-0 rounded-md border border-border object-cover" />
+  ) : (
+    <div className="h-10 w-16 shrink-0 rounded-md border border-border bg-muted" aria-hidden="true" />
+  )
+}
 
-  const filteredData = React.useMemo(() => {
+function RowActions({ banner }: { banner: AdminBanner }) {
+  return (
+    <div className="flex justify-end" onClick={stopRowClick} onKeyDown={stopRowClick}>
+      <DropdownMenu>
+        <DropdownMenuTrigger render={<Button variant="ghost" size="icon-sm" className="text-muted-foreground hover:text-foreground" aria-label={`Actions for ${banner.name}`} />}>
+          <MoreHorizontal className="size-4" />
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-44">
+          <DropdownMenuItem render={<Link href={`/admin/banners/${banner.id}`} />}>
+            <Eye className="size-4" aria-hidden="true" />
+            View
+          </DropdownMenuItem>
+          <DropdownMenuItem render={<Link href={`/admin/banners/${banner.id}/edit`} />}>
+            <Edit className="size-4" aria-hidden="true" />
+            Edit
+          </DropdownMenuItem>
+          {banner.ctaHref ? (
+            <>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem render={<Link href={banner.ctaHref} target="_blank" rel="noreferrer" />}>
+                <ExternalLink className="size-4" aria-hidden="true" />
+                Open link
+              </DropdownMenuItem>
+            </>
+          ) : null}
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </div>
+  )
+}
+
+export function AdminBannersView({ initialBanners }: { initialBanners: AdminBanner[] }) {
+  const router = useRouter()
+  const { values: f, set, reset, active } = useUrlFilters(DEFAULT_FILTERS)
+
+  const filtered = React.useMemo(() => {
+    const query = f.q.trim().toLowerCase()
     return initialBanners.filter((banner) => {
-      if (filters.search) {
-        const query = filters.search.toLowerCase()
-        const matchName = banner.name.toLowerCase().includes(query)
-        const matchTitle = banner.title.toLowerCase().includes(query)
-        const matchDesc = banner.description?.toLowerCase().includes(query)
-        const matchEyebrow = banner.eyebrow?.toLowerCase().includes(query)
-        const matchCta = banner.ctaLabel?.toLowerCase().includes(query)
-        if (!matchName && !matchTitle && !matchDesc && !matchEyebrow && !matchCta) {
-          return false
-        }
-      }
-
-      if (filters.placement !== 'all' && banner.placement !== filters.placement) {
-        return false
-      }
-
-      if (filters.status !== 'all' && banner.effectiveStatus !== filters.status) {
-        return false
-      }
-
+      if (query && ![banner.name, banner.title, banner.description ?? '', banner.eyebrow ?? '', banner.ctaLabel ?? ''].some((value) => value.toLowerCase().includes(query))) return false
+      if (f.placement !== 'all' && banner.placement !== f.placement) return false
+      if (f.status !== 'all' && banner.effectiveStatus !== f.status) return false
       return true
     })
-  }, [initialBanners, filters])
+  }, [initialBanners, f])
 
-  return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <div className="flex items-center gap-2.5">
-            <h1 className="text-xl sm:text-2xl font-bold font-heading text-foreground">
-              Banners
-            </h1>
-            <Badge
-              variant="secondary"
-              className="text-xs font-semibold px-2.5 py-0.5 bg-blue-50 text-blue-700 border-0"
-            >
-              {initialBanners.length} Banners
-            </Badge>
+  const columns = React.useMemo<ColumnDef<AdminBanner>[]>(
+    () => [
+      {
+        accessorKey: 'name',
+        header: ({ column }) => <SortHeader label="Banner" sorted={column.getIsSorted()} onToggle={() => column.toggleSorting(column.getIsSorted() === 'asc')} />,
+        cell: ({ row }) => (
+          <div className="flex min-w-[260px] items-center gap-3">
+            <Thumb banner={row.original} />
+            <div className="min-w-0">
+              <Link href={`/admin/banners/${row.original.id}`} onClick={stopRowClick} className="block truncate font-medium text-foreground hover:text-primary hover:underline">
+                {row.original.name}
+              </Link>
+              <p className="max-w-[260px] truncate text-[13px] text-muted-foreground">{row.original.title}</p>
+            </div>
+          </div>
+        ),
+      },
+      { accessorKey: 'placement', header: 'Placement', cell: ({ row }) => <Tag>{placementLabel(row.original.placement)}</Tag> },
+      {
+        id: 'schedule',
+        accessorFn: (banner) => banner.startsAt ?? '',
+        header: ({ column }) => <SortHeader label="Runs" sorted={column.getIsSorted()} onToggle={() => column.toggleSorting(column.getIsSorted() === 'asc')} />,
+        cell: ({ row }) => <span className="whitespace-nowrap text-muted-foreground">{formatBannerWindow(row.original.startsAt, row.original.endsAt)}</span>,
+      },
+      {
+        accessorKey: 'effectiveStatus',
+        header: 'Status',
+        cell: ({ row }) => <StatusBadge tone={bannerStatusTones[row.original.effectiveStatus]}>{bannerStatusLabels[row.original.effectiveStatus]}</StatusBadge>,
+      },
+      { id: 'actions', header: () => <span className="sr-only">Actions</span>, cell: ({ row }) => <RowActions banner={row.original} /> },
+    ],
+    [],
+  )
+
+  if (initialBanners.length === 0) {
+    return (
+      <div className="space-y-5">
+        <AdminPageHeader title="Banners" description="Promotional strips shown on the homepage and study abroad page." />
+        <div className="flex flex-col items-center rounded-lg border border-border bg-card px-6 py-14 text-center">
+          <p className="text-[15px] font-semibold text-foreground">No banners yet</p>
+          <p className="mt-1 max-w-sm text-sm text-muted-foreground">Create a banner, pick where it shows, and schedule when it runs.</p>
+          <div className="mt-5">
+            <NewBannerLink />
           </div>
         </div>
-
-        <Link
-          href="/admin/banners/new"
-          className="inline-flex items-center justify-center gap-1.5 h-9 px-3.5 text-xs font-semibold rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors shadow-xs shrink-0 self-start sm:self-auto"
-        >
-          <Plus className="w-3.5 h-3.5" />
-          <span>Create Banner</span>
-        </Link>
       </div>
+    )
+  }
 
-      <div className="bg-card rounded-xl p-4 sm:p-5 shadow-xs border-0 space-y-4">
-        <BannerFilters
-          filters={filters}
-          onFilterChange={handleFilterChange}
-          onResetFilters={handleResetFilters}
-        />
+  return (
+    <div className="space-y-5">
+      <AdminPageHeader title="Banners" count={`${initialBanners.length} total`} description="Promotional strips shown on the homepage and study abroad page." actions={<NewBannerLink />} />
 
-        {initialBanners.length === 0 ? (
-          <div className="p-12 text-center bg-muted/10 rounded-xl border border-dashed border-border/80 space-y-3">
-            <div className="w-10 h-10 rounded-full bg-muted/60 flex items-center justify-center mx-auto text-muted-foreground">
-              <ImageIcon className="w-5 h-5" />
-            </div>
-            <h3 className="text-sm font-bold text-foreground">No banners yet.</h3>
-            <div className="pt-2">
-              <Link
-                href="/admin/banners/new"
-                className="inline-flex items-center gap-1.5 h-8 px-3 text-xs font-medium rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
-              >
-                <Plus className="w-3.5 h-3.5" />
-                <span>Create Banner</span>
-              </Link>
-            </div>
-          </div>
-        ) : (
-          <>
-            <div className="hidden md:block">
-              <AdminDataTable
-                columns={bannerTableColumns}
-                data={filteredData}
-                pageSize={10}
-              />
-            </div>
+      <AdminToolbar
+        search={f.q}
+        onSearchChange={(q) => set({ q })}
+        searchPlaceholder="Search name, headline or button"
+        hasActiveFilters={active}
+        onReset={reset}
+        summary={active ? `${filtered.length} of ${initialBanners.length} match` : undefined}
+      >
+        <AdminFilterSelect label="Placement" value={f.placement} onChange={(placement) => set({ placement })} options={bannerPlacementOptions} />
+        <AdminFilterSelect label="Status" value={f.status} onChange={(status) => set({ status })} options={bannerStatusOptions} />
+      </AdminToolbar>
 
-            <div className="md:hidden space-y-3">
-              {filteredData.length > 0 ? (
-                filteredData.map((banner) => (
-                  <BannerMobileCard key={banner.id} banner={banner} />
-                ))
-              ) : (
-                <div className="p-8 text-center bg-muted/20 rounded-xl border border-dashed border-border text-muted-foreground text-xs">
-                  No banners found matching current filter criteria.
+      <AdminDataTable
+        columns={columns}
+        data={filtered}
+        onRowClick={(banner) => router.push(`/admin/banners/${banner.id}`)}
+        getRowAriaLabel={(banner) => `Open ${banner.name}`}
+        hasActiveFilters={active}
+        onResetFilters={reset}
+        emptyTitle="No banners match"
+        emptyDescription="Try a different search or clear the filters."
+        mobileCardRender={(row) => {
+          const banner = row.original
+          return (
+            <Link href={`/admin/banners/${banner.id}`} className="flex items-start gap-3 rounded-lg border border-border bg-card p-4">
+              <Thumb banner={banner} />
+              <div className="min-w-0 flex-1 space-y-1">
+                <div className="flex items-start justify-between gap-3">
+                  <p className="truncate font-medium text-foreground">{banner.name}</p>
+                  <StatusBadge tone={bannerStatusTones[banner.effectiveStatus]}>{bannerStatusLabels[banner.effectiveStatus]}</StatusBadge>
                 </div>
-              )}
-            </div>
-          </>
-        )}
-      </div>
+                <p className="text-[13px] text-muted-foreground">
+                  {placementLabel(banner.placement)} · {formatBannerWindow(banner.startsAt, banner.endsAt)}
+                </p>
+              </div>
+            </Link>
+          )
+        }}
+      />
     </div>
   )
 }

@@ -1,21 +1,7 @@
-import {
-  studyLevelOptions as rawStudyLevelOptions,
-  streamOptions as rawStreamOptions,
-} from '@/features/student/data/profile-form'
+import { studyLevelOptions, streamOptions } from '@/features/student/data/profile-form'
 
-export { rawStudyLevelOptions as studyLevelOptions, rawStreamOptions as streamOptions }
+export { studyLevelOptions, streamOptions }
 
-export const studyLevelFilterOptions = [
-  { value: 'all', label: 'All Study Levels' },
-  ...rawStudyLevelOptions.map((opt) => ({ value: opt, label: opt })),
-]
-
-export const streamFilterOptions = [
-  { value: 'all', label: 'All Streams' },
-  ...rawStreamOptions.map((opt) => ({ value: opt, label: opt })),
-]
-
-export const accountStatusOptions = [
-  { value: 'all', label: 'All Account Statuses' },
-  { value: 'demo_account', label: 'Demo Account' },
-]
+export const studyLevelFilterOptions = studyLevelOptions.map((value) => ({ value, label: value }))
+export const streamFilterOptions = streamOptions.map((value) => ({ value, label: value }))
+export const accountStatusFilterOptions = [{ value: 'demo_account', label: 'Demo account' }]

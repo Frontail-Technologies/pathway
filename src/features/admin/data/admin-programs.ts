@@ -261,9 +261,9 @@ export function getAdminProgramFilterOptions(): {
   const streams = Array.from(new Set(courses.map((c) => c.stream))).sort()
   const durations = Array.from(new Set(courses.map((c) => c.duration))).sort()
   const qualityStatuses = [
-    { value: 'all', label: 'All Quality' },
+    { value: 'all', label: 'All' },
     { value: 'ready', label: 'Ready' },
-    { value: 'needs_review', label: 'Needs Review' },
+    { value: 'needs_review', label: 'Needs review' },
     { value: 'conflict', label: 'Conflict' },
     { value: 'incomplete', label: 'Incomplete' },
   ]

@@ -1,80 +1,57 @@
-import { DomainAvailabilityItem } from '../../data/admin-reports'
-import { Badge } from '@/components/ui/badge'
-import { CheckCircle2, CircleDashed, Link2Off } from 'lucide-react'
+'use client'
+
+import type { ColumnDef } from '@tanstack/react-table'
+import type { DomainAvailabilityItem } from '../../data/admin-reports'
+import { AdminDataTable } from '../admin-data-table'
+import { StatusBadge, Tag } from '../kit'
+
+const categoryLabels: Record<DomainAvailabilityItem['category'], string> = {
+  Catalog: 'Catalogue',
+  Content: 'Content',
+  'Users & Commerce': 'Users',
+  'Telemetry & Integrations': 'Integrations',
+}
+
+export function AvailabilityStatus({ status }: { status: DomainAvailabilityItem['status'] }) {
+  if (status === 'available') return <StatusBadge tone="success">Has data</StatusBadge>
+  if (status === 'empty') return <StatusBadge>No records yet</StatusBadge>
+  return <StatusBadge tone="warning">Not connected yet</StatusBadge>
+}
+
+const columns: ColumnDef<DomainAvailabilityItem>[] = [
+  {
+    accessorKey: 'domain',
+    header: 'Area',
+    cell: ({ row }) => (
+      <div className="min-w-[180px]">
+        <p className="font-medium text-foreground">{row.original.domain}</p>
+        <p className="text-[13px] text-muted-foreground">{row.original.operationalNote}</p>
+      </div>
+    ),
+  },
+  { accessorKey: 'category', header: 'Group', cell: ({ row }) => <Tag>{categoryLabels[row.original.category]}</Tag> },
+  { accessorKey: 'dataSource', header: 'Source', cell: ({ row }) => <span className="whitespace-nowrap">{row.original.dataSource}</span> },
+  { accessorKey: 'recordCount', header: 'Records', cell: ({ row }) => <span className="whitespace-nowrap text-muted-foreground tabular-nums">{row.original.recordCount}</span> },
+  { accessorKey: 'status', header: 'Status', cell: ({ row }) => <AvailabilityStatus status={row.original.status} /> },
+]
 
 export function DataAvailabilitySection({ items }: { items: DomainAvailabilityItem[] }) {
   return (
-    <section className="space-y-4">
-      <h2 className="text-base font-bold font-heading text-foreground">
-        Platform Data Availability Matrix
-      </h2>
-
-      <div className="bg-card rounded-xl border-0 shadow-xs overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-xs text-left">
-            <thead className="bg-muted/40 text-muted-foreground font-semibold uppercase tracking-wider text-[10px] border-b border-border/60">
-              <tr>
-                <th className="px-4 py-3">Domain</th>
-                <th className="px-4 py-3">Category</th>
-                <th className="px-4 py-3">Data Source</th>
-                <th className="px-4 py-3">Records / Status</th>
-                <th className="px-4 py-3">Pipeline Status</th>
-                <th className="px-4 py-3">Operational Note</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border/60">
-              {items.map((item) => (
-                <tr key={item.id} className="hover:bg-muted/20 transition-colors">
-                  <td className="px-4 py-3 font-semibold text-foreground whitespace-nowrap">
-                    {item.domain}
-                  </td>
-                  <td className="px-4 py-3 text-muted-foreground whitespace-nowrap">
-                    {item.category}
-                  </td>
-                  <td className="px-4 py-3 font-medium text-foreground whitespace-nowrap">
-                    {item.dataSource}
-                  </td>
-                  <td className="px-4 py-3 font-medium text-foreground whitespace-nowrap">
-                    {item.recordCount}
-                  </td>
-                  <td className="px-4 py-3 whitespace-nowrap">
-                    {item.status === 'available' && (
-                      <Badge
-                        variant="secondary"
-                        className="bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-0 text-[11px] font-semibold gap-1"
-                      >
-                        <CheckCircle2 className="w-3 h-3" />
-                        Available
-                      </Badge>
-                    )}
-                    {item.status === 'empty' && (
-                      <Badge
-                        variant="secondary"
-                        className="bg-blue-500/10 text-blue-700 dark:text-blue-400 border-0 text-[11px] font-semibold gap-1"
-                      >
-                        <CircleDashed className="w-3 h-3" />
-                        Empty (0)
-                      </Badge>
-                    )}
-                    {item.status === 'not_connected' && (
-                      <Badge
-                        variant="secondary"
-                        className="bg-amber-500/10 text-amber-700 dark:text-amber-400 border-0 text-[11px] font-semibold gap-1"
-                      >
-                        <Link2Off className="w-3 h-3" />
-                        Not Connected
-                      </Badge>
-                    )}
-                  </td>
-                  <td className="px-4 py-3 text-muted-foreground max-w-xs sm:max-w-md truncate">
-                    {item.operationalNote}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+    <AdminDataTable
+      columns={columns}
+      data={items}
+      pageSize={50}
+      mobileCardRender={(row) => (
+        <div className="space-y-1.5 rounded-lg border border-border bg-card p-4">
+          <div className="flex items-start justify-between gap-3">
+            <p className="font-medium text-foreground">{row.original.domain}</p>
+            <AvailabilityStatus status={row.original.status} />
+          </div>
+          <p className="text-[13px] text-muted-foreground">
+            {row.original.dataSource} · {row.original.recordCount}
+          </p>
         </div>
-      </div>
-    </section>
+      )}
+    />
   )
 }

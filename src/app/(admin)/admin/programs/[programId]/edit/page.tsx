@@ -24,12 +24,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const record = getAdminProgramById(programId)
   if (!record) {
     return {
-      title: 'Program Not Found | Pathway Admin',
+      title: 'Course not found | Pathway Admin',
     }
   }
   return {
     title: `Edit ${record.program.name} | Pathway Admin`,
-    description: `Edit canonical academic program taxonomy, curriculum, and entrance exams for ${record.program.name}.`,
+    description: `Edit ${record.program.name}.`,
   }
 }
 

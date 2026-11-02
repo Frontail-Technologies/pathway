@@ -19,7 +19,7 @@ export type BannerFormData = {
   status: BannerStatus
 }
 
-const MAX_IMAGE_SIZE_BYTES = 5 * 1024 * 1024 
+const MAX_IMAGE_SIZE_BYTES = 5 * 1024 * 1024
 
 export function useBannerEditor(initialBanner?: Banner | null) {
   const isEditing = !!initialBanner
@@ -39,6 +39,8 @@ export function useBannerEditor(initialBanner?: Banner | null) {
     endsAt: initialBanner?.endsAt ? initialBanner.endsAt.slice(0, 16) : '',
     status: initialBanner?.status || 'draft',
   })
+
+  const [initialSnapshot] = React.useState(() => JSON.stringify({ formData, image: initialBanner?.image || '', mobileImage: initialBanner?.mobileImage || '' }))
 
   const [errors, setErrors] = React.useState<Record<string, string>>({})
   const [apiNotice, setApiNotice] = React.useState<string | null>(null)
@@ -153,26 +155,26 @@ export function useBannerEditor(initialBanner?: Banner | null) {
     const errs: Record<string, string> = {}
 
     if (!formData.name.trim()) {
-      errs.name = 'Internal banner name is required for Admin cataloging.'
+      errs.name = 'Name is required.'
     }
 
     if (!formData.title.trim()) {
-      errs.title = 'Headline is required for the public banner display.'
+      errs.title = 'Headline is required.'
     }
 
     if (formData.ctaHref && !formData.ctaHref.startsWith('/') && !formData.ctaHref.startsWith('http://') && !formData.ctaHref.startsWith('https://')) {
-      errs.ctaHref = 'Destination must be a relative Pathway route (/...) or valid HTTPS URL.'
+      errs.ctaHref = 'Use a Pathway path starting with / or a full https:// link.'
     }
 
     if (formData.secondaryCtaHref && !formData.secondaryCtaHref.startsWith('/') && !formData.secondaryCtaHref.startsWith('http://') && !formData.secondaryCtaHref.startsWith('https://')) {
-      errs.secondaryCtaHref = 'Destination must be a relative Pathway route (/...) or valid HTTPS URL.'
+      errs.secondaryCtaHref = 'Use a Pathway path starting with / or a full https:// link.'
     }
 
     if (formData.startsAt && formData.endsAt) {
       const start = new Date(formData.startsAt).getTime()
       const end = new Date(formData.endsAt).getTime()
       if (end <= start) {
-        errs.endsAt = 'End date/time must be after start date/time.'
+        errs.endsAt = 'End must be after the start.'
       }
     }
 
@@ -190,10 +192,10 @@ export function useBannerEditor(initialBanner?: Banner | null) {
     const hasLocalFile = !!selectedDesktopFile || !!selectedMobileFile
     if (hasLocalFile) {
       setApiNotice(
-        'Saving banners requires the Admin API. Image upload requires the Admin Storage API.'
+        'Saving needs the Admin API, and image upload needs the storage API. Neither is connected yet, so nothing was saved.'
       )
     } else {
-      setApiNotice('Saving banners requires the Admin API.')
+      setApiNotice('Saving needs the Admin API, which is not connected yet, so nothing was saved.')
     }
   }
 
@@ -207,8 +209,14 @@ export function useBannerEditor(initialBanner?: Banner | null) {
       ? (mobilePreviewUrl ?? undefined)
       : (mobileUrlValue || undefined)
 
+  const isDirty =
+    !!selectedDesktopFile ||
+    !!selectedMobileFile ||
+    JSON.stringify({ formData, image: desktopUrlValue, mobileImage: mobileUrlValue }) !== initialSnapshot
+
   return {
     isEditing,
+    isDirty,
     formData,
     errors,
     apiNotice,

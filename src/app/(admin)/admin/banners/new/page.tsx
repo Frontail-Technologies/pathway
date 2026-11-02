@@ -2,8 +2,8 @@ import { type Metadata } from 'next'
 import { AdminBannerEditorView } from '@/features/admin/components/banners/editor/admin-banner-editor-view'
 
 export const metadata: Metadata = {
-  title: 'Create Banner | Banners | Pathway Admin',
-  description: 'Configure and create a new standalone visual banner creative in Pathway.',
+  title: 'New banner | Pathway admin',
+  description: 'Create a new banner.',
 }
 
 export default function AdminBannerNewPage() {

@@ -1,7 +1,6 @@
 'use client'
 
 import { Share2 } from 'lucide-react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
@@ -39,43 +38,38 @@ export function SeoSocialSection({
   baselineDescription,
 }: SeoSocialSectionProps) {
   return (
-    <Card id="social" className="border-0 shadow-xs">
-      <CardHeader className="p-4 sm:p-5 pb-2">
-        <div className="flex items-center gap-2">
-          <Share2 className="w-4 h-4 text-blue-600" />
-          <CardTitle className="text-sm font-semibold">Social Sharing (Open Graph)</CardTitle>
-        </div>
-      </CardHeader>
-      <CardContent className="p-4 sm:p-5 pt-2 space-y-4">
+    <section id="social" className="scroll-mt-20 space-y-4 rounded-lg border border-border bg-card p-5 sm:p-6">
+      <h2 className="text-[15px] font-semibold text-foreground">Social Sharing (Open Graph)</h2>
+      <div className="space-y-4">
         <div className="space-y-1.5">
-          <Label className="text-xs font-semibold">Open Graph Title (Optional)</Label>
+          <Label className="text-sm font-medium text-foreground">Open Graph Title (Optional)</Label>
           <Input
             placeholder={ogTitle || baselineTitle || 'Default to meta title...'}
             value={ogTitle}
             onChange={(e) => onOgTitleChange(e.target.value)}
-            className="h-9 text-xs bg-background"
+            className="h-9 text-sm bg-background"
           />
-          <p className="text-[11px] text-muted-foreground">
+          <p className="text-[13px] text-muted-foreground">
             Custom title for social cards (Facebook, LinkedIn, X). If left empty, falls back to the resolved Meta Title.
           </p>
         </div>
 
         <div className="space-y-1.5">
-          <Label className="text-xs font-semibold">Open Graph Description (Optional)</Label>
+          <Label className="text-sm font-medium text-foreground">Open Graph Description (Optional)</Label>
           <Textarea
             placeholder={ogDescription || baselineDescription || 'Default to meta description...'}
             value={ogDescription}
             onChange={(e) => onOgDescriptionChange(e.target.value)}
             rows={2}
-            className="text-xs bg-background resize-none leading-relaxed"
+            className="text-sm bg-background resize-none leading-relaxed"
           />
-          <p className="text-[11px] text-muted-foreground">
+          <p className="text-[13px] text-muted-foreground">
             Custom description for social cards. If left empty, falls back to the resolved Meta Description.
           </p>
         </div>
 
         <div className="space-y-1.5 pt-1">
-          <Label className="text-xs font-semibold">Social Share Image (OG Image)</Label>
+          <Label className="text-sm font-medium text-foreground">Social Share Image (OG Image)</Label>
           <ImageAssetInput
             mode={ogImageMode}
             onModeChange={onOgImageModeChange}
@@ -91,7 +85,7 @@ export function SeoSocialSection({
             urlInputId="seo-og-image-url"
           />
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </section>
   )
 }

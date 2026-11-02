@@ -119,6 +119,15 @@ export function useScholarshipEditor(
   const [errors, setErrors] = React.useState<Record<string, string>>({})
   const [submitNotice, setSubmitNotice] = React.useState<string | null>(null)
 
+  const snapshot = JSON.stringify([
+    name, provider, providerType, providerInitials, scholarshipType, educationLevels, streams, states, categories,
+    genderEligibility, incomeLimitBucket, overviewCopy, shortEligibility, eligibilityRows, benefitLabel, benefitValue,
+    benefitType, benefitCoverage, benefitDuration, benefitDisbursement, deadline, deadlineDisplay, applicationStatus,
+    importantDates, officialApplyUrl, applicationSteps, selectionProcess, requiredDocuments, documents,
+  ])
+  const [initialSnapshot] = React.useState(snapshot)
+  const dirty = snapshot !== initialSnapshot
+
   React.useEffect(() => {
     let ticking = false
 
@@ -320,7 +329,7 @@ export function useScholarshipEditor(
     const newErrors: Record<string, string> = {}
     if (!name.trim()) newErrors.name = 'Scholarship name is required'
     if (!provider.trim()) newErrors.provider = 'Provider name is required'
-    if (!benefitLabel.trim()) newErrors.benefitLabel = 'Financial benefit label is required'
+    if (!benefitLabel.trim()) newErrors.benefitLabel = 'Benefit amount is required'
 
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
@@ -334,11 +343,12 @@ export function useScholarshipEditor(
       firstError?.scrollIntoView({ behavior: 'smooth' })
       return
     }
-    setSubmitNotice('Saving Scholarships requires the Admin API. Demo editor — changes are not persisted.')
+    setSubmitNotice('Saving isn’t connected yet, so changes in this editor are not stored.')
   }
 
   return {
     isEdit,
+    dirty,
     name,
     setName,
     provider,

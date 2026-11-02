@@ -2,183 +2,201 @@
 
 import * as React from 'react'
 import Link from 'next/link'
-import { useSearchParams } from 'next/navigation'
-import {
-  getAdminOfferings,
-  type AdminProgramOffering,
-} from '@/features/admin/data/admin-admissions-fees'
-import { AdminDataTable } from '@/features/admin/components/admin-data-table'
-import { buttonVariants } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Plus, Banknote } from 'lucide-react'
-import { getAdmissionsFeesColumns } from './admissions-fees-table-columns'
-import { AdmissionsFeesMobileCard } from './admissions-fees-mobile-card'
-import {
-  AdmissionsFeesFilters,
-  type AdmissionsFeesFilterState,
-} from './admissions-fees-filters'
+import { useRouter } from 'next/navigation'
+import type { ColumnDef } from '@tanstack/react-table'
+import { BookOpen, Building2, Edit, Eye, MoreHorizontal, Plus } from 'lucide-react'
+import { Button, buttonVariants } from '@/components/ui/button'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import { getAdminOfferings, type AdminProgramOffering } from '@/features/admin/data/admin-admissions-fees'
+import { useUrlFilters } from '@/features/admin/hooks/use-url-filters'
+import { AdminDataTable } from '../../admin-data-table'
+import { AdminFilterSelect, AdminPageHeader, AdminToolbar, CompletenessMeter, SortHeader, StatusBadge, stopRowClick, Tag, toneFromVariant } from '../../kit'
+import { admissionModes, directoryQualityBadgeStyles as qualityStyles } from '../shared/admissions-fees-constants'
+
+const DEFAULT_FILTERS = { q: '', institution: 'all', program: 'all', level: 'all', mode: 'all', quality: 'all' }
+
+const levelOptions = ['Undergraduate', 'Postgraduate', 'Diploma', 'Certificate'].map((l) => ({ value: l, label: l }))
+const qualityOptions = (Object.keys(qualityStyles) as (keyof typeof qualityStyles)[]).map((key) => ({ value: key, label: qualityStyles[key].label }))
+
+function uniqueBy(items: AdminProgramOffering[], key: 'institution' | 'program') {
+  const map = new Map<string, { value: string; label: string; slug: string }>()
+  for (const o of items) {
+    const id = key === 'institution' ? o.institutionId : o.programId
+    if (!map.has(id)) map.set(id, { value: id, label: key === 'institution' ? o.institutionName : o.programName, slug: key === 'institution' ? o.institutionSlug : o.programSlug })
+  }
+  return Array.from(map.values()).sort((a, b) => a.label.localeCompare(b.label))
+}
+
+function RowActions({ item }: { item: AdminProgramOffering }) {
+  return (
+    <div className="flex justify-end" onClick={stopRowClick} onKeyDown={stopRowClick}>
+      <DropdownMenu>
+        <DropdownMenuTrigger render={<Button variant="ghost" size="icon-sm" className="text-muted-foreground hover:text-foreground" aria-label={`Actions for ${item.programName} at ${item.institutionName}`} />}>
+          <MoreHorizontal className="size-4" />
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-48">
+          <DropdownMenuItem render={<Link href={`/admin/admissions-fees/${item.id}`} />}>
+            <Eye className="size-4" aria-hidden="true" />
+            View
+          </DropdownMenuItem>
+          <DropdownMenuItem render={<Link href={`/admin/admissions-fees/${item.id}/edit`} />}>
+            <Edit className="size-4" aria-hidden="true" />
+            Edit
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem render={<Link href={`/admin/institutions/${item.institutionId}`} />}>
+            <Building2 className="size-4" aria-hidden="true" />
+            Open institution
+          </DropdownMenuItem>
+          <DropdownMenuItem render={<Link href={`/admin/programs/${item.programId}`} />}>
+            <BookOpen className="size-4" aria-hidden="true" />
+            Open course
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </div>
+  )
+}
 
 export function AdminAdmissionsFeesView() {
-  const searchParams = useSearchParams()
-  const initialInstitutionParam = searchParams.get('institution') || 'all'
-  const initialProgramParam = searchParams.get('program') || 'all'
+  const router = useRouter()
+  const data = React.useMemo(() => getAdminOfferings(), [])
+  const institutions = React.useMemo(() => uniqueBy(data, 'institution'), [data])
+  const programs = React.useMemo(() => uniqueBy(data, 'program'), [data])
+  const { values: f, set, reset, active } = useUrlFilters(DEFAULT_FILTERS)
 
-  const allOfferings = React.useMemo(() => getAdminOfferings(), [])
+  // Links from other screens may pass a slug instead of an id.
+  const institutionValue = institutions.find((i) => i.value === f.institution || i.slug === f.institution)?.value ?? f.institution
+  const programValue = programs.find((p) => p.value === f.program || p.slug === f.program)?.value ?? f.program
 
-  const institutions = React.useMemo(() => {
-    const map = new Map<string, string>()
-    for (const o of allOfferings) {
-      if (!map.has(o.institutionId)) {
-        map.set(o.institutionId, o.institutionName)
-      }
-    }
-    return Array.from(map.entries()).map(([id, name]) => ({ id, name }))
-  }, [allOfferings])
-
-  const programs = React.useMemo(() => {
-    const map = new Map<string, string>()
-    for (const o of allOfferings) {
-      if (!map.has(o.programId)) {
-        map.set(o.programId, o.programName)
-      }
-    }
-    return Array.from(map.entries()).map(([id, name]) => ({ id, name }))
-  }, [allOfferings])
-
-  const [filters, setFilters] = React.useState<AdmissionsFeesFilterState>({
-    search: '',
-    institutionId: initialInstitutionParam,
-    programId: initialProgramParam,
-    level: 'all',
-    admissionMode: 'all',
-    qualityStatus: 'all',
-  })
-
-  React.useEffect(() => {
-    if (initialInstitutionParam !== 'all' || initialProgramParam !== 'all') {
-      setFilters((prev) => ({
-        ...prev,
-        institutionId: initialInstitutionParam !== 'all' ? initialInstitutionParam : prev.institutionId,
-        programId: initialProgramParam !== 'all' ? initialProgramParam : prev.programId,
-      }))
-    }
-  }, [initialInstitutionParam, initialProgramParam])
-
-  function handleFilterChange(key: keyof AdmissionsFeesFilterState, value: string) {
-    setFilters((prev) => ({ ...prev, [key]: value }))
-  }
-
-  function handleResetFilters() {
-    setFilters({
-      search: '',
-      institutionId: 'all',
-      programId: 'all',
-      level: 'all',
-      admissionMode: 'all',
-      qualityStatus: 'all',
-    })
-  }
-
-  const hasActiveFilters = React.useMemo(() => {
-    return (
-      filters.institutionId !== 'all' ||
-      filters.programId !== 'all' ||
-      filters.level !== 'all' ||
-      filters.admissionMode !== 'all' ||
-      filters.qualityStatus !== 'all' ||
-      filters.search.trim() !== ''
-    )
-  }, [filters])
-
-  const filteredOfferings = React.useMemo(() => {
-    return allOfferings.filter((off) => {
-      if (filters.search) {
-        const q = filters.search.toLowerCase()
-        const matchesProgram = off.programName.toLowerCase().includes(q)
-        const matchesInst = off.institutionName.toLowerCase().includes(q)
-        const matchesExam = off.entranceExams.some((ex) => ex.toLowerCase().includes(q))
-        const matchesCounselling = off.counsellingBody.toLowerCase().includes(q)
-        if (!matchesProgram && !matchesInst && !matchesExam && !matchesCounselling) return false
-      }
-
-      if (filters.institutionId !== 'all') {
-        if (off.institutionId !== filters.institutionId && off.institutionSlug !== filters.institutionId) {
-          return false
-        }
-      }
-
-      if (filters.programId !== 'all') {
-        if (off.programId !== filters.programId && off.programSlug !== filters.programId) {
-          return false
-        }
-      }
-
-      if (filters.level !== 'all' && off.level !== filters.level) {
-        return false
-      }
-
-      if (filters.admissionMode !== 'all' && off.admissionMode !== filters.admissionMode) {
-        return false
-      }
-
-      if (filters.qualityStatus !== 'all' && off.qualityStatus !== filters.qualityStatus) {
-        return false
-      }
-
+  const filtered = React.useMemo(() => {
+    const query = f.q.trim().toLowerCase()
+    return data.filter((off) => {
+      if (query && ![off.programName, off.institutionName, off.counsellingBody, ...off.entranceExams].some((value) => value.toLowerCase().includes(query))) return false
+      if (f.institution !== 'all' && off.institutionId !== f.institution && off.institutionSlug !== f.institution) return false
+      if (f.program !== 'all' && off.programId !== f.program && off.programSlug !== f.program) return false
+      if (f.level !== 'all' && off.level !== f.level) return false
+      if (f.mode !== 'all' && off.admissionMode !== f.mode) return false
+      if (f.quality !== 'all' && off.qualityStatus !== f.quality) return false
       return true
     })
-  }, [allOfferings, filters])
+  }, [data, f])
 
-  const columns = React.useMemo(() => getAdmissionsFeesColumns(), [])
+  const columns = React.useMemo<ColumnDef<AdminProgramOffering>[]>(
+    () => [
+      {
+        id: 'offering',
+        accessorFn: (row) => `${row.programName} ${row.institutionName}`,
+        header: ({ column }) => <SortHeader label="Course and institution" sorted={column.getIsSorted()} onToggle={() => column.toggleSorting(column.getIsSorted() === 'asc')} />,
+        cell: ({ row }) => (
+          <div className="min-w-[220px] max-w-[320px]">
+            <Link href={`/admin/admissions-fees/${row.original.id}`} onClick={stopRowClick} className="font-medium text-foreground hover:text-primary hover:underline">
+              {row.original.programName}
+            </Link>
+            <p className="truncate text-[13px] text-muted-foreground">
+              {row.original.institutionName}, {row.original.institutionCity}
+            </p>
+          </div>
+        ),
+      },
+      { accessorKey: 'level', header: 'Level', cell: ({ row }) => <Tag>{row.original.level}</Tag> },
+      {
+        accessorKey: 'annualFeeValue',
+        header: ({ column }) => <SortHeader label="Annual fee" sorted={column.getIsSorted()} onToggle={() => column.toggleSorting(column.getIsSorted() === 'asc')} />,
+        cell: ({ row }) =>
+          row.original.annualFee ? (
+            <div className="whitespace-nowrap">
+              <p className="font-medium text-foreground tabular-nums">{row.original.annualFee}</p>
+              {row.original.totalProgrammeFee ? <p className="text-[13px] text-muted-foreground">{row.original.totalProgrammeFee} total</p> : null}
+            </div>
+          ) : (
+            <StatusBadge tone="warning">Not set</StatusBadge>
+          ),
+      },
+      {
+        accessorKey: 'admissionMode',
+        header: 'Admission',
+        cell: ({ row }) => (
+          <div className="max-w-[200px]">
+            <p className="text-foreground">{admissionModes.find((m) => m.value === row.original.admissionMode)?.label ?? row.original.admissionMode}</p>
+            <p className="truncate text-[13px] text-muted-foreground">{row.original.entranceExams.length > 0 ? row.original.entranceExams.join(', ') : row.original.counsellingBody || 'No exam'}</p>
+          </div>
+        ),
+      },
+      {
+        accessorKey: 'qualityStatus',
+        header: 'Data quality',
+        cell: ({ row }) => {
+          const style = qualityStyles[row.original.qualityStatus]
+          return <StatusBadge tone={toneFromVariant(style.variant)}>{style.label}</StatusBadge>
+        },
+      },
+      {
+        accessorKey: 'completeness',
+        header: ({ column }) => <SortHeader label="Completeness" sorted={column.getIsSorted()} onToggle={() => column.toggleSorting(column.getIsSorted() === 'asc')} />,
+        cell: ({ row }) => <CompletenessMeter value={row.original.completeness} />,
+      },
+      { id: 'actions', header: () => <span className="sr-only">Actions</span>, cell: ({ row }) => <RowActions item={row.original} /> },
+    ],
+    [],
+  )
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <div className="flex items-center gap-2.5">
-            <h1 className="text-xl sm:text-2xl font-bold font-heading text-foreground">
-              Admissions & Fees
-            </h1>
-            <Badge
-              variant="secondary"
-              className="text-xs font-semibold px-2.5 py-0.5 bg-primary/10 text-primary border-0"
-            >
-              {allOfferings.length} Offerings
-            </Badge>
-          </div>
-        </div>
+    <div className="space-y-5">
+      <AdminPageHeader
+        title="Admissions & fees"
+        count={`${data.length} total`}
+        description="Fees and admission rules for each course at each institution."
+        actions={
+          <Link href="/admin/admissions-fees/new" className={buttonVariants({ size: 'sm', className: 'gap-1.5' })}>
+            <Plus className="size-4" aria-hidden="true" />
+            Add offering
+          </Link>
+        }
+      />
 
-        <Link
-          href="/admin/admissions-fees/new"
-          className={buttonVariants({
-            size: 'sm',
-            className: 'text-xs font-semibold gap-1.5 self-start sm:self-auto shadow-xs',
-          })}
-        >
-          <Plus className="w-3.5 h-3.5" />
-          Create Offering
-        </Link>
-      </div>
-
-      <div className="bg-card rounded-xl p-4 sm:p-5 shadow-xs border-0 space-y-4">
-        <AdmissionsFeesFilters
-          filters={filters}
-          onFilterChange={handleFilterChange}
-          onResetFilters={handleResetFilters}
-          institutions={institutions}
-          programs={programs}
-        />
-      </div>
+      <AdminToolbar
+        search={f.q}
+        onSearchChange={(q) => set({ q })}
+        searchPlaceholder="Search course, institution or exam"
+        hasActiveFilters={active}
+        onReset={reset}
+        summary={active ? `${filtered.length} of ${data.length} match` : undefined}
+      >
+        <AdminFilterSelect label="Institution" value={institutionValue} onChange={(institution) => set({ institution })} options={institutions} />
+        <AdminFilterSelect label="Course" value={programValue} onChange={(program) => set({ program })} options={programs} />
+        <AdminFilterSelect label="Level" value={f.level} onChange={(level) => set({ level })} options={levelOptions} />
+        <AdminFilterSelect label="Admission" value={f.mode} onChange={(mode) => set({ mode })} options={admissionModes} />
+        <AdminFilterSelect label="Quality" value={f.quality} onChange={(quality) => set({ quality })} options={qualityOptions} />
+      </AdminToolbar>
 
       <AdminDataTable
         columns={columns}
-        data={filteredOfferings}
-        mobileCardRender={({ original }) => <AdmissionsFeesMobileCard offering={original} />}
-        pageSize={10}
-        emptyTitle="No program offerings match these filters"
-        emptyDescription="Try adjusting your institution, program, or search query to find offerings."
-        onResetFilters={handleResetFilters}
-        hasActiveFilters={hasActiveFilters}
+        data={filtered}
+        onRowClick={(item) => router.push(`/admin/admissions-fees/${item.id}`)}
+        getRowAriaLabel={(item) => `Open ${item.programName} at ${item.institutionName}`}
+        hasActiveFilters={active}
+        onResetFilters={reset}
+        emptyTitle="No offerings match"
+        emptyDescription="Try a different search or clear the filters."
+        mobileCardRender={(row) => {
+          const item = row.original
+          const quality = qualityStyles[item.qualityStatus]
+          return (
+            <Link href={`/admin/admissions-fees/${item.id}`} className="block space-y-2.5 rounded-lg border border-border bg-card p-4">
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <p className="font-medium text-foreground">{item.programName}</p>
+                  <p className="text-[13px] text-muted-foreground">
+                    {item.institutionName} · {item.annualFee ? `${item.annualFee} a year` : 'Fee not set'}
+                  </p>
+                </div>
+                <StatusBadge tone={toneFromVariant(quality.variant)}>{quality.label}</StatusBadge>
+              </div>
+              <CompletenessMeter value={item.completeness} />
+            </Link>
+          )
+        }}
       />
     </div>
   )

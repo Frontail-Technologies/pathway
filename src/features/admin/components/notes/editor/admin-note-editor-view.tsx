@@ -15,8 +15,10 @@ import { NotePricingSection } from './note-pricing-section'
 import { NoteRelatedSection } from './note-related-section'
 import { NotePublishingSection } from './note-publishing-section'
 import { Button } from '@/components/ui/button'
-import { ArrowLeft, Save } from 'lucide-react'
-import Link from 'next/link'
+import { Info } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { useUnsavedChanges } from '@/features/admin/hooks/use-unsaved-changes'
+import { AdminPageHeader } from '../../kit'
 
 export function AdminNoteEditorView({
   initialNote,
@@ -25,6 +27,7 @@ export function AdminNoteEditorView({
 }) {
   const {
     isEditing,
+    dirty,
     formData,
     errors,
     apiNotice,
@@ -57,6 +60,19 @@ export function AdminNoteEditorView({
     toggleExamId,
     handleSubmit,
   } = useNoteEditor(initialNote)
+  const router = useRouter()
+  useUnsavedChanges(dirty)
+
+  const backHref = isEditing && initialNote ? `/admin/notes/${initialNote.id}` : '/admin/notes'
+  const handleCancel = () => {
+    if (dirty && !window.confirm('Discard your unsaved changes?')) return
+    router.push(backHref)
+  }
+  const onSubmit = (event: React.FormEvent) => {
+    handleSubmit(event)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+  const saveLabel = isEditing ? 'Save changes' : 'Create note'
 
   const { activeSectionId, scrollToSection } = useAdminScrollSpy({
     sectionIds: NOTE_EDITOR_SECTIONS.map((section) => section.id),
@@ -64,40 +80,29 @@ export function AdminNoteEditorView({
   })
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6 max-w-7xl mx-auto">
-      { }
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="space-y-1">
-          <Link
-            href="/admin/notes"
-            className="inline-flex items-center gap-1.5 text-xs font-semibold text-muted-foreground hover:text-foreground transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            <span>Back to Notes & Study Material</span>
-          </Link>
-          <h1 className="text-xl sm:text-2xl font-bold font-heading text-foreground">
-            {isEditing ? `Edit: ${initialNote?.title}` : 'Create Study Note'}
-          </h1>
-        </div>
+    <form onSubmit={onSubmit} className="space-y-6">
+      <AdminPageHeader
+        back={{ href: backHref, label: isEditing ? 'Note' : 'Notes' }}
+        title={isEditing ? `Edit ${initialNote?.title ?? 'note'}` : 'New note'}
+        actions={
+          <>
+            <Button type="button" variant="outline" size="sm" onClick={handleCancel}>
+              Cancel
+            </Button>
+            <Button type="submit" size="sm">
+              {saveLabel}
+            </Button>
+          </>
+        }
+      />
 
-        <div className="flex items-center gap-2 shrink-0">
-          <Link
-            href="/admin/notes"
-            className="inline-flex items-center justify-center h-9 px-3.5 text-xs font-medium rounded-lg border border-border hover:bg-muted text-foreground transition-colors"
-          >
-            Cancel
-          </Link>
-          <Button
-            type="submit"
-            className="h-9 px-4 text-xs font-semibold shadow-xs"
-          >
-            <Save className="w-3.5 h-3.5 mr-1.5" />
-            <span>{isEditing ? 'Save Changes' : 'Create Study Note'}</span>
-          </Button>
+      {apiNotice ? (
+        <div role="status" className="flex items-center gap-2.5 rounded-lg border border-border bg-card px-4 py-3 text-sm text-foreground">
+          <Info className="size-4 shrink-0 text-muted-foreground" aria-hidden="true" />
+          {apiNotice}
         </div>
-      </div>
+      ) : null}
 
-      { }
       <AdminEditorLayout
         navigation={
           <NoteEditorNav
@@ -162,13 +167,16 @@ export function AdminNoteEditorView({
             toggleExamId={toggleExamId}
           />
 
-          <NotePublishingSection
-            formData={formData}
-            isEditing={isEditing}
-            apiNotice={apiNotice}
-            onChange={handleFieldChange}
-            onSubmit={handleSubmit}
-          />
+          <NotePublishingSection formData={formData} onChange={handleFieldChange} />
+
+          <div className="flex items-center justify-end gap-2">
+            <Button type="button" variant="outline" size="sm" onClick={handleCancel}>
+              Cancel
+            </Button>
+            <Button type="submit" size="sm">
+              {saveLabel}
+            </Button>
+          </div>
       </AdminEditorLayout>
     </form>
   )

@@ -3,8 +3,8 @@ import { getAdminPromotions } from '@/features/admin/data/admin-promotions'
 import { AdminPromotionsView } from '@/features/admin/components/promotions/directory/admin-promotions-view'
 
 export const metadata: Metadata = {
-  title: 'Featured & Sponsored | Admin Console',
-  description: 'Manage featured editorial highlights and sponsored entity placements across public discovery surfaces.',
+  title: 'Featured listings | Pathway admin',
+  description: 'Records highlighted on the homepage and list pages.',
 }
 
 export default function AdminPromotionsPage() {

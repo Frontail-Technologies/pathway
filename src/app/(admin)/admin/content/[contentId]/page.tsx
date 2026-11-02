@@ -10,11 +10,11 @@ type Props = {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { contentId } = await params
   const entry = getAdminContentById(contentId)
-  if (!entry) return { title: 'Content Not Found | Pathway Admin' }
+  if (!entry) return { title: 'Article not found | Pathway admin' }
 
   return {
-    title: `${entry.title} | Content Details | Pathway Admin`,
-    description: `Administrative overview and metadata for editorial piece ${entry.title}.`,
+    title: `${entry.title} | Articles | Pathway admin`,
+    description: entry.excerpt,
   }
 }
 

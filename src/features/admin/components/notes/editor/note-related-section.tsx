@@ -3,9 +3,8 @@
 import * as React from 'react'
 import { courses } from '@/features/courses/data/courses'
 import { exams } from '@/features/exams/data/exams'
-import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
-import { BookOpen, GraduationCap, Search, Check } from 'lucide-react'
+import { Search, Check } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { NoteFormData } from './use-note-editor'
 
@@ -30,23 +29,20 @@ export function NoteRelatedSection({
   )
 
   return (
-    <div id="related" className="bg-card rounded-xl p-5 sm:p-6 border-0 shadow-xs space-y-5">
+    <div id="related" className="rounded-lg border border-border bg-card p-5 sm:p-6 space-y-5">
       <div>
-        <h2 className="text-sm font-bold text-foreground">Related Academic Programs & Exams</h2>
-        <p className="text-xs text-muted-foreground mt-0.5">
-          Link study material to canonical courses and competitive entrance exams.
+        <h2 className="text-[15px] font-semibold text-foreground">Courses and exams</h2>
+        <p className="mt-0.5 text-[13px] text-muted-foreground">
+          Link the note to the courses and exams it helps with.
         </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         { }
-        <div className="space-y-3 p-4 bg-muted/20 rounded-xl border border-border/60">
+        <div className="space-y-3 p-4 rounded-lg border border-border">
           <div className="flex items-center gap-2">
-            <BookOpen className="w-4 h-4 text-primary" />
-            <span className="text-xs font-bold text-foreground">Connected Programs</span>
-            <Badge variant="secondary" className="text-[10px] ml-auto">
-              {formData.courseIds.length} Linked
-            </Badge>
+            <span className="text-sm font-medium text-foreground">Courses</span>
+            <span className="ml-auto text-[13px] text-muted-foreground tabular-nums">{formData.courseIds.length} linked</span>
           </div>
 
           <div className="relative">
@@ -54,8 +50,8 @@ export function NoteRelatedSection({
             <Input
               value={courseQuery}
               onChange={(e) => setCourseQuery(e.target.value)}
-              placeholder="Search programs..."
-              className="pl-8 h-8 text-xs bg-background"
+              placeholder="Search courses"
+              className="pl-8 h-8 text-sm bg-background"
             />
           </div>
 
@@ -63,32 +59,31 @@ export function NoteRelatedSection({
             {filteredCourses.map((course) => {
               const isSelected = formData.courseIds.includes(course.id)
               return (
-                <div
+                <button
+                  type="button"
+                  aria-pressed={isSelected}
                   key={course.id}
                   onClick={() => toggleCourseId(course.id)}
                   className={cn(
-                    'p-2 rounded-lg text-xs flex items-center justify-between cursor-pointer transition-colors',
+                    'w-full text-left p-2 rounded-md text-sm flex items-center justify-between cursor-pointer transition-colors',
                     isSelected
-                      ? 'bg-primary/10 text-primary font-medium'
-                      : 'hover:bg-muted/40 text-muted-foreground'
+                      ? 'bg-accent text-accent-foreground font-medium'
+                      : 'hover:bg-muted text-foreground'
                   )}
                 >
                   <span className="truncate pr-2">{course.name}</span>
                   {isSelected && <Check className="w-3.5 h-3.5 shrink-0 text-primary" />}
-                </div>
+                </button>
               )
             })}
           </div>
         </div>
 
         { }
-        <div className="space-y-3 p-4 bg-muted/20 rounded-xl border border-border/60">
+        <div className="space-y-3 p-4 rounded-lg border border-border">
           <div className="flex items-center gap-2">
-            <GraduationCap className="w-4 h-4 text-primary" />
-            <span className="text-xs font-bold text-foreground">Target Entrance Exams</span>
-            <Badge variant="secondary" className="text-[10px] ml-auto">
-              {formData.examIds.length} Linked
-            </Badge>
+            <span className="text-sm font-medium text-foreground">Exams</span>
+            <span className="ml-auto text-[13px] text-muted-foreground tabular-nums">{formData.examIds.length} linked</span>
           </div>
 
           <div className="relative">
@@ -96,8 +91,8 @@ export function NoteRelatedSection({
             <Input
               value={examQuery}
               onChange={(e) => setExamQuery(e.target.value)}
-              placeholder="Search exams..."
-              className="pl-8 h-8 text-xs bg-background"
+              placeholder="Search exams"
+              className="pl-8 h-8 text-sm bg-background"
             />
           </div>
 
@@ -105,19 +100,21 @@ export function NoteRelatedSection({
             {filteredExams.map((exam) => {
               const isSelected = formData.examIds.includes(exam.id)
               return (
-                <div
+                <button
+                  type="button"
+                  aria-pressed={isSelected}
                   key={exam.id}
                   onClick={() => toggleExamId(exam.id)}
                   className={cn(
-                    'p-2 rounded-lg text-xs flex items-center justify-between cursor-pointer transition-colors',
+                    'w-full text-left p-2 rounded-md text-sm flex items-center justify-between cursor-pointer transition-colors',
                     isSelected
-                      ? 'bg-primary/10 text-primary font-medium'
-                      : 'hover:bg-muted/40 text-muted-foreground'
+                      ? 'bg-accent text-accent-foreground font-medium'
+                      : 'hover:bg-muted text-foreground'
                   )}
                 >
                   <span className="truncate pr-2">{exam.name}</span>
                   {isSelected && <Check className="w-3.5 h-3.5 shrink-0 text-primary" />}
-                </div>
+                </button>
               )
             })}
           </div>

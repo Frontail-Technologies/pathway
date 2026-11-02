@@ -13,122 +13,113 @@ import {
   type GenderEligibility,
   type IncomeLimitBucket,
 } from '@/features/scholarships/data/scholarships'
-import { Check, AlertCircle, X, type LucideIcon } from 'lucide-react'
-import {
-  adminStatusBadgeClassNames,
-  adminStatusBadgeVariants,
-} from '@/features/admin/constants/status'
+import type { StatusTone } from '../../kit'
 
 export const providerTypes: { value: ProviderType; label: string }[] = [
-  { value: 'Government', label: 'Government Body' },
-  { value: 'Private', label: 'Private Organization' },
-  { value: 'University', label: 'University / Institution' },
-  { value: 'Trust / Foundation', label: 'Trust / Foundation' },
+  { value: 'Government', label: 'Government' },
+  { value: 'Private', label: 'Private organisation' },
+  { value: 'University', label: 'University or institution' },
+  { value: 'Trust / Foundation', label: 'Trust or foundation' },
 ]
 
 export const scholarshipTypes: { value: ScholarshipType; label: string }[] = [
-  { value: 'Merit Based', label: 'Merit Based' },
-  { value: 'Need Based', label: 'Need Based / EWS' },
-  { value: 'Women', label: 'Women in Education' },
-  { value: 'Minority', label: 'Minority Community' },
-  { value: 'Disability', label: 'Persons with Disabilities' },
-  { value: 'Research', label: 'Research & Fellowship' },
-  { value: 'Sports', label: 'Sports Excellence' },
+  { value: 'Merit Based', label: 'Merit based' },
+  { value: 'Need Based', label: 'Need based' },
+  { value: 'Women', label: 'Women' },
+  { value: 'Minority', label: 'Minority' },
+  { value: 'Disability', label: 'Disability' },
+  { value: 'Research', label: 'Research' },
+  { value: 'Sports', label: 'Sports' },
 ]
 
 export const educationLevels: { value: EducationLevel; label: string }[] = [
   { value: 'Class 10', label: 'Class 10' },
   { value: 'Class 12', label: 'Class 12' },
-  { value: 'Undergraduate', label: 'Undergraduate (UG)' },
-  { value: 'Postgraduate', label: 'Postgraduate (PG)' },
+  { value: 'Undergraduate', label: 'Undergraduate' },
+  { value: 'Postgraduate', label: 'Postgraduate' },
   { value: 'Diploma', label: 'Diploma' },
-  { value: 'PhD', label: 'Doctorate / PhD' },
+  { value: 'PhD', label: 'PhD' },
 ]
 
 export const genderOptions: { value: GenderEligibility; label: string }[] = [
-  { value: 'All Genders', label: 'All Genders' },
-  { value: 'Female Only', label: 'Female Only' },
+  { value: 'All Genders', label: 'All genders' },
+  { value: 'Female Only', label: 'Female only' },
 ]
 
 export const incomeLimitOptions: { value: IncomeLimitBucket; label: string }[] = [
-  { value: 'Below ₹2.5 Lakh', label: 'Below ₹2.5 Lakh / Year' },
-  { value: '₹2.5–5 Lakh', label: '₹2.5–5 Lakh / Year' },
-  { value: '₹5–8 Lakh', label: '₹5–8 Lakh / Year' },
-  { value: 'Above ₹8 Lakh', label: 'Above ₹8 Lakh / Year' },
+  { value: 'Below ₹2.5 Lakh', label: 'Below ₹2.5 lakh a year' },
+  { value: '₹2.5–5 Lakh', label: '₹2.5–5 lakh a year' },
+  { value: '₹5–8 Lakh', label: '₹5–8 lakh a year' },
+  { value: 'Above ₹8 Lakh', label: 'Above ₹8 lakh a year' },
 ]
 
 export const benefitTypes = [
-  { value: 'Monetary', label: 'Direct Monetary Grant' },
-  { value: 'Fee Waiver', label: 'Full / Partial Tuition Waiver' },
-  { value: 'Stipend', label: 'Monthly Maintenance Stipend' },
-  { value: 'Fellowship', label: 'Research Fellowship' },
-  { value: 'Other', label: 'Equipment / Book Grant' },
+  { value: 'Monetary', label: 'Cash grant' },
+  { value: 'Fee Waiver', label: 'Tuition fee waiver' },
+  { value: 'Stipend', label: 'Monthly stipend' },
+  { value: 'Fellowship', label: 'Research fellowship' },
+  { value: 'Other', label: 'Other (books, equipment)' },
 ]
 
 export const applicationStatusOptions: { value: ApplicationStatus | 'not-recorded'; label: string }[] = [
   { value: 'open', label: 'Open' },
-  { value: 'closing-soon', label: 'Closing Soon' },
+  { value: 'closing-soon', label: 'Closing soon' },
   { value: 'upcoming', label: 'Upcoming' },
   { value: 'closed', label: 'Closed' },
-  { value: 'not-recorded', label: 'Date Not Recorded' },
+  { value: 'not-recorded', label: 'No date recorded' },
 ]
 
 export const scholarshipDocumentTypes: { value: ScholarshipDocumentType; label: string }[] = [
-  { value: 'notification', label: 'Official Notification' },
-  { value: 'guidelines', label: 'Scheme Guidelines' },
-  { value: 'application_form', label: 'Application Form' },
-  { value: 'scheme_document', label: 'Scheme Policy Document' },
-  { value: 'handbook', label: 'Applicant Handbook' },
-  { value: 'other', label: 'Other Asset' },
+  { value: 'notification', label: 'Official notification' },
+  { value: 'guidelines', label: 'Guidelines' },
+  { value: 'application_form', label: 'Application form' },
+  { value: 'scheme_document', label: 'Scheme document' },
+  { value: 'handbook', label: 'Applicant handbook' },
+  { value: 'other', label: 'Other' },
 ]
 
 export const scholarshipEditorNavSections = [
-  { id: 'identity', label: 'Scholarship Identity' },
-  { id: 'provider', label: 'Provider & Scope' },
-  { id: 'eligibility', label: 'Eligibility Criteria' },
-  { id: 'benefits', label: 'Financial Benefits' },
-  { id: 'dates', label: 'Application Window' },
-  { id: 'process', label: 'Application Process' },
-  { id: 'documents', label: 'Documents & Circulars' },
-  { id: 'review', label: 'Source & Review' },
+  { id: 'identity', label: 'Basics' },
+  { id: 'provider', label: 'Provider and scope' },
+  { id: 'eligibility', label: 'Eligibility' },
+  { id: 'benefits', label: 'Benefits' },
+  { id: 'dates', label: 'Dates' },
+  { id: 'process', label: 'How to apply' },
+  { id: 'documents', label: 'Documents' },
+  { id: 'review', label: 'Source and review' },
 ] as const
 
-export const qualityBadgeStyles: Record<AdminDataQualityStatus, { label: string; className: string; variant: 'success' | 'warning' | 'destructive' | 'muted' }> = {
-  ready: { label: 'Ready', className: adminStatusBadgeClassNames.success, variant: adminStatusBadgeVariants.success },
-  needs_review: { label: 'Needs Review', className: adminStatusBadgeClassNames.warning, variant: adminStatusBadgeVariants.warning },
-  conflict: { label: 'Conflict Detected', className: adminStatusBadgeClassNames.destructive, variant: adminStatusBadgeVariants.destructive },
-  incomplete: { label: 'Incomplete Data', className: adminStatusBadgeClassNames.muted, variant: adminStatusBadgeVariants.muted },
+type Styled = { label: string; tone: StatusTone }
+
+export const qualityBadgeStyles: Record<AdminDataQualityStatus, Styled> = {
+  ready: { label: 'Ready', tone: 'success' },
+  needs_review: { label: 'Needs review', tone: 'warning' },
+  conflict: { label: 'Conflict', tone: 'danger' },
+  incomplete: { label: 'Incomplete', tone: 'neutral' },
 }
 
-export const directoryQualityBadgeStyles: Record<AdminDataQualityStatus, { label: string; className: string; variant: 'success' | 'warning' | 'destructive' | 'muted' }> = {
-  ready: { label: 'Ready', className: adminStatusBadgeClassNames.success, variant: adminStatusBadgeVariants.success },
-  needs_review: { label: 'Needs Review', className: adminStatusBadgeClassNames.warning, variant: adminStatusBadgeVariants.warning },
-  conflict: { label: 'Conflict', className: adminStatusBadgeClassNames.destructive, variant: adminStatusBadgeVariants.destructive },
-  incomplete: { label: 'Incomplete', className: adminStatusBadgeClassNames.muted, variant: adminStatusBadgeVariants.muted },
+export const statusBadgeStyles: Record<AdminContentStatus, Styled> = {
+  complete: { label: 'Complete', tone: 'success' },
+  partial: { label: 'Partial', tone: 'warning' },
+  basic: { label: 'Basic', tone: 'neutral' },
 }
 
-export const statusBadgeStyles: Record<AdminContentStatus, { label: string; className: string; variant: 'success' | 'warning' | 'muted' }> = {
-  complete: { label: 'Complete', className: adminStatusBadgeClassNames.success, variant: adminStatusBadgeVariants.success },
-  partial: { label: 'Partial', className: adminStatusBadgeClassNames.warning, variant: adminStatusBadgeVariants.warning },
-  basic: { label: 'Basic', className: adminStatusBadgeClassNames.muted, variant: adminStatusBadgeVariants.muted },
+export const applicationStatusBadgeStyles: Record<ApplicationStatus | 'not-recorded', Styled> = {
+  open: { label: 'Open', tone: 'success' },
+  'closing-soon': { label: 'Closing soon', tone: 'warning' },
+  upcoming: { label: 'Upcoming', tone: 'info' },
+  closed: { label: 'Closed', tone: 'neutral' },
+  'not-recorded': { label: 'No date recorded', tone: 'neutral' },
 }
 
-export const applicationStatusBadgeStyles: Record<ApplicationStatus | 'not-recorded', { label: string; className: string; variant: 'success' | 'warning' | 'muted' }> = {
-  open: { label: 'Open', className: adminStatusBadgeClassNames.success, variant: adminStatusBadgeVariants.success },
-  'closing-soon': { label: 'Closing Soon', className: adminStatusBadgeClassNames.warning, variant: adminStatusBadgeVariants.warning },
-  upcoming: { label: 'Upcoming', className: adminStatusBadgeClassNames.muted, variant: adminStatusBadgeVariants.muted },
-  closed: { label: 'Closed', className: adminStatusBadgeClassNames.muted, variant: adminStatusBadgeVariants.muted },
-  'not-recorded': { label: 'Date Not Recorded', className: adminStatusBadgeClassNames.muted, variant: adminStatusBadgeVariants.muted },
+export const qualityCheckStyles: Record<SectionQualityState, Styled> = {
+  ready: { label: 'Ready', tone: 'success' },
+  needs_review: { label: 'Needs review', tone: 'warning' },
+  missing: { label: 'Missing', tone: 'neutral' },
 }
 
-export const qualityCheckStyles: Record<SectionQualityState, { icon: LucideIcon; badgeClass: string; label: string; variant: 'success' | 'warning' | 'muted' }> = {
-  ready: { icon: Check, badgeClass: adminStatusBadgeClassNames.success, label: 'Ready', variant: adminStatusBadgeVariants.success },
-  needs_review: { icon: AlertCircle, badgeClass: adminStatusBadgeClassNames.warning, label: 'Needs Review', variant: adminStatusBadgeVariants.warning },
-  missing: { icon: X, badgeClass: adminStatusBadgeClassNames.muted, label: 'Missing', variant: adminStatusBadgeVariants.muted },
-}
-
-export const completenessStatusStyles: Record<SectionCompletenessState, { icon: LucideIcon; badgeClass: string; label: string; variant: 'success' | 'warning' | 'muted' }> = {
-  complete: { icon: Check, badgeClass: adminStatusBadgeClassNames.success, label: 'Complete', variant: adminStatusBadgeVariants.success },
-  partial: { icon: AlertCircle, badgeClass: adminStatusBadgeClassNames.warning, label: 'Partial', variant: adminStatusBadgeVariants.warning },
-  missing: { icon: X, badgeClass: adminStatusBadgeClassNames.muted, label: 'Missing', variant: adminStatusBadgeVariants.muted },
+export const completenessStatusStyles: Record<SectionCompletenessState, Styled> = {
+  complete: { label: 'Complete', tone: 'success' },
+  partial: { label: 'Partial', tone: 'warning' },
+  missing: { label: 'Missing', tone: 'neutral' },
 }

@@ -24,7 +24,7 @@ export type ContentFormData = {
   relatedEntityRefs: RelatedEntityRef[]
 }
 
-const MAX_IMAGE_SIZE_BYTES = 5 * 1024 * 1024 
+const MAX_IMAGE_SIZE_BYTES = 5 * 1024 * 1024
 
 export function useContentEditor(initialEntry?: ContentEntry | null) {
   const isEditing = !!initialEntry
@@ -42,6 +42,8 @@ export function useContentEditor(initialEntry?: ContentEntry | null) {
     tagsString: initialEntry?.tags?.join(', ') || '',
     relatedEntityRefs: initialEntry?.relatedEntityRefs || [],
   })
+
+  const [initialSnapshot] = React.useState(() => JSON.stringify(formData))
 
   const [slugManuallyEdited, setSlugManuallyEdited] = React.useState(!!initialEntry?.slug)
   const [errors, setErrors] = React.useState<Record<string, string>>({})
@@ -174,10 +176,10 @@ export function useContentEditor(initialEntry?: ContentEntry | null) {
       nextErrors.title = 'Title is required.'
     }
     if (!formData.slug.trim()) {
-      nextErrors.slug = 'URL slug is required.'
+      nextErrors.slug = 'Slug is required.'
     }
     if (!formData.body.trim()) {
-      nextErrors.body = 'Content body cannot be empty.'
+      nextErrors.body = 'Body is required.'
     }
 
     setErrors(nextErrors)
@@ -189,14 +191,17 @@ export function useContentEditor(initialEntry?: ContentEntry | null) {
     if (!validate()) return
 
     if (selectedHeroFile) {
-      setApiNotice('Saving editorial content requires the Admin API. Image upload requires the Admin Storage API.')
+      setApiNotice('Saving needs the Admin API, and image upload needs the storage API. Neither is connected yet, so nothing was saved.')
     } else {
-      setApiNotice('Saving editorial content requires the Admin API.')
+      setApiNotice('Saving needs the Admin API, which is not connected yet, so nothing was saved.')
     }
   }
 
+  const isDirty = !!selectedHeroFile || JSON.stringify(formData) !== initialSnapshot
+
   return {
     formData,
+    isDirty,
     errors,
     isEditing,
     apiNotice,

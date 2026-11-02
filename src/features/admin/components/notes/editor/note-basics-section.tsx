@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/select'
 import { noteTypeMap, NoteType } from '@/features/notes/types/note'
 import type { NoteFormData } from './use-note-editor'
+import { sentenceCase } from '../shared/note-meta'
 
 export function NoteBasicsSection({
   formData,
@@ -27,59 +28,59 @@ export function NoteBasicsSection({
   onFieldChange: (key: keyof NoteFormData, value: NoteFormData[keyof NoteFormData]) => void
 }) {
   return (
-    <div id="basics" className="bg-card rounded-xl p-5 sm:p-6 border-0 shadow-xs space-y-5">
+    <div id="basics" className="rounded-lg border border-border bg-card p-5 sm:p-6 space-y-5">
       <div>
-        <h2 className="text-sm font-bold text-foreground">Basic Information</h2>
-        <p className="text-xs text-muted-foreground mt-0.5">
-          Title, slug identifier, study material format, and editorial description.
+        <h2 className="text-[15px] font-semibold text-foreground">Basics</h2>
+        <p className="mt-0.5 text-[13px] text-muted-foreground">
+          Title, link and description.
         </p>
       </div>
 
       <div className="space-y-4">
         <div className="space-y-1.5">
-          <Label htmlFor="note-title" className="text-xs font-semibold text-foreground">
+          <Label htmlFor="note-title" className="text-sm font-medium text-foreground">
             Title <span className="text-destructive">*</span>
           </Label>
           <Input
             id="note-title"
             value={formData.title}
             onChange={(e) => onTitleChange(e.target.value)}
-            placeholder="e.g. Complete Organic Chemistry Reaction Mechanisms & Revision Sheet"
-            className="text-xs font-medium"
+            placeholder="e.g. Organic chemistry reaction mechanisms"
+            className="text-sm font-medium"
           />
           {errors.title ? (
-            <p className="text-[11px] text-destructive">{errors.title}</p>
+            <p className="text-[13px] text-destructive">{errors.title}</p>
           ) : (
-            <p className="text-[10px] text-muted-foreground">
-              Descriptive title for marketplace search and discovery.
+            <p className="text-xs text-muted-foreground">
+              Shown on the note card and in search.
             </p>
           )}
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="space-y-1.5">
-            <Label htmlFor="note-slug" className="text-xs font-semibold text-foreground">
-              Public URL Slug <span className="text-destructive">*</span>
+            <Label htmlFor="note-slug" className="text-sm font-medium text-foreground">
+              URL slug <span className="text-destructive">*</span>
             </Label>
             <Input
               id="note-slug"
               value={formData.slug}
               onChange={(e) => onSlugChange(e.target.value)}
               placeholder="organic-chemistry-reaction-mechanisms"
-              className="text-xs font-mono"
+              className="text-sm font-mono"
             />
             {errors.slug ? (
-              <p className="text-[11px] text-destructive">{errors.slug}</p>
+              <p className="text-[13px] text-destructive">{errors.slug}</p>
             ) : (
-              <p className="text-[10px] text-muted-foreground">
-                Canonical URL path at /notes/{formData.slug || '[slug]'}
+              <p className="text-xs text-muted-foreground">
+                Public link: /notes/{formData.slug || '[slug]'}
               </p>
             )}
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="note-type" className="text-xs font-semibold text-foreground">
-              Material Format / Type <span className="text-destructive">*</span>
+            <Label htmlFor="note-type" className="text-sm font-medium text-foreground">
+              Type <span className="text-destructive">*</span>
             </Label>
             <Select
               value={formData.noteType}
@@ -87,15 +88,15 @@ export function NoteBasicsSection({
                 if (val) onFieldChange('noteType', val as NoteType)
               }}
             >
-              <SelectTrigger id="note-type" className="text-xs bg-background">
+              <SelectTrigger id="note-type" className="text-sm bg-background">
                 <SelectValue placeholder="Select material type">
-                  {noteTypeMap[formData.noteType]?.label ?? formData.noteType}
+                  {sentenceCase(noteTypeMap[formData.noteType]?.label ?? formData.noteType)}
                 </SelectValue>
               </SelectTrigger>
               <SelectContent>
                 {(Object.keys(noteTypeMap) as NoteType[]).map((key) => (
-                  <SelectItem key={key} value={key} className="text-xs">
-                    {noteTypeMap[key].label}
+                  <SelectItem key={key} value={key} className="text-sm">
+                    {sentenceCase(noteTypeMap[key].label)}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -104,29 +105,29 @@ export function NoteBasicsSection({
         </div>
 
         <div className="space-y-1.5">
-          <Label htmlFor="note-short-desc" className="text-xs font-semibold text-foreground">
-            Short Description / Excerpt
+          <Label htmlFor="note-short-desc" className="text-sm font-medium text-foreground">
+            Short description
           </Label>
           <Input
             id="note-short-desc"
             value={formData.shortDescription}
             onChange={(e) => onFieldChange('shortDescription', e.target.value)}
-            placeholder="e.g. High-yield summary covering electrophilic addition, nucleophilic substitution, and named reactions."
-            className="text-xs"
+            placeholder="One line shown under the title"
+            className="text-sm"
           />
         </div>
 
         <div className="space-y-1.5">
-          <Label htmlFor="note-desc" className="text-xs font-semibold text-foreground">
-            Full Description & Contents
+          <Label htmlFor="note-desc" className="text-sm font-medium text-foreground">
+            Description
           </Label>
           <Textarea
             id="note-desc"
             rows={4}
             value={formData.description}
             onChange={(e) => onFieldChange('description', e.target.value)}
-            placeholder="Detailed chapter breakdown, key takeaways, covered exam topics, and study recommendations..."
-            className="text-xs resize-y"
+            placeholder="Chapters covered, key topics and who it's for"
+            className="text-sm resize-y"
           />
         </div>
       </div>

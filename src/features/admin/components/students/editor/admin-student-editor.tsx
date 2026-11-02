@@ -1,253 +1,142 @@
 'use client'
 
-import Link from 'next/link'
-import type { FormEvent } from 'react'
+import * as React from 'react'
+import { useRouter } from 'next/navigation'
+import { toast } from 'sonner'
 import type { AdminStudent } from '@/features/admin/data/admin-students'
-import { StudentStatusBadge } from '../shared/student-status-badge'
-import { Badge } from '@/components/ui/badge'
-import { Button, buttonVariants } from '@/components/ui/button'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import { ArrowLeft, Save } from 'lucide-react'
+import { useUnsavedChanges } from '@/features/admin/hooks/use-unsaved-changes'
+import { AdminPageHeader, CompletenessMeter, FactList, Panel, StatusBadge } from '../../kit'
+import { StudentStatusBadge } from '../shared/student-status-badge'
 
-type AdminStudentEditorProps = {
-  student: AdminStudent
-}
-
-function Field({
-  id,
-  label,
-  value,
-  placeholder,
-  type = 'text',
-}: {
-  id: string
-  label: string
-  value?: string | number
-  placeholder?: string
-  type?: string
-}) {
+function Field({ id, label, value, placeholder, type = 'text', hint }: { id: string; label: string; value?: string | number; placeholder?: string; type?: string; hint?: string }) {
   return (
     <div className="space-y-1.5">
-      <Label htmlFor={id}>{label}</Label>
-      <Input id={id} name={id} type={type} defaultValue={value ?? ''} placeholder={placeholder} />
+      <Label htmlFor={id} className="text-sm font-medium">
+        {label}
+      </Label>
+      <Input id={id} name={id} type={type} defaultValue={value ?? ''} placeholder={placeholder} className="h-9" />
+      {hint ? <p className="text-[13px] text-muted-foreground">{hint}</p> : null}
     </div>
   )
 }
 
-function TagListEditor({
-  id,
-  label,
-  values,
-  placeholder,
-}: {
-  id: string
-  label: string
-  values: string[]
-  placeholder: string
-}) {
+function ListField({ id, label, values, placeholder }: { id: string; label: string; values: string[]; placeholder: string }) {
   return (
     <div className="space-y-1.5">
-      <Label htmlFor={id}>{label}</Label>
-      <Textarea
-        id={id}
-        name={id}
-        defaultValue={values.join(', ')}
-        placeholder={placeholder}
-      />
+      <Label htmlFor={id} className="text-sm font-medium">
+        {label}
+      </Label>
+      <Textarea id={id} name={id} defaultValue={values.join(', ')} placeholder={placeholder} className="min-h-16" />
     </div>
   )
 }
 
-export function AdminStudentEditor({ student }: AdminStudentEditorProps) {
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+export function AdminStudentEditor({ student }: { student: AdminStudent }) {
+  const router = useRouter()
+  const [dirty, setDirty] = React.useState(false)
+  useUnsavedChanges(dirty)
+  const detailHref = `/admin/students/${student.id}`
+
+  function handleCancel() {
+    if (dirty && !window.confirm('Discard your unsaved changes?')) return
+    setDirty(false)
+    router.push(detailHref)
+  }
+
+  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
+    toast('Changes not saved', { description: 'Saving student profiles needs the account API, which is not connected yet.' })
   }
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-        <div className="space-y-3">
-          <Link
-            href={`/admin/students/${student.id}`}
-            className={buttonVariants({
-              variant: 'ghost',
-              size: 'sm',
-              className: 'inline-flex text-xs text-muted-foreground hover:text-foreground',
-            })}
-          >
-            <ArrowLeft />
-            Back to Student
-          </Link>
-          <div className="space-y-1">
-            <div className="flex flex-wrap items-center gap-2">
-              <h1 className="text-xl font-bold font-heading text-foreground">
-                Edit Student
-              </h1>
-              <StudentStatusBadge status={student.accountStatus} />
-            </div>
-            <p className="text-xs text-muted-foreground">
-              Update student identity, education preferences, and profile metadata.
-            </p>
-          </div>
-        </div>
+      <AdminPageHeader back={{ href: detailHref, label: student.name }} title="Edit student" meta={<StudentStatusBadge status={student.accountStatus} />} />
 
-        <div className="flex items-center gap-2">
-          <Link
-            href={`/admin/students/${student.id}`}
-            className={buttonVariants({
-              variant: 'outline',
-              size: 'sm',
-              className: 'inline-flex text-xs font-semibold',
-            })}
-          >
-            Cancel
-          </Link>
-          <Button type="submit" form="student-editor-form" size="sm">
-            <Save />
-            Save Changes
-          </Button>
-        </div>
-      </div>
-
-      <form id="student-editor-form" className="space-y-6" onSubmit={handleSubmit}>
-        <Card>
-          <CardHeader>
-            <CardTitle>Profile Identity</CardTitle>
-            <CardDescription>
-              Core account information shown in admin search and student profile views.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
+      <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-12">
+        <form id="student-editor-form" className="space-y-6 lg:col-span-8" onSubmit={handleSubmit} onChange={() => setDirty(true)}>
+          <Panel title="Profile" description="Shown in admin search and on the student's own profile.">
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-              <Field id="name" label="Full Name" value={student.name} />
+              <Field id="name" label="Full name" value={student.name} />
               <Field id="email" label="Email" value={student.email} type="email" />
               <Field id="phone" label="Phone" value={student.phone} />
               <Field id="city" label="City" value={student.city} />
             </div>
-          </CardContent>
-        </Card>
+          </Panel>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Education Profile</CardTitle>
-            <CardDescription>
-              Academic intent, target stream, and education background.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
+          <Panel title="Education">
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-              <Field id="studyLevel" label="Study Level" value={student.studyLevel} />
+              <Field id="studyLevel" label="Study level" value={student.studyLevel} />
               <Field id="stream" label="Stream" value={student.stream} />
-              <Field id="studyGoal" label="Study Goal" value={student.studyGoal} />
-              <Field id="careerGoal" label="Career Goal" value={student.careerGoal} />
-              <Field id="institution" label="Current Institution" value={student.education?.institution} />
-              <Field id="graduationYear" label="Graduation Year" value={student.education?.graduationYear} type="number" />
+              <Field id="studyGoal" label="Study goal" value={student.studyGoal} />
+              <Field id="careerGoal" label="Career goal" value={student.careerGoal} />
+              <Field id="institution" label="School or college" value={student.education?.institution} />
+              <Field id="graduationYear" label="Graduation year" value={student.education?.graduationYear} type="number" />
             </div>
-          </CardContent>
-        </Card>
+          </Panel>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Preferences</CardTitle>
-            <CardDescription>
-              Comma-separated values used by recommendations, matching, and student discovery tools.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
+          <Panel title="Preferences" description="Separate values with commas. Used for recommendations and matching.">
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-              <TagListEditor
-                id="preferredStreams"
-                label="Preferred Streams"
-                values={student.preferredStreams ?? []}
-                placeholder="Engineering, Management"
-              />
-              <TagListEditor
-                id="preferredCourses"
-                label="Preferred Courses"
-                values={student.preferredCourses}
-                placeholder="B.Tech, MBA"
-              />
-              <TagListEditor
-                id="preferredExams"
-                label="Preferred Exams"
-                values={student.preferredExams}
-                placeholder="JEE Main, CAT"
-              />
-              <TagListEditor
-                id="preferredLocations"
-                label="Preferred Locations"
-                values={student.preferredLocations}
-                placeholder="Delhi, Bengaluru"
-              />
+              <ListField id="preferredStreams" label="Preferred streams" values={student.preferredStreams ?? []} placeholder="Engineering, Management" />
+              <ListField id="preferredCourses" label="Preferred courses" values={student.preferredCourses} placeholder="B.Tech, MBA" />
+              <ListField id="preferredExams" label="Target exams" values={student.preferredExams} placeholder="JEE Main, CAT" />
+              <ListField id="preferredLocations" label="Preferred locations" values={student.preferredLocations} placeholder="Delhi, Bengaluru" />
             </div>
-          </CardContent>
-        </Card>
+          </Panel>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Work Experience</CardTitle>
-            <CardDescription>
-              Profile experience entries are displayed in the student detail review sections.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
+          <Panel title="Experience" description="One entry per line: role | organisation | type | start - end.">
+            <Label htmlFor="workExperience" className="sr-only">
+              Experience
+            </Label>
             <Textarea
               id="workExperience"
               name="workExperience"
+              className="min-h-24"
               defaultValue={student.workExperience
-                .map((item) =>
-                  [item.role, item.organisation, item.type, [item.start, item.end].filter(Boolean).join(' - ')]
-                    .filter(Boolean)
-                    .join(' | ')
-                )
+                .map((item) => [item.role, item.organisation, item.type, [item.start, item.end].filter(Boolean).join(' - ')].filter(Boolean).join(' | '))
                 .join('\n')}
               placeholder="Role | Organisation | Type | Start - End"
             />
-          </CardContent>
-        </Card>
+          </Panel>
+        </form>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Source & Review</CardTitle>
-            <CardDescription>
-              Account source metadata and admin-only indexing state.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-              <div className="space-y-1.5">
-                <Label>Account Type</Label>
-                <Badge variant="muted" size="sm">{student.accountType}</Badge>
+        <aside className="space-y-6 lg:sticky lg:top-[4.5rem] lg:col-span-4">
+          <Panel>
+            <div className="space-y-3">
+              <div className="flex gap-2">
+                <Button type="submit" form="student-editor-form" className="h-9 flex-1">
+                  Save changes
+                </Button>
+                <Button type="button" variant="outline" className="h-9" onClick={handleCancel}>
+                  Cancel
+                </Button>
               </div>
-              <div className="space-y-1.5">
-                <Label>Data Source</Label>
-                <Badge variant="muted" size="sm">{student.dataSource}</Badge>
-              </div>
-              <div className="space-y-1.5">
-                <Label>Public Indexing</Label>
-                <Badge variant={student.scraperExcluded ? 'warning' : 'success'} size="sm">
-                  {student.scraperExcluded ? 'Excluded' : 'Allowed'}
-                </Badge>
-              </div>
+              <p className="text-[13px] text-muted-foreground">{dirty ? 'You have unsaved changes.' : 'No changes yet.'}</p>
             </div>
-          </CardContent>
-          <CardFooter>
-            <p className="text-xs text-muted-foreground">
-              Student profile persistence will connect to the account API when the admin write endpoint is available.
-            </p>
-          </CardFooter>
-        </Card>
-      </form>
+          </Panel>
+
+          <Panel title="Summary">
+            <div className="space-y-4">
+              <div>
+                <p className="mb-1 text-[13px] text-muted-foreground">Profile completeness</p>
+                <CompletenessMeter value={student.profileCompletion.percent} />
+              </div>
+              <FactList
+                columns={1}
+                items={[
+                  { label: 'Account type', value: student.accountType },
+                  { label: 'Source', value: student.dataSource },
+                  { label: 'Search engines', value: student.scraperExcluded ? <StatusBadge>Not indexed</StatusBadge> : <StatusBadge tone="warning">Indexed</StatusBadge> },
+                ]}
+              />
+              <p className="text-[13px] text-muted-foreground">Saving needs the account API, which is not connected yet.</p>
+            </div>
+          </Panel>
+        </aside>
+      </div>
     </div>
   )
 }

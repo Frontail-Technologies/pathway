@@ -41,12 +41,12 @@ export function NotePreviewAssetSection({
   }
 
   return (
-    <div id="preview-asset" className="bg-card rounded-xl p-5 sm:p-6 border-0 shadow-xs space-y-5">
+    <div id="preview-asset" className="rounded-lg border border-border bg-card p-5 sm:p-6 space-y-5">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
         <div>
-          <h2 className="text-sm font-bold text-foreground">Sample Preview Asset (Optional)</h2>
-          <p className="text-xs text-muted-foreground mt-0.5">
-            Public sample excerpt or preview pages for student inspection before purchase.
+          <h2 className="text-[15px] font-semibold text-foreground">Sample preview (optional)</h2>
+          <p className="mt-0.5 text-[13px] text-muted-foreground">
+            A few pages students can see before they buy.
           </p>
         </div>
 
@@ -55,27 +55,27 @@ export function NotePreviewAssetSection({
             type="button"
             onClick={() => setPreviewMode('upload')}
             className={cn(
-              'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold transition-colors cursor-pointer',
+              'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-sm font-semibold transition-colors cursor-pointer',
               previewMode === 'upload'
-                ? 'bg-card text-foreground shadow-xs'
+                ? 'bg-card text-foreground'
                 : 'text-muted-foreground hover:text-foreground'
             )}
           >
             <Upload className="w-3.5 h-3.5" />
-            <span>Upload Sample</span>
+            <span>Upload</span>
           </button>
           <button
             type="button"
             onClick={() => setPreviewMode('url')}
             className={cn(
-              'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold transition-colors cursor-pointer',
+              'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-sm font-semibold transition-colors cursor-pointer',
               previewMode === 'url'
-                ? 'bg-card text-foreground shadow-xs'
+                ? 'bg-card text-foreground'
                 : 'text-muted-foreground hover:text-foreground'
             )}
           >
             <LinkIcon className="w-3.5 h-3.5" />
-            <span>Sample URL</span>
+            <span>Link</span>
           </button>
         </div>
       </div>
@@ -98,24 +98,24 @@ export function NotePreviewAssetSection({
               tabIndex={0}
               role="button"
               aria-label="Click to select sample preview excerpt"
-              className="border-2 border-dashed border-border/80 rounded-xl p-6 text-center cursor-pointer hover:border-primary/50 hover:bg-muted/30 transition-colors space-y-1.5"
+              className="border-2 border-dashed border-border/80 rounded-lg p-6 text-center cursor-pointer hover:border-primary/50 hover:bg-muted/30 transition-colors space-y-1.5"
             >
               <Eye className="w-6 h-6 mx-auto text-muted-foreground/70" />
-              <p className="text-xs font-semibold text-foreground">
-                Click to attach sample excerpt PDF or preview image
+              <p className="text-sm font-medium text-foreground">
+                Choose a sample PDF or image
               </p>
-              <p className="text-[10px] text-muted-foreground">
-                PDF or Image format • Maximum 25 MB
+              <p className="text-xs text-muted-foreground">
+                PDF or image, up to 25 MB
               </p>
             </div>
           ) : (
-            <div className="p-3 bg-muted/20 rounded-xl border border-border/70 flex items-center justify-between gap-3 text-xs">
+            <div className="p-3 bg-muted/20 rounded-lg border border-border/70 flex items-center justify-between gap-3 text-sm">
               <div className="space-y-0.5 min-w-0">
                 <p className="font-semibold text-foreground truncate">
                   {selectedPreviewFile.name}
                 </p>
-                <p className="text-[10px] text-muted-foreground">
-                  Sample selected for local inspection
+                <p className="text-xs text-muted-foreground">
+                  Not saved until upload is connected
                 </p>
               </div>
 
@@ -125,7 +125,7 @@ export function NotePreviewAssetSection({
                   variant="outline"
                   size="sm"
                   onClick={() => fileInputRef.current?.click()}
-                  className="h-7 text-xs"
+                  className="h-7 text-sm"
                 >
                   Replace
                 </Button>
@@ -134,7 +134,7 @@ export function NotePreviewAssetSection({
                   variant="ghost"
                   size="sm"
                   onClick={handleRemovePreviewFile}
-                  className="h-7 text-xs text-destructive hover:bg-destructive/10"
+                  className="h-7 text-sm text-destructive hover:bg-destructive/10"
                 >
                   Remove
                 </Button>
@@ -143,7 +143,7 @@ export function NotePreviewAssetSection({
           )}
 
           {previewFileError && (
-            <div className="flex items-center gap-1.5 text-[11px] text-destructive font-medium">
+            <div className="flex items-center gap-1.5 text-[13px] text-destructive font-medium">
               <AlertCircle className="w-3.5 h-3.5 shrink-0" />
               <span>{previewFileError}</span>
             </div>
@@ -153,8 +153,8 @@ export function NotePreviewAssetSection({
 
       {previewMode === 'url' && (
         <div className="space-y-1.5 max-w-lg">
-          <Label htmlFor="note-preview-url" className="text-xs font-semibold">
-            Sample Preview Asset URL
+          <Label htmlFor="note-preview-url" className="text-sm font-medium text-foreground">
+            Sample link
           </Label>
           <div className="flex gap-2">
             <Input
@@ -162,7 +162,7 @@ export function NotePreviewAssetSection({
               value={previewUrlValue}
               onChange={(e) => setPreviewUrlValue(e.target.value)}
               placeholder="https://.../preview-sample.pdf"
-              className="text-xs font-mono"
+              className="text-sm font-mono"
             />
             {previewUrlValue && (
               <Button
@@ -170,7 +170,7 @@ export function NotePreviewAssetSection({
                 variant="ghost"
                 size="sm"
                 onClick={() => setPreviewUrlValue('')}
-                className="h-9 px-2 text-xs"
+                className="h-9 px-2 text-sm"
               >
                 Clear
               </Button>

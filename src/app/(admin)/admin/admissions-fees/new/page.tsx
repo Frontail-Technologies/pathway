@@ -2,8 +2,8 @@ import type { Metadata } from 'next'
 import { AdminAdmissionsFeesEditor } from '@/features/admin/components/admissions-fees/editor/admin-admissions-fees-editor'
 
 export const metadata: Metadata = {
-  title: 'Create Program Offering | Admissions & Fees | Pathway Admin',
-  description: 'Configure fee structure, entrance exam requirements, and admission procedures for a new institution program offering.',
+  title: 'Add offering | Admissions & fees | Pathway Admin',
+  description: 'Add fees and admission rules for a course at an institution.',
 }
 
 export default function AdminAdmissionsFeesCreatePage() {

@@ -25,18 +25,18 @@ export function NoteClassificationSection({
   onFieldChange: (key: keyof NoteFormData, value: NoteFormData[keyof NoteFormData]) => void
 }) {
   return (
-    <div id="classification" className="bg-card rounded-xl p-5 sm:p-6 border-0 shadow-xs space-y-5">
+    <div id="classification" className="rounded-lg border border-border bg-card p-5 sm:p-6 space-y-5">
       <div>
-        <h2 className="text-sm font-bold text-foreground">Academic Scope & Classification</h2>
-        <p className="text-xs text-muted-foreground mt-0.5">
-          Subject taxonomy, study level, and curriculum stream categorization.
+        <h2 className="text-[15px] font-semibold text-foreground">Subject and level</h2>
+        <p className="mt-0.5 text-[13px] text-muted-foreground">
+          Used for filters on the public notes page.
         </p>
       </div>
 
       <div className="space-y-4">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="space-y-1.5">
-            <Label htmlFor="note-subject" className="text-xs font-semibold text-foreground">
+            <Label htmlFor="note-subject" className="text-sm font-medium text-foreground">
               Subject
             </Label>
             <Input
@@ -44,13 +44,13 @@ export function NoteClassificationSection({
               value={formData.subject}
               onChange={(e) => onFieldChange('subject', e.target.value)}
               placeholder="e.g. Organic Chemistry, Algorithms"
-              className="text-xs"
+              className="text-sm"
             />
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="note-level" className="text-xs font-semibold text-foreground">
-              Study Level
+            <Label htmlFor="note-level" className="text-sm font-medium text-foreground">
+              Study level
             </Label>
             <Select
               value={formData.studyLevel}
@@ -58,31 +58,31 @@ export function NoteClassificationSection({
                 if (val) onFieldChange('studyLevel', val)
               }}
             >
-              <SelectTrigger id="note-level" className="text-xs bg-background">
+              <SelectTrigger id="note-level" className="text-sm bg-background">
                 <SelectValue placeholder="Select study level">
                   {studyLevelMap[formData.studyLevel]?.label ?? formatStudyLevel(formData.studyLevel)}
                 </SelectValue>
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="undergraduate" className="text-xs">
+                <SelectItem value="undergraduate" className="text-sm">
                   Undergraduate
                 </SelectItem>
-                <SelectItem value="postgraduate" className="text-xs">
+                <SelectItem value="postgraduate" className="text-sm">
                   Postgraduate
                 </SelectItem>
-                <SelectItem value="class_12" className="text-xs">
+                <SelectItem value="class_12" className="text-sm">
                   Class 12
                 </SelectItem>
-                <SelectItem value="class_11" className="text-xs">
+                <SelectItem value="class_11" className="text-sm">
                   Class 11
                 </SelectItem>
-                <SelectItem value="class_10" className="text-xs">
+                <SelectItem value="class_10" className="text-sm">
                   Class 10
                 </SelectItem>
-                <SelectItem value="class_9" className="text-xs">
+                <SelectItem value="class_9" className="text-sm">
                   Class 9
                 </SelectItem>
-                <SelectItem value="diploma" className="text-xs">
+                <SelectItem value="diploma" className="text-sm">
                   Diploma
                 </SelectItem>
               </SelectContent>
@@ -90,8 +90,8 @@ export function NoteClassificationSection({
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="note-stream" className="text-xs font-semibold text-foreground">
-              Stream / Discipline
+            <Label htmlFor="note-stream" className="text-sm font-medium text-foreground">
+              Stream
             </Label>
             <Select
               value={formData.stream}
@@ -99,14 +99,14 @@ export function NoteClassificationSection({
                 if (val) onFieldChange('stream', val)
               }}
             >
-              <SelectTrigger id="note-stream" className="text-xs bg-background">
+              <SelectTrigger id="note-stream" className="text-sm bg-background">
                 <SelectValue placeholder="Select stream / discipline">
                   {formatStream(formData.stream)}
                 </SelectValue>
               </SelectTrigger>
               <SelectContent>
                 {streamOptions.map((st) => (
-                  <SelectItem key={st.value} value={st.value} className="text-xs">
+                  <SelectItem key={st.value} value={st.value} className="text-sm">
                     {st.label}
                   </SelectItem>
                 ))}
@@ -117,28 +117,28 @@ export function NoteClassificationSection({
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
           <div className="space-y-1.5">
-            <Label htmlFor="note-author" className="text-xs font-semibold text-foreground">
-              Author Name (Optional)
+            <Label htmlFor="note-author" className="text-sm font-medium text-foreground">
+              Author (optional)
             </Label>
             <Input
               id="note-author"
               value={formData.authorName}
               onChange={(e) => onFieldChange('authorName', e.target.value)}
-              placeholder="Optional author name"
-              className="text-xs"
+              placeholder="Name"
+              className="text-sm"
             />
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="note-provider" className="text-xs font-semibold text-foreground">
-              Institution / Provider Name (Optional)
+            <Label htmlFor="note-provider" className="text-sm font-medium text-foreground">
+              Provider or institution (optional)
             </Label>
             <Input
               id="note-provider"
               value={formData.providerName}
               onChange={(e) => onFieldChange('providerName', e.target.value)}
-              placeholder="Optional institution or provider"
-              className="text-xs"
+              placeholder="Name"
+              className="text-sm"
             />
           </div>
         </div>

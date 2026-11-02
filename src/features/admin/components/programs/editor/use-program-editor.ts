@@ -5,6 +5,7 @@ import type {
   AdminProgramDocumentType,
   AdminProgramDocument,
 } from '@/features/admin/types/programs'
+import { toast } from 'sonner'
 import { useAdminScrollSpy } from '@/features/admin/hooks/use-admin-scroll-spy'
 import { programEditorNavSections } from '@/features/admin/constants/programs'
 
@@ -112,7 +113,27 @@ export function useProgramEditor(program?: AdminProgram | null, mode: 'create' |
   const [selectedFileMeta, setSelectedFileMeta] = React.useState<{ name: string; size: string } | null>(null)
 
   const [errors, setErrors] = React.useState<Record<string, string>>({})
-  const [submitNotice, setSubmitNotice] = React.useState<string | null>(null)
+
+  // Dirty tracking: compare the current form values with the last saved snapshot.
+  const snapshot = JSON.stringify({
+    name,
+    degree,
+    level,
+    stream,
+    specialization,
+    duration,
+    studyMode,
+    description,
+    eligibilitySummary,
+    academicQualification,
+    mandatorySubjects,
+    minimumMarks,
+    curriculum,
+    selectedExams,
+    documents,
+  })
+  const [savedSnapshot, setSavedSnapshot] = React.useState(snapshot)
+  const isDirty = snapshot !== savedSnapshot
   const { activeSectionId, scrollToSection } = useAdminScrollSpy({
     sectionIds: PROGRAM_SECTION_IDS,
     offset: 120,
@@ -216,11 +237,11 @@ export function useProgramEditor(program?: AdminProgram | null, mode: 'create' |
 
   function validate(): boolean {
     const newErrors: Record<string, string> = {}
-    if (!name.trim()) newErrors.name = 'Program name is required'
-    if (!degree.trim()) newErrors.degree = 'Degree designation is required'
-    if (!level) newErrors.level = 'Study level is required'
-    if (!stream) newErrors.stream = 'Academic stream is required'
-    if (!duration.trim()) newErrors.duration = 'Duration is required'
+    if (!name.trim()) newErrors.name = 'Enter a course name'
+    if (!degree.trim()) newErrors.degree = 'Enter a degree'
+    if (!level) newErrors.level = 'Choose a level'
+    if (!stream) newErrors.stream = 'Choose a stream'
+    if (!duration.trim()) newErrors.duration = 'Enter a duration'
 
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
@@ -230,9 +251,13 @@ export function useProgramEditor(program?: AdminProgram | null, mode: 'create' |
     e.preventDefault()
     if (!validate()) {
       scrollToSection('identity')
+      toast.error('Some required fields are missing.')
       return
     }
-    setSubmitNotice('Saving programs requires the Admin API. Demo editor — changes are not persisted.')
+    setSavedSnapshot(snapshot)
+    toast.success(isEdit ? 'Course saved' : 'Course created', {
+      description: 'Demo only: changes are kept for this session and not stored yet.',
+    })
   }
 
   return {
@@ -292,7 +317,7 @@ export function useProgramEditor(program?: AdminProgram | null, mode: 'create' |
     activeSection: activeSectionId,
     scrollToSection,
     errors,
-    submitNotice,
+    isDirty,
     handleSubmit,
   }
 }

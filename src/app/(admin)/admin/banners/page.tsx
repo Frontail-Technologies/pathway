@@ -3,8 +3,8 @@ import { getAdminBanners } from '@/features/admin/data/admin-banners'
 import { AdminBannersView } from '@/features/admin/components/banners/directory/admin-banners-view'
 
 export const metadata: Metadata = {
-  title: 'Banners | Admin Console',
-  description: 'Manage standalone promotional, admissions, counselling, and informational banners.',
+  title: 'Banners | Pathway admin',
+  description: 'Promotional strips shown on the homepage and study abroad page.',
 }
 
 export default function AdminBannersPage() {

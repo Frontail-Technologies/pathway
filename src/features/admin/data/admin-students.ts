@@ -60,10 +60,10 @@ export function mapProfileToAdminStudent(profile: StudentProfile): AdminStudent 
     education: profile.education,
     workExperience: profile.workExperience,
     accountStatus: 'demo_account',
-    accountStatusLabel: 'Demo Account',
+    accountStatusLabel: 'Demo account',
     accountType: 'Student',
     profileCompletion: completion,
-    dataSource: 'Pathway Account',
+    dataSource: 'Pathway account',
     scraperExcluded: true,
   }
 }

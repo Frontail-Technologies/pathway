@@ -1,4 +1,5 @@
 import * as React from 'react'
+import { toast } from 'sonner'
 import {
   type AdminProgramOffering,
   type FeeComponent,
@@ -71,7 +72,35 @@ export function useAdmissionsFeesEditor(
 
   const [activeSection, setActiveSection] = React.useState<string>('identity')
   const [errors, setErrors] = React.useState<Record<string, string>>({})
-  const [submitNotice, setSubmitNotice] = React.useState<string | null>(null)
+
+  // Dirty tracking: compare the current form values with the last saved snapshot.
+  const snapshot = JSON.stringify({
+    institutionId,
+    programId,
+    degree,
+    level,
+    stream,
+    duration,
+    studyMode,
+    admissionMode,
+    annualFee,
+    totalProgrammeFee,
+    feePeriod,
+    academicSession,
+    feeComponents,
+    eligibilitySummary,
+    academicQualification,
+    mandatorySubjects,
+    minimumMarks,
+    importantRequirements,
+    selectedExams,
+    counsellingBody,
+    selectionProcess,
+    applicationSteps,
+    documents,
+  })
+  const [savedSnapshot, setSavedSnapshot] = React.useState(snapshot)
+  const isDirty = snapshot !== savedSnapshot
 
   React.useEffect(() => {
     let ticking = false
@@ -227,10 +256,10 @@ export function useAdmissionsFeesEditor(
 
   function validate(): boolean {
     const newErrors: Record<string, string> = {}
-    if (!institutionId) newErrors.institutionId = 'Institution selection is required'
-    if (!programId) newErrors.programId = 'Program selection is required'
-    if (!annualFee.trim()) newErrors.annualFee = 'Annual tuition fee is required'
-    if (!academicSession.trim()) newErrors.academicSession = 'Academic session is required'
+    if (!institutionId) newErrors.institutionId = 'Choose an institution'
+    if (!programId) newErrors.programId = 'Choose a course'
+    if (!annualFee.trim()) newErrors.annualFee = 'Enter the annual fee'
+    if (!academicSession.trim()) newErrors.academicSession = 'Enter the session'
 
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
@@ -239,12 +268,16 @@ export function useAdmissionsFeesEditor(
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!validate()) {
-      setActiveSection('identity')
-      const firstError = document.getElementById('identity')
-      firstError?.scrollIntoView({ behavior: 'smooth' })
+      const target = !institutionId || !programId || !academicSession.trim() ? 'identity' : 'fees'
+      setActiveSection(target)
+      document.getElementById(target)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      toast.error('Some required fields are missing.')
       return
     }
-    setSubmitNotice('Saving Admissions & Fees requires the Admin API. Demo editor — changes are not persisted.')
+    setSavedSnapshot(snapshot)
+    toast.success(isEdit ? 'Offering saved' : 'Offering created', {
+      description: 'Demo only: changes are kept for this session and not stored yet.',
+    })
   }
 
   return {
@@ -330,7 +363,7 @@ export function useAdmissionsFeesEditor(
     activeSection,
     setActiveSection,
     errors,
-    submitNotice,
+    isDirty,
     handleSubmit,
   }
 }

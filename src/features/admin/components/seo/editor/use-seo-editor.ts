@@ -69,6 +69,11 @@ export function useSeoEditor(initialRecord?: AdminSeoRecord | SeoMetadataRecord)
     ogImagePreviewUrl: initialRecord?.ogImage || null,
   })
 
+  const { secondaryKeywordInput: _input, ogImageFile, ogImagePreviewUrl: _preview, ...savedFields } = state
+  const snapshot = JSON.stringify([savedFields, Boolean(ogImageFile)])
+  const [initialSnapshot] = React.useState(snapshot)
+  const dirty = snapshot !== initialSnapshot
+
   const [errors, setErrors] = React.useState<Record<string, string>>({})
   const [isSubmitting, setIsSubmitting] = React.useState(false)
   const [activeSection, setActiveSection] = React.useState('target')
@@ -210,7 +215,7 @@ export function useSeoEditor(initialRecord?: AdminSeoRecord | SeoMetadataRecord)
       ogImagePreviewUrl: objectUrl,
       ogImage: file.name,
     }))
-    toast.info('Image selected for local preview. Uploading requires the Admin Storage API.')
+    toast.info('Image shown for preview only. File upload isn’t connected yet.')
   }
 
   const handleRemoveImage = () => {
@@ -229,17 +234,17 @@ export function useSeoEditor(initialRecord?: AdminSeoRecord | SeoMetadataRecord)
     const newErrors: Record<string, string> = {}
 
     if (!state.targetType || state.targetType.trim() === '') {
-      newErrors.targetType = 'Please select a target type.'
+      newErrors.targetType = 'Choose a type.'
     }
 
     if (!state.targetId || state.targetId.trim() === '') {
-      newErrors.targetId = 'Please select a valid target page or entity.'
+      newErrors.targetId = 'Choose a page.'
     }
 
     if (state.canonicalPath && state.canonicalPath.trim() !== '') {
       const canonicalCheck = validateCanonicalPath(state.canonicalPath)
       if (!canonicalCheck.isValid) {
-        newErrors.canonicalPath = canonicalCheck.error || 'Invalid canonical path.'
+        newErrors.canonicalPath = canonicalCheck.error || 'Enter a valid path, e.g. /colleges.'
       }
     }
 
@@ -251,14 +256,15 @@ export function useSeoEditor(initialRecord?: AdminSeoRecord | SeoMetadataRecord)
     e.preventDefault()
 
     if (!validateForm()) {
-      toast.error('Please resolve validation errors before saving.')
+      toast.error('Fix the highlighted fields before saving.')
       return
     }
 
-    toast.info('Saving SEO metadata requires the Admin API.')
+    toast.info('Saving isn’t connected yet, so these changes are not stored.')
   }
 
   return {
+    dirty,
     state,
     errors,
     isSubmitting,

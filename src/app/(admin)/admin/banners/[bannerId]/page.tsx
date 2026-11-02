@@ -10,11 +10,11 @@ type Props = {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { bannerId } = await params
   const banner = getAdminBannerById(bannerId)
-  if (!banner) return { title: 'Banner Not Found | Pathway Admin' }
+  if (!banner) return { title: 'Banner not found | Pathway admin' }
 
   return {
-    title: `${banner.name} | Banner Details | Pathway Admin`,
-    description: `Administrative overview and configuration for banner creative ${banner.name}.`,
+    title: `${banner.name} | Banners | Pathway admin`,
+    description: banner.title,
   }
 }
 

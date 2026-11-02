@@ -1,17 +1,9 @@
 import * as React from 'react'
-import { Label } from '@/components/ui/label'
+import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
 import { exams as canonicalExams } from '@/features/exams/data/exams'
+import { EditorSection, Field, FormSelect, RemovableChip } from '../../../programs/shared/section-kit'
 
 const examSelectOptions = canonicalExams.map((ex) => ({
   value: ex.shortName,
@@ -44,120 +36,49 @@ export function ExamsEditorSection({
   onSelectionProcessChange: (val: string) => void
 }) {
   return (
-    <section id="exams" className="bg-card rounded-xl p-5 sm:p-6 shadow-xs border-0 space-y-4 scroll-mt-20">
-      <h2 className="text-sm font-bold uppercase tracking-wider text-foreground">
-        Entrance Exams & Selection
-      </h2>
+    <EditorSection id="exams" title="Entrance exams">
+      <div className="flex flex-wrap gap-1.5">
+        {selectedExams.map((examName) => (
+          <RemovableChip key={examName} onRemove={() => onRemoveExam(examName)} removeLabel={`Remove ${examName}`}>
+            {examName}
+          </RemovableChip>
+        ))}
+        {selectedExams.length === 0 ? <p className="text-[13px] text-muted-foreground">No exams added yet.</p> : null}
+      </div>
 
-      <div className="space-y-3">
-        <div className="flex flex-wrap gap-2">
-          {selectedExams.map((examName) => (
-            <Badge
-              key={examName}
-              variant="secondary"
-              className="text-xs font-semibold px-2.5 py-1 bg-muted/80 text-foreground border border-border/60 gap-1.5"
-            >
-              <span>{examName}</span>
-              <button
-                type="button"
-                onClick={() => onRemoveExam(examName)}
-                className="text-muted-foreground hover:text-destructive text-sm leading-none"
-                aria-label={`Remove exam ${examName}`}
-              >
-                ×
-              </button>
-            </Badge>
-          ))}
-          {selectedExams.length === 0 && (
-            <span className="text-xs text-muted-foreground italic">
-              No entrance exams configured for this offering.
-            </span>
-          )}
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-          <div className="space-y-1.5">
-            <Label htmlFor="exam-select" className="text-xs font-semibold">
-              Select Canonical Exam
-            </Label>
-            <Select
-              items={examSelectOptions}
-              value={examSelectValue}
-              onValueChange={(val) => {
-                if (val) onAddExam(val)
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <Field label="Add an exam" htmlFor="exam-select">
+          <FormSelect id="exam-select" value={examSelectValue} onChange={onAddExam} options={examSelectOptions} placeholder="Choose an exam" />
+        </Field>
+        <Field label="Other exam" htmlFor="custom-exam" hint="For exams not in the list.">
+          <div className="flex items-center gap-2">
+            <Input
+              id="custom-exam"
+              value={customExamInput}
+              onChange={(e) => onCustomExamInputChange(e.target.value)}
+              placeholder="e.g. State CET"
+              className="text-sm"
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault()
+                  onAddCustomExam()
+                }
               }}
-            >
-              <SelectTrigger id="exam-select" className="w-full text-xs">
-                <SelectValue placeholder="Choose an entrance exam..." />
-              </SelectTrigger>
-              <SelectContent>
-                {examSelectOptions.map((opt) => (
-                  <SelectItem key={opt.value} value={opt.value}>
-                    {opt.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            />
+            <Button type="button" variant="outline" onClick={onAddCustomExam} className="shrink-0">
+              Add
+            </Button>
           </div>
-
-          <div className="space-y-1.5">
-            <Label htmlFor="custom-exam" className="text-xs font-semibold">
-              Add Other Exam
-            </Label>
-            <div className="flex items-center gap-2">
-              <Input
-                id="custom-exam"
-                value={customExamInput}
-                onChange={(e) => onCustomExamInputChange(e.target.value)}
-                placeholder="e.g. State CET / Institutional Test"
-                className="text-xs"
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    e.preventDefault()
-                    onAddCustomExam()
-                  }
-                }}
-              />
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={onAddCustomExam}
-                className="text-xs shrink-0 bg-card"
-              >
-                Add
-              </Button>
-            </div>
-          </div>
-        </div>
+        </Field>
       </div>
 
-      <div className="space-y-1.5 pt-2">
-        <Label htmlFor="counselling-body" className="text-xs font-semibold">
-          Counselling & Allocation Authority
-        </Label>
-        <Input
-          id="counselling-body"
-          value={counsellingBody}
-          onChange={(e) => onCounsellingBodyChange(e.target.value)}
-          placeholder="e.g. JoSAA Counselling, JAC Delhi, MCC All India Counselling"
-          className="text-xs"
-        />
-      </div>
+      <Field label="Counselling body" htmlFor="counselling-body">
+        <Input id="counselling-body" value={counsellingBody} onChange={(e) => onCounsellingBodyChange(e.target.value)} placeholder="e.g. JoSAA, MCC" className="text-sm" />
+      </Field>
 
-      <div className="space-y-1.5">
-        <Label htmlFor="selection-process" className="text-xs font-semibold">
-          Selection Procedure Breakdown
-        </Label>
-        <Textarea
-          id="selection-process"
-          value={selectionProcess}
-          onChange={(e) => onSelectionProcessChange(e.target.value)}
-          placeholder="Describe how candidates are shortlisted, rank cutoffs applied, and seats allocated..."
-          rows={3}
-          className="text-xs resize-none"
-        />
-      </div>
-    </section>
+      <Field label="How selection works" htmlFor="selection-process" hint="Shortlisting, cut-offs and seat allocation.">
+        <Textarea id="selection-process" value={selectionProcess} onChange={(e) => onSelectionProcessChange(e.target.value)} rows={3} className="resize-none text-sm" />
+      </Field>
+    </EditorSection>
   )
 }

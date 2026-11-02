@@ -98,53 +98,53 @@ export function ScholarshipIdentitySection({
   errors: Record<string, string>
 }) {
   return (
-    <section id="identity" className="bg-card rounded-xl p-5 sm:p-6 shadow-xs border-0 space-y-5 scroll-mt-20">
-      <h2 className="text-sm font-bold uppercase tracking-wider text-foreground">
-        Scholarship Identity & Scope
+    <section id="identity" className="rounded-lg border border-border bg-card p-5 sm:p-6 space-y-5 scroll-mt-20">
+      <h2 className="text-[15px] font-semibold text-foreground">
+        Basics
       </h2>
 
       <div className="space-y-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="space-y-1 sm:col-span-2">
-            <label className="text-xs font-semibold text-foreground">
-              Scholarship Scheme Name <span className="text-destructive">*</span>
+            <label className="text-sm font-medium text-foreground">
+              Name <span className="text-destructive">*</span>
             </label>
             <Input
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="e.g. AICTE Pragati Scholarship for Girls"
-              className={`text-xs ${errors.name ? 'border-destructive' : ''}`}
+              className={`text-sm ${errors.name ? 'border-destructive' : ''}`}
             />
             {errors.name && (
-              <span className="text-[11px] text-destructive block">{errors.name}</span>
+              <span className="text-[13px] text-destructive block">{errors.name}</span>
             )}
           </div>
 
           <div className="space-y-1">
-            <label className="text-xs font-semibold text-foreground">
-              Administering Provider <span className="text-destructive">*</span>
+            <label className="text-sm font-medium text-foreground">
+              Provider <span className="text-destructive">*</span>
             </label>
             <Input
               value={provider}
               onChange={(e) => setProvider(e.target.value)}
               placeholder="e.g. Government of India / AICTE / Reliance Foundation"
-              className={`text-xs ${errors.provider ? 'border-destructive' : ''}`}
+              className={`text-sm ${errors.provider ? 'border-destructive' : ''}`}
             />
             {errors.provider && (
-              <span className="text-[11px] text-destructive block">{errors.provider}</span>
+              <span className="text-[13px] text-destructive block">{errors.provider}</span>
             )}
           </div>
 
           <div className="space-y-1">
-            <label className="text-xs font-semibold text-foreground">
-              Provider Body Type
+            <label className="text-sm font-medium text-foreground">
+              Provider type
             </label>
             <Select
               items={providerTypes}
               value={providerType}
               onValueChange={(val) => setProviderType(val as ProviderType)}
             >
-              <SelectTrigger className="w-full text-xs">
+              <SelectTrigger className="w-full text-sm">
                 <SelectValue placeholder="Select provider type" />
               </SelectTrigger>
               <SelectContent>
@@ -158,28 +158,28 @@ export function ScholarshipIdentitySection({
           </div>
 
           <div className="space-y-1">
-            <label className="text-xs font-semibold text-foreground">
-              Provider Initials / Avatar Tag
+            <label className="text-sm font-medium text-foreground">
+              Provider initials
             </label>
             <Input
               value={providerInitials}
-              onChange={(e) => setProviderInitials(e.target.value)}
+              onChange={(e) => setProviderInitials(e.target.value.toUpperCase())}
               placeholder="e.g. AICTE / GOI / DST"
-              className="text-xs uppercase"
+              className="text-sm"
               maxLength={6}
             />
           </div>
 
           <div className="space-y-1">
-            <label className="text-xs font-semibold text-foreground">
-              Scholarship Scheme Category
+            <label className="text-sm font-medium text-foreground">
+              Scholarship type
             </label>
             <Select
               items={scholarshipTypes}
               value={scholarshipType}
               onValueChange={(val) => setScholarshipType(val as ScholarshipType)}
             >
-              <SelectTrigger className="w-full text-xs">
+              <SelectTrigger className="w-full text-sm">
                 <SelectValue placeholder="Select scholarship type" />
               </SelectTrigger>
               <SelectContent>
@@ -194,8 +194,8 @@ export function ScholarshipIdentitySection({
         </div>
 
         <div className="space-y-2 pt-2 border-t border-border/60">
-          <label className="text-xs font-semibold text-foreground block">
-            Applicable Study Levels
+          <label className="text-sm font-medium text-foreground block">
+            Study levels
           </label>
           <div className="flex flex-wrap gap-2">
             {educationLevels.map((lvl) => {
@@ -205,10 +205,11 @@ export function ScholarshipIdentitySection({
                   key={lvl.value}
                   type="button"
                   onClick={() => onToggleLevel(lvl.value)}
-                  className={`text-xs px-3 py-1.5 rounded-lg font-semibold transition-colors border ${
+                  aria-pressed={selected}
+                  className={`text-sm px-3 py-1.5 rounded-md font-medium transition-colors border ${
                     selected
-                      ? 'bg-primary text-primary-foreground border-primary'
-                      : 'bg-muted/40 text-muted-foreground border-border hover:bg-muted'
+                      ? 'bg-accent text-accent-foreground border-primary/50'
+                      : 'bg-card text-foreground border-border hover:bg-muted'
                   }`}
                 >
                   {lvl.label}
@@ -220,15 +221,15 @@ export function ScholarshipIdentitySection({
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-border/60">
           <div className="space-y-1">
-            <label className="text-xs font-semibold text-foreground">
-              Gender Restriction
+            <label className="text-sm font-medium text-foreground">
+              Gender
             </label>
             <Select
               items={genderOptions}
               value={genderEligibility}
               onValueChange={(val) => setGenderEligibility(val as GenderEligibility)}
             >
-              <SelectTrigger className="w-full text-xs">
+              <SelectTrigger className="w-full text-sm">
                 <SelectValue placeholder="Gender eligibility" />
               </SelectTrigger>
               <SelectContent>
@@ -242,19 +243,19 @@ export function ScholarshipIdentitySection({
           </div>
 
           <div className="space-y-1">
-            <label className="text-xs font-semibold text-foreground">
-              Annual Family Income Ceiling
+            <label className="text-sm font-medium text-foreground">
+              Family income limit
             </label>
             <Select
-              items={[{ value: 'none', label: 'No Ceiling Specified' }, ...incomeLimitOptions]}
+              items={[{ value: 'none', label: 'No limit' }, ...incomeLimitOptions]}
               value={incomeLimitBucket}
               onValueChange={(val) => setIncomeLimitBucket(val as any)}
             >
-              <SelectTrigger className="w-full text-xs">
+              <SelectTrigger className="w-full text-sm">
                 <SelectValue placeholder="Income limit" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="none">No Ceiling Specified</SelectItem>
+                <SelectItem value="none">No limit</SelectItem>
                 {incomeLimitOptions.map((opt) => (
                   <SelectItem key={opt.value} value={opt.value}>
                     {opt.label}
@@ -267,8 +268,8 @@ export function ScholarshipIdentitySection({
 
         <div className="space-y-3 pt-2 border-t border-border/60">
           <div className="space-y-1.5">
-            <label className="text-xs font-semibold text-foreground">
-              Restricted Streams (Optional)
+            <label className="text-sm font-medium text-foreground">
+              Streams (optional)
             </label>
             <div className="flex gap-2">
               <Input
@@ -281,17 +282,17 @@ export function ScholarshipIdentitySection({
                   }
                 }}
                 placeholder="e.g. Engineering / Science / Medical"
-                className="text-xs flex-1"
+                className="text-sm flex-1"
               />
-              <Button type="button" variant="outline" size="sm" onClick={onAddStream} className="text-xs">
+              <Button type="button" variant="outline" size="sm" onClick={onAddStream} className="text-sm">
                 <Plus className="w-3.5 h-3.5 mr-1" />
-                Add Stream
+                Add
               </Button>
             </div>
             {streams.length > 0 && (
               <div className="flex flex-wrap gap-1.5 pt-1">
                 {streams.map((s) => (
-                  <Badge key={s} variant="secondary" className="text-xs gap-1 bg-muted px-2 py-0.5">
+                  <Badge key={s} variant="secondary" className="text-sm gap-1 bg-muted px-2 py-0.5">
                     {s}
                     <button type="button" onClick={() => onRemoveStream(s)} className="hover:text-destructive">
                       <X className="w-3 h-3" />
@@ -303,8 +304,8 @@ export function ScholarshipIdentitySection({
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-xs font-semibold text-foreground">
-              Restricted Domicile / States (Optional)
+            <label className="text-sm font-medium text-foreground">
+              States (optional)
             </label>
             <div className="flex gap-2">
               <Input
@@ -317,17 +318,17 @@ export function ScholarshipIdentitySection({
                   }
                 }}
                 placeholder="e.g. Maharashtra / Karnataka / Uttar Pradesh"
-                className="text-xs flex-1"
+                className="text-sm flex-1"
               />
-              <Button type="button" variant="outline" size="sm" onClick={onAddState} className="text-xs">
+              <Button type="button" variant="outline" size="sm" onClick={onAddState} className="text-sm">
                 <Plus className="w-3.5 h-3.5 mr-1" />
-                Add State
+                Add
               </Button>
             </div>
             {states.length > 0 && (
               <div className="flex flex-wrap gap-1.5 pt-1">
                 {states.map((st) => (
-                  <Badge key={st} variant="secondary" className="text-xs gap-1 bg-muted px-2 py-0.5">
+                  <Badge key={st} variant="secondary" className="text-sm gap-1 bg-muted px-2 py-0.5">
                     {st}
                     <button type="button" onClick={() => onRemoveState(st)} className="hover:text-destructive">
                       <X className="w-3 h-3" />
@@ -340,15 +341,15 @@ export function ScholarshipIdentitySection({
         </div>
 
         <div className="space-y-1 pt-2 border-t border-border/60">
-          <label className="text-xs font-semibold text-foreground">
-            Overview Summary Narrative
+          <label className="text-sm font-medium text-foreground">
+            Overview
           </label>
           <Textarea
             value={overviewCopy}
             onChange={(e) => setOverviewCopy(e.target.value)}
-            placeholder="Describe the objective of the scholarship, administering ministry/foundation, and key target recipients..."
+            placeholder="What the scholarship is for, who runs it and who it helps"
             rows={3}
-            className="text-xs leading-relaxed resize-y"
+            className="text-sm leading-relaxed resize-y"
           />
         </div>
       </div>

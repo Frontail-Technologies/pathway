@@ -3,7 +3,7 @@ import { getAdminReviews } from '@/features/admin/data/admin-reviews'
 import { AdminReviewsView } from '@/features/admin/components/reviews/directory/admin-reviews-view'
 
 export const metadata: Metadata = {
-  title: 'Reviews | Admin Console',
+  title: 'Reviews | Pathway Admin',
   description: 'Moderate and manage external Google reviews and Pathway student reviews.',
 }
 

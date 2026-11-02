@@ -2,8 +2,8 @@ import type { Metadata } from 'next'
 import { AdminProgramEditor } from '@/features/admin/components/programs/admin-program-editor'
 
 export const metadata: Metadata = {
-  title: 'Create Academic Program | Pathway Admin',
-  description: 'Create a canonical academic program with structured curriculum, entrance exams, and document resources.',
+  title: 'Add course | Pathway Admin',
+  description: 'Add a course to the catalogue.',
 }
 
 export default function AdminProgramCreatePage() {

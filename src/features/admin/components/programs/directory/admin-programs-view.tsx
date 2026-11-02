@@ -2,203 +2,186 @@
 
 import * as React from 'react'
 import Link from 'next/link'
-import { useRouter, useSearchParams } from 'next/navigation'
-import {
-  getAdminPrograms,
-  getAdminProgramFilterOptions,
-} from '@/features/admin/data/admin-programs'
+import { useRouter } from 'next/navigation'
+import type { ColumnDef } from '@tanstack/react-table'
+import { Banknote, Edit, ExternalLink, Eye, MoreHorizontal, Plus } from 'lucide-react'
+import { Button, buttonVariants } from '@/components/ui/button'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import { directoryQualityBadgeStyles as qualityStyles } from '@/features/admin/constants/programs'
+import { getAdminProgramFilterOptions, getAdminPrograms } from '@/features/admin/data/admin-programs'
+import { useUrlFilters } from '@/features/admin/hooks/use-url-filters'
 import type { AdminProgram } from '@/features/admin/types/programs'
 import { AdminDataTable } from '../../admin-data-table'
-import { programTableColumns } from './program-table-columns'
-import { ProgramMobileCard } from './program-mobile-card'
-import { ProgramFilters } from './program-filters'
-import { buttonVariants } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Plus, BookOpen } from 'lucide-react'
+import { AdminFilterSelect, AdminPageHeader, AdminToolbar, CompletenessMeter, SortHeader, StatusBadge, stopRowClick, Tag, toneFromVariant } from '../../kit'
+
+const DEFAULT_FILTERS = { q: '', level: 'all', stream: 'all', duration: 'all', quality: 'all', page: 'all', institution: 'all' }
+
+function RowActions({ item }: { item: AdminProgram }) {
+  return (
+    <div className="flex justify-end" onClick={stopRowClick} onKeyDown={stopRowClick}>
+      <DropdownMenu>
+        <DropdownMenuTrigger render={<Button variant="ghost" size="icon-sm" className="text-muted-foreground hover:text-foreground" aria-label={`Actions for ${item.name}`} />}>
+          <MoreHorizontal className="size-4" />
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-48">
+          <DropdownMenuItem render={<Link href={`/admin/programs/${item.id}`} />}>
+            <Eye className="size-4" aria-hidden="true" />
+            View
+          </DropdownMenuItem>
+          <DropdownMenuItem render={<Link href={`/admin/programs/${item.id}/edit`} />}>
+            <Edit className="size-4" aria-hidden="true" />
+            Edit
+          </DropdownMenuItem>
+          <DropdownMenuItem render={<Link href={`/admin/admissions-fees?program=${item.id}`} />}>
+            <Banknote className="size-4" aria-hidden="true" />
+            Admissions and fees
+          </DropdownMenuItem>
+          {item.hasDetailPage ? (
+            <>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem render={<Link href={`/course/${item.slug}`} target="_blank" rel="noreferrer" />}>
+                <ExternalLink className="size-4" aria-hidden="true" />
+                Open public page
+              </DropdownMenuItem>
+            </>
+          ) : null}
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </div>
+  )
+}
 
 export function AdminProgramsView() {
-  const searchParams = useSearchParams()
   const router = useRouter()
-  const initialInstitution = searchParams.get('institution') || 'all'
-
   const [data] = React.useState<AdminProgram[]>(() => getAdminPrograms())
-  const filterOptions = React.useMemo(() => getAdminProgramFilterOptions(), [])
+  const options = React.useMemo(() => getAdminProgramFilterOptions(), [])
+  const { values: f, set, reset, active } = useUrlFilters(DEFAULT_FILTERS)
 
-  const [searchQuery, setSearchQuery] = React.useState('')
-  const [selectedLevel, setSelectedLevel] = React.useState<string>('all')
-  const [selectedStream, setSelectedStream] = React.useState<string>('all')
-  const [selectedDuration, setSelectedDuration] = React.useState<string>('all')
-  const [selectedQuality, setSelectedQuality] = React.useState<string>('all')
-  const [selectedInstitution, setSelectedInstitution] = React.useState<string>(initialInstitution)
-  const [selectedDetailPage, setSelectedDetailPage] = React.useState<string>('all')
+  // Links from other screens may pass an institution slug; resolve it to the id the filter uses.
+  const institution = options.institutions.find((i) => i.id === f.institution || i.slug === f.institution)
+  const institutionValue = institution?.id ?? f.institution
 
-  const hasActiveFilters =
-    searchQuery.trim() !== '' ||
-    selectedLevel !== 'all' ||
-    selectedStream !== 'all' ||
-    selectedDuration !== 'all' ||
-    selectedQuality !== 'all' ||
-    selectedInstitution !== 'all' ||
-    selectedDetailPage !== 'all'
-
-  function resetFilters() {
-    setSearchQuery('')
-    setSelectedLevel('all')
-    setSelectedStream('all')
-    setSelectedDuration('all')
-    setSelectedQuality('all')
-    setSelectedInstitution('all')
-    setSelectedDetailPage('all')
-  }
-
-  const filteredData = React.useMemo(() => {
+  const filtered = React.useMemo(() => {
+    const query = f.q.trim().toLowerCase()
     return data.filter((item) => {
-      if (searchQuery.trim()) {
-        const query = searchQuery.toLowerCase()
-        const matchesName = item.name.toLowerCase().includes(query)
-        const matchesDegree = item.degree.toLowerCase().includes(query)
-        const matchesStream = item.stream.toLowerCase().includes(query)
-        const matchesSpec = item.specialization?.toLowerCase().includes(query)
-        if (!matchesName && !matchesDegree && !matchesStream && !matchesSpec) {
-          return false
-        }
-      }
-
-      if (selectedLevel !== 'all' && item.level !== selectedLevel) {
-        return false
-      }
-
-      if (selectedStream !== 'all' && item.stream !== selectedStream) {
-        return false
-      }
-
-      if (selectedDuration !== 'all' && item.duration !== selectedDuration) {
-        return false
-      }
-
-      if (selectedQuality !== 'all' && item.qualityStatus !== selectedQuality) {
-        return false
-      }
-
-      if (selectedInstitution !== 'all') {
-        const offers = item.offerings.some(
-          (o) => o.id === selectedInstitution || o.slug === selectedInstitution
-        )
-        if (!offers) return false
-      }
-
-      if (selectedDetailPage === 'live' && !item.hasDetailPage) {
-        return false
-      }
-      if (selectedDetailPage === 'not_available' && item.hasDetailPage) {
-        return false
-      }
-
+      if (query && ![item.name, item.degree, item.stream, item.specialization ?? ''].some((value) => value.toLowerCase().includes(query))) return false
+      if (f.level !== 'all' && item.level !== f.level) return false
+      if (f.stream !== 'all' && item.stream !== f.stream) return false
+      if (f.duration !== 'all' && item.duration !== f.duration) return false
+      if (f.quality !== 'all' && item.qualityStatus !== f.quality) return false
+      if (f.page === 'live' && !item.hasDetailPage) return false
+      if (f.page === 'none' && item.hasDetailPage) return false
+      if (f.institution !== 'all' && !item.offerings.some((o) => o.id === f.institution || o.slug === f.institution)) return false
       return true
     })
-  }, [
-    data,
-    searchQuery,
-    selectedLevel,
-    selectedStream,
-    selectedDuration,
-    selectedQuality,
-    selectedInstitution,
-    selectedDetailPage,
-  ])
+  }, [data, f])
 
-  const levelOptions = React.useMemo(
-    () => [{ value: 'all', label: 'All Levels' }, ...filterOptions.levels.map((l) => ({ value: l, label: l }))],
-    [filterOptions.levels]
-  )
-  const streamOptions = React.useMemo(
-    () => [{ value: 'all', label: 'All Streams' }, ...filterOptions.streams.map((s) => ({ value: s, label: s }))],
-    [filterOptions.streams]
-  )
-  const durationOptions = React.useMemo(
-    () => [{ value: 'all', label: 'All Durations' }, ...filterOptions.durations.map((d) => ({ value: d, label: d }))],
-    [filterOptions.durations]
-  )
-  const qualityOptions = React.useMemo(
-    () => filterOptions.qualityStatuses,
-    [filterOptions.qualityStatuses]
-  )
-  const detailPageOptions = React.useMemo(
+  const columns = React.useMemo<ColumnDef<AdminProgram>[]>(
     () => [
-      { value: 'all', label: 'All Pages' },
-      { value: 'live', label: 'Live Only' },
-      { value: 'not_available', label: 'Not Available' },
+      {
+        accessorKey: 'name',
+        header: ({ column }) => <SortHeader label="Course" sorted={column.getIsSorted()} onToggle={() => column.toggleSorting(column.getIsSorted() === 'asc')} />,
+        cell: ({ row }) => (
+          <div className="min-w-[220px]">
+            <Link href={`/admin/programs/${row.original.id}`} onClick={stopRowClick} className="font-medium text-foreground hover:text-primary hover:underline">
+              {row.original.name}
+            </Link>
+            <p className="text-[13px] text-muted-foreground">{[row.original.degree, row.original.specialization].filter(Boolean).join(' · ')}</p>
+          </div>
+        ),
+      },
+      { accessorKey: 'level', header: 'Level', cell: ({ row }) => <Tag>{row.original.level}</Tag> },
+      {
+        accessorKey: 'stream',
+        header: ({ column }) => <SortHeader label="Stream" sorted={column.getIsSorted()} onToggle={() => column.toggleSorting(column.getIsSorted() === 'asc')} />,
+        cell: ({ row }) => <Tag>{row.original.stream}</Tag>,
+      },
+      { accessorKey: 'duration', header: 'Duration', cell: ({ row }) => <span className="whitespace-nowrap text-muted-foreground">{row.original.duration}</span> },
+      {
+        accessorKey: 'collegesOfferingCount',
+        header: ({ column }) => <SortHeader label="Institutions" sorted={column.getIsSorted()} onToggle={() => column.toggleSorting(column.getIsSorted() === 'asc')} />,
+        cell: ({ row }) => <span className="tabular-nums">{row.original.collegesOfferingCount}</span>,
+      },
+      {
+        accessorKey: 'qualityStatus',
+        header: 'Data quality',
+        cell: ({ row }) => {
+          const style = qualityStyles[row.original.qualityStatus]
+          return <StatusBadge tone={toneFromVariant(style.variant)}>{style.label}</StatusBadge>
+        },
+      },
+      {
+        accessorKey: 'completeness',
+        header: ({ column }) => <SortHeader label="Completeness" sorted={column.getIsSorted()} onToggle={() => column.toggleSorting(column.getIsSorted() === 'asc')} />,
+        cell: ({ row }) => <CompletenessMeter value={row.original.completeness} />,
+      },
+      {
+        accessorKey: 'hasDetailPage',
+        header: 'Public page',
+        cell: ({ row }) => (row.original.hasDetailPage ? <StatusBadge tone="success">Live</StatusBadge> : <StatusBadge>Not published</StatusBadge>),
+      },
+      { id: 'actions', header: () => <span className="sr-only">Actions</span>, cell: ({ row }) => <RowActions item={row.original} /> },
     ],
-    []
+    [],
   )
-
-  const selectedInstitutionName = React.useMemo(() => {
-    return filterOptions.institutions.find(
-      (i) => i.id === selectedInstitution || i.slug === selectedInstitution
-    )?.name
-  }, [filterOptions.institutions, selectedInstitution])
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div className="flex items-center gap-2">
-          <BookOpen className="w-5 h-5 text-primary" />
-          <h1 className="text-xl font-bold font-heading text-foreground">
-            Programs & Courses Directory
-          </h1>
-          <Badge variant="info" size="sm">
-            {filteredData.length} records
-          </Badge>
-        </div>
-
-        <Link
-          href="/admin/programs/new"
-          className={buttonVariants({
-            size: 'sm',
-            className: 'text-xs font-semibold gap-1.5 shadow-xs w-full sm:w-auto inline-flex',
-          })}
-        >
-          <Plus className="w-4 h-4" />
-          Add Program
-        </Link>
-      </div>
-
-      <ProgramFilters
-        searchQuery={searchQuery}
-        onSearchChange={setSearchQuery}
-        selectedLevel={selectedLevel}
-        onLevelChange={setSelectedLevel}
-        levelOptions={levelOptions}
-        selectedStream={selectedStream}
-        onStreamChange={setSelectedStream}
-        streamOptions={streamOptions}
-        selectedDuration={selectedDuration}
-        onDurationChange={setSelectedDuration}
-        durationOptions={durationOptions}
-        selectedQuality={selectedQuality}
-        onQualityChange={setSelectedQuality}
-        qualityOptions={qualityOptions}
-        selectedDetailPage={selectedDetailPage}
-        onDetailPageChange={setSelectedDetailPage}
-        detailPageOptions={detailPageOptions}
-        selectedInstitution={selectedInstitution}
-        onInstitutionReset={() => setSelectedInstitution('all')}
-        institutionName={selectedInstitutionName}
-        hasActiveFilters={hasActiveFilters}
-        onResetFilters={resetFilters}
+    <div className="space-y-5">
+      <AdminPageHeader
+        title="Courses"
+        count={`${data.length} total`}
+        description="Courses in the catalogue and the institutions that offer them."
+        actions={
+          <Link href="/admin/programs/new" className={buttonVariants({ size: 'sm', className: 'gap-1.5' })}>
+            <Plus className="size-4" aria-hidden="true" />
+            Add course
+          </Link>
+        }
       />
 
+      <AdminToolbar
+        search={f.q}
+        onSearchChange={(q) => set({ q })}
+        searchPlaceholder="Search name, degree or stream"
+        hasActiveFilters={active}
+        onReset={reset}
+        summary={active ? `${filtered.length} of ${data.length} match` : undefined}
+      >
+        <AdminFilterSelect label="Level" value={f.level} onChange={(level) => set({ level })} options={options.levels.map((l) => ({ value: l, label: l }))} />
+        <AdminFilterSelect label="Stream" value={f.stream} onChange={(stream) => set({ stream })} options={options.streams.map((s) => ({ value: s, label: s }))} />
+        <AdminFilterSelect label="Duration" value={f.duration} onChange={(duration) => set({ duration })} options={options.durations.map((d) => ({ value: d, label: d }))} />
+        <AdminFilterSelect label="Quality" value={f.quality} onChange={(quality) => set({ quality })} options={options.qualityStatuses.filter((q) => q.value !== 'all').map((q) => ({ value: q.value, label: qualityStyles[q.value as keyof typeof qualityStyles]?.label ?? q.label }))} />
+        <AdminFilterSelect label="Public page" value={f.page} onChange={(page) => set({ page })} options={[{ value: 'live', label: 'Live' }, { value: 'none', label: 'Not published' }]} />
+        <AdminFilterSelect label="Institution" value={institutionValue} onChange={(next) => set({ institution: next })} options={options.institutions.map((i) => ({ value: i.id, label: i.name }))} />
+      </AdminToolbar>
+
       <AdminDataTable
-        columns={programTableColumns}
-        data={filteredData}
-        mobileCardRender={({ original }) => <ProgramMobileCard program={original} />}
-        pageSize={10}
-        emptyTitle="No academic programs match these filters"
-        emptyDescription="Try adjusting your stream, study level, or search query to find programs."
-        onResetFilters={resetFilters}
-        hasActiveFilters={hasActiveFilters}
-        onRowClick={(program) => router.push(`/admin/programs/${program.id}`)}
-        getRowAriaLabel={(program) => `View details for ${program.name}`}
+        columns={columns}
+        data={filtered}
+        onRowClick={(item) => router.push(`/admin/programs/${item.id}`)}
+        getRowAriaLabel={(item) => `Open ${item.name}`}
+        hasActiveFilters={active}
+        onResetFilters={reset}
+        emptyTitle="No courses match"
+        emptyDescription="Try a different search or clear the filters."
+        mobileCardRender={(row) => {
+          const item = row.original
+          const quality = qualityStyles[item.qualityStatus]
+          return (
+            <Link href={`/admin/programs/${item.id}`} className="block space-y-2.5 rounded-lg border border-border bg-card p-4">
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <p className="font-medium text-foreground">{item.name}</p>
+                  <p className="text-[13px] text-muted-foreground">
+                    {item.level} · {item.stream} · {item.duration}
+                  </p>
+                </div>
+                <StatusBadge tone={toneFromVariant(quality.variant)}>{quality.label}</StatusBadge>
+              </div>
+              <CompletenessMeter value={item.completeness} />
+            </Link>
+          )
+        }}
       />
     </div>
   )

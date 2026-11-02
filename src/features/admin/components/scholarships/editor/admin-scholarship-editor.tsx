@@ -1,13 +1,16 @@
 'use client'
 
 import * as React from 'react'
+import { useRouter } from 'next/navigation'
+import { Info } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 import { type AdminScholarship } from '@/features/admin/data/admin-scholarships'
-import { AdminEditorSectionNav } from '@/features/admin/components/admin-editor-section-nav'
-import { AdminEditorLayout } from '@/features/admin/components/shared/admin-editor-layout'
+import { useUnsavedChanges } from '@/features/admin/hooks/use-unsaved-changes'
+import { AdminEditorSectionNav } from '../../admin-editor-section-nav'
+import { AdminEditorLayout } from '../../shared/admin-editor-layout'
+import { AdminPageHeader } from '../../kit'
 import { scholarshipEditorNavSections } from '../shared/scholarship-constants'
 import { useScholarshipEditor } from './use-scholarship-editor'
-import { ScholarshipEditorHeader } from './scholarship-editor-header'
-import { ScholarshipEditorMobileActions } from './scholarship-editor-mobile-actions'
 import { ScholarshipIdentitySection } from './sections/scholarship-identity-section'
 import { ScholarshipEligibilitySection } from './sections/scholarship-eligibility-section'
 import { ScholarshipBenefitsSection } from './sections/scholarship-benefits-section'
@@ -15,7 +18,6 @@ import { ScholarshipDatesSection } from './sections/scholarship-dates-section'
 import { ScholarshipProcessSection } from './sections/scholarship-process-section'
 import { ScholarshipDocsSection } from './sections/scholarship-docs-section'
 import { ScholarshipSourceSection } from './sections/scholarship-source-section'
-import { AlertCircle } from 'lucide-react'
 
 export function AdminScholarshipEditor({
   scholarship,
@@ -24,30 +26,49 @@ export function AdminScholarshipEditor({
   scholarship?: AdminScholarship | null
   mode?: 'create' | 'edit'
 }) {
+  const router = useRouter()
   const form = useScholarshipEditor(scholarship, mode)
+  useUnsavedChanges(form.dirty)
+
+  const backHref = form.isEdit && scholarship ? `/admin/scholarships/${scholarship.id}` : '/admin/scholarships'
+  const handleCancel = () => {
+    if (form.dirty && !window.confirm('Discard your unsaved changes?')) return
+    router.push(backHref)
+  }
+  const onSubmit = (event: React.FormEvent) => {
+    form.handleSubmit(event)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+  const saveLabel = form.isEdit ? 'Save changes' : 'Create scholarship'
 
   const scrollToSection = (id: string) => {
     form.setActiveSection(id)
-    const el = document.getElementById(id)
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth' })
-    }
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
   }
 
   return (
-    <form onSubmit={form.handleSubmit} className="space-y-6 pb-20 sm:pb-8">
-      <ScholarshipEditorHeader
-        isEdit={form.isEdit}
-        scholarshipName={form.name}
-        onSubmit={form.handleSubmit}
+    <form onSubmit={onSubmit} className="space-y-6 pb-20 sm:pb-8">
+      <AdminPageHeader
+        back={{ href: backHref, label: form.isEdit ? 'Scholarship' : 'Scholarships' }}
+        title={form.isEdit ? `Edit ${scholarship?.name ?? 'scholarship'}` : 'New scholarship'}
+        actions={
+          <div className="hidden items-center gap-2 sm:flex">
+            <Button type="button" variant="outline" size="sm" onClick={handleCancel}>
+              Cancel
+            </Button>
+            <Button type="submit" size="sm">
+              {saveLabel}
+            </Button>
+          </div>
+        }
       />
 
-      {form.submitNotice && (
-        <div className="p-4 rounded-xl bg-blue-50 border border-blue-200 text-blue-900 text-xs flex items-center gap-3">
-          <AlertCircle className="w-4 h-4 text-blue-600 shrink-0" />
-          <span>{form.submitNotice}</span>
+      {form.submitNotice ? (
+        <div role="status" className="flex items-center gap-2.5 rounded-lg border border-border bg-card px-4 py-3 text-sm text-foreground">
+          <Info className="size-4 shrink-0 text-muted-foreground" aria-hidden="true" />
+          {form.submitNotice}
         </div>
-      )}
+      ) : null}
 
       <AdminEditorLayout
         navigation={
@@ -55,7 +76,7 @@ export function AdminScholarshipEditor({
             sections={[...scholarshipEditorNavSections]}
             activeSectionId={form.activeSection}
             onSectionChange={scrollToSection}
-            title="Scholarship Form Sections"
+            title="Sections"
           />
         }
       >
@@ -180,10 +201,14 @@ export function AdminScholarshipEditor({
           <ScholarshipSourceSection isEdit={form.isEdit} />
       </AdminEditorLayout>
 
-      <ScholarshipEditorMobileActions
-        isEdit={form.isEdit}
-        onSubmit={form.handleSubmit}
-      />
+      <div className="fixed inset-x-0 bottom-0 z-40 flex items-center gap-3 border-t border-border bg-card p-3 sm:hidden">
+        <Button type="button" variant="outline" size="sm" className="flex-1" onClick={handleCancel}>
+          Cancel
+        </Button>
+        <Button type="submit" size="sm" className="flex-1">
+          {saveLabel}
+        </Button>
+      </div>
     </form>
   )
 }

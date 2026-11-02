@@ -2,8 +2,8 @@ import { Metadata } from 'next'
 import { AdminReportsView } from '@/features/admin/components/reports/admin-reports-view'
 
 export const metadata: Metadata = {
-  title: 'Reports & Audits | Pathway Admin',
-  description: 'Operational catalog reports, data quality audits, and subsystem availability matrices for the Pathway platform.',
+  title: 'Reports | Pathway Admin',
+  description: 'Catalogue, data quality and data source reports.',
 }
 
 export default function AdminReportsPage() {

@@ -1,8 +1,9 @@
 'use client'
 
-import Link from 'next/link'
-import { ArrowLeft } from 'lucide-react'
-import { Badge } from '@/components/ui/badge'
+import { useRouter } from 'next/navigation'
+import { Button } from '@/components/ui/button'
+import { useUnsavedChanges } from '@/features/admin/hooks/use-unsaved-changes'
+import { AdminPageHeader } from '../../kit'
 import { AdminSeoRecord } from '@/features/admin/data/admin-seo'
 import { useAdminScrollSpy } from '@/features/admin/hooks/use-admin-scroll-spy'
 import { AdminEditorLayout } from '@/features/admin/components/shared/admin-editor-layout'
@@ -13,7 +14,6 @@ import { SeoSearchMetadataSection } from './seo-search-metadata-section'
 import { SeoCanonicalRobotsSection } from './seo-canonical-robots-section'
 import { SeoSocialSection } from './seo-social-section'
 import { SeoPreviewCard } from './seo-preview-card'
-import { SeoPublishingSection } from './seo-publishing-section'
 
 export function AdminSeoEditorView({
   initialRecord,
@@ -21,6 +21,7 @@ export function AdminSeoEditorView({
   initialRecord?: AdminSeoRecord
 }) {
   const {
+    dirty,
     state,
     errors,
     isSubmitting,
@@ -45,41 +46,33 @@ export function AdminSeoEditorView({
     offset: 120,
   })
 
+  const router = useRouter()
+  useUnsavedChanges(dirty)
+  const backHref = isEditing && initialRecord ? `/admin/seo/${initialRecord.id}` : '/admin/seo'
+  const handleCancel = () => {
+    if (dirty && !window.confirm('Discard your unsaved changes?')) return
+    router.push(backHref)
+  }
+  const saveLabel = isEditing ? 'Save changes' : 'Create override'
+  const actions = (
+    <>
+      <Button type="button" variant="outline" size="sm" onClick={handleCancel}>
+        Cancel
+      </Button>
+      <Button type="submit" size="sm" disabled={isSubmitting}>
+        {isSubmitting ? 'Saving…' : saveLabel}
+      </Button>
+    </>
+  )
+
   return (
-    <div className="space-y-6 max-w-6xl">
-      <div className="space-y-4">
-        <div className="flex items-center gap-2 text-xs text-muted-foreground">
-          <Link
-            href="/admin/seo"
-            className="hover:text-foreground transition-colors flex items-center gap-1"
-          >
-            <ArrowLeft className="w-3.5 h-3.5" />
-            <span>SEO Metadata</span>
-          </Link>
-          <span>/</span>
-          <span className="text-foreground font-medium">
-            {isEditing ? 'Edit SEO Override' : 'Create SEO Override'}
-          </span>
-        </div>
+    <form onSubmit={handleSubmit} className="space-y-6">
+      <AdminPageHeader
+        back={{ href: backHref, label: isEditing ? 'SEO override' : 'SEO' }}
+        title={isEditing ? `Edit SEO for ${initialRecord?.targetLabel ?? 'page'}` : 'New SEO override'}
+        actions={actions}
+      />
 
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div>
-            <div className="flex items-center gap-2.5">
-              <h1 className="text-xl sm:text-2xl font-bold font-heading text-foreground">
-                {isEditing ? 'Edit SEO Override' : 'Create SEO Override'}
-              </h1>
-              <Badge
-                variant="secondary"
-                className="text-xs font-semibold px-2.5 py-0.5 bg-blue-50 text-blue-700 border-0"
-              >
-                {isEditing ? 'Edit Mode' : 'New Override'}
-              </Badge>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <form onSubmit={handleSubmit}>
         <AdminEditorLayout
           navigation={
             <SeoEditorNav
@@ -147,12 +140,8 @@ export function AdminSeoEditorView({
 
             <SeoPreviewCard metadata={resolvedMetadata} />
 
-            <SeoPublishingSection
-              isEditing={isEditing}
-              isSubmitting={isSubmitting}
-            />
+            <div className="flex items-center justify-end gap-2">{actions}</div>
         </AdminEditorLayout>
-      </form>
-    </div>
+    </form>
   )
 }

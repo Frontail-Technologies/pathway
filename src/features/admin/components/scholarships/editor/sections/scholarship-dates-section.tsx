@@ -42,23 +42,23 @@ export function ScholarshipDatesSection({
   onRemoveDateItem: (idx: number) => void
 }) {
   return (
-    <section id="dates" className="bg-card rounded-xl p-5 sm:p-6 shadow-xs border-0 space-y-5 scroll-mt-20">
-      <h2 className="text-sm font-bold uppercase tracking-wider text-foreground">
-        Application Window & Key Dates
+    <section id="dates" className="rounded-lg border border-border bg-card p-5 sm:p-6 space-y-5 scroll-mt-20">
+      <h2 className="text-[15px] font-semibold text-foreground">
+        Dates
       </h2>
 
       <div className="space-y-4">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="space-y-1">
-            <label className="text-xs font-semibold text-foreground">
-              Application Window Status
+            <label className="text-sm font-medium text-foreground">
+              Application window
             </label>
             <Select
               items={applicationStatusOptions}
               value={applicationStatus}
               onValueChange={(val) => setApplicationStatus(val as any)}
             >
-              <SelectTrigger className="w-full text-xs">
+              <SelectTrigger className="w-full text-sm">
                 <SelectValue placeholder="Window status" />
               </SelectTrigger>
               <SelectContent>
@@ -72,49 +72,49 @@ export function ScholarshipDatesSection({
           </div>
 
           <div className="space-y-1">
-            <label className="text-xs font-semibold text-foreground">
-              Deadline ISO Date
+            <label className="text-sm font-medium text-foreground">
+              Deadline
             </label>
             <Input
               type="date"
               value={deadline}
               onChange={(e) => setDeadline(e.target.value)}
-              className="text-xs"
+              className="text-sm"
             />
           </div>
 
           <div className="space-y-1">
-            <label className="text-xs font-semibold text-foreground">
-              Deadline Formatted Display
+            <label className="text-sm font-medium text-foreground">
+              Deadline as shown
             </label>
             <Input
               value={deadlineDisplay}
               onChange={(e) => setDeadlineDisplay(e.target.value)}
               placeholder="e.g. 15 Oct 2026"
-              className="text-xs"
+              className="text-sm"
             />
           </div>
         </div>
 
         <div className="space-y-2 pt-3 border-t border-border/60">
-          <label className="text-xs font-semibold text-foreground block">
-            Scheduled Timeline Milestones
+          <label className="text-sm font-medium text-foreground block">
+            Other dates
           </label>
           <div className="grid grid-cols-1 sm:grid-cols-12 gap-2">
             <div className="sm:col-span-5">
               <Input
                 value={newDateLabel}
                 onChange={(e) => setNewDateLabel(e.target.value)}
-                placeholder="Milestone (e.g. Document Verification)"
-                className="text-xs"
+                placeholder="Label, e.g. Document verification"
+                className="text-sm"
               />
             </div>
             <div className="sm:col-span-5">
               <Input
                 value={newDateValue}
                 onChange={(e) => setNewDateValue(e.target.value)}
-                placeholder="Scheduled Date / Window (e.g. Nov 2026)"
-                className="text-xs"
+                placeholder="Date, e.g. Nov 2026"
+                className="text-sm"
               />
             </div>
             <div className="sm:col-span-2">
@@ -123,10 +123,10 @@ export function ScholarshipDatesSection({
                 variant="outline"
                 size="sm"
                 onClick={onAddDateItem}
-                className="w-full text-xs h-9"
+                className="w-full text-sm h-9"
               >
                 <Plus className="w-3.5 h-3.5 mr-1" />
-                Add Date
+                Add
               </Button>
             </div>
           </div>
@@ -136,7 +136,7 @@ export function ScholarshipDatesSection({
               {importantDates.map((item, idx) => (
                 <div
                   key={idx}
-                  className="p-2.5 sm:px-3.5 flex items-center justify-between gap-3 text-xs"
+                  className="p-2.5 sm:px-3.5 flex items-center justify-between gap-3 text-sm"
                 >
                   <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 flex-1 min-w-0">
                     <span className="font-semibold text-foreground sm:w-1/3 truncate">
@@ -159,8 +159,8 @@ export function ScholarshipDatesSection({
               ))}
             </div>
           ) : (
-            <p className="text-[11px] text-muted-foreground italic">
-              No additional timeline milestones configured.
+            <p className="text-[13px] text-muted-foreground">
+              No other dates added.
             </p>
           )}
         </div>

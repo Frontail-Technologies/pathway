@@ -1,32 +1,46 @@
-import {
-  type ReviewSource,
-  type ReviewEntityType,
-  type ModerationStatus,
-  reviewSourceMap,
-  moderationStatusMap,
-  reviewEntityTypeMap,
-} from '@/features/admin/data/admin-reviews'
+import type { ModerationStatus, ReviewEntityType, ReviewSource } from '@/features/admin/data/admin-reviews'
+import type { StatusTone } from '@/features/admin/components/kit'
 
-export const reviewSourceFilterOptions = [
-  { value: 'all', label: 'All Sources' },
-  { value: 'google', label: 'Google Places' },
-  { value: 'pathway', label: 'Pathway Native' },
-]
+/** Sentence-case labels for the admin UI (the shared review types use longer title-case labels). */
+export const reviewSourceLabels: Record<ReviewSource, string> = {
+  google: 'Google',
+  pathway: 'Pathway',
+}
 
-export const entityTypeFilterOptions = [
-  { value: 'all', label: 'All Entity Types' },
-  { value: 'institution', label: 'Institutions' },
-  { value: 'coaching', label: 'Coaching Providers' },
-  { value: 'tutor', label: 'Individual Tutors' },
-]
+export const reviewEntityTypeLabels: Record<ReviewEntityType, string> = {
+  institution: 'Institution',
+  coaching: 'Coaching',
+  tutor: 'Tutor',
+}
 
-export const moderationStatusFilterOptions = [
-  { value: 'all', label: 'All Moderation Statuses' },
-  { value: 'published', label: 'Published' },
-  { value: 'pending', label: 'Pending' },
-  { value: 'flagged', label: 'Flagged' },
-  { value: 'hidden', label: 'Hidden' },
-]
+export const moderationStatusLabels: Record<ModerationStatus, string> = {
+  published: 'Published',
+  pending: 'Pending',
+  flagged: 'Flagged',
+  hidden: 'Hidden',
+}
 
-export { reviewSourceMap, moderationStatusMap, reviewEntityTypeMap }
-export type { ReviewSource, ReviewEntityType, ModerationStatus }
+export const moderationStatusDescriptions: Record<ModerationStatus, string> = {
+  published: 'Visible on the public profile.',
+  pending: 'Waiting for review before it is shown.',
+  flagged: 'Reported or marked for a closer look.',
+  hidden: 'Hidden from the public profile.',
+}
+
+export const moderationStatusTones: Record<ModerationStatus, StatusTone> = {
+  published: 'success',
+  pending: 'warning',
+  flagged: 'danger',
+  hidden: 'neutral',
+}
+
+const toOptions = <T extends string>(labels: Record<T, string>) => (Object.keys(labels) as T[]).map((value) => ({ value, label: labels[value] }))
+
+export const reviewSourceOptions = toOptions(reviewSourceLabels)
+export const reviewEntityTypeOptions = toOptions(reviewEntityTypeLabels)
+export const moderationStatusOptions = toOptions(moderationStatusLabels)
+
+export function formatReviewDate(value?: string) {
+  if (!value) return undefined
+  return new Date(value).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
+}

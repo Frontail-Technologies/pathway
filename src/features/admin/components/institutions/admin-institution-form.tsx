@@ -1,20 +1,16 @@
 'use client'
 
 import * as React from 'react'
+import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
-import { Info, AlertCircle } from 'lucide-react'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import type { AdminInstitution } from '@/features/admin/types/institutions'
 import { ImageAssetInput } from '@/features/admin/components/shared/image-asset-input'
+import { useUnsavedChanges } from '@/features/admin/hooks/use-unsaved-changes'
+import { CompletenessMeter, FactList, Panel } from '../kit'
 
 export type InstitutionFormValues = {
   name: string
@@ -33,6 +29,12 @@ export type AdminInstitutionFormProps = {
   onCancel: () => void
 }
 
+const TYPE_OPTIONS = [
+  { value: 'Government', label: 'Government' },
+  { value: 'Private', label: 'Private' },
+  { value: 'Deemed', label: 'Deemed' },
+]
+
 const defaultValues: InstitutionFormValues = {
   name: '',
   type: 'Government',
@@ -44,49 +46,71 @@ const defaultValues: InstitutionFormValues = {
   imageUrl: '',
 }
 
-export function AdminInstitutionForm({
-  institution,
-  mode = 'add',
-  onCancel,
-}: AdminInstitutionFormProps) {
-  const [values, setValues] = React.useState<InstitutionFormValues>(defaultValues)
-  const [errors, setErrors] = React.useState<Partial<Record<keyof InstitutionFormValues, string>>>({})
-  const [submitNotice, setSubmitNotice] = React.useState<string | null>(null)
+function initialValuesFor(institution: AdminInstitution | null | undefined, mode: 'add' | 'edit'): InstitutionFormValues {
+  if (mode !== 'edit' || !institution) return defaultValues
+  return {
+    name: institution.name || '',
+    type: institution.type || 'Government',
+    city: institution.city || '',
+    state: institution.state || '',
+    approval: institution.approval || 'UGC Approved',
+    description: institution.popularCourse ? `Premier institution with popular program: ${institution.popularCourse}` : '',
+    website: '',
+    imageUrl: '',
+  }
+}
+
+type Errors = Partial<Record<keyof InstitutionFormValues, string>>
+
+function FieldError({ id, message }: { id: string; message?: string }) {
+  if (!message) return null
+  return (
+    <p id={id} className="text-[13px] text-destructive">
+      {message}
+    </p>
+  )
+}
+
+function RequiredMark() {
+  return (
+    <span className="text-muted-foreground" aria-hidden="true">
+      {' '}
+      *
+    </span>
+  )
+}
+
+export function AdminInstitutionForm({ institution, mode = 'add', onCancel }: AdminInstitutionFormProps) {
+  const initialValues = React.useMemo(() => initialValuesFor(institution, mode), [institution, mode])
+  const [values, setValues] = React.useState<InstitutionFormValues>(initialValues)
+  const [errors, setErrors] = React.useState<Errors>({})
   const [imageMode, setImageMode] = React.useState<'upload' | 'url'>('upload')
   const [selectedImageFile, setSelectedImageFile] = React.useState<File | null>(null)
   const [imagePreviewUrl, setImagePreviewUrl] = React.useState<string | null>(null)
   const [imageFileError, setImageFileError] = React.useState<string | null>(null)
 
   React.useEffect(() => {
-    setSubmitNotice(null)
+    setValues(initialValues)
     setErrors({})
-    if (mode === 'edit' && institution) {
-      setValues({
-        name: institution.name || '',
-        type: institution.type || 'Government',
-        city: institution.city || '',
-        state: institution.state || '',
-        approval: institution.approval || 'UGC Approved',
-        description: institution.popularCourse ? `Premier institution with popular program: ${institution.popularCourse}` : '',
-        website: '',
-        imageUrl: '',
-      })
-    } else {
-      setValues(defaultValues)
-    }
     setImageMode('upload')
     setSelectedImageFile(null)
     setImagePreviewUrl(null)
     setImageFileError(null)
-  }, [institution, mode])
+  }, [initialValues])
 
   React.useEffect(() => {
     return () => {
-      if (imagePreviewUrl?.startsWith('blob:')) {
-        URL.revokeObjectURL(imagePreviewUrl)
-      }
+      if (imagePreviewUrl?.startsWith('blob:')) URL.revokeObjectURL(imagePreviewUrl)
     }
   }, [imagePreviewUrl])
+
+  const dirty = selectedImageFile !== null || (Object.keys(values) as (keyof InstitutionFormValues)[]).some((key) => values[key] !== initialValues[key])
+  useUnsavedChanges(dirty)
+
+  function update<K extends keyof InstitutionFormValues>(key: K, value: InstitutionFormValues[K]) {
+    setValues((current) => ({ ...current, [key]: value }))
+    if (errors[key]) setErrors((current) => ({ ...current, [key]: undefined }))
+  }
 
   function selectImageFile(file: File) {
     if (!file.type.startsWith('image/')) {
@@ -109,195 +133,128 @@ export function AdminInstitutionForm({
   }
 
   function validate(): boolean {
-    const newErrors: Partial<Record<keyof InstitutionFormValues, string>> = {}
-    if (!values.name.trim()) newErrors.name = 'Institution name is required'
-    if (!values.type) newErrors.type = 'Institution type is required'
-    if (!values.city.trim()) newErrors.city = 'City is required'
-    if (!values.state.trim()) newErrors.state = 'State is required'
-
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
+    const next: Errors = {}
+    if (!values.name.trim()) next.name = 'Enter the institution name.'
+    if (!values.type) next.type = 'Choose a type.'
+    if (!values.city.trim()) next.city = 'Enter a city.'
+    if (!values.state.trim()) next.state = 'Enter a state.'
+    setErrors(next)
+    return Object.keys(next).length === 0
   }
 
-  function handleSubmit(e: React.FormEvent) {
-    e.preventDefault()
-    if (!validate()) return
-    setSubmitNotice('Saving institutions requires the Admin API. Demo editor — changes are not persisted.')
+  function handleSubmit(event: React.FormEvent) {
+    event.preventDefault()
+    if (!validate()) {
+      toast.error('Check the highlighted fields')
+      return
+    }
+    toast('Changes not saved', { description: 'Saving institutions needs the admin API, which is not connected yet.' })
+  }
+
+  function handleCancel() {
+    if (dirty && !window.confirm('Discard your unsaved changes?')) return
+    onCancel()
   }
 
   const isEdit = mode === 'edit'
-  const title = isEdit ? 'Edit Institution' : 'Add New Institution'
-  const description = isEdit
-    ? `Update catalog details for ${institution?.name || 'institution'}`
-    : 'Create a new college or university record in the catalog'
-  const closeForm = onCancel
+  const inputClass = 'h-9 text-sm'
 
-  const formContent = (
-    <>
-        <div className="px-6 py-5 border-b border-border/80 shrink-0 text-left">
-          <h1 className="text-lg font-bold font-heading text-foreground">{title}</h1>
-          <p className="text-xs text-muted-foreground">{description}</p>
-        </div>
-
-        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto px-6 py-5 space-y-6">
-          {submitNotice && (
-            <div className="p-3.5 rounded-lg bg-secondary text-secondary-foreground flex items-start gap-2.5 border border-primary/15">
-              <Info className="w-4 h-4 text-primary shrink-0 mt-0.5" />
-              <div className="text-xs font-medium leading-relaxed">
-                {submitNotice}
-              </div>
-            </div>
-          )}
-
+  return (
+    <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-12">
+      <form id="institution-form" onSubmit={handleSubmit} noValidate className="space-y-6 lg:col-span-8">
+        <Panel title="Basics">
           <div className="space-y-4">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-              Basic Information
-            </h3>
-
             <div className="space-y-1.5">
-              <Label htmlFor="inst-name" className="text-xs font-semibold">
-                Institution Name <span className="text-destructive">*</span>
+              <Label htmlFor="inst-name" className="text-sm font-medium">
+                Name
+                <RequiredMark />
               </Label>
               <Input
                 id="inst-name"
                 value={values.name}
-                onChange={(e) => setValues({ ...values, name: e.target.value })}
+                onChange={(event) => update('name', event.target.value)}
                 placeholder="e.g. Indian Institute of Technology Delhi"
-                className="text-xs"
+                aria-invalid={!!errors.name}
+                aria-describedby={errors.name ? 'inst-name-error' : undefined}
+                className={inputClass}
               />
-              {errors.name && (
-                <p className="text-[11px] text-destructive font-medium flex items-center gap-1 mt-1">
-                  <AlertCircle className="w-3 h-3" /> {errors.name}
-                </p>
-              )}
+              <FieldError id="inst-name-error" message={errors.name} />
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div className="space-y-1.5">
-                <Label htmlFor="inst-type" className="text-xs font-semibold">
-                  Institution Type <span className="text-destructive">*</span>
+                <Label htmlFor="inst-type" className="text-sm font-medium">
+                  Type
+                  <RequiredMark />
                 </Label>
-                <Select
-                  items={[
-                    { value: 'Government', label: 'Government' },
-                    { value: 'Private', label: 'Private' },
-                    { value: 'Deemed', label: 'Deemed' },
-                  ]}
-                  value={values.type}
-                  onValueChange={(val) =>
-                    setValues({ ...values, type: (val as 'Government' | 'Private' | 'Deemed') || 'Government' })
-                  }
-                >
-                  <SelectTrigger id="inst-type" className="w-full text-xs">
-                    <SelectValue placeholder="Select type">
-                      {values.type || 'Select type'}
-                    </SelectValue>
+                <Select items={TYPE_OPTIONS} value={values.type} onValueChange={(value) => update('type', ((value as InstitutionFormValues['type'] | null) ?? 'Government'))}>
+                  <SelectTrigger id="inst-type" className="h-9 w-full text-sm" aria-invalid={!!errors.type}>
+                    <SelectValue placeholder="Choose a type">{values.type}</SelectValue>
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="Government">Government</SelectItem>
-                    <SelectItem value="Private">Private</SelectItem>
-                    <SelectItem value="Deemed">Deemed</SelectItem>
+                    {TYPE_OPTIONS.map((option) => (
+                      <SelectItem key={option.value} value={option.value}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
-                {errors.type && (
-                  <p className="text-[11px] text-destructive font-medium flex items-center gap-1 mt-1">
-                    <AlertCircle className="w-3 h-3" /> {errors.type}
-                  </p>
-                )}
+                <FieldError id="inst-type-error" message={errors.type} />
               </div>
 
               <div className="space-y-1.5">
-                <Label htmlFor="inst-approval" className="text-xs font-semibold">
-                  Approval & Accreditation
+                <Label htmlFor="inst-approval" className="text-sm font-medium">
+                  Approval and accreditation
                 </Label>
-                <Input
-                  id="inst-approval"
-                  value={values.approval}
-                  onChange={(e) => setValues({ ...values, approval: e.target.value })}
-                  placeholder="e.g. UGC / AICTE"
-                  className="text-xs"
-                />
+                <Input id="inst-approval" value={values.approval} onChange={(event) => update('approval', event.target.value)} placeholder="e.g. UGC, AICTE" className={inputClass} />
               </div>
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="inst-desc" className="text-xs font-semibold">
-                Short Description
+              <Label htmlFor="inst-desc" className="text-sm font-medium">
+                Short description
               </Label>
-              <Textarea
-                id="inst-desc"
-                value={values.description}
-                onChange={(e) => setValues({ ...values, description: e.target.value })}
-                placeholder="Key highlights and academic focus of the institution..."
-                rows={3}
-                className="text-xs resize-none"
-              />
+              <Textarea id="inst-desc" value={values.description} onChange={(event) => update('description', event.target.value)} placeholder="What the institution is known for" rows={3} className="resize-none text-sm" />
+              <p className="text-[13px] text-muted-foreground">One or two sentences shown in search results and listings.</p>
             </div>
           </div>
+        </Panel>
 
-          <div className="space-y-4 pt-2 border-t border-border/60">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-              Location
-            </h3>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-1.5">
-                <Label htmlFor="inst-city" className="text-xs font-semibold">
-                  City <span className="text-destructive">*</span>
-                </Label>
-                <Input
-                  id="inst-city"
-                  value={values.city}
-                  onChange={(e) => setValues({ ...values, city: e.target.value })}
-                  placeholder="e.g. New Delhi"
-                  className="text-xs"
-                />
-                {errors.city && (
-                  <p className="text-[11px] text-destructive font-medium flex items-center gap-1 mt-1">
-                    <AlertCircle className="w-3 h-3" /> {errors.city}
-                  </p>
-                )}
-              </div>
-
-              <div className="space-y-1.5">
-                <Label htmlFor="inst-state" className="text-xs font-semibold">
-                  State <span className="text-destructive">*</span>
-                </Label>
-                <Input
-                  id="inst-state"
-                  value={values.state}
-                  onChange={(e) => setValues({ ...values, state: e.target.value })}
-                  placeholder="e.g. Delhi"
-                  className="text-xs"
-                />
-                {errors.state && (
-                  <p className="text-[11px] text-destructive font-medium flex items-center gap-1 mt-1">
-                    <AlertCircle className="w-3 h-3" /> {errors.state}
-                  </p>
-                )}
-              </div>
-            </div>
-          </div>
-
-          <div className="space-y-4 pt-2 border-t border-border/60">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-              Public Identity & Media
-            </h3>
-
+        <Panel title="Location">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="space-y-1.5">
-              <Label htmlFor="inst-website" className="text-xs font-semibold">
-                Official Website
+              <Label htmlFor="inst-city" className="text-sm font-medium">
+                City
+                <RequiredMark />
               </Label>
-              <Input
-                id="inst-website"
-                type="url"
-                value={values.website}
-                onChange={(e) => setValues({ ...values, website: e.target.value })}
-                placeholder="https://..."
-                className="text-xs"
-              />
+              <Input id="inst-city" value={values.city} onChange={(event) => update('city', event.target.value)} placeholder="e.g. New Delhi" aria-invalid={!!errors.city} aria-describedby={errors.city ? 'inst-city-error' : undefined} className={inputClass} />
+              <FieldError id="inst-city-error" message={errors.city} />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="inst-state" className="text-sm font-medium">
+                State
+                <RequiredMark />
+              </Label>
+              <Input id="inst-state" value={values.state} onChange={(event) => update('state', event.target.value)} placeholder="e.g. Delhi" aria-invalid={!!errors.state} aria-describedby={errors.state ? 'inst-state-error' : undefined} className={inputClass} />
+              <FieldError id="inst-state-error" message={errors.state} />
+            </div>
+          </div>
+        </Panel>
+
+        <Panel title="Website and image">
+          <div className="space-y-5">
+            <div className="space-y-1.5">
+              <Label htmlFor="inst-website" className="text-sm font-medium">
+                Official website
+              </Label>
+              <Input id="inst-website" type="url" value={values.website} onChange={(event) => update('website', event.target.value)} placeholder="https://" className={inputClass} />
             </div>
 
+            <div className="space-y-2">
+              <div>
+                <p className="text-sm font-medium text-foreground">Cover image</p>
+                <p className="text-[13px] text-muted-foreground">Shown at the top of the public page. Landscape, 16:9 works best.</p>
+              </div>
             <ImageAssetInput
               mode={imageMode}
               onModeChange={setImageMode}
@@ -307,36 +264,54 @@ export function AdminInstitutionForm({
               onSelectFile={selectImageFile}
               onRemoveFile={removeImageFile}
               urlValue={values.imageUrl}
-              onUrlChange={(imageUrl) => setValues({ ...values, imageUrl })}
-              label="Institution cover image"
+              onUrlChange={(imageUrl) => update('imageUrl', imageUrl)}
+              label="Cover image"
               inputId="institution-cover-image-upload"
               urlInputId="institution-cover-image-url"
             />
-          </div>
-
-          <div className="pt-2">
-            <div className="flex flex-row justify-end gap-2">
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={closeForm}
-                className="text-xs font-semibold"
-              >
-                Cancel
-              </Button>
-              <Button
-                type="submit"
-                size="sm"
-                className="text-xs font-semibold"
-              >
-                {isEdit ? 'Save Institution' : 'Create Institution'}
-              </Button>
             </div>
           </div>
-        </form>
-    </>
-  )
+        </Panel>
+      </form>
 
-  return <div className="mx-auto w-full max-w-4xl overflow-hidden rounded-lg border border-border bg-card shadow-xs">{formContent}</div>
+      <aside className="space-y-6 lg:sticky lg:top-[4.5rem] lg:col-span-4">
+        <Panel>
+          <div className="space-y-3">
+            <div className="flex gap-2">
+              <Button type="submit" form="institution-form" className="h-9 flex-1">
+                {isEdit ? 'Save changes' : 'Create institution'}
+              </Button>
+              <Button type="button" variant="outline" className="h-9" onClick={handleCancel}>
+                Cancel
+              </Button>
+            </div>
+            <p className="text-[13px] text-muted-foreground">{dirty ? 'You have unsaved changes.' : isEdit ? 'No changes yet.' : 'Fields marked * are required.'}</p>
+          </div>
+        </Panel>
+
+        <Panel title="Summary">
+          <div className="space-y-4">
+            <FactList
+              columns={1}
+              items={[
+                { label: 'Name', value: values.name.trim() || <span className="font-normal text-muted-foreground">Not set</span> },
+                { label: 'Type', value: values.type },
+                {
+                  label: 'Location',
+                  value: [values.city.trim(), values.state.trim()].filter(Boolean).join(', ') || <span className="font-normal text-muted-foreground">Not set</span>,
+                },
+              ]}
+            />
+            {isEdit && institution ? (
+              <div>
+                <p className="mb-1 text-[13px] text-muted-foreground">Profile completeness</p>
+                <CompletenessMeter value={institution.completeness} />
+              </div>
+            ) : null}
+            <p className="text-[13px] text-muted-foreground">Courses, fees and admissions are managed in their own sections once the institution exists.</p>
+          </div>
+        </Panel>
+      </aside>
+    </div>
+  )
 }

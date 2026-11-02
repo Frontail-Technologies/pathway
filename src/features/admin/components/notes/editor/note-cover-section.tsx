@@ -24,11 +24,11 @@ export function NoteCoverSection({
   handleRemoveCoverFile: () => void
 }) {
   return (
-    <div id="cover" className="space-y-5 rounded-xl border-0 bg-card p-5 shadow-xs sm:p-6">
+    <div id="cover" className="space-y-5 rounded-lg border border-border bg-card p-5 sm:p-6">
       <div>
-        <h2 className="text-sm font-bold text-foreground">Cover & Thumbnail Image</h2>
-        <p className="mt-0.5 text-xs text-muted-foreground">
-          Card artwork and visual thumbnail for marketplace listing.
+        <h2 className="text-[15px] font-semibold text-foreground">Cover image</h2>
+        <p className="mt-0.5 text-[13px] text-muted-foreground">
+          Shown on the note card.
         </p>
       </div>
 

@@ -50,11 +50,11 @@ export function NotePdfAssetSection({
   }
 
   return (
-    <div id="pdf-asset" className="bg-card rounded-xl p-5 sm:p-6 border-0 shadow-xs space-y-5">
+    <div id="pdf-asset" className="rounded-lg border border-border bg-card p-5 sm:p-6 space-y-5">
       <div>
-        <h2 className="text-sm font-bold text-foreground">Downloadable PDF Asset (Protected)</h2>
-        <p className="text-xs text-muted-foreground mt-0.5">
-          Attach the full educational PDF note document for student access and entitlement downloads.
+        <h2 className="text-[15px] font-semibold text-foreground">PDF file</h2>
+        <p className="mt-0.5 text-[13px] text-muted-foreground">
+          The full note students download. Kept private and served through short-lived links.
         </p>
       </div>
 
@@ -85,37 +85,33 @@ export function NotePdfAssetSection({
             role="button"
             aria-label="Click or drag PDF file to attach downloadable notes"
             className={cn(
-              'border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-colors focus:outline-hidden focus:ring-2 focus:ring-primary/20 space-y-2.5',
+              'border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors focus:outline-hidden focus:ring-2 focus:ring-primary/20 space-y-2.5',
               isDragging
                 ? 'border-primary bg-primary/5'
                 : 'border-border/80 hover:border-primary/50 hover:bg-muted/30 bg-muted/10'
             )}
           >
-            <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center mx-auto text-muted-foreground">
-              <Upload className="w-5 h-5" />
-            </div>
+            <Upload className="mx-auto size-5 text-muted-foreground" aria-hidden="true" />
             <div className="space-y-1">
-              <p className="text-xs font-bold text-foreground">
-                Click to choose PDF document or drag & drop here
+              <p className="text-sm font-medium text-foreground">
+                Choose a PDF or drag it here
               </p>
-              <p className="text-[11px] text-muted-foreground">
-                PDF format only • Maximum size 25 MB
+              <p className="text-[13px] text-muted-foreground">
+                PDF only, up to 25 MB
               </p>
             </div>
           </div>
         ) : (
           <div className="space-y-3">
-            <div className="p-4 bg-muted/20 rounded-xl border border-border/70 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="p-4 bg-muted/20 rounded-lg border border-border/70 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div className="flex items-center gap-3 min-w-0">
-                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary shrink-0">
-                  <FileText className="w-5 h-5" />
-                </div>
+                <FileText className="size-5 shrink-0 text-muted-foreground" aria-hidden="true" />
                 <div className="space-y-0.5 min-w-0">
-                  <p className="text-xs font-bold text-foreground truncate">
+                  <p className="text-sm font-medium text-foreground truncate">
                     {selectedPdfFile.name}
                   </p>
-                  <p className="text-[11px] text-muted-foreground font-mono">
-                    {formatFileSize(selectedPdfFile.size)} • application/pdf
+                  <p className="text-[13px] text-muted-foreground font-mono">
+                    {formatFileSize(selectedPdfFile.size)} · PDF
                   </p>
                 </div>
               </div>
@@ -126,17 +122,17 @@ export function NotePdfAssetSection({
                   variant="outline"
                   size="sm"
                   onClick={() => fileInputRef.current?.click()}
-                  className="h-8 text-xs gap-1.5"
+                  className="h-8 text-sm gap-1.5"
                 >
                   <RefreshCw className="w-3.5 h-3.5" />
-                  <span>Replace PDF</span>
+                  <span>Replace</span>
                 </Button>
                 <Button
                   type="button"
                   variant="ghost"
                   size="sm"
                   onClick={handleRemovePdfFile}
-                  className="h-8 text-xs text-destructive hover:bg-destructive/10 gap-1.5"
+                  className="h-8 text-sm text-destructive hover:bg-destructive/10 gap-1.5"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
                   <span>Remove</span>
@@ -144,17 +140,17 @@ export function NotePdfAssetSection({
               </div>
             </div>
 
-            <div className="flex items-center gap-2 text-xs text-muted-foreground p-3 bg-muted/20 rounded-lg border border-border/60">
-              <Lock className="w-4 h-4 text-primary shrink-0" />
+            <div className="flex items-center gap-2 text-sm text-muted-foreground p-3 bg-muted/20 rounded-lg border border-border/60">
+              <Lock className="w-4 h-4 text-muted-foreground shrink-0" />
               <span>
-                File selected for local inspection. Persisting binary documents requires the Admin Storage API.
+                File upload isn’t connected yet, so this file won’t be saved.
               </span>
             </div>
           </div>
         )}
 
         {pdfFileError && (
-          <div className="flex items-center gap-1.5 text-[11px] text-destructive font-medium">
+          <div className="flex items-center gap-1.5 text-[13px] text-destructive font-medium">
             <AlertCircle className="w-3.5 h-3.5 shrink-0" />
             <span>{pdfFileError}</span>
           </div>

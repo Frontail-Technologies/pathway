@@ -18,50 +18,54 @@ export function NotePricingSection({
   const isPaid = formData.pricingType === 'paid'
 
   return (
-    <div id="pricing" className="bg-card rounded-xl p-5 sm:p-6 border-0 shadow-xs space-y-5">
+    <div id="pricing" className="rounded-lg border border-border bg-card p-5 sm:p-6 space-y-5">
       <div>
-        <h2 className="text-sm font-bold text-foreground">Pricing & Access</h2>
+        <h2 className="text-[15px] font-semibold text-foreground">Price</h2>
       </div>
 
       <div className="space-y-4">
         <div className="space-y-2">
-          <Label className="text-xs font-semibold text-foreground">Access Model</Label>
+          <Label className="text-sm font-medium text-foreground">Access</Label>
           <div className="grid grid-cols-2 gap-3 max-w-md">
-            <div
+            <button
+              type="button"
+              aria-pressed={!isPaid}
               onClick={() => onFieldChange('pricingType', 'free')}
               className={cn(
-                'p-3.5 rounded-xl border text-center cursor-pointer transition-all space-y-1',
+                'p-3.5 rounded-lg border text-left cursor-pointer transition-colors space-y-1',
                 !isPaid
-                  ? 'border-success bg-success-surface text-success'
-                  : 'border-border/70 hover:border-primary/40 bg-card text-muted-foreground'
+                  ? 'border-primary/50 bg-accent text-accent-foreground'
+                  : 'border-border hover:bg-muted bg-card text-foreground'
               )}
             >
-              <p className="text-xs font-bold">Free Access</p>
-              <p className="text-[10px]">Open download for registered students.</p>
-            </div>
+              <p className="text-sm font-medium">Free</p>
+              <p className="text-[13px] text-muted-foreground">Signed-in students download it for free.</p>
+            </button>
 
-            <div
+            <button
+              type="button"
+              aria-pressed={isPaid}
               onClick={() => onFieldChange('pricingType', 'paid')}
               className={cn(
-                'p-3.5 rounded-xl border text-center cursor-pointer transition-all space-y-1',
+                'p-3.5 rounded-lg border text-left cursor-pointer transition-colors space-y-1',
                 isPaid
-                  ? 'border-primary bg-primary/5 text-primary'
-                  : 'border-border/70 hover:border-primary/40 bg-card text-muted-foreground'
+                  ? 'border-primary/50 bg-accent text-accent-foreground'
+                  : 'border-border hover:bg-muted bg-card text-foreground'
               )}
             >
-              <p className="text-xs font-bold">Paid Purchase</p>
-              <p className="text-[10px]">Requires verified one-time payment.</p>
-            </div>
+              <p className="text-sm font-medium">Paid</p>
+              <p className="text-[13px] text-muted-foreground">Students pay once to download.</p>
+            </button>
           </div>
         </div>
 
         {isPaid && (
           <div className="space-y-1.5 max-w-xs pt-1">
-            <Label htmlFor="note-price" className="text-xs font-semibold text-foreground">
-              Purchase Price (in Indian Rupees ₹) <span className="text-destructive">*</span>
+            <Label htmlFor="note-price" className="text-sm font-medium text-foreground">
+              Price in ₹ <span className="text-destructive">*</span>
             </Label>
             <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-bold text-muted-foreground">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
                 ₹
               </span>
               <Input
@@ -72,14 +76,14 @@ export function NotePricingSection({
                 value={formData.priceRupees}
                 onChange={(e) => onFieldChange('priceRupees', e.target.value)}
                 placeholder="199"
-                className="pl-7 text-xs font-mono font-bold"
+                className="pl-7 text-sm tabular-nums"
               />
             </div>
             {errors.priceRupees ? (
-              <p className="text-[11px] text-destructive">{errors.priceRupees}</p>
+              <p className="text-[13px] text-destructive">{errors.priceRupees}</p>
             ) : (
-              <p className="text-[10px] text-muted-foreground">
-                Normalized internally to integer paise ({parseInt(formData.priceRupees || '0', 10) * 100} Paise).
+              <p className="text-xs text-muted-foreground">
+                Whole rupees only.
               </p>
             )}
           </div>

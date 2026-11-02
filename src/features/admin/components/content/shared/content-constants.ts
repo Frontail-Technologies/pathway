@@ -1,58 +1,62 @@
-import {
-  type ContentType,
-  type ContentStatus,
-  type ContentCategory,
-  contentTypeMap,
-  contentStatusMap,
-  contentCategoryMap,
-} from '@/features/admin/data/admin-content'
+import type { StatusTone } from '@/features/admin/components/kit'
+import type { ContentCategory, ContentStatus, ContentType, RelatedEntityType } from '@/features/admin/data/admin-content'
 
-export const contentTypeOptions: { value: ContentType; label: string }[] = [
-  { value: 'article', label: 'Article' },
-  { value: 'guide', label: 'Guide' },
-  { value: 'news', label: 'News & Circular' },
-  { value: 'explainer', label: 'Explainer' },
-]
+export type { ContentCategory, ContentStatus, ContentType, RelatedEntityType }
 
-export const contentStatusOptions: { value: ContentStatus; label: string }[] = [
-  { value: 'draft', label: 'Draft' },
-  { value: 'published', label: 'Published' },
-  { value: 'archived', label: 'Archived' },
-]
-
-export const contentCategoryOptions: { value: ContentCategory; label: string }[] = [
-  { value: 'admissions', label: 'Admissions' },
-  { value: 'exams', label: 'Exams & Prep' },
-  { value: 'colleges', label: 'Institutions' },
-  { value: 'courses', label: 'Programs & Courses' },
-  { value: 'careers', label: 'Careers & Industry' },
-  { value: 'study_abroad', label: 'Study Abroad' },
-  { value: 'scholarships', label: 'Scholarships & Aid' },
-  { value: 'general', label: 'General Guidance' },
-]
-
-export const contentTypeFilterOptions = [
-  { value: 'all', label: 'All Types' },
-  ...contentTypeOptions,
-]
-
-export const contentStatusFilterOptions = [
-  { value: 'all', label: 'All Statuses' },
-  ...contentStatusOptions,
-]
-
-export const contentCategoryFilterOptions = [
-  { value: 'all', label: 'All Categories' },
-  ...contentCategoryOptions,
-]
-
-export {
-  contentTypeMap,
-  contentStatusMap,
-  contentCategoryMap,
+/** Admin-facing labels, sentence case. The shared content maps carry public-facing copy. */
+export const contentTypeLabels: Record<ContentType, string> = {
+  article: 'Article',
+  guide: 'Guide',
+  news: 'News',
+  explainer: 'Explainer',
 }
-export type {
-  ContentType,
-  ContentStatus,
-  ContentCategory,
+
+export const contentStatusLabels: Record<ContentStatus, string> = {
+  draft: 'Draft',
+  published: 'Published',
+  archived: 'Archived',
+}
+
+export const contentStatusTones: Record<ContentStatus, StatusTone> = {
+  draft: 'neutral',
+  published: 'success',
+  archived: 'neutral',
+}
+
+export const contentStatusHints: Record<ContentStatus, string> = {
+  draft: 'Only admins can see drafts.',
+  published: 'Ready to show on the site.',
+  archived: 'Kept for reference, not shown on the site.',
+}
+
+export const contentCategoryLabels: Record<ContentCategory, string> = {
+  admissions: 'Admissions',
+  exams: 'Exams',
+  colleges: 'Colleges',
+  courses: 'Courses',
+  careers: 'Careers',
+  study_abroad: 'Study abroad',
+  scholarships: 'Scholarships',
+  general: 'General',
+}
+
+export const relatedEntityTypeLabels: Record<RelatedEntityType, string> = {
+  institution: 'Institution',
+  program: 'Course',
+  scholarship: 'Scholarship',
+  exam: 'Exam',
+  tutor: 'Tutor',
+  coaching: 'Coaching',
+}
+
+const toOptions = <K extends string>(labels: Record<K, string>) => (Object.keys(labels) as K[]).map((value) => ({ value, label: labels[value] }))
+
+export const contentTypeOptions = toOptions(contentTypeLabels)
+export const contentStatusOptions = toOptions(contentStatusLabels)
+export const contentCategoryOptions = toOptions(contentCategoryLabels)
+export const relatedEntityTypeOptions = toOptions(relatedEntityTypeLabels)
+
+export function formatContentDate(value?: string) {
+  if (!value) return null
+  return new Date(value).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
 }

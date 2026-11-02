@@ -29,8 +29,8 @@ export const institutionDirectoryQualityBadgeStyles: Record<AdminDataQualityStat
 export const institutionDetailQualityBadgeStyles: Record<AdminDataQualityStatus, BadgePresentation> = {
   ready: { label: 'Ready to publish', className: adminStatusBadgeClassNames.success, variant: adminStatusBadgeVariants.success },
   needs_review: { label: 'Needs review', className: adminStatusBadgeClassNames.warning, variant: adminStatusBadgeVariants.warning },
-  conflict: { label: 'Conflict Detected', className: adminStatusBadgeClassNames.destructive, variant: adminStatusBadgeVariants.destructive },
-  incomplete: { label: 'Incomplete Data', className: adminStatusBadgeClassNames.muted, variant: adminStatusBadgeVariants.muted },
+  conflict: { label: 'Conflict detected', className: adminStatusBadgeClassNames.destructive, variant: adminStatusBadgeVariants.destructive },
+  incomplete: { label: 'Incomplete data', className: adminStatusBadgeClassNames.muted, variant: adminStatusBadgeVariants.muted },
 }
 
 export const institutionContentStatusBadgeStyles: Record<AdminContentStatus, BadgePresentation> = {

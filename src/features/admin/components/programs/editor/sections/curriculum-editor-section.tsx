@@ -1,8 +1,9 @@
 import * as React from 'react'
+import { Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Plus, Trash2 } from 'lucide-react'
 import { type CurriculumYear } from '../use-program-editor'
+import { EditorSection, RemovableChip } from '../../shared/section-kit'
 
 export type CurriculumEditorSectionProps = {
   curriculum: CurriculumYear[]
@@ -28,65 +29,27 @@ export function CurriculumEditorSection({
   onRemoveSubject,
 }: CurriculumEditorSectionProps) {
   return (
-    <section id="curriculum" className="bg-card rounded-xl p-5 sm:p-6 shadow-xs border-0 space-y-4 scroll-mt-20">
-      <div className="flex items-center justify-between">
-        <h2 className="text-sm font-bold uppercase tracking-wider text-foreground">
-          Curriculum & Syllabus
-        </h2>
-        <span className="text-xs text-muted-foreground">
-          {curriculum.length} {curriculum.length === 1 ? 'Academic Year' : 'Academic Years'}
-        </span>
-      </div>
-
-      <div className="space-y-4">
+    <EditorSection id="curriculum" title="Curriculum" action={`${curriculum.length} ${curriculum.length === 1 ? 'year' : 'years'}`}>
+      <div className="divide-y divide-border rounded-md border border-border">
         {curriculum.map((yearGroup, yearIdx) => (
-          <div
-            key={yearGroup.year}
-            className="p-4 rounded-lg bg-muted/30 border border-border/60 space-y-3"
-          >
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-foreground">
-                {yearGroup.year}
-              </span>
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                onClick={() => onRemoveYear(yearIdx)}
-                className="h-7 px-2 text-xs text-destructive hover:text-destructive hover:bg-destructive/10"
-              >
-                <Trash2 className="w-3.5 h-3.5 mr-1" />
-                Remove Year
+          <div key={`${yearGroup.year}-${yearIdx}`} className="space-y-3 p-4">
+            <div className="flex items-center justify-between gap-3">
+              <p className="text-sm font-medium text-foreground">{yearGroup.year}</p>
+              <Button type="button" variant="ghost" size="sm" onClick={() => onRemoveYear(yearIdx)} className="text-muted-foreground hover:text-destructive">
+                Remove year
               </Button>
             </div>
 
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-1.5">
               {yearGroup.subjects.map((sub, subIdx) => (
-                <span
-                  key={sub}
-                  className="inline-flex items-center gap-1.5 text-xs font-medium bg-card px-2.5 py-1 rounded-md border border-border/70 text-foreground shadow-2xs"
-                >
-                  <span>{sub}</span>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon-xs"
-                    onClick={() => onRemoveSubject(yearIdx, subIdx)}
-                    className="size-4 text-muted-foreground hover:text-destructive"
-                    aria-label={`Remove ${sub}`}
-                  >
-                    ×
-                  </Button>
-                </span>
+                <RemovableChip key={`${sub}-${subIdx}`} onRemove={() => onRemoveSubject(yearIdx, subIdx)} removeLabel={`Remove ${sub}`}>
+                  {sub}
+                </RemovableChip>
               ))}
-              {yearGroup.subjects.length === 0 && (
-                <span className="text-xs text-muted-foreground italic">
-                  No subjects added to this academic year yet.
-                </span>
-              )}
+              {yearGroup.subjects.length === 0 ? <p className="text-[13px] text-muted-foreground">No subjects yet.</p> : null}
             </div>
 
-            <div className="flex items-center gap-2 pt-1">
+            <div className="flex items-center gap-2">
               <Input
                 value={newSubjectInputs[yearIdx] || ''}
                 onChange={(e) => onSubjectInputChange(yearIdx, e.target.value)}
@@ -96,42 +59,26 @@ export function CurriculumEditorSection({
                     onAddSubject(yearIdx)
                   }
                 }}
-                placeholder="Add subject title..."
-                className="text-xs h-8"
+                placeholder="Subject name"
+                aria-label={`Add subject to ${yearGroup.year}`}
+                className="text-sm"
               />
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={() => onAddSubject(yearIdx)}
-                className="text-xs h-8 px-2.5 shrink-0 bg-card"
-              >
-                <Plus className="w-3.5 h-3.5 mr-1" />
-                Add Subject
+              <Button type="button" variant="outline" onClick={() => onAddSubject(yearIdx)} className="shrink-0">
+                Add
               </Button>
             </div>
           </div>
         ))}
-
-        <div className="flex items-center gap-2 pt-1">
-          <Input
-            value={newYearName}
-            onChange={(e) => onNewYearNameChange(e.target.value)}
-            placeholder="e.g. Year 5 (Dual Degree / Integrated)"
-            className="text-xs h-8 max-w-xs"
-          />
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={onAddYear}
-            className="text-xs h-8 font-semibold bg-card"
-          >
-            <Plus className="w-3.5 h-3.5 mr-1 text-primary" />
-            Add Academic Year
-          </Button>
-        </div>
+        {curriculum.length === 0 ? <p className="p-4 text-sm text-muted-foreground">No years added yet.</p> : null}
       </div>
-    </section>
+
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+        <Input value={newYearName} onChange={(e) => onNewYearNameChange(e.target.value)} placeholder={`Year ${curriculum.length + 1}`} aria-label="New year name" className="text-sm sm:max-w-xs" />
+        <Button type="button" variant="outline" onClick={onAddYear} className="gap-1.5 self-start sm:self-auto">
+          <Plus className="size-4" aria-hidden="true" />
+          Add year
+        </Button>
+      </div>
+    </EditorSection>
   )
 }

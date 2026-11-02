@@ -32,27 +32,27 @@ export function ScholarshipProcessSection({
   onRemoveSelectionStage: (idx: number) => void
 }) {
   return (
-    <section id="process" className="bg-card rounded-xl p-5 sm:p-6 shadow-xs border-0 space-y-5 scroll-mt-20">
-      <h2 className="text-sm font-bold uppercase tracking-wider text-foreground">
-        Application Procedure & Selection
+    <section id="process" className="rounded-lg border border-border bg-card p-5 sm:p-6 space-y-5 scroll-mt-20">
+      <h2 className="text-[15px] font-semibold text-foreground">
+        How to apply
       </h2>
 
       <div className="space-y-4">
         <div className="space-y-1">
-          <label className="text-xs font-semibold text-foreground">
-            Official Application Portal URL
+          <label className="text-sm font-medium text-foreground">
+            Official application link
           </label>
           <Input
             value={officialApplyUrl}
             onChange={(e) => setOfficialApplyUrl(e.target.value)}
             placeholder="e.g. https://scholarships.gov.in/ or https://www.aicte-india.org/"
-            className="text-xs font-mono"
+            className="text-sm font-mono"
           />
         </div>
 
         <div className="space-y-2 pt-3 border-t border-border/60">
-          <label className="text-xs font-semibold text-foreground block">
-            Step-by-Step Application Procedure
+          <label className="text-sm font-medium text-foreground block">
+            Application steps
           </label>
           <div className="flex gap-2">
             <Input
@@ -65,11 +65,11 @@ export function ScholarshipProcessSection({
                 }
               }}
               placeholder="e.g. Visit official portal and register with student academic details"
-              className="text-xs flex-1"
+              className="text-sm flex-1"
             />
-            <Button type="button" variant="outline" size="sm" onClick={onAddStep} className="text-xs">
+            <Button type="button" variant="outline" size="sm" onClick={onAddStep} className="text-sm">
               <Plus className="w-3.5 h-3.5 mr-1" />
-              Add Step
+              Add
             </Button>
           </div>
 
@@ -78,10 +78,10 @@ export function ScholarshipProcessSection({
               {applicationSteps.map((step, idx) => (
                 <div
                   key={idx}
-                  className="flex items-start justify-between gap-3 p-3 rounded-lg bg-muted/20 border border-border/60 text-xs"
+                  className="flex items-start justify-between gap-3 p-3 rounded-lg bg-muted/20 border border-border/60 text-sm"
                 >
                   <div className="flex items-start gap-2.5 min-w-0">
-                    <div className="w-5 h-5 rounded-full bg-primary/10 text-primary font-bold flex items-center justify-center shrink-0 text-[11px] mt-0.5">
+                    <div className="w-5 shrink-0 text-right text-[13px] font-medium text-muted-foreground tabular-nums">
                       {idx + 1}
                     </div>
                     <span className="text-foreground leading-relaxed font-medium">{step}</span>
@@ -99,15 +99,15 @@ export function ScholarshipProcessSection({
               ))}
             </div>
           ) : (
-            <p className="text-[11px] text-muted-foreground italic">
-              No step-by-step application procedure added yet.
+            <p className="text-[13px] text-muted-foreground">
+              No steps added yet.
             </p>
           )}
         </div>
 
         <div className="space-y-2 pt-3 border-t border-border/60">
-          <label className="text-xs font-semibold text-foreground block">
-            Selection & Verification Stages
+          <label className="text-sm font-medium text-foreground block">
+            Selection stages
           </label>
           <div className="flex gap-2">
             <Input
@@ -119,19 +119,19 @@ export function ScholarshipProcessSection({
                   onAddSelectionStage()
                 }
               }}
-              placeholder="e.g. Online Scrutiny / Document Verification / Merit List Publication"
-              className="text-xs flex-1"
+              placeholder="e.g. Document verification"
+              className="text-sm flex-1"
             />
-            <Button type="button" variant="outline" size="sm" onClick={onAddSelectionStage} className="text-xs">
+            <Button type="button" variant="outline" size="sm" onClick={onAddSelectionStage} className="text-sm">
               <Plus className="w-3.5 h-3.5 mr-1" />
-              Add Stage
+              Add
             </Button>
           </div>
 
           {selectionProcess.length > 0 && (
             <div className="flex flex-wrap gap-1.5 pt-1">
               {selectionProcess.map((stg, idx) => (
-                <Badge key={idx} variant="secondary" className="text-xs gap-1 bg-muted px-2 py-0.5">
+                <Badge key={idx} variant="secondary" className="text-sm gap-1 bg-muted px-2 py-0.5">
                   {stg}
                   <button type="button" onClick={() => onRemoveSelectionStage(idx)} className="hover:text-destructive">
                     <X className="w-3 h-3" />

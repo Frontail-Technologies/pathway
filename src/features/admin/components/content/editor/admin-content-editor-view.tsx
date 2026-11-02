@@ -1,8 +1,13 @@
 'use client'
 
-import * as React from 'react'
+import { useRouter } from 'next/navigation'
 import type { ContentEntry } from '@/features/content/types/content'
+import { Button } from '@/components/ui/button'
 import { useAdminScrollSpy } from '@/features/admin/hooks/use-admin-scroll-spy'
+import { useUnsavedChanges } from '@/features/admin/hooks/use-unsaved-changes'
+import { AdminPageHeader } from '../../kit'
+import { AdminEditorLayout } from '../../shared/admin-editor-layout'
+import { FormNotice } from '../shared/content-form'
 import { useContentEditor } from './use-content-editor'
 import { ContentEditorNav, CONTENT_EDITOR_SECTIONS } from './content-editor-nav'
 import { ContentBasicsSection } from './content-basics-section'
@@ -11,130 +16,66 @@ import { ContentMediaSection } from './content-media-section'
 import { ContentTaxonomySection } from './content-taxonomy-section'
 import { ContentRelatedEntitiesSection } from './content-related-entities-section'
 import { ContentPublishingSection } from './content-publishing-section'
-import { Button } from '@/components/ui/button'
-import { ArrowLeft, Save } from 'lucide-react'
-import Link from 'next/link'
 
-export function AdminContentEditorView({
-  initialEntry,
-}: {
-  initialEntry?: ContentEntry | null
-}) {
-  const {
-    formData,
-    errors,
-    isEditing,
-    apiNotice,
-    heroMediaMode,
-    setHeroMediaMode,
-    selectedHeroFile,
-    heroPreviewUrl,
-    heroFileError,
-    handleSelectHeroFile,
-    handleRemoveHeroFile,
-    handleTitleChange,
-    handleSlugChange,
-    handleChange,
-    handleAddRelatedEntity,
-    handleRemoveRelatedEntity,
-    handleSubmit,
-  } = useContentEditor(initialEntry)
+export function AdminContentEditorView({ initialEntry }: { initialEntry?: ContentEntry | null }) {
+  const router = useRouter()
+  const editor = useContentEditor(initialEntry)
+  const { formData, errors, isEditing, isDirty, apiNotice, handleChange, handleSubmit } = editor
+
+  useUnsavedChanges(isDirty)
 
   const { activeSectionId, scrollToSection } = useAdminScrollSpy({
     sectionIds: CONTENT_EDITOR_SECTIONS.map((section) => section.id),
     offset: 120,
   })
 
+  const backHref = isEditing && initialEntry ? `/admin/content/${initialEntry.id}` : '/admin/content'
+  const handleCancel = () => {
+    if (isDirty && !window.confirm('Discard your unsaved changes?')) return
+    router.push(backHref)
+  }
+
+  const actions = (
+    <>
+      <Button type="button" variant="outline" size="sm" onClick={handleCancel}>
+        Cancel
+      </Button>
+      <Button type="submit" size="sm">
+        {isEditing ? 'Save changes' : 'Create article'}
+      </Button>
+    </>
+  )
+
   return (
-    <div className="space-y-6 max-w-5xl mx-auto pb-12">
-      { }
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="space-y-1">
-          <Link
-            href="/admin/content"
-            className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            <span>Back to Articles & Content</span>
-          </Link>
-          <h1 className="text-xl sm:text-2xl font-bold font-heading text-foreground">
-            {isEditing ? `Edit: ${initialEntry?.title}` : 'Create New Article / Content'}
-          </h1>
-        </div>
+    <form onSubmit={handleSubmit} noValidate className="space-y-6 pb-12">
+      <AdminPageHeader
+        back={isEditing && initialEntry ? { href: backHref, label: initialEntry.title } : { href: '/admin/content', label: 'Articles' }}
+        title={isEditing ? 'Edit article' : 'New article'}
+        actions={actions}
+      />
 
-        <div className="flex items-center gap-2 shrink-0">
-          <Link
-            href="/admin/content"
-            className="inline-flex items-center justify-center h-9 px-3.5 text-xs font-medium rounded-lg border border-border hover:bg-muted text-foreground transition-colors"
-          >
-            Cancel
-          </Link>
-          <Button
-            type="button"
-            onClick={() => handleSubmit()}
-            className="h-9 px-4 text-xs font-semibold shadow-xs"
-          >
-            <Save className="w-3.5 h-3.5 mr-1.5" />
-            <span>{isEditing ? 'Save Changes' : 'Create Entry'}</span>
-          </Button>
-        </div>
-      </div>
+      {apiNotice ? <FormNotice>{apiNotice}</FormNotice> : null}
 
-      { }
-      <div className="sticky top-16 z-20 bg-background/95 pt-2 backdrop-blur">
-        <ContentEditorNav
-          activeSectionId={activeSectionId}
-          onSectionChange={scrollToSection}
-        />
-      </div>
-
-      { }
-      <div className="space-y-6">
-        <ContentBasicsSection
-          formData={formData}
-          errors={errors}
-          onTitleChange={handleTitleChange}
-          onSlugChange={handleSlugChange}
-          onChange={handleChange}
-        />
-
-        <ContentBodySection
-          formData={formData}
-          errors={errors}
-          onChange={handleChange}
-        />
-
+      <AdminEditorLayout navigation={<ContentEditorNav activeSectionId={activeSectionId} onSectionChange={scrollToSection} />}>
+        <ContentBasicsSection formData={formData} errors={errors} onTitleChange={editor.handleTitleChange} onSlugChange={editor.handleSlugChange} onChange={handleChange} />
+        <ContentBodySection formData={formData} errors={errors} onChange={handleChange} />
         <ContentMediaSection
-          mode={heroMediaMode}
-          onModeChange={setHeroMediaMode}
-          selectedFile={selectedHeroFile}
-          previewUrl={heroPreviewUrl}
-          fileError={heroFileError}
-          onSelectFile={handleSelectHeroFile}
-          onRemoveFile={handleRemoveHeroFile}
+          mode={editor.heroMediaMode}
+          onModeChange={editor.setHeroMediaMode}
+          selectedFile={editor.selectedHeroFile}
+          previewUrl={editor.heroPreviewUrl}
+          fileError={editor.heroFileError}
+          onSelectFile={editor.handleSelectHeroFile}
+          onRemoveFile={editor.handleRemoveHeroFile}
           urlValue={formData.heroImage}
-          onUrlChange={(val) => handleChange('heroImage', val)}
+          onUrlChange={(value) => handleChange('heroImage', value)}
         />
+        <ContentTaxonomySection formData={formData} onChange={handleChange} />
+        <ContentRelatedEntitiesSection formData={formData} onAddRelatedEntity={editor.handleAddRelatedEntity} onRemoveRelatedEntity={editor.handleRemoveRelatedEntity} />
+        <ContentPublishingSection formData={formData} onChange={handleChange} />
 
-        <ContentTaxonomySection
-          formData={formData}
-          onChange={handleChange}
-        />
-
-        <ContentRelatedEntitiesSection
-          formData={formData}
-          onAddRelatedEntity={handleAddRelatedEntity}
-          onRemoveRelatedEntity={handleRemoveRelatedEntity}
-        />
-
-        <ContentPublishingSection
-          formData={formData}
-          isEditing={isEditing}
-          apiNotice={apiNotice}
-          onChange={handleChange}
-          onSubmit={handleSubmit}
-        />
-      </div>
-    </div>
+        <div className="flex items-center justify-end gap-2 border-t border-border pt-4">{actions}</div>
+      </AdminEditorLayout>
+    </form>
   )
 }

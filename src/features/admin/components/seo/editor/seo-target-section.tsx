@@ -1,7 +1,6 @@
 'use client'
 
 import { Target, ShieldAlert, Globe } from 'lucide-react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   Select,
   SelectContent,
@@ -40,17 +39,12 @@ export function SeoTargetSection({
   const selectedOption = targetOptions.find((o) => o.id === targetId)
 
   return (
-    <Card id="target" className="border-0 shadow-xs">
-      <CardHeader className="p-4 sm:p-5 pb-2">
-        <div className="flex items-center gap-2">
-          <Target className="w-4 h-4 text-blue-600" />
-          <CardTitle className="text-sm font-semibold">Target Page / Canonical Entity</CardTitle>
-        </div>
-      </CardHeader>
-      <CardContent className="p-4 sm:p-5 pt-2 space-y-4">
+    <section id="target" className="scroll-mt-20 space-y-4 rounded-lg border border-border bg-card p-5 sm:p-6">
+      <h2 className="text-[15px] font-semibold text-foreground">Target Page / Canonical Entity</h2>
+      <div className="space-y-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="space-y-1.5">
-            <Label className="text-xs font-semibold">
+            <Label className="text-sm font-medium text-foreground">
               Target Type <span className="text-destructive">*</span>
             </Label>
             <Select
@@ -60,32 +54,32 @@ export function SeoTargetSection({
               }}
               disabled={isEditing}
             >
-              <SelectTrigger className="h-9 text-xs bg-background">
+              <SelectTrigger className="h-9 text-sm bg-background">
                 <SelectValue placeholder="Select target type" />
               </SelectTrigger>
               <SelectContent>
                 {Object.entries(seoTargetTypeMap).map(([key, meta]) => (
-                  <SelectItem key={key} value={key} className="text-xs">
+                  <SelectItem key={key} value={key} className="text-sm">
                     {meta.label}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
             {typeError ? (
-              <p className="text-[11px] text-destructive">{typeError}</p>
+              <p className="text-[13px] text-destructive">{typeError}</p>
             ) : targetType ? (
-              <p className="text-[11px] text-muted-foreground">
+              <p className="text-[13px] text-muted-foreground">
                 {seoTargetTypeMap[targetType]?.description}
               </p>
             ) : (
-              <p className="text-[11px] text-muted-foreground">
+              <p className="text-[13px] text-muted-foreground">
                 Choose the public page category or entity type to target.
               </p>
             )}
           </div>
 
           <div className="space-y-1.5">
-            <Label className="text-xs font-semibold">
+            <Label className="text-sm font-medium text-foreground">
               Target Page / Entity <span className="text-destructive">*</span>
             </Label>
             <Select
@@ -95,16 +89,16 @@ export function SeoTargetSection({
               }}
               disabled={isEditing || !targetType}
             >
-              <SelectTrigger className="h-9 text-xs bg-background">
+              <SelectTrigger className="h-9 text-sm bg-background">
                 <SelectValue placeholder={!targetType ? 'Select target type first' : 'Select specific target'} />
               </SelectTrigger>
               <SelectContent className="max-h-64">
                 {targetOptions.map((opt) => (
-                  <SelectItem key={opt.id} value={opt.id} className="text-xs">
+                  <SelectItem key={opt.id} value={opt.id} className="text-sm">
                     <div className="flex flex-col text-left">
                       <span>{opt.label}</span>
                       {opt.sublabel && (
-                        <span className="text-[10px] text-muted-foreground">
+                        <span className="text-xs text-muted-foreground">
                           {opt.sublabel}
                         </span>
                       )}
@@ -114,41 +108,35 @@ export function SeoTargetSection({
               </SelectContent>
             </Select>
             {error ? (
-              <p className="text-[11px] text-destructive">{error}</p>
+              <p className="text-[13px] text-destructive">{error}</p>
             ) : targetId ? (
-              <p className="text-[11px] text-muted-foreground flex items-center gap-1">
+              <p className="text-[13px] text-muted-foreground flex items-center gap-1">
                 <Globe className="w-3 h-3" />
                 <span>Resolved route: </span>
-                <code className="font-mono text-[10px] bg-muted/60 px-1 py-0.5 rounded">
+                <code className="font-mono text-xs bg-muted/60 px-1 py-0.5 rounded">
                   {selectedOption?.routePath || targetId}
                 </code>
               </p>
             ) : (
-              <p className="text-[11px] text-muted-foreground">
+              <p className="text-[13px] text-muted-foreground">
                 {!targetType ? 'Disabled until target type is selected.' : 'Select the specific route or entity.'}
               </p>
             )}
           </div>
         </div>
 
-        <div className="p-3 rounded-lg bg-muted/20 border border-border/60 text-[11px] text-muted-foreground flex items-start gap-2">
+        <div className="p-3 rounded-lg bg-muted/20 border border-border/60 text-[13px] text-muted-foreground flex items-start gap-2">
           <ShieldAlert className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
           <p className="leading-relaxed">
             <strong>Public Surface Only:</strong> Private authenticated routes (
-              <code className="font-mono text-[10px]">/admin/*</code>,{' '}
-              <code className="font-mono text-[10px]">/student/*</code>,{' '}
-              <code className="font-mono text-[10px]">/login</code>,{' '}
-              <code className="font-mono text-[10px]">/register</code>
+              <code className="font-mono text-xs">/admin/*</code>,{' '}
+              <code className="font-mono text-xs">/student/*</code>,{' '}
+              <code className="font-mono text-xs">/login</code>,{' '}
+              <code className="font-mono text-xs">/register</code>
             ) are strictly excluded from SEO configuration to prevent accidental exposure of private areas.
           </p>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </section>
   )
 }
-
-
-
-
-
-

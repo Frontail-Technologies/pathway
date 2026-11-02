@@ -27,12 +27,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const record = getAdminOfferingById(offeringId)
   if (!record) {
     return {
-      title: 'Offering Not Found | Pathway Admin',
+      title: 'Offering not found | Pathway Admin',
     }
   }
   return {
-    title: `Edit ${record.offering.programName} @ ${record.offering.institutionName} | Admissions & Fees | Pathway Admin`,
-    description: `Edit fee schedules, entrance exams, and admission workflows for ${record.offering.programName} at ${record.offering.institutionName}.`,
+    title: `Edit ${record.offering.programName} at ${record.offering.institutionName} | Admissions & fees | Pathway Admin`,
+    description: `Edit fees and admission rules for ${record.offering.programName} at ${record.offering.institutionName}.`,
   }
 }
 

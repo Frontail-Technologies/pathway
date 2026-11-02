@@ -1,32 +1,44 @@
-import {
-  type LeadStatus,
-  type EnquirySource,
-  leadStatusMap,
-  enquirySourceMap,
-} from '@/features/admin/data/admin-enquiries'
+import type { EnquirySource, LeadStatus } from '@/features/admin/data/admin-enquiries'
+import type { StatusTone } from '@/features/admin/components/kit'
 
-export const leadStatusFilterOptions = [
-  { value: 'all', label: 'All Lead Statuses' },
-  { value: 'new', label: 'New' },
-  { value: 'contacted', label: 'Contacted' },
-  { value: 'qualified', label: 'Qualified' },
-  { value: 'converted', label: 'Converted' },
-  { value: 'closed', label: 'Closed' },
-]
+/** Sentence-case labels for the admin UI (the shared enquiry types use title case). */
+export const leadStatusLabels: Record<LeadStatus, string> = {
+  new: 'New',
+  contacted: 'Contacted',
+  qualified: 'Qualified',
+  converted: 'Converted',
+  closed: 'Closed',
+}
 
-export const enquirySourceFilterOptions = [
-  { value: 'all', label: 'All Sources' },
-  { value: 'college', label: 'College' },
-  { value: 'course', label: 'Program / Course' },
-  { value: 'tutor', label: 'Tutor Session' },
-  { value: 'coaching', label: 'Coaching Institute' },
-  { value: 'counselling', label: 'General Counselling' },
-  { value: 'general', label: 'General Enquiry' },
-]
+export const leadStatusDescriptions: Record<LeadStatus, string> = {
+  new: 'Received and waiting for a first reply.',
+  contacted: 'We have reached out to the student.',
+  qualified: 'A real admission or counselling opportunity.',
+  converted: 'The student enrolled or booked.',
+  closed: 'No further action needed.',
+}
 
-export const assignmentFilterOptions = [
-  { value: 'all', label: 'All Assignees' },
-  { value: 'unassigned', label: 'Unassigned' },
-]
+export const leadStatusTones: Record<LeadStatus, StatusTone> = {
+  new: 'info',
+  contacted: 'warning',
+  qualified: 'info',
+  converted: 'success',
+  closed: 'neutral',
+}
 
-export { leadStatusMap, enquirySourceMap }
+export const enquirySourceLabels: Record<EnquirySource, string> = {
+  college: 'College',
+  course: 'Course',
+  tutor: 'Tutor session',
+  coaching: 'Coaching',
+  counselling: 'Counselling',
+  general: 'General',
+}
+
+export const leadStatusOptions = (Object.keys(leadStatusLabels) as LeadStatus[]).map((value) => ({ value, label: leadStatusLabels[value] }))
+export const enquirySourceOptions = (Object.keys(enquirySourceLabels) as EnquirySource[]).map((value) => ({ value, label: enquirySourceLabels[value] }))
+export const assignmentOptions = [{ value: 'unassigned', label: 'Unassigned' }]
+
+export function enquiryTitle(enquiry: { subject?: string; contactName: string }) {
+  return enquiry.subject || `Enquiry from ${enquiry.contactName}`
+}
