@@ -14,7 +14,7 @@ export function AdminDetailStickyRail({
   return (
     <div
       className={cn(
-        'w-full space-y-6 lg:sticky lg:top-20 lg:self-start',
+        'w-full space-y-6 lg:sticky lg:top-[4.5rem] lg:self-start',
         className
       )}
       {...props}

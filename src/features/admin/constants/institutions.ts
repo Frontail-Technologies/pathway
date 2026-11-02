@@ -21,14 +21,14 @@ type CheckPresentation = {
 
 export const institutionDirectoryQualityBadgeStyles: Record<AdminDataQualityStatus, BadgePresentation> = {
   ready: { label: 'Ready', className: adminStatusBadgeClassNames.success, variant: adminStatusBadgeVariants.success },
-  needs_review: { label: 'Needs Review', className: adminStatusBadgeClassNames.warning, variant: adminStatusBadgeVariants.warning },
+  needs_review: { label: 'Needs review', className: adminStatusBadgeClassNames.warning, variant: adminStatusBadgeVariants.warning },
   conflict: { label: 'Conflict', className: adminStatusBadgeClassNames.destructive, variant: adminStatusBadgeVariants.destructive },
   incomplete: { label: 'Incomplete', className: adminStatusBadgeClassNames.muted, variant: adminStatusBadgeVariants.muted },
 }
 
 export const institutionDetailQualityBadgeStyles: Record<AdminDataQualityStatus, BadgePresentation> = {
-  ready: { label: 'Ready for Publish', className: adminStatusBadgeClassNames.success, variant: adminStatusBadgeVariants.success },
-  needs_review: { label: 'Needs Review', className: adminStatusBadgeClassNames.warning, variant: adminStatusBadgeVariants.warning },
+  ready: { label: 'Ready to publish', className: adminStatusBadgeClassNames.success, variant: adminStatusBadgeVariants.success },
+  needs_review: { label: 'Needs review', className: adminStatusBadgeClassNames.warning, variant: adminStatusBadgeVariants.warning },
   conflict: { label: 'Conflict Detected', className: adminStatusBadgeClassNames.destructive, variant: adminStatusBadgeVariants.destructive },
   incomplete: { label: 'Incomplete Data', className: adminStatusBadgeClassNames.muted, variant: adminStatusBadgeVariants.muted },
 }
@@ -41,7 +41,7 @@ export const institutionContentStatusBadgeStyles: Record<AdminContentStatus, Bad
 
 export const institutionQualityCheckStyles: Record<SectionQualityState, CheckPresentation> = {
   ready: { icon: Check, badgeClass: adminStatusBadgeClassNames.success, label: 'Ready', variant: adminStatusBadgeVariants.success },
-  needs_review: { icon: AlertCircle, badgeClass: adminStatusBadgeClassNames.warning, label: 'Needs Review', variant: adminStatusBadgeVariants.warning },
+  needs_review: { icon: AlertCircle, badgeClass: adminStatusBadgeClassNames.warning, label: 'Needs review', variant: adminStatusBadgeVariants.warning },
   missing: { icon: X, badgeClass: adminStatusBadgeClassNames.muted, label: 'Missing', variant: adminStatusBadgeVariants.muted },
 }
 

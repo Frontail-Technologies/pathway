@@ -36,7 +36,7 @@ export function AdminEditorSectionNav({
 }: AdminEditorSectionNavProps) {
   if (variant === 'horizontal') {
     return (
-      <nav className={cn('flex items-center gap-1.5 overflow-x-auto border-b border-border/50 pb-2 text-xs font-medium', className)} aria-label={title}>
+      <nav className={cn('flex items-center gap-1.5 overflow-x-auto border-b border-border/50 pb-2 text-sm font-medium', className)} aria-label={title}>
         {sections.map((item) => {
           const Icon = item.icon
           const isActive = activeSectionId === item.id
@@ -64,8 +64,8 @@ export function AdminEditorSectionNav({
   }
 
   return (
-    <Card className={cn('sticky top-20 shadow-xs p-2 gap-1', className)}>
-      <div className="px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-muted-foreground border-b border-border/50">
+    <Card className={cn('sticky top-[4.5rem] gap-1 border border-border p-2 shadow-none ring-0', className)}>
+      <div className="border-b border-border px-3 py-1.5 text-[13px] font-medium text-muted-foreground">
         {title}
       </div>
       <nav className="space-y-0.5 pt-1" aria-label={title}>
@@ -82,9 +82,9 @@ export function AdminEditorSectionNav({
               onClick={() => onSectionChange(item.id)}
               aria-current={isActive ? 'true' : undefined}
               className={cn(
-                'w-full justify-start gap-2.5 px-3 py-2 h-9 text-xs font-medium text-left cursor-pointer transition-colors',
+                'h-8 w-full cursor-pointer justify-start gap-2.5 px-2.5 text-left text-sm font-normal transition-colors',
                 isActive
-                  ? 'bg-primary/10 text-primary font-semibold hover:bg-primary/15 hover:text-primary dark:bg-primary/20'
+                  ? 'bg-accent font-medium text-accent-foreground hover:bg-accent hover:text-accent-foreground'
                   : 'text-muted-foreground hover:bg-muted/60 hover:text-foreground'
               )}
             >

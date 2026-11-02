@@ -86,13 +86,13 @@ export function AdminDataTable<TData, TValue>({
 
   return (
     <div className={cn("space-y-4", className)}>
-      <div className="hidden md:block">
-        <Table>
+      <div className="hidden overflow-hidden rounded-lg border border-border bg-card md:block">
+        <Table className="text-sm">
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
+              <TableRow key={headerGroup.id} className="border-b border-border bg-muted/50 hover:bg-muted/50">
                 {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id}>
+                  <TableHead key={header.id} className="h-10 text-[13px] font-medium tracking-normal normal-case text-muted-foreground first:pl-4 last:pr-4">
                     {header.isPlaceholder
                       ? null
                       : flexRender(
@@ -110,7 +110,7 @@ export function AdminDataTable<TData, TValue>({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
-                  className={onRowClick ? "cursor-pointer" : undefined}
+                  className={cn("border-b border-border last:border-0", onRowClick && "cursor-pointer outline-none hover:bg-muted/40 focus-visible:bg-muted/60")}
                   onClick={() => onRowClick?.(row.original)}
                   onKeyDown={(event) => {
                     if (
@@ -125,7 +125,7 @@ export function AdminDataTable<TData, TValue>({
                   aria-label={getRowAriaLabel?.(row.original)}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <TableCell key={cell.id} className="py-3 align-middle first:pl-4 last:pr-4">
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext(),
@@ -170,7 +170,7 @@ export function AdminDataTable<TData, TValue>({
               {mobileCardRender ? (
                 mobileCardRender(row)
               ) : (
-                <div className="bg-card rounded-xl p-4 shadow-xs border-0 space-y-2">
+                <div className="space-y-2 rounded-lg border border-border bg-card p-4">
                   {row.getVisibleCells().map((cell) => (
                     <div key={cell.id} className="text-xs">
                       {flexRender(
@@ -184,7 +184,7 @@ export function AdminDataTable<TData, TValue>({
             </React.Fragment>
           ))
         ) : (
-          <div className="bg-card rounded-xl p-8 shadow-xs border-0 flex flex-col items-center justify-center text-center">
+          <div className="flex flex-col items-center justify-center rounded-lg border border-border bg-card p-8 text-center">
             <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center text-muted-foreground mb-2.5">
               <Inbox className="w-5 h-5" />
             </div>
@@ -207,15 +207,12 @@ export function AdminDataTable<TData, TValue>({
       </div>
 
       {totalRows > 0 && (
-        <div className="flex flex-wrap items-center justify-between gap-3 px-1 py-1 text-xs text-muted-foreground">
-          <div className="font-medium">
-            Showing{" "}
-            <span className="font-bold text-foreground">{startRow}</span> to{" "}
-            <span className="font-bold text-foreground">{endRow}</span> of{" "}
-            <span className="font-bold text-foreground">{totalRows}</span>{" "}
-            records
+        <div className="flex flex-wrap items-center justify-between gap-3 px-1 text-[13px] text-muted-foreground">
+          <div className="tabular-nums">
+            {startRow}–{endRow} of {totalRows}
           </div>
 
+          {table.getPageCount() > 1 ? (
           <div className="flex items-center gap-2">
             <Button
               type="button"
@@ -227,7 +224,7 @@ export function AdminDataTable<TData, TValue>({
               <ChevronLeft />
               Previous
             </Button>
-            <span className="text-xs font-semibold px-2 tabular-nums">
+            <span className="px-2 text-[13px] tabular-nums">
               Page {table.getPageCount() > 0 ? pageIndex + 1 : 1} of{" "}
               {Math.max(table.getPageCount(), 1)}
             </span>
@@ -242,6 +239,7 @@ export function AdminDataTable<TData, TValue>({
               <ChevronRight />
             </Button>
           </div>
+          ) : null}
         </div>
       )}
     </div>

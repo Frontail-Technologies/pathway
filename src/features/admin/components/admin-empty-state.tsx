@@ -25,7 +25,7 @@ export function AdminEmptyState({
       </div>
       <p className="text-sm font-semibold text-foreground">{title}</p>
       {description && (
-        <p className="text-xs text-muted-foreground max-w-sm mt-1 leading-relaxed">{description}</p>
+        <p className="mt-1 max-w-sm text-[13px] leading-relaxed text-muted-foreground">{description}</p>
       )}
     </div>
   )

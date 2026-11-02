@@ -3,146 +3,102 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import {
-  LayoutDashboard,
-  GraduationCap,
-  BookOpen,
-  Banknote,
   Award,
-  Users,
-  UserCheck,
-  Inbox,
-  MessageSquare,
-  Sparkles,
-  FileText,
-  Image,
-  BookMarked,
-  SearchCode,
+  Banknote,
   BarChart3,
+  BookMarked,
+  BookOpen,
+  ClipboardList,
+  Compass,
   ExternalLink,
+  FileText,
+  GraduationCap,
+  History,
+  Image,
+  Inbox,
+  LayoutDashboard,
+  MessageSquare,
+  SearchCode,
+  Settings,
+  ShieldCheck,
+  Sparkles,
+  UserCheck,
+  Users,
   type LucideIcon,
 } from 'lucide-react'
-import { adminNavigationGroups } from '@/features/admin/data/admin-stats'
+import { adminNavigationGroups, findAdminNavItem } from '@/features/admin/data/admin-stats'
 import { cn } from '@/lib/utils'
 
 const iconMap: Record<string, LucideIcon> = {
-  LayoutDashboard,
-  GraduationCap,
-  BookOpen,
-  Banknote,
   Award,
-  Users,
-  UserCheck,
-  Inbox,
-  MessageSquare,
-  Sparkles,
-  FileText,
-  Image,
-  BookMarked,
-  SearchCode,
+  Banknote,
   BarChart3,
+  BookMarked,
+  BookOpen,
+  ClipboardList,
+  Compass,
+  FileText,
+  GraduationCap,
+  History,
+  Image,
+  Inbox,
+  LayoutDashboard,
+  MessageSquare,
+  SearchCode,
+  Settings,
+  ShieldCheck,
+  Sparkles,
+  UserCheck,
+  Users,
 }
 
-export function AdminSidebar({
-  onItemClick,
-  className,
-}: {
-  onItemClick?: () => void
-  className?: string
-}) {
+export function AdminSidebar({ onItemClick, className }: { onItemClick?: () => void; className?: string }) {
   const pathname = usePathname()
+  const activeId = findAdminNavItem(pathname)?.item.id
 
   return (
-    <aside
-      className={cn(
-        'flex flex-col h-full bg-admin-sidebar text-admin-sidebar-foreground select-none',
-        className
-      )}
-      aria-label="Admin Navigation"
-    >
-      <div className="h-16 px-6 flex items-center justify-between border-b border-admin-sidebar-border shrink-0">
-        <Link
-          href="/admin"
-          onClick={onItemClick}
-          className="flex items-center gap-2 group outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-lg"
-          aria-label="Pathway Admin home"
-        >
-          <span className="font-heading text-xl font-extrabold tracking-tight text-foreground">
-            Pathway
-          </span>
-          <span className="bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full">
-            Admin
-          </span>
+    <aside className={cn('flex h-full flex-col bg-admin-sidebar text-admin-sidebar-foreground', className)} aria-label="Admin">
+      <div className="flex h-14 shrink-0 items-center gap-2 border-b border-admin-sidebar-border px-5">
+        <Link href="/admin" onClick={onItemClick} className="flex items-center gap-2 rounded-md outline-none focus-visible:ring-2 focus-visible:ring-ring" aria-label="Pathway admin home">
+          <span className="font-heading text-lg font-extrabold tracking-tight text-foreground">Pathway</span>
+          <span className="text-sm font-medium text-muted-foreground">Admin</span>
         </Link>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-4 py-5 space-y-6">
+      <nav className="flex-1 space-y-5 overflow-y-auto px-3 py-4">
         {adminNavigationGroups.map((group) => (
-          <div key={group.id} className="space-y-1">
-            <p className="px-3 text-[11px] font-semibold uppercase tracking-wider text-admin-sidebar-muted mb-1.5">
-              {group.title}
-            </p>
-            <nav className="space-y-0.5">
+          <div key={group.id}>
+            {group.id !== 'overview' ? <p className="mb-1 px-2.5 text-xs font-medium text-admin-sidebar-muted">{group.title}</p> : null}
+            <ul className="space-y-px">
               {group.items.map((item) => {
-                const Icon = iconMap[item.icon] || LayoutDashboard
-                const isActive = pathname === item.href || (item.href !== '/admin' && pathname.startsWith(`${item.href}/`))
-
-                if (!item.available) {
-                  return (
-                    <div
-                      key={item.id}
-                      className="w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium text-muted-foreground/60 cursor-not-allowed select-none"
-                      title={`${item.label} (${item.badge || 'Coming Soon'})`}
-                      aria-disabled="true"
-                    >
-                      <div className="flex items-center gap-3 min-w-0">
-                        <Icon className="w-4 h-4 shrink-0 text-muted-foreground/60" />
-                        <span className="truncate">{item.label}</span>
-                      </div>
-                      {item.badge && (
-                        <span className="text-[9px] font-semibold bg-muted text-muted-foreground px-1.5 py-0.5 rounded">
-                          {item.badge}
-                        </span>
-                      )}
-                    </div>
-                  )
-                }
-
+                const Icon = iconMap[item.icon] ?? LayoutDashboard
+                const active = item.id === activeId
                 return (
-                  <Link
-                    key={item.id}
-                    href={item.href}
-                    onClick={onItemClick}
-                    className={cn(
-                      'w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium transition-colors outline-none focus-visible:ring-2 focus-visible:ring-ring',
-                      isActive
-                        ? 'bg-admin-sidebar-active text-primary font-semibold'
-                        : 'text-admin-sidebar-foreground hover:text-foreground hover:bg-admin-sidebar-hover'
-                    )}
-                  >
-                    <div className="flex items-center gap-3 min-w-0">
-                      <Icon
-                        className={cn(
-                          'w-4 h-4 shrink-0',
-                          isActive ? 'text-primary' : 'text-admin-sidebar-muted'
-                        )}
-                      />
+                  <li key={item.id}>
+                    <Link
+                      href={item.href}
+                      onClick={onItemClick}
+                      aria-current={active ? 'page' : undefined}
+                      className={cn(
+                        'flex h-8 items-center gap-2.5 rounded-md px-2.5 text-sm outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring',
+                        active ? 'bg-admin-sidebar-active font-medium text-primary' : 'text-admin-sidebar-foreground hover:bg-admin-sidebar-hover hover:text-foreground',
+                      )}
+                    >
+                      <Icon className={cn('size-4 shrink-0', active ? 'text-primary' : 'text-admin-sidebar-muted')} aria-hidden="true" />
                       <span className="truncate">{item.label}</span>
-                    </div>
-                  </Link>
+                    </Link>
+                  </li>
                 )
               })}
-            </nav>
+            </ul>
           </div>
         ))}
-      </div>
+      </nav>
 
-      <div className="p-4 border-t border-admin-sidebar-border shrink-0">
-        <Link
-          href="/"
-          className="flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium text-admin-sidebar-foreground hover:text-foreground hover:bg-admin-sidebar-hover transition-colors outline-none focus-visible:ring-2 focus-visible:ring-ring"
-        >
-          <span>View Public Portal</span>
-          <ExternalLink className="w-3.5 h-3.5 text-admin-sidebar-muted" />
+      <div className="shrink-0 border-t border-admin-sidebar-border p-3">
+        <Link href="/" target="_blank" className="flex h-8 items-center gap-2.5 rounded-md px-2.5 text-sm text-admin-sidebar-foreground outline-none hover:bg-admin-sidebar-hover focus-visible:ring-2 focus-visible:ring-ring">
+          <ExternalLink className="size-4 text-admin-sidebar-muted" aria-hidden="true" />
+          View public site
         </Link>
       </div>
     </aside>

@@ -131,7 +131,7 @@ export function getContentCompleteness(): {
   const items: ContentCompletenessItem[] = [
     {
       id: 'institutions',
-      label: 'Institution Profiles',
+      label: 'Institutions',
       completedCount: collegeDetailCount,
       totalCount: colleges.length,
       percentage: Math.round((collegeDetailCount / colleges.length) * 100),
@@ -139,7 +139,7 @@ export function getContentCompleteness(): {
     },
     {
       id: 'courses',
-      label: 'Course Details',
+      label: 'Courses',
       completedCount: courseDetailCount,
       totalCount: courses.length,
       percentage: Math.round((courseDetailCount / courses.length) * 100),
@@ -147,7 +147,7 @@ export function getContentCompleteness(): {
     },
     {
       id: 'scholarships',
-      label: 'Scholarship Details',
+      label: 'Scholarships',
       completedCount: scholarshipDetailCount,
       totalCount: scholarships.length,
       percentage: Math.round((scholarshipDetailCount / scholarships.length) * 100),
@@ -155,7 +155,7 @@ export function getContentCompleteness(): {
     },
     {
       id: 'tutors',
-      label: 'Tutor Profiles',
+      label: 'Tutors',
       completedCount: tutorDetailCount,
       totalCount: tutors.length,
       percentage: Math.round((tutorDetailCount / tutors.length) * 100),
@@ -163,7 +163,7 @@ export function getContentCompleteness(): {
     },
     {
       id: 'coaching',
-      label: 'Coaching Profiles',
+      label: 'Coaching',
       completedCount: coachingDetailCount,
       totalCount: coachingProviders.length,
       percentage: Math.round((coachingDetailCount / coachingProviders.length) * 100),
@@ -171,7 +171,7 @@ export function getContentCompleteness(): {
     },
     {
       id: 'exams',
-      label: 'Exam Guides',
+      label: 'Exams',
       completedCount: examDetailCount,
       totalCount: exams.length,
       percentage: Math.round((examDetailCount / exams.length) * 100),
@@ -213,34 +213,34 @@ export function getNeedsAttentionTasks(): OperationalAttentionTask[] {
   return [
     {
       id: 'incomplete-college-profiles',
-      title: `${missingCollegesCount} Institution profiles pending full detail content`,
+      title: `${missingCollegesCount} institutions need a full profile`,
       description: 'Colleges have active catalog listings; comprehensive campus profile modules remain to be authored.',
       severity: 'warning',
-      badgeText: `${missingCollegesCount} Incomplete`,
+      badgeText: `${missingCollegesCount} incomplete`,
       actionLabel: 'Review in Institutions',
     },
     {
       id: 'incomplete-course-curriculum',
-      title: `${missingCoursesCount} Programs pending semester curriculum and syllabus details`,
+      title: `${missingCoursesCount} courses need syllabus and curriculum`,
       description: 'Program catalog outlines are active; structured semester curriculum and detailed syllabus topics remain to be added.',
       severity: 'warning',
-      badgeText: `${missingCoursesCount} Incomplete`,
+      badgeText: `${missingCoursesCount} incomplete`,
       actionLabel: 'Review in Programs',
     },
     {
       id: 'tutor-portrait-assets',
-      title: `${tutorsUsingAvatarFallback} Tutor profiles pending photographic portraits`,
+      title: `${tutorsUsingAvatarFallback} tutors need a photo`,
       description: 'Educator profiles are currently using fallback avatars until photographic assets are linked.',
       severity: 'info',
-      badgeText: `${tutorsUsingAvatarFallback} Pending`,
+      badgeText: `${tutorsUsingAvatarFallback} pending`,
       actionLabel: 'Review in Tutors',
     },
     {
       id: 'enquiry-crm-pipeline',
-      title: 'Enquiry CRM & Lead pipeline awaiting live connection',
+      title: 'Enquiry tracking is not connected yet',
       description: 'Student counselling and enquiry submissions are currently in UI prototype state without active persistence.',
       severity: 'neutral',
-      badgeText: 'Pipeline Offline',
+      badgeText: 'Not connected',
       actionLabel: 'Configure in Enquiries',
     },
   ]
@@ -262,140 +262,68 @@ export function getLeadPipelineStages(): LeadPipelineStage[] {
 }
 
 export const adminNavigationGroups: AdminNavGroup[] = [
+  { id: 'overview', title: 'Overview', items: [{ id: 'dashboard', label: 'Dashboard', href: '/admin', icon: 'LayoutDashboard', available: true }] },
   {
-    id: 'overview',
-    title: 'Overview',
+    id: 'catalogue',
+    title: 'Catalogue',
     items: [
-      {
-        id: 'dashboard',
-        label: 'Dashboard',
-        href: '/admin',
-        icon: 'LayoutDashboard',
-        active: true,
-        available: true,
-      },
+      { id: 'institutions', label: 'Institutions', href: '/admin/institutions', icon: 'GraduationCap', available: true },
+      { id: 'programs', label: 'Courses', href: '/admin/programs', icon: 'BookOpen', available: true },
+      { id: 'admissions', label: 'Admissions & fees', href: '/admin/admissions-fees', icon: 'Banknote', available: true },
+      { id: 'exams', label: 'Exams', href: '/admin/exams', icon: 'ClipboardList', available: true },
+      { id: 'scholarships', label: 'Scholarships', href: '/admin/scholarships', icon: 'Award', available: true },
+      { id: 'streams', label: 'Streams', href: '/admin/streams', icon: 'Compass', available: true },
     ],
   },
   {
-    id: 'academic-data',
-    title: 'Academic Data',
+    id: 'people',
+    title: 'People',
     items: [
-      {
-        id: 'institutions',
-        label: 'Institutions',
-        href: '/admin/institutions',
-        icon: 'GraduationCap',
-        available: true,
-      },
-      {
-        id: 'programs',
-        label: 'Programs & Courses',
-        href: '/admin/programs',
-        icon: 'BookOpen',
-        available: true,
-      },
-      {
-        id: 'admissions',
-        label: 'Admissions & Fees',
-        href: '/admin/admissions-fees',
-        icon: 'Banknote',
-        available: true,
-      },
-      {
-        id: 'scholarships',
-        label: 'Scholarships',
-        href: '/admin/scholarships',
-        icon: 'Award',
-        available: true,
-      },
+      { id: 'students', label: 'Students', href: '/admin/students', icon: 'UserCheck', available: true },
+      { id: 'tutors', label: 'Tutors & coaching', href: '/admin/tutors-coaching', icon: 'Users', available: true },
+      { id: 'enquiries', label: 'Enquiries', href: '/admin/enquiries', icon: 'Inbox', available: true },
+      { id: 'reviews', label: 'Reviews', href: '/admin/reviews', icon: 'MessageSquare', available: true },
     ],
   },
   {
-    id: 'people-services',
-    title: 'People & Services',
+    id: 'content',
+    title: 'Content',
     items: [
-      {
-        id: 'tutors',
-        label: 'Tutors & Coaching',
-        href: '/admin/tutors-coaching',
-        icon: 'Users',
-        available: true,
-      },
-      {
-        id: 'students',
-        label: 'Students',
-        href: '/admin/students',
-        icon: 'UserCheck',
-        available: true,
-      },
-      {
-        id: 'enquiries',
-        label: 'Enquiries & Leads',
-        href: '/admin/enquiries',
-        icon: 'Inbox',
-        available: true,
-      },
-      {
-        id: 'reviews',
-        label: 'Reviews',
-        href: '/admin/reviews',
-        icon: 'MessageSquare',
-        available: true,
-      },
-    ],
-  },
-  {
-    id: 'content-discovery',
-    title: 'Content & Discovery',
-    items: [
-      {
-        id: 'featured',
-        label: 'Featured / Sponsored',
-        href: '/admin/promotions',
-        icon: 'Sparkles',
-        available: true,
-      },
-      {
-        id: 'content',
-        label: 'Articles & Content',
-        href: '/admin/content',
-        icon: 'FileText',
-        available: true,
-      },
-      {
-        id: 'banners',
-        label: 'Banners',
-        href: '/admin/banners',
-        icon: 'Image',
-        available: true,
-      },
-      {
-        id: 'notes',
-        label: 'Notes & Study Material',
-        href: '/admin/notes',
-        icon: 'BookMarked',
-        available: true,
-      },
-      {
-        id: 'seo',
-        label: 'SEO Metadata',
-        href: '/admin/seo',
-        icon: 'SearchCode',
-        available: true,
-      },
+      { id: 'content', label: 'Articles', href: '/admin/content', icon: 'FileText', available: true },
+      { id: 'notes', label: 'Notes', href: '/admin/notes', icon: 'BookMarked', available: true },
+      { id: 'banners', label: 'Banners', href: '/admin/banners', icon: 'Image', available: true },
+      { id: 'featured', label: 'Featured listings', href: '/admin/promotions', icon: 'Sparkles', available: true },
+      { id: 'seo', label: 'SEO', href: '/admin/seo', icon: 'SearchCode', available: true },
     ],
   },
   {
     id: 'insights',
     title: 'Insights',
     items: [
-      {
-        id: 'reports',
-        label: 'Reports',
-        href: '/admin/reports',
-        icon: 'BarChart3',
-        available: true,
-      },
+      { id: 'reports', label: 'Reports', href: '/admin/reports', icon: 'BarChart3', available: true },
+      { id: 'activity', label: 'Activity log', href: '/admin/activity', icon: 'History', available: true },
+    ],
+  },
+  {
+    id: 'workspace',
+    title: 'Workspace',
+    items: [
+      { id: 'team', label: 'Team & access', href: '/admin/team', icon: 'ShieldCheck', available: true },
+      { id: 'settings', label: 'Settings', href: '/admin/settings', icon: 'Settings', available: true },
     ],
   },
 ]
+
+/** The nav item (and group) that owns a pathname, plus what kind of page it is. Drives breadcrumbs. */
+export function findAdminNavItem(pathname: string) {
+  for (const group of adminNavigationGroups) {
+    for (const item of group.items) {
+      if (item.href === '/admin' ? pathname === '/admin' : pathname === item.href || pathname.startsWith(`${item.href}/`)) {
+        const rest = pathname.slice(item.href.length)
+        const kind: 'index' | 'new' | 'edit' | 'detail' = !rest || rest === '/' ? 'index' : rest.endsWith('/new') ? 'new' : rest.endsWith('/edit') ? 'edit' : 'detail'
+        return { group, item, kind }
+      }
+    }
+  }
+  return null
+}

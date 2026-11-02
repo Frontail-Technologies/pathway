@@ -93,44 +93,47 @@
 }
 
 [data-theme='admin'] {
-  --background: #f5f7fb;
-  --foreground: #17233a;
+  /* Same brand as the public site; neutrals do the work, colour is reserved for status and the primary action.
+     Every text pair meets WCAG AA (4.5:1) on white and on the canvas. */
+  --background: #f6f7f9;
+  --foreground: #0f172a;
   --card: #ffffff;
-  --card-foreground: #17233a;
+  --card-foreground: #0f172a;
   --popover: #ffffff;
-  --popover-foreground: #17233a;
-  --primary: #2498dd;
+  --popover-foreground: #0f172a;
+  --primary: #1d4ed8;
   --primary-foreground: #ffffff;
-  --secondary: #eaf7ff;
-  --secondary-foreground: #1879b6;
-  --muted: #f3f6fa;
-  --muted-foreground: #73839a;
-  --accent: #e5f6ff;
-  --accent-foreground: #1879b6;
-  --destructive: #e75d62;
-  --border: #e6ebf2;
-  --input: #dce4ee;
-  --ring: #2498dd;
+  --secondary: #f1f5f9;
+  --secondary-foreground: #0f172a;
+  --muted: #f1f5f9;
+  --muted-foreground: #475569;
+  --accent: #eef2ff;
+  --accent-foreground: #1e40af;
+  --destructive: #b91c1c;
+  --border: #e2e8f0;
+  --input: #cbd5e1;
+  --ring: #1d4ed8;
   --radius: 0.5rem;
-  --brand-blue: #2498dd;
-  --brand-blue-dark: #1879b6;
-  --brand-blue-light: #eaf7ff;
-  --success: #62be35;
-  --warning: #f08a00;
-  --success-surface: #edf9e8;
-  --warning-surface: #fff8e8;
+  --brand-blue: #1d4ed8;
+  --brand-blue-dark: #1e40af;
+  --brand-blue-light: #eff4ff;
+  --success: #15803d;
+  --warning: #b45309;
+  --success-surface: #f0fdf4;
+  --warning-surface: #fffbeb;
   --admin-sidebar: #ffffff;
-  --admin-sidebar-foreground: #48576d;
-  --admin-sidebar-muted: #94a3b8;
-  --admin-sidebar-hover: #f1f8fc;
-  --admin-sidebar-active: #dff4ff;
-  --admin-sidebar-border: #e9eef4;
-  --admin-canvas: #f5f7fb;
-  --chart-1: #2498dd;
-  --chart-2: #f5ae38;
-  --chart-3: #62be35;
-  --chart-4: #8b7cf6;
-  --chart-5: #f07882;
+  --admin-sidebar-foreground: #334155;
+  --admin-sidebar-muted: #64748b;
+  --admin-sidebar-hover: #f1f5f9;
+  --admin-sidebar-active: #eff4ff;
+  --admin-sidebar-border: #e2e8f0;
+  --admin-canvas: #f6f7f9;
+  /* One blue family plus slate, so charts read as one system instead of a rainbow. */
+  --chart-1: #1d4ed8;
+  --chart-2: #60a5fa;
+  --chart-3: #94a3b8;
+  --chart-4: #1e3a8a;
+  --chart-5: #cbd5e1;
 }
 
 @layer base {

@@ -31,7 +31,7 @@ export function AdminSection({
   return (
     <section
       className={cn(
-        'bg-card rounded-xl shadow-xs border-0 overflow-hidden flex flex-col',
+        'flex flex-col overflow-hidden rounded-lg border border-border bg-card',
         fill ? 'h-full' : 'h-auto',
         className
       )}
@@ -40,20 +40,20 @@ export function AdminSection({
       <div className="px-5 py-4 sm:px-6 sm:py-5 border-b border-border/70 flex flex-wrap items-center justify-between gap-2 shrink-0">
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
-            <h2 id={headingId} className="min-w-0 truncate whitespace-nowrap text-base font-bold font-heading text-foreground">
+            <h2 id={headingId} className="min-w-0 truncate text-[15px] font-semibold text-foreground">
               {title}
             </h2>
             {badge}
           </div>
           {description && (
-            <p className="text-xs text-muted-foreground mt-0.5">{description}</p>
+            <p className="mt-0.5 text-[13px] text-muted-foreground">{description}</p>
           )}
         </div>
         {action && <div className="shrink-0">{action}</div>}
       </div>
       <div
         className={cn(
-          noPadding ? '' : padding === 'compact' ? 'px-3 pt-3 pb-1 sm:px-4 sm:pt-4 sm:pb-1' : 'p-5 sm:p-6',
+          noPadding ? '' : padding === 'compact' ? 'px-3 pt-3 pb-1 sm:px-4 sm:pt-4 sm:pb-1' : 'p-5',
           'flex-1 flex flex-col min-h-0',
           contentClassName
         )}
