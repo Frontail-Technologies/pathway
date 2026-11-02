@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { Search } from 'lucide-react'
 import { CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
 import { getAdminCoachingProviders } from '@/features/admin/data/admin-coaching'
+import { getAdminExams } from '@/features/admin/data/admin-exams'
 import { getAdminInstitutions } from '@/features/admin/data/admin-institutions'
 import { getAdminPrograms } from '@/features/admin/data/admin-programs'
 import { getAdminScholarships } from '@/features/admin/data/admin-scholarships'
@@ -19,6 +20,7 @@ function useSearchIndex() {
     const records: { group: string; items: Entry[] }[] = [
       { group: 'Institutions', items: getAdminInstitutions().map((i) => ({ id: `inst-${i.id}`, label: i.name, hint: `${i.city}, ${i.state}`, href: `/admin/institutions/${i.id}` })) },
       { group: 'Courses', items: getAdminPrograms().map((p) => ({ id: `prog-${p.id}`, label: p.name, hint: 'Course', href: `/admin/programs/${p.id}` })) },
+      { group: 'Exams', items: getAdminExams().map((e) => ({ id: `exam-${e.id}`, label: e.shortName, hint: e.name, href: `/admin/exams/${e.id}` })) },
       { group: 'Scholarships', items: getAdminScholarships().map((s) => ({ id: `sch-${s.id}`, label: s.name, hint: 'Scholarship', href: `/admin/scholarships/${s.id}` })) },
       { group: 'Tutors', items: getAdminTutors().map((t) => ({ id: `tut-${t.slug}`, label: t.name, hint: 'Tutor', href: `/admin/tutors-coaching/tutors/${t.slug}` })) },
       { group: 'Coaching', items: getAdminCoachingProviders().map((c) => ({ id: `coa-${c.slug}`, label: c.name, hint: 'Coaching', href: `/admin/tutors-coaching/coaching/${c.slug}` })) },
