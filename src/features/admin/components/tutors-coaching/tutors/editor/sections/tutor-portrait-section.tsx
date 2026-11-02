@@ -1,20 +1,18 @@
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { TutorPortrait } from '@/features/tutors/components/tutor-avatar'
+import { EditorSection, Field } from '../../../shared/editor-kit'
 import type { TutorFormData } from '../use-tutor-editor'
 
-const HAIR_STYLE_LABELS: Record<string, string> = {
-  short: 'Short',
-  long: 'Long',
-  bun: 'Bun',
-}
+const HAIR_STYLES = [
+  { value: 'short', label: 'Short' },
+  { value: 'long', label: 'Long' },
+  { value: 'bun', label: 'Bun' },
+]
+const GLASSES = [
+  { value: 'false', label: 'No' },
+  { value: 'true', label: 'Yes' },
+]
 
 export function TutorPortraitSection({
   formData,
@@ -26,98 +24,55 @@ export function TutorPortraitSection({
   updateAvatarField: <K extends keyof TutorFormData['avatar']>(field: K, value: TutorFormData['avatar'][K]) => void
 }) {
   return (
-    <div id="section-portrait" className="bg-card border border-border rounded-xl p-5 shadow-xs space-y-4">
-      <h2 className="text-sm font-bold text-foreground">Portrait & Visual Assets</h2>
+    <EditorSection id="portrait" title="Portrait" description="Use a real photo where possible. Without one, the illustrated avatar is shown.">
+      <div className="flex flex-col gap-5 sm:flex-row sm:items-start">
+        <TutorPortrait tutor={{ name: formData.name || 'Tutor preview', portrait: formData.portrait, avatar: formData.avatar }} className="size-20 shrink-0 rounded-lg" />
+        <div className="min-w-0 flex-1 space-y-5">
+          <Field label="Photo file" htmlFor="tutor-portrait-path" hint="Path to an uploaded image. Leave empty to use the avatar.">
+            <Input id="tutor-portrait-path" value={formData.portrait} onChange={(event) => updateField('portrait', event.target.value)} placeholder="e.g. /tutors/arjun-sharma.jpg" className="h-9 font-mono text-sm" />
+          </Field>
 
-      <div className="flex flex-col sm:flex-row items-start gap-5 p-4 rounded-lg bg-muted/30 border border-border/50">
-        <TutorPortrait
-          tutor={{
-            name: formData.name || 'Tutor Preview',
-            portrait: formData.portrait,
-            avatar: formData.avatar,
-          }}
-          className="size-24 rounded-2xl shrink-0 shadow-xs"
-        />
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+            <Field label="Hair style">
+              <Select value={formData.avatar.style} onValueChange={(value) => updateAvatarField('style', (value || 'short') as TutorFormData['avatar']['style'])} items={HAIR_STYLES}>
+                <SelectTrigger aria-label="Hair style" className="h-9 w-full bg-card text-sm">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {HAIR_STYLES.map((item) => (
+                    <SelectItem key={item.value} value={item.value}>
+                      {item.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </Field>
 
-        <div className="space-y-4 text-xs flex-1">
-          <div className="space-y-1.5">
-            <Label htmlFor="tutor-portrait-path" className="text-xs font-semibold">
-              Photographic Portrait Path (Optional)
-            </Label>
-            <Input
-              id="tutor-portrait-path"
-              value={formData.portrait}
-              onChange={(e) => updateField('portrait', e.target.value)}
-              placeholder="e.g. /tutors/arjun-sharma.jpg"
-              className="text-xs h-9 font-mono"
-            />
-            <p className="text-[11px] text-muted-foreground">
-              If left blank, the SVG illustrated avatar below will be used as a verified fallback.
-            </p>
-          </div>
+            <Field label="Glasses">
+              <Select value={formData.avatar.glasses ? 'true' : 'false'} onValueChange={(value) => updateAvatarField('glasses', value === 'true')} items={GLASSES}>
+                <SelectTrigger aria-label="Glasses" className="h-9 w-full bg-card text-sm">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {GLASSES.map((item) => (
+                    <SelectItem key={item.value} value={item.value}>
+                      {item.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </Field>
 
-          <div className="pt-2 border-t border-border/50 space-y-3">
-            <Label className="text-xs font-semibold block">Illustrated Avatar Configuration</Label>
+            <Field label="Shirt colour" htmlFor="tutor-avatar-shirt">
+              <Input id="tutor-avatar-shirt" value={formData.avatar.shirt} onChange={(event) => updateAvatarField('shirt', event.target.value)} className="h-9 font-mono text-sm" />
+            </Field>
 
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              <div className="space-y-1">
-                <span className="text-[11px] text-muted-foreground block">Hair Style</span>
-                <Select
-                  value={formData.avatar.style}
-                  onValueChange={(val) => updateAvatarField('style', (val || 'short') as 'short' | 'long' | 'bun')}
-                >
-                  <SelectTrigger className="h-8 text-xs bg-card">
-                    <SelectValue placeholder="Select style">
-                      {HAIR_STYLE_LABELS[formData.avatar.style] || 'Short'}
-                    </SelectValue>
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="short">Short</SelectItem>
-                    <SelectItem value="long">Long</SelectItem>
-                    <SelectItem value="bun">Bun</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-1">
-                <span className="text-[11px] text-muted-foreground block">Glasses</span>
-                <Select
-                  value={formData.avatar.glasses ? 'true' : 'false'}
-                  onValueChange={(val) => updateAvatarField('glasses', val === 'true')}
-                >
-                  <SelectTrigger className="h-8 text-xs bg-card">
-                    <SelectValue placeholder="Select">
-                      {formData.avatar.glasses ? 'Yes' : 'No'}
-                    </SelectValue>
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="true">Yes</SelectItem>
-                    <SelectItem value="false">No</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-1">
-                <span className="text-[11px] text-muted-foreground block">Shirt Color</span>
-                <Input
-                  value={formData.avatar.shirt}
-                  onChange={(e) => updateAvatarField('shirt', e.target.value)}
-                  className="h-8 text-xs font-mono"
-                />
-              </div>
-
-              <div className="space-y-1">
-                <span className="text-[11px] text-muted-foreground block">Skin Tone</span>
-                <Input
-                  value={formData.avatar.skin}
-                  onChange={(e) => updateAvatarField('skin', e.target.value)}
-                  className="h-8 text-xs font-mono"
-                />
-              </div>
-            </div>
+            <Field label="Skin tone" htmlFor="tutor-avatar-skin">
+              <Input id="tutor-avatar-skin" value={formData.avatar.skin} onChange={(event) => updateAvatarField('skin', event.target.value)} className="h-9 font-mono text-sm" />
+            </Field>
           </div>
         </div>
       </div>
-    </div>
+    </EditorSection>
   )
 }

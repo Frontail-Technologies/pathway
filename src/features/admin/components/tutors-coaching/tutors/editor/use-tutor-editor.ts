@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import type {
   TutorSubject,
   TutorExam,
@@ -41,7 +40,6 @@ const defaultAvatar: TutorAvatarSpec = {
 }
 
 export function useTutorEditor(initialTutor?: AdminTutor) {
-  const router = useRouter()
   const isEditing = !!initialTutor
 
   const [formData, setFormData] = useState<TutorFormData>({
@@ -115,28 +113,29 @@ export function useTutorEditor(initialTutor?: AdminTutor) {
 
   const validate = (): boolean => {
     const errs: Record<string, string> = {}
-    if (!formData.name.trim()) errs.name = 'Tutor display name is required'
-    if (!formData.headline.trim()) errs.headline = 'Professional headline is required'
-    if (!formData.intro.trim()) errs.intro = 'Short bio intro is required'
-    if (formData.subjects.length === 0) errs.subjects = 'At least one subject is required'
-    if (formData.exams.length === 0) errs.exams = 'At least one target exam is required'
-    if (formData.modes.length === 0) errs.modes = 'At least one delivery mode is required'
+    if (!formData.name.trim()) errs.name = 'Enter the tutor’s name'
+    if (!formData.headline.trim()) errs.headline = 'Enter a headline'
+    if (!formData.intro.trim()) errs.intro = 'Enter a short summary'
+    if (formData.subjects.length === 0) errs.subjects = 'Choose at least one subject'
+    if (formData.exams.length === 0) errs.exams = 'Choose at least one exam'
+    if (formData.modes.length === 0) errs.modes = 'Choose at least one mode'
 
     setErrors(errs)
     return Object.keys(errs).length === 0
   }
 
-  const handleSave = () => {
+  const handleSave = (onSaved?: () => void) => {
     if (!validate()) {
       setSaveStatus('error')
-      setSaveMessage('Please correct the validation errors before saving.')
+      setSaveMessage('Some required fields are missing. Fix the highlighted fields and save again.')
       return
     }
 
     setSaveStatus('saving')
     setTimeout(() => {
       setSaveStatus('saved')
-      setSaveMessage('Profile validated locally. Saving tutor profiles requires the Admin API.')
+      onSaved?.()
+      setSaveMessage('Everything checks out. Saving isn’t connected yet, so these changes won’t be stored.')
     }, 600)
   }
 
@@ -152,6 +151,5 @@ export function useTutorEditor(initialTutor?: AdminTutor) {
     addArrayString,
     removeArrayString,
     handleSave,
-    router,
   }
 }

@@ -1,108 +1,72 @@
 'use client'
 
-import { useState, useMemo } from 'react'
-import { AdminDataTable } from '@/features/admin/components/admin-data-table'
+import { useMemo } from 'react'
+import { useRouter } from 'next/navigation'
 import type { AdminCoachingProvider } from '@/features/admin/data/admin-coaching'
 import type { LearningMode } from '@/features/coaching/data/coaching'
+import { useUrlFilters } from '@/features/admin/hooks/use-url-filters'
+import { AdminDataTable } from '../../../admin-data-table'
+import { AdminFilterSelect, AdminToolbar } from '../../../kit'
+import { COACHING_EXAM_OPTIONS, COACHING_MODE_OPTIONS, COACHING_PROVIDER_TYPES, PUBLIC_PAGE_FILTER_OPTIONS, sentenceCase, toOptions } from '../../shared/tutor-coaching-constants'
+import { QUALITY_FILTER_OPTIONS } from '../../shared/tutor-status-badge'
 import { coachingColumns } from './coaching-table-columns'
-import { CoachingFilters, type CoachingFilterValues } from './coaching-filters'
 import { CoachingMobileCard } from './coaching-mobile-card'
 
-const defaultFilters: CoachingFilterValues = {
-  search: '',
-  providerType: 'All',
-  mode: 'All',
-  exam: 'All',
-  quality: 'All',
-  detailStatus: 'All',
-  location: '',
-}
+const DEFAULT_FILTERS = { q: '', type: 'all', mode: 'all', exam: 'all', location: 'all', quality: 'all', page: 'all' }
+
+const TYPE_OPTIONS = COACHING_PROVIDER_TYPES.map((value) => ({ value, label: sentenceCase(value) }))
 
 export function AdminCoachingTableView({ providers }: { providers: AdminCoachingProvider[] }) {
-  const [filters, setFilters] = useState<CoachingFilterValues>(defaultFilters)
+  const router = useRouter()
+  const { values: f, set, active } = useUrlFilters(DEFAULT_FILTERS)
+  // Reset only this list's filters so ?tab=coaching stays (the hook's own reset clears the whole query).
+  const reset = () => set(DEFAULT_FILTERS)
+  const locationOptions = useMemo(() => toOptions([...new Set(providers.map((provider) => provider.location))].sort()), [providers])
 
-  const handleFilterChange = (key: keyof CoachingFilterValues, value: string) => {
-    setFilters((prev) => ({ ...prev, [key]: value }))
-  }
-
-  const handleReset = () => {
-    setFilters(defaultFilters)
-  }
-
-  const filteredProviders = useMemo(() => {
+  const filtered = useMemo(() => {
+    const query = f.q.trim().toLowerCase()
     return providers.filter((provider) => {
-      if (filters.search) {
-        const q = filters.search.toLowerCase()
-        const matchName = provider.name.toLowerCase().includes(q)
-        const matchLocation = provider.location.toLowerCase().includes(q)
-        const matchState = provider.state?.toLowerCase().includes(q) ?? false
-        const matchExam = provider.exams.some((e) => e.toLowerCase().includes(q))
-        const matchSubject = provider.subjects.some((s) => s.toLowerCase().includes(q))
-        if (!matchName && !matchLocation && !matchState && !matchExam && !matchSubject) {
-          return false
-        }
-      }
-
-      if (filters.location) {
-        const loc = filters.location.toLowerCase()
-        const matchLoc = provider.location.toLowerCase().includes(loc)
-        const matchSt = provider.state?.toLowerCase().includes(loc) ?? false
-        if (!matchLoc && !matchSt) return false
-      }
-
-      if (filters.providerType !== 'All') {
-        if (provider.providerType !== filters.providerType) return false
-      }
-
-      if (filters.mode !== 'All') {
-        if (!provider.modes.includes(filters.mode as LearningMode)) return false
-      }
-
-      if (filters.exam !== 'All') {
-        if (!provider.exams.includes(filters.exam)) return false
-      }
-
-      if (filters.quality !== 'All') {
-        if (provider.quality.status !== filters.quality) return false
-      }
-
-      if (filters.detailStatus !== 'All') {
-        if (filters.detailStatus === 'Has Detail Page' && !provider.hasDetailPage) return false
-        if (filters.detailStatus === 'Listing Only' && provider.hasDetailPage) return false
-      }
-
+      if (query && ![provider.name, provider.location, provider.state ?? '', ...provider.exams, ...provider.subjects].some((value) => value.toLowerCase().includes(query))) return false
+      if (f.type !== 'all' && provider.providerType !== f.type) return false
+      if (f.mode !== 'all' && !provider.modes.includes(f.mode as LearningMode)) return false
+      if (f.exam !== 'all' && !provider.exams.includes(f.exam)) return false
+      if (f.location !== 'all' && provider.location !== f.location) return false
+      if (f.quality !== 'all' && provider.quality.status !== f.quality) return false
+      if (f.page === 'live' && !provider.hasDetailPage) return false
+      if (f.page === 'none' && provider.hasDetailPage) return false
       return true
     })
-  }, [providers, filters])
+  }, [providers, f])
 
   return (
-    <div className="w-full min-w-0 bg-card rounded-xl p-4 sm:p-5 shadow-xs border-0 space-y-4">
-      <CoachingFilters
-        values={filters}
-        onChange={handleFilterChange}
-        onReset={handleReset}
-        totalCount={providers.length}
-        filteredCount={filteredProviders.length}
+    <div className="space-y-4">
+      <AdminToolbar
+        search={f.q}
+        onSearchChange={(q) => set({ q })}
+        searchPlaceholder="Search name, city, exam or subject"
+        hasActiveFilters={active}
+        onReset={reset}
+        summary={active ? `${filtered.length} of ${providers.length} match` : undefined}
+      >
+        <AdminFilterSelect label="Type" value={f.type} onChange={(type) => set({ type })} options={TYPE_OPTIONS} />
+        <AdminFilterSelect label="Exam" value={f.exam} onChange={(exam) => set({ exam })} options={toOptions(COACHING_EXAM_OPTIONS)} />
+        <AdminFilterSelect label="Mode" value={f.mode} onChange={(mode) => set({ mode })} options={toOptions(COACHING_MODE_OPTIONS)} />
+        <AdminFilterSelect label="Location" value={f.location} onChange={(location) => set({ location })} options={locationOptions} />
+        <AdminFilterSelect label="Status" value={f.quality} onChange={(quality) => set({ quality })} options={QUALITY_FILTER_OPTIONS} />
+        <AdminFilterSelect label="Public page" value={f.page} onChange={(page) => set({ page })} options={PUBLIC_PAGE_FILTER_OPTIONS} />
+      </AdminToolbar>
+
+      <AdminDataTable
+        columns={coachingColumns}
+        data={filtered}
+        onRowClick={(provider) => router.push(`/admin/tutors-coaching/coaching/${provider.id}`)}
+        getRowAriaLabel={(provider) => `Open ${provider.name}`}
+        hasActiveFilters={active}
+        onResetFilters={reset}
+        emptyTitle="No coaching providers match"
+        emptyDescription="Try a different search or clear the filters."
+        mobileCardRender={(row) => <CoachingMobileCard provider={row.original} />}
       />
-
-      <div className="hidden md:block w-full min-w-0">
-        <AdminDataTable
-          columns={coachingColumns}
-          data={filteredProviders}
-          pageSize={10}
-        />
-      </div>
-
-      <div className="md:hidden space-y-3">
-        {filteredProviders.map((provider) => (
-          <CoachingMobileCard key={provider.id} provider={provider} />
-        ))}
-        {filteredProviders.length === 0 && (
-          <div className="text-center py-10 bg-muted/20 border border-dashed border-border rounded-xl text-xs text-muted-foreground">
-            No coaching providers match the selected filters.
-          </div>
-        )}
-      </div>
     </div>
   )
 }

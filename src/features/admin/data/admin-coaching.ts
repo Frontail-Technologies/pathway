@@ -50,41 +50,41 @@ export function calculateCoachingCompleteness(provider: CoachingProvider): Admin
   const total = 10
 
   if (provider.name?.trim()) completed++
-  else missing.push('Provider Name')
+  else missing.push('Provider name')
 
   if (provider.providerType?.trim()) completed++
-  else missing.push('Provider Type')
+  else missing.push('Provider type')
 
   if (provider.location?.trim()) completed++
   else missing.push('Location')
 
   if (provider.exams && provider.exams.length > 0) completed++
-  else missing.push('Target Exams')
+  else missing.push('Target exams')
 
   if (provider.subjects && provider.subjects.length > 0) completed++
   else missing.push('Subjects')
 
   if (provider.modes && provider.modes.length > 0) completed++
-  else missing.push('Delivery Modes')
+  else missing.push('Delivery modes')
 
   if (provider.courseTypes && provider.courseTypes.length > 0) completed++
-  else missing.push('Course Types')
+  else missing.push('Course types')
 
   if (provider.programLabel?.trim() && provider.highlights?.length > 0) completed++
-  else missing.push('Highlights / Tagline')
+  else missing.push('Highlights / tagline')
 
   if (provider.hasDetailPage && provider.aboutCopy) {
     completed++
   } else if (!provider.hasDetailPage) {
-    missing.push('Deep Profile Content')
+    missing.push('Deep profile content')
   } else {
-    missing.push('Incomplete Overview Content')
+    missing.push('Incomplete overview content')
   }
 
   if (provider.programs && provider.programs.length > 0) {
     completed++
   } else {
-    missing.push('Structured Course Programs')
+    missing.push('Structured course programs')
   }
 
   const percentage = Math.round((completed / total) * 100)
@@ -105,7 +105,7 @@ export function calculateCoachingQuality(provider: CoachingProvider): AdminCoach
   if (provider.name?.trim() && provider.providerType) {
     checks.push({
       id: 'identity',
-      label: 'Identity & Provider Type',
+      label: 'Identity & provider type',
       status: 'passed',
       note: `${provider.name} (${provider.providerType})`,
     })
@@ -113,7 +113,7 @@ export function calculateCoachingQuality(provider: CoachingProvider): AdminCoach
     failures++
     checks.push({
       id: 'identity',
-      label: 'Identity & Provider Type',
+      label: 'Identity & provider type',
       status: 'failed',
       note: 'Provider name or type missing',
     })
@@ -122,7 +122,7 @@ export function calculateCoachingQuality(provider: CoachingProvider): AdminCoach
   if (provider.location?.trim()) {
     checks.push({
       id: 'location',
-      label: 'Location & Footprint',
+      label: 'Location & footprint',
       status: 'passed',
       note: provider.state ? `${provider.location}, ${provider.state}` : provider.location,
     })
@@ -130,7 +130,7 @@ export function calculateCoachingQuality(provider: CoachingProvider): AdminCoach
     failures++
     checks.push({
       id: 'location',
-      label: 'Location & Footprint',
+      label: 'Location & footprint',
       status: 'failed',
       note: 'Location is not specified',
     })
@@ -139,7 +139,7 @@ export function calculateCoachingQuality(provider: CoachingProvider): AdminCoach
   if (provider.exams && provider.exams.length > 0 && provider.subjects && provider.subjects.length > 0) {
     checks.push({
       id: 'curriculum',
-      label: 'Exam & Subject Mapping',
+      label: 'Exam & subject mapping',
       status: 'passed',
       note: `${provider.exams.join(', ')} — ${provider.subjects.join(', ')}`,
     })
@@ -147,7 +147,7 @@ export function calculateCoachingQuality(provider: CoachingProvider): AdminCoach
     warnings++
     checks.push({
       id: 'curriculum',
-      label: 'Exam & Subject Mapping',
+      label: 'Exam & subject mapping',
       status: 'warning',
       note: 'Exam coverage or subject mapping incomplete',
     })
@@ -156,7 +156,7 @@ export function calculateCoachingQuality(provider: CoachingProvider): AdminCoach
   if (provider.programs && provider.programs.length > 0) {
     checks.push({
       id: 'programs',
-      label: 'Program Catalog',
+      label: 'Program catalog',
       status: 'passed',
       note: `${provider.programs.length} structured program track(s) configured`,
     })
@@ -164,7 +164,7 @@ export function calculateCoachingQuality(provider: CoachingProvider): AdminCoach
     warnings++
     checks.push({
       id: 'programs',
-      label: 'Program Catalog',
+      label: 'Program catalog',
       status: 'warning',
       note: 'No structured batch or course records linked',
     })
@@ -173,14 +173,14 @@ export function calculateCoachingQuality(provider: CoachingProvider): AdminCoach
   if (provider.facultyNotes && provider.facultyNotes.length > 0) {
     checks.push({
       id: 'faculty',
-      label: 'Teaching Approach & Faculty Policy',
+      label: 'Teaching approach & faculty policy',
       status: 'passed',
       note: `${provider.facultyNotes.length} approach note(s) documented without unverified rank claims`,
     })
   } else {
     checks.push({
       id: 'faculty',
-      label: 'Teaching Approach & Faculty Policy',
+      label: 'Teaching approach & faculty policy',
       status: 'info',
       note: 'Faculty notes pending configuration',
     })
@@ -189,7 +189,7 @@ export function calculateCoachingQuality(provider: CoachingProvider): AdminCoach
   if (provider.gallery && provider.gallery.length > 0) {
     checks.push({
       id: 'media',
-      label: 'Media Assets & Gallery',
+      label: 'Media assets & gallery',
       status: 'passed',
       note: `${provider.gallery.length} visual asset(s) linked`,
     })
@@ -197,7 +197,7 @@ export function calculateCoachingQuality(provider: CoachingProvider): AdminCoach
     warnings++
     checks.push({
       id: 'media',
-      label: 'Media Assets & Gallery',
+      label: 'Media assets & gallery',
       status: 'warning',
       note: 'Gallery imagery missing',
     })
@@ -205,7 +205,7 @@ export function calculateCoachingQuality(provider: CoachingProvider): AdminCoach
 
   checks.push({
     id: 'pipeline',
-    label: 'Pipeline Scraper Policy',
+    label: 'Pipeline scraper policy',
     status: 'info',
     note: 'Staging -> Diff -> Approval pipeline eligible for official institutional portals',
   })

@@ -1,13 +1,12 @@
 'use client'
 
-import { AlertCircle, CheckCircle2, User, FileText, BookOpen, Sparkles, Globe, Camera, Shield } from 'lucide-react'
 import type { AdminTutor } from '@/features/admin/data/admin-tutors'
 import { useAdminScrollSpy } from '@/features/admin/hooks/use-admin-scroll-spy'
-import { AdminEditorSectionNav } from '@/features/admin/components/admin-editor-section-nav'
-import { AdminEditorLayout } from '@/features/admin/components/shared/admin-editor-layout'
+import { AdminEditorSectionNav } from '../../../admin-editor-section-nav'
+import { AdminEditorLayout } from '../../../shared/admin-editor-layout'
+import { AdminPageHeader } from '../../../kit'
+import { EditorActions, MobileSaveBar, SaveNotice, useEditorGuard } from '../../shared/editor-kit'
 import { useTutorEditor } from './use-tutor-editor'
-import { TutorEditorHeader } from './tutor-editor-header'
-import { TutorEditorMobileActions } from './tutor-editor-mobile-actions'
 import { TutorIdentitySection } from './sections/tutor-identity-section'
 import { TutorBioSection } from './sections/tutor-bio-section'
 import { TutorSubjectsExamsSection } from './sections/tutor-subjects-exams-section'
@@ -16,120 +15,57 @@ import { TutorLanguagesModesSection } from './sections/tutor-languages-modes-sec
 import { TutorPortraitSection } from './sections/tutor-portrait-section'
 import { TutorSourceSection } from './sections/tutor-source-section'
 
-const TUTOR_EDITOR_SECTIONS = [
-  { id: 'identity', label: 'Identity', icon: User },
-  { id: 'bio', label: 'Bio & Overview', icon: FileText },
-  { id: 'subjects', label: 'Subjects & Exams', icon: BookOpen },
-  { id: 'teaching', label: 'Teaching Profile', icon: Sparkles },
-  { id: 'languages', label: 'Languages & Modes', icon: Globe },
-  { id: 'portrait', label: 'Portrait & Visuals', icon: Camera },
-  { id: 'source', label: 'Source & Review', icon: Shield },
+const SECTIONS = [
+  { id: 'identity', label: 'Basics' },
+  { id: 'bio', label: 'Bio' },
+  { id: 'subjects', label: 'Subjects and exams' },
+  { id: 'teaching', label: 'Teaching approach' },
+  { id: 'languages', label: 'Languages and mode' },
+  { id: 'portrait', label: 'Portrait' },
+  { id: 'source', label: 'Source' },
 ]
-
-const SECTION_IDS = TUTOR_EDITOR_SECTIONS.map((s) => s.id)
+const SECTION_IDS = SECTIONS.map((section) => section.id)
 
 export function AdminTutorEditor({ initialTutor }: { initialTutor?: AdminTutor }) {
-  const {
-    formData,
-    isEditing,
-    errors,
-    saveStatus,
-    saveMessage,
-    updateField,
-    updateAvatarField,
-    toggleArrayItem,
-    addArrayString,
-    removeArrayString,
-    handleSave,
-  } = useTutorEditor(initialTutor)
+  const editor = useTutorEditor(initialTutor)
+  const { formData, isEditing, errors, saveStatus, saveMessage } = editor
+  const backHref = isEditing ? `/admin/tutors-coaching/tutors/${formData.id}` : '/admin/tutors-coaching'
+  const { dirty, markSaved, cancel } = useEditorGuard(formData, backHref)
+  const { activeSectionId, scrollToSection } = useAdminScrollSpy({ sectionIds: SECTION_IDS, offset: 120 })
 
-  const { activeSectionId, scrollToSection } = useAdminScrollSpy({
-    sectionIds: SECTION_IDS,
-    offset: 120,
-  })
+  const actions = {
+    onCancel: cancel,
+    onSave: () => editor.handleSave(markSaved),
+    saveStatus,
+    saveLabel: isEditing ? 'Save changes' : 'Create tutor',
+  }
 
   return (
-    <div className="space-y-6 pb-16 lg:pb-0">
-      <TutorEditorHeader
-        isEditing={isEditing}
-        tutorName={formData.name}
-        tutorId={formData.id}
-        saveStatus={saveStatus}
-        onSave={handleSave}
+    <div className="space-y-6 pb-20 lg:pb-0">
+      <AdminPageHeader
+        back={isEditing ? { href: backHref, label: initialTutor?.name ?? 'Tutor' } : { href: backHref, label: 'Tutors & coaching' }}
+        title={isEditing ? `Edit ${initialTutor?.name ?? 'tutor'}` : 'Add tutor'}
+        meta={dirty ? <span className="text-[13px] text-muted-foreground">Unsaved changes</span> : undefined}
+        actions={
+          <div className="hidden items-center gap-2 lg:flex">
+            <EditorActions {...actions} />
+          </div>
+        }
       />
 
-      {saveMessage && (
-        <div
-          className={`p-4 rounded-xl border flex items-center gap-3 text-xs ${
-            saveStatus === 'error'
-              ? 'bg-destructive/10 text-destructive border-destructive/20'
-              : 'bg-primary/10 text-primary border-primary/20'
-          }`}
-        >
-          {saveStatus === 'error' ? (
-            <AlertCircle className="w-4 h-4 shrink-0" />
-          ) : (
-            <CheckCircle2 className="w-4 h-4 shrink-0" />
-          )}
-          <span>{saveMessage}</span>
-        </div>
-      )}
+      <SaveNotice status={saveStatus} message={saveMessage} />
 
       <AdminEditorLayout
-        navigation={
-          <AdminEditorSectionNav
-            sections={TUTOR_EDITOR_SECTIONS}
-            activeSectionId={activeSectionId}
-            onSectionChange={scrollToSection}
-          />
-        }
-        mobileActions={
-          <TutorEditorMobileActions
-            saveStatus={saveStatus}
-            onSave={handleSave}
-            isEditing={isEditing}
-          />
-        }
+        navigation={<AdminEditorSectionNav sections={SECTIONS} activeSectionId={activeSectionId} onSectionChange={scrollToSection} />}
+        mobileActions={<MobileSaveBar dirty={dirty} {...actions} />}
       >
-          <TutorIdentitySection
-            formData={formData}
-            errors={errors}
-            updateField={updateField}
-          />
-
-          <TutorBioSection
-            formData={formData}
-            errors={errors}
-            updateField={updateField}
-            addArrayString={addArrayString}
-            removeArrayString={removeArrayString}
-          />
-
-          <TutorSubjectsExamsSection
-            formData={formData}
-            errors={errors}
-            toggleArrayItem={toggleArrayItem}
-          />
-
-          <TutorTeachingProfileSection
-            formData={formData}
-            addArrayString={addArrayString}
-            removeArrayString={removeArrayString}
-          />
-
-          <TutorLanguagesModesSection
-            formData={formData}
-            errors={errors}
-            toggleArrayItem={toggleArrayItem}
-          />
-
-          <TutorPortraitSection
-            formData={formData}
-            updateField={updateField}
-            updateAvatarField={updateAvatarField}
-          />
-
-          <TutorSourceSection />
+        <TutorIdentitySection formData={formData} errors={errors} updateField={editor.updateField} />
+        <TutorBioSection formData={formData} errors={errors} updateField={editor.updateField} addArrayString={editor.addArrayString} removeArrayString={editor.removeArrayString} />
+        <TutorSubjectsExamsSection formData={formData} errors={errors} toggleArrayItem={editor.toggleArrayItem} />
+        <TutorTeachingProfileSection formData={formData} addArrayString={editor.addArrayString} removeArrayString={editor.removeArrayString} />
+        <TutorLanguagesModesSection formData={formData} errors={errors} toggleArrayItem={editor.toggleArrayItem} />
+        <TutorPortraitSection formData={formData} updateField={editor.updateField} updateAvatarField={editor.updateAvatarField} />
+        <TutorSourceSection />
       </AdminEditorLayout>
     </div>
   )

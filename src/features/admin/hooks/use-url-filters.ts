@@ -34,7 +34,13 @@ export function useUrlFilters<T extends Record<string, string>>(defaults: T) {
     [defaults, params, pathname, router],
   )
 
-  const reset = useCallback(() => router.replace(pathname, { scroll: false }), [pathname, router])
+  // Clears only this hook's keys, so other params (e.g. ?tab=) survive "Clear".
+  const reset = useCallback(() => {
+    const next = new URLSearchParams(params.toString())
+    for (const key of Object.keys(defaults)) next.delete(key)
+    const query = next.toString()
+    router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false })
+  }, [defaults, params, pathname, router])
   const active = (Object.keys(defaults) as (keyof T)[]).some((key) => values[key] !== defaults[key])
 
   return { values, set, reset, active }

@@ -10,10 +10,10 @@ type Props = {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { tutorId } = await params
   const tutor = getAdminTutorById(tutorId)
-  if (!tutor) return { title: 'Tutor Not Found | Pathway Admin' }
+  if (!tutor) return { title: 'Tutor not found | Pathway Admin' }
 
   return {
-    title: `${tutor.name} | Tutor Details | Pathway Admin`,
+    title: `${tutor.name} | Tutors | Pathway Admin`,
     description: `Admin profile and curriculum details for ${tutor.name}.`,
   }
 }

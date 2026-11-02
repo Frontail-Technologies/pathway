@@ -1,22 +1,16 @@
 import { useState } from 'react'
-import { Plus, Trash2 } from 'lucide-react'
-import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
+import { Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Label } from '@/components/ui/label'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
-import {
-  COACHING_COURSE_TYPE_OPTIONS,
-  COACHING_MODE_OPTIONS,
-} from '../../../shared/tutor-coaching-constants'
-import type { CoachingFormData } from '../use-coaching-editor'
+import { Input } from '@/components/ui/input'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Textarea } from '@/components/ui/textarea'
 import type { CoachingProgram } from '@/features/coaching/data/coaching'
+import { ChipToggleGroup, EditorSection, Field, RemoveButton } from '../../../shared/editor-kit'
+import { COACHING_COURSE_TYPE_OPTIONS, sentenceCase } from '../../../shared/tutor-coaching-constants'
+import type { CoachingFormData } from '../use-coaching-editor'
+
+const PROGRAM_MODES = ['Classroom', 'Online', 'Hybrid'].map((value) => ({ value, label: value }))
+const COURSE_TYPES = COACHING_COURSE_TYPE_OPTIONS.map((value) => ({ value, label: sentenceCase(value) }))
 
 export function CoachingProgramsSection({
   formData,
@@ -31,150 +25,83 @@ export function CoachingProgramsSection({
 }) {
   const [name, setName] = useState('')
   const [mode, setMode] = useState('Classroom')
-  const [courseType, setCourseType] = useState('Classroom Program')
+  const [courseType, setCourseType] = useState<string>('Classroom Program')
   const [description, setDescription] = useState('')
-
-  const handleAddTrack = () => {
+  const add = () => {
     if (!name.trim() || !description.trim()) return
-    addProgram({
-      name: name.trim(),
-      mode,
-      courseType,
-      description: description.trim(),
-    })
+    addProgram({ name: name.trim(), mode, courseType, description: description.trim() })
     setName('')
     setDescription('')
   }
 
   return (
-    <div id="section-programs" className="bg-card border border-border rounded-xl p-5 shadow-xs space-y-4">
-      <h2 className="text-sm font-bold text-foreground">Programs & Course Formats</h2>
+    <EditorSection id="programs" title="Programs" description={formData.hasDetailPage ? undefined : 'Individual programs appear only when the provider has a public profile page.'}>
+      <ChipToggleGroup label="Course formats" hint="Shown on the listing card." options={COACHING_COURSE_TYPE_OPTIONS} selected={formData.courseTypes} onToggle={(value) => toggleArrayItem('courseTypes', value)} format={sentenceCase} />
 
-      <div className="space-y-4 text-xs">
-        <div className="space-y-2">
-          <Label className="text-xs font-semibold">Listing Course Formats</Label>
-          <div className="flex flex-wrap gap-2">
-            {COACHING_COURSE_TYPE_OPTIONS.map((type: string) => {
-              const selected = formData.courseTypes.includes(type)
-              return (
-                <button
-                  key={type}
-                  type="button"
-                  onClick={() => toggleArrayItem('courseTypes', type)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors border cursor-pointer ${
-                    selected
-                      ? 'bg-primary text-primary-foreground border-primary'
-                      : 'bg-card text-foreground border-border hover:bg-muted/70'
-                  }`}
-                >
-                  {type}
-                </button>
-              )
-            })}
+      {formData.hasDetailPage ? (
+        <div className="space-y-4 border-t border-border pt-5">
+          {formData.programs.length > 0 ? (
+            <ul className="divide-y divide-border rounded-md border border-border">
+              {formData.programs.map((program, index) => (
+                <li key={`${program.name}-${index}`} className="flex items-start justify-between gap-3 px-3 py-2.5">
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium text-foreground">{program.name}</p>
+                    <p className="text-[13px] text-muted-foreground">{[program.mode, program.courseType && sentenceCase(program.courseType)].filter(Boolean).join(' · ')}</p>
+                    <p className="mt-0.5 text-sm text-foreground">{program.description}</p>
+                  </div>
+                  <RemoveButton label={`Remove program ${program.name}`} onClick={() => removeProgram(index)} />
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-sm text-muted-foreground">No programs yet.</p>
+          )}
+
+          <div className="space-y-4 rounded-md border border-dashed border-border p-4">
+            <p className="text-sm font-medium text-foreground">Add a program</p>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+              <Field label="Name" htmlFor="coaching-program-name">
+                <Input id="coaching-program-name" value={name} onChange={(event) => setName(event.target.value)} placeholder="e.g. JEE Main program" className="h-9 text-sm" />
+              </Field>
+              <Field label="Mode">
+                <Select value={mode} onValueChange={(value) => setMode((value as string | null) || 'Classroom')} items={PROGRAM_MODES}>
+                  <SelectTrigger aria-label="Mode" className="h-9 w-full bg-card text-sm">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {PROGRAM_MODES.map((item) => (
+                      <SelectItem key={item.value} value={item.value}>
+                        {item.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </Field>
+              <Field label="Format">
+                <Select value={courseType} onValueChange={(value) => setCourseType((value as string | null) || 'Classroom Program')} items={COURSE_TYPES}>
+                  <SelectTrigger aria-label="Format" className="h-9 w-full bg-card text-sm">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {COURSE_TYPES.map((item) => (
+                      <SelectItem key={item.value} value={item.value}>
+                        {item.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </Field>
+              <Field label="Description" htmlFor="coaching-program-description" className="sm:col-span-3">
+                <Textarea id="coaching-program-description" value={description} onChange={(event) => setDescription(event.target.value)} placeholder="e.g. Physics, Chemistry and Mathematics with regular test practice." rows={2} className="resize-none text-sm" />
+              </Field>
+            </div>
+            <Button type="button" variant="outline" size="sm" onClick={add} disabled={!name.trim() || !description.trim()} className="gap-1.5">
+              <Plus className="size-4" aria-hidden="true" />
+              Add program
+            </Button>
           </div>
         </div>
-
-        {formData.hasDetailPage && (
-          <div className="space-y-3 pt-3 border-t border-border/50">
-            <Label className="text-xs font-semibold block">Add Structured Program Track</Label>
-
-            <div className="p-3.5 rounded-lg bg-muted/30 border border-border/50 space-y-3">
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <div className="space-y-1 sm:col-span-1">
-                  <span className="text-[11px] text-muted-foreground block">Track Name</span>
-                  <Input
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="e.g. JEE Main Program"
-                    className="text-xs h-8"
-                  />
-                </div>
-
-                <div className="space-y-1">
-                  <span className="text-[11px] text-muted-foreground block">Mode</span>
-                  <Select value={mode} onValueChange={(val) => setMode(val || 'Classroom')}>
-                    <SelectTrigger className="h-8 text-xs bg-card">
-                      <SelectValue placeholder="Select mode">
-                        {mode}
-                      </SelectValue>
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Classroom">Classroom</SelectItem>
-                      <SelectItem value="Online">Online</SelectItem>
-                      <SelectItem value="Hybrid">Hybrid</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-1">
-                  <span className="text-[11px] text-muted-foreground block">Course Format</span>
-                  <Select value={courseType} onValueChange={(val) => setCourseType(val || 'Classroom Program')}>
-                    <SelectTrigger className="h-8 text-xs bg-card">
-                      <SelectValue placeholder="Select course format">
-                        {courseType}
-                      </SelectValue>
-                    </SelectTrigger>
-                    <SelectContent>
-                      {COACHING_COURSE_TYPE_OPTIONS.map((t: string) => (
-                        <SelectItem key={t} value={t}>
-                          {t}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-1 sm:col-span-3">
-                  <span className="text-[11px] text-muted-foreground block">Track Description</span>
-                  <Textarea
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    placeholder="e.g. JEE Main preparation covering Physics, Chemistry and Mathematics with regular test practice."
-                    rows={2}
-                    className="text-xs resize-none"
-                  />
-                </div>
-              </div>
-
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={handleAddTrack}
-                className="h-8 text-xs gap-1"
-              >
-                <Plus className="w-3.5 h-3.5" />
-                Add Track
-              </Button>
-            </div>
-
-            <div className="space-y-2 pt-2">
-              {formData.programs.map((program, idx) => (
-                <div
-                  key={idx}
-                  className="flex items-start justify-between gap-3 p-3 rounded-lg bg-muted/40 border border-border/60 text-xs"
-                >
-                  <div className="space-y-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <span className="font-bold text-foreground">{program.name}</span>
-                      {program.mode && <span className="text-muted-foreground">({program.mode})</span>}
-                    </div>
-                    <p className="text-muted-foreground leading-relaxed">{program.description}</p>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => removeProgram(idx)}
-                    aria-label={`Remove program track ${program.name}`}
-                    className="text-muted-foreground hover:text-destructive transition-colors p-1 cursor-pointer shrink-0"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
+      ) : null}
+    </EditorSection>
   )
 }

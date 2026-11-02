@@ -65,41 +65,41 @@ export function calculateTutorCompleteness(tutor: Tutor): AdminTutorCompleteness
   const total = 10
 
   if (tutor.name?.trim()) completed++
-  else missing.push('Full Name')
+  else missing.push('Full name')
 
   if (tutor.headline?.trim()) completed++
   else missing.push('Headline')
 
   if (tutor.intro?.trim()) completed++
-  else missing.push('Intro / Bio')
+  else missing.push('Intro / bio')
 
   if (tutor.subjects && tutor.subjects.length > 0) completed++
   else missing.push('Subjects')
 
   if (tutor.exams && tutor.exams.length > 0) completed++
-  else missing.push('Exam Targets')
+  else missing.push('Exam targets')
 
   if (tutor.studyLevels && tutor.studyLevels.length > 0) completed++
-  else missing.push('Study Levels')
+  else missing.push('Study levels')
 
   if (tutor.languages && tutor.languages.length > 0) completed++
   else missing.push('Languages')
 
   if (tutor.modes && tutor.modes.length > 0) completed++
-  else missing.push('Delivery Modes')
+  else missing.push('Delivery modes')
 
   if (tutor.hasDetailPage && tutor.detail?.longBio && tutor.detail.traits?.length > 0) {
     completed++
   } else if (!tutor.hasDetailPage) {
-    missing.push('Deep Detail Profile')
+    missing.push('Deep detail profile')
   } else {
-    missing.push('Incomplete Detail Profile')
+    missing.push('Incomplete detail profile')
   }
 
   if (tutor.portrait && tutor.portrait.trim().length > 0) {
     completed++
   } else {
-    missing.push('Photographic Portrait')
+    missing.push('Photographic portrait')
   }
 
   const percentage = Math.round((completed / total) * 100)
@@ -120,7 +120,7 @@ export function calculateTutorQuality(tutor: Tutor): AdminTutorQualityAssessment
   if (tutor.name?.trim() && tutor.headline?.trim()) {
     checks.push({
       id: 'identity',
-      label: 'Identity & Headline',
+      label: 'Identity & headline',
       status: 'passed',
       note: `${tutor.name} — ${tutor.headline}`,
     })
@@ -128,7 +128,7 @@ export function calculateTutorQuality(tutor: Tutor): AdminTutorQualityAssessment
     failures++
     checks.push({
       id: 'identity',
-      label: 'Identity & Headline',
+      label: 'Identity & headline',
       status: 'failed',
       note: 'Missing name or professional headline',
     })
@@ -137,7 +137,7 @@ export function calculateTutorQuality(tutor: Tutor): AdminTutorQualityAssessment
   if (tutor.intro && tutor.intro.length >= 20) {
     checks.push({
       id: 'bio',
-      label: 'Intro & Bio Quality',
+      label: 'Intro & bio quality',
       status: 'passed',
       note: 'Clear teaching summary without unsupported marketing claims',
     })
@@ -145,7 +145,7 @@ export function calculateTutorQuality(tutor: Tutor): AdminTutorQualityAssessment
     warnings++
     checks.push({
       id: 'bio',
-      label: 'Intro & Bio Quality',
+      label: 'Intro & bio quality',
       status: 'warning',
       note: 'Intro is sparse or missing',
     })
@@ -154,7 +154,7 @@ export function calculateTutorQuality(tutor: Tutor): AdminTutorQualityAssessment
   if (tutor.subjects && tutor.subjects.length > 0) {
     checks.push({
       id: 'subjects',
-      label: 'Subject Coverage',
+      label: 'Subject coverage',
       status: 'passed',
       note: `${tutor.subjects.length} subject(s) mapped: ${tutor.subjects.join(', ')}`,
     })
@@ -162,7 +162,7 @@ export function calculateTutorQuality(tutor: Tutor): AdminTutorQualityAssessment
     failures++
     checks.push({
       id: 'subjects',
-      label: 'Subject Coverage',
+      label: 'Subject coverage',
       status: 'failed',
       note: 'No subjects assigned to educator',
     })
@@ -171,7 +171,7 @@ export function calculateTutorQuality(tutor: Tutor): AdminTutorQualityAssessment
   if (tutor.exams && tutor.exams.length > 0) {
     checks.push({
       id: 'exams',
-      label: 'Exam Target Alignment',
+      label: 'Exam target alignment',
       status: 'passed',
       note: `${tutor.exams.length} exam(s) targeted: ${tutor.exams.join(', ')}`,
     })
@@ -179,7 +179,7 @@ export function calculateTutorQuality(tutor: Tutor): AdminTutorQualityAssessment
     warnings++
     checks.push({
       id: 'exams',
-      label: 'Exam Target Alignment',
+      label: 'Exam target alignment',
       status: 'warning',
       note: 'No target entrance or board exams specified',
     })
@@ -188,7 +188,7 @@ export function calculateTutorQuality(tutor: Tutor): AdminTutorQualityAssessment
   if (tutor.languages && tutor.languages.length > 0 && tutor.modes && tutor.modes.length > 0) {
     checks.push({
       id: 'delivery',
-      label: 'Languages & Delivery Modes',
+      label: 'Languages & delivery modes',
       status: 'passed',
       note: `${tutor.languages.join(', ')} | ${tutor.modes.join(', ')}`,
     })
@@ -196,7 +196,7 @@ export function calculateTutorQuality(tutor: Tutor): AdminTutorQualityAssessment
     warnings++
     checks.push({
       id: 'delivery',
-      label: 'Languages & Delivery Modes',
+      label: 'Languages & delivery modes',
       status: 'warning',
       note: 'Delivery mode or language specification incomplete',
     })
@@ -206,7 +206,7 @@ export function calculateTutorQuality(tutor: Tutor): AdminTutorQualityAssessment
   if (portraitStatus === 'real') {
     checks.push({
       id: 'portrait',
-      label: 'Portrait Asset',
+      label: 'Portrait asset',
       status: 'passed',
       note: 'Verified photographic headshot present',
     })
@@ -214,7 +214,7 @@ export function calculateTutorQuality(tutor: Tutor): AdminTutorQualityAssessment
     warnings++
     checks.push({
       id: 'portrait',
-      label: 'Portrait Asset',
+      label: 'Portrait asset',
       status: 'warning',
       note: 'Using illustrated avatar placeholder; photographic asset needed for full review',
     })
@@ -222,7 +222,7 @@ export function calculateTutorQuality(tutor: Tutor): AdminTutorQualityAssessment
     failures++
     checks.push({
       id: 'portrait',
-      label: 'Portrait Asset',
+      label: 'Portrait asset',
       status: 'failed',
       note: 'No portrait asset or fallback avatar found',
     })
@@ -230,7 +230,7 @@ export function calculateTutorQuality(tutor: Tutor): AdminTutorQualityAssessment
 
   checks.push({
     id: 'provenance',
-    label: 'Source Provenance & Scraper Policy',
+    label: 'Source provenance & scraper policy',
     status: 'info',
     note: 'Manual record — web scraping restricted for individual personal profiles',
   })

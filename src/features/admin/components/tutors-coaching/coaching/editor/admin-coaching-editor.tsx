@@ -1,13 +1,12 @@
 'use client'
 
-import { AlertCircle, CheckCircle2, Building2, FileText, BookOpen, MapPin, GraduationCap, Image, Shield } from 'lucide-react'
 import type { AdminCoachingProvider } from '@/features/admin/data/admin-coaching'
 import { useAdminScrollSpy } from '@/features/admin/hooks/use-admin-scroll-spy'
-import { AdminEditorSectionNav } from '@/features/admin/components/admin-editor-section-nav'
-import { AdminEditorLayout } from '@/features/admin/components/shared/admin-editor-layout'
+import { AdminEditorSectionNav } from '../../../admin-editor-section-nav'
+import { AdminEditorLayout } from '../../../shared/admin-editor-layout'
+import { AdminPageHeader } from '../../../kit'
+import { EditorActions, MobileSaveBar, SaveNotice, useEditorGuard } from '../../shared/editor-kit'
 import { useCoachingEditor } from './use-coaching-editor'
-import { CoachingEditorHeader } from './coaching-editor-header'
-import { CoachingEditorMobileActions } from './coaching-editor-mobile-actions'
 import { CoachingIdentitySection } from './sections/coaching-identity-section'
 import { CoachingOverviewSection } from './sections/coaching-overview-section'
 import { CoachingProgramsSection } from './sections/coaching-programs-section'
@@ -16,126 +15,57 @@ import { CoachingFacultySection } from './sections/coaching-faculty-section'
 import { CoachingMediaSection } from './sections/coaching-media-section'
 import { CoachingSourceSection } from './sections/coaching-source-section'
 
-const COACHING_EDITOR_SECTIONS = [
-  { id: 'identity', label: 'Identity', icon: Building2 },
-  { id: 'overview', label: 'Overview & Highlights', icon: FileText },
-  { id: 'programs', label: 'Programs & Tracks', icon: BookOpen },
-  { id: 'location', label: 'Location & Modes', icon: MapPin },
-  { id: 'faculty', label: 'Faculty & Approach', icon: GraduationCap },
-  { id: 'media', label: 'Media & Gallery', icon: Image },
-  { id: 'source', label: 'Source & Pipeline', icon: Shield },
+const SECTIONS = [
+  { id: 'identity', label: 'Basics' },
+  { id: 'overview', label: 'Overview' },
+  { id: 'programs', label: 'Programs' },
+  { id: 'location', label: 'Coverage and mode' },
+  { id: 'faculty', label: 'Teaching approach' },
+  { id: 'media', label: 'Photos' },
+  { id: 'source', label: 'Source' },
 ]
-
-const SECTION_IDS = COACHING_EDITOR_SECTIONS.map((s) => s.id)
+const SECTION_IDS = SECTIONS.map((section) => section.id)
 
 export function AdminCoachingEditor({ initialProvider }: { initialProvider?: AdminCoachingProvider }) {
-  const {
-    formData,
-    isEditing,
-    errors,
-    saveStatus,
-    saveMessage,
-    updateField,
-    toggleArrayItem,
-    addHighlight,
-    removeHighlight,
-    addProgram,
-    removeProgram,
-    addFacultyNote,
-    removeFacultyNote,
-    addGalleryImage,
-    removeGalleryImage,
-    handleSave,
-  } = useCoachingEditor(initialProvider)
+  const editor = useCoachingEditor(initialProvider)
+  const { formData, isEditing, errors, saveStatus, saveMessage } = editor
+  const backHref = isEditing ? `/admin/tutors-coaching/coaching/${formData.id}` : '/admin/tutors-coaching?tab=coaching'
+  const { dirty, markSaved, cancel } = useEditorGuard(formData, backHref)
+  const { activeSectionId, scrollToSection } = useAdminScrollSpy({ sectionIds: SECTION_IDS, offset: 120 })
 
-  const { activeSectionId, scrollToSection } = useAdminScrollSpy({
-    sectionIds: SECTION_IDS,
-    offset: 120,
-  })
+  const actions = {
+    onCancel: cancel,
+    onSave: () => editor.handleSave(markSaved),
+    saveStatus,
+    saveLabel: isEditing ? 'Save changes' : 'Create provider',
+  }
 
   return (
-    <div className="space-y-6 pb-16 lg:pb-0">
-      <CoachingEditorHeader
-        isEditing={isEditing}
-        providerName={formData.name}
-        providerId={formData.id}
-        saveStatus={saveStatus}
-        onSave={handleSave}
+    <div className="space-y-6 pb-20 lg:pb-0">
+      <AdminPageHeader
+        back={isEditing ? { href: backHref, label: initialProvider?.name ?? 'Provider' } : { href: backHref, label: 'Tutors & coaching' }}
+        title={isEditing ? `Edit ${initialProvider?.name ?? 'provider'}` : 'Add coaching provider'}
+        meta={dirty ? <span className="text-[13px] text-muted-foreground">Unsaved changes</span> : undefined}
+        actions={
+          <div className="hidden items-center gap-2 lg:flex">
+            <EditorActions {...actions} />
+          </div>
+        }
       />
 
-      {saveMessage && (
-        <div
-          className={`p-4 rounded-xl border flex items-center gap-3 text-xs ${
-            saveStatus === 'error'
-              ? 'bg-destructive/10 text-destructive border-destructive/20'
-              : 'bg-primary/10 text-primary border-primary/20'
-          }`}
-        >
-          {saveStatus === 'error' ? (
-            <AlertCircle className="w-4 h-4 shrink-0" />
-          ) : (
-            <CheckCircle2 className="w-4 h-4 shrink-0" />
-          )}
-          <span>{saveMessage}</span>
-        </div>
-      )}
+      <SaveNotice status={saveStatus} message={saveMessage} />
 
       <AdminEditorLayout
-        navigation={
-          <AdminEditorSectionNav
-            sections={COACHING_EDITOR_SECTIONS}
-            activeSectionId={activeSectionId}
-            onSectionChange={scrollToSection}
-          />
-        }
-        mobileActions={
-          <CoachingEditorMobileActions
-            saveStatus={saveStatus}
-            onSave={handleSave}
-            isEditing={isEditing}
-          />
-        }
+        navigation={<AdminEditorSectionNav sections={SECTIONS} activeSectionId={activeSectionId} onSectionChange={scrollToSection} />}
+        mobileActions={<MobileSaveBar dirty={dirty} {...actions} />}
       >
-          <CoachingIdentitySection
-            formData={formData}
-            errors={errors}
-            updateField={updateField}
-          />
-
-          <CoachingOverviewSection
-            formData={formData}
-            errors={errors}
-            updateField={updateField}
-            addHighlight={addHighlight}
-            removeHighlight={removeHighlight}
-          />
-
-          <CoachingProgramsSection
-            formData={formData}
-            toggleArrayItem={toggleArrayItem}
-            addProgram={addProgram}
-            removeProgram={removeProgram}
-          />
-
-          <CoachingLocationModesSection
-            formData={formData}
-            errors={errors}
-            toggleArrayItem={toggleArrayItem}
-          />
-
-          <CoachingFacultySection
-            formData={formData}
-            addFacultyNote={addFacultyNote}
-            removeFacultyNote={removeFacultyNote}
-          />
-
-          <CoachingMediaSection
-            formData={formData}
-            addGalleryImage={addGalleryImage}
-            removeGalleryImage={removeGalleryImage}
-          />
-
-          <CoachingSourceSection />
+        <CoachingIdentitySection formData={formData} errors={errors} updateField={editor.updateField} />
+        <CoachingOverviewSection formData={formData} errors={errors} updateField={editor.updateField} addHighlight={editor.addHighlight} removeHighlight={editor.removeHighlight} />
+        <CoachingProgramsSection formData={formData} toggleArrayItem={editor.toggleArrayItem} addProgram={editor.addProgram} removeProgram={editor.removeProgram} />
+        <CoachingLocationModesSection formData={formData} errors={errors} toggleArrayItem={editor.toggleArrayItem} />
+        <CoachingFacultySection formData={formData} addFacultyNote={editor.addFacultyNote} removeFacultyNote={editor.removeFacultyNote} />
+        <CoachingMediaSection formData={formData} addGalleryImage={editor.addGalleryImage} removeGalleryImage={editor.removeGalleryImage} />
+        <CoachingSourceSection />
       </AdminEditorLayout>
     </div>
   )

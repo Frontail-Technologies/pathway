@@ -10,10 +10,10 @@ type Props = {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { providerId } = await params
   const provider = getAdminCoachingProviderById(providerId)
-  if (!provider) return { title: 'Provider Not Found | Pathway Admin' }
+  if (!provider) return { title: 'Provider not found | Pathway Admin' }
 
   return {
-    title: `${provider.name} | Coaching Details | Pathway Admin`,
+    title: `${provider.name} | Coaching | Pathway Admin`,
     description: `Admin profile and program tracks for ${provider.name}.`,
   }
 }

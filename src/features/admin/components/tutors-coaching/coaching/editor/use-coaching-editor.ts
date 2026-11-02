@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import type {
   CoachingProviderType,
   LearningMode,
@@ -34,7 +33,6 @@ export type CoachingFormData = {
 }
 
 export function useCoachingEditor(initialProvider?: AdminCoachingProvider) {
-  const router = useRouter()
   const isEditing = !!initialProvider
 
   const [formData, setFormData] = useState<CoachingFormData>({
@@ -143,28 +141,29 @@ export function useCoachingEditor(initialProvider?: AdminCoachingProvider) {
 
   const validate = (): boolean => {
     const errs: Record<string, string> = {}
-    if (!formData.name.trim()) errs.name = 'Provider name is required'
-    if (!formData.location.trim()) errs.location = 'City / Location is required'
-    if (!formData.programLabel.trim()) errs.programLabel = 'Program tagline or label is required'
-    if (formData.exams.length === 0) errs.exams = 'At least one target exam is required'
-    if (formData.subjects.length === 0) errs.subjects = 'At least one subject is required'
-    if (formData.modes.length === 0) errs.modes = 'At least one delivery mode is required'
+    if (!formData.name.trim()) errs.name = 'Enter the provider’s name'
+    if (!formData.location.trim()) errs.location = 'Enter a city, or “Online”'
+    if (!formData.programLabel.trim()) errs.programLabel = 'Enter a tagline'
+    if (formData.exams.length === 0) errs.exams = 'Choose at least one exam'
+    if (formData.subjects.length === 0) errs.subjects = 'Choose at least one subject'
+    if (formData.modes.length === 0) errs.modes = 'Choose at least one mode'
 
     setErrors(errs)
     return Object.keys(errs).length === 0
   }
 
-  const handleSave = () => {
+  const handleSave = (onSaved?: () => void) => {
     if (!validate()) {
       setSaveStatus('error')
-      setSaveMessage('Please correct the validation errors before saving.')
+      setSaveMessage('Some required fields are missing. Fix the highlighted fields and save again.')
       return
     }
 
     setSaveStatus('saving')
     setTimeout(() => {
       setSaveStatus('saved')
-      setSaveMessage('Provider validated locally. Saving coaching providers requires the Admin API.')
+      onSaved?.()
+      setSaveMessage('Everything checks out. Saving isn’t connected yet, so these changes won’t be stored.')
     }, 600)
   }
 
@@ -185,6 +184,5 @@ export function useCoachingEditor(initialProvider?: AdminCoachingProvider) {
     addGalleryImage,
     removeGalleryImage,
     handleSave,
-    router,
   }
 }

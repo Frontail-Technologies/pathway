@@ -1,14 +1,12 @@
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
-import { COACHING_PROVIDER_TYPES } from '../../../shared/tutor-coaching-constants'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import type { CoachingProviderType } from '@/features/coaching/data/coaching'
+import { CheckboxField, EditorSection, Field } from '../../../shared/editor-kit'
+import { COACHING_PROVIDER_TYPES, sentenceCase } from '../../../shared/tutor-coaching-constants'
 import type { CoachingFormData } from '../use-coaching-editor'
+
+const slugify = (value: string) => value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
+const TYPE_ITEMS = COACHING_PROVIDER_TYPES.map((value) => ({ value, label: sentenceCase(value) }))
 
 export function CoachingIdentitySection({
   formData,
@@ -20,114 +18,54 @@ export function CoachingIdentitySection({
   updateField: <K extends keyof CoachingFormData>(field: K, value: CoachingFormData[K]) => void
 }) {
   return (
-    <div id="section-identity" className="bg-card border border-border rounded-xl p-5 shadow-xs space-y-4">
-      <h2 className="text-sm font-bold text-foreground">Identity & Provider Profile</h2>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-        <div className="space-y-1.5 sm:col-span-2">
-          <Label htmlFor="coaching-name" className="text-xs font-semibold">
-            Provider / Institute Name <span className="text-destructive">*</span>
-          </Label>
+    <EditorSection id="identity" title="Basics">
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+        <Field label="Name" htmlFor="coaching-name" required error={errors.name} className="sm:col-span-2">
           <Input
             id="coaching-name"
             value={formData.name}
-            onChange={(e) => {
-              updateField('name', e.target.value)
-              if (!formData.slug) {
-                updateField('slug', e.target.value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''))
-              }
+            onChange={(event) => {
+              updateField('name', event.target.value)
+              if (!formData.slug) updateField('slug', slugify(event.target.value))
             }}
             placeholder="e.g. Apex JEE Academy"
-            className="text-xs h-9"
+            aria-invalid={!!errors.name}
+            className="h-9 text-sm"
           />
-          {errors.name && <p className="text-[11px] text-destructive">{errors.name}</p>}
-        </div>
+        </Field>
 
-        <div className="space-y-1.5">
-          <Label htmlFor="coaching-slug" className="text-xs font-semibold">
-            URL Slug <span className="text-destructive">*</span>
-          </Label>
-          <Input
-            id="coaching-slug"
-            value={formData.slug}
-            onChange={(e) => updateField('slug', e.target.value)}
-            placeholder="e.g. apex-jee-academy-kota"
-            className="text-xs h-9 font-mono"
-          />
-        </div>
+        <Field label="URL" htmlFor="coaching-slug" hint={`Public address: /coaching/${formData.slug || 'name'}`}>
+          <Input id="coaching-slug" value={formData.slug} onChange={(event) => updateField('slug', event.target.value)} placeholder="e.g. apex-jee-academy-kota" className="h-9 font-mono text-sm" />
+        </Field>
 
-        <div className="space-y-1.5">
-          <Label className="text-xs font-semibold">
-            Provider Type <span className="text-destructive">*</span>
-          </Label>
-          <Select
-            value={formData.providerType}
-            onValueChange={(val) => updateField('providerType', (val || 'Coaching Institute') as any)}
-          >
-            <SelectTrigger className="h-9 text-xs bg-card">
-              <SelectValue placeholder="Select provider type">
-                {formData.providerType || 'Select provider type'}
-              </SelectValue>
+        <Field label="Type" required>
+          <Select value={formData.providerType} onValueChange={(value) => updateField('providerType', (value || 'Coaching Institute') as CoachingProviderType)} items={TYPE_ITEMS}>
+            <SelectTrigger aria-label="Type" className="h-9 w-full bg-card text-sm">
+              <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              {COACHING_PROVIDER_TYPES.map((type: string) => (
-                <SelectItem key={type} value={type}>
-                  {type}
+              {TYPE_ITEMS.map((item) => (
+                <SelectItem key={item.value} value={item.value}>
+                  {item.label}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
-        </div>
+        </Field>
 
-        <div className="space-y-1.5">
-          <Label htmlFor="coaching-location" className="text-xs font-semibold">
-            City / Location <span className="text-destructive">*</span>
-          </Label>
-          <Input
-            id="coaching-location"
-            value={formData.location}
-            onChange={(e) => updateField('location', e.target.value)}
-            placeholder="e.g. Kota or Online"
-            className="text-xs h-9"
-          />
-          {errors.location && <p className="text-[11px] text-destructive">{errors.location}</p>}
-        </div>
+        <Field label="City" htmlFor="coaching-location" required error={errors.location} hint="Use “Online” for online-only providers.">
+          <Input id="coaching-location" value={formData.location} onChange={(event) => updateField('location', event.target.value)} placeholder="e.g. Kota" aria-invalid={!!errors.location} className="h-9 text-sm" />
+        </Field>
 
-        <div className="space-y-1.5">
-          <Label htmlFor="coaching-state" className="text-xs font-semibold">
-            State (Optional for physical institutes)
-          </Label>
-          <Input
-            id="coaching-state"
-            value={formData.state}
-            onChange={(e) => updateField('state', e.target.value)}
-            placeholder="e.g. Rajasthan"
-            className="text-xs h-9"
-          />
-        </div>
-
-        <div className="flex items-center gap-6 sm:col-span-2 pt-1 text-xs">
-          <label className="flex items-center gap-2 cursor-pointer select-none">
-            <input
-              type="checkbox"
-              checked={formData.hasDetailPage}
-              onChange={(e) => updateField('hasDetailPage', e.target.checked)}
-              className="rounded border-border text-primary focus:ring-ring"
-            />
-            <span className="font-medium text-foreground">Has Dedicated Public Detail Page</span>
-          </label>
-
-          <label className="flex items-center gap-2 cursor-pointer select-none">
-            <input
-              type="checkbox"
-              checked={formData.featured}
-              onChange={(e) => updateField('featured', e.target.checked)}
-              className="rounded border-border text-primary focus:ring-ring"
-            />
-            <span className="font-medium text-foreground">Featured Provider</span>
-          </label>
-        </div>
+        <Field label="State" htmlFor="coaching-state" hint="Leave empty for online-only providers.">
+          <Input id="coaching-state" value={formData.state} onChange={(event) => updateField('state', event.target.value)} placeholder="e.g. Rajasthan" className="h-9 text-sm" />
+        </Field>
       </div>
-    </div>
+
+      <div className="flex flex-col gap-3 border-t border-border pt-5 sm:flex-row sm:gap-8">
+        <CheckboxField label="Has a public profile page" hint="Otherwise the provider appears in listings only." checked={formData.hasDetailPage} onChange={(value) => updateField('hasDetailPage', value)} />
+        <CheckboxField label="Featured" hint="Shown first in coaching listings." checked={formData.featured} onChange={(value) => updateField('featured', value)} />
+      </div>
+    </EditorSection>
   )
 }

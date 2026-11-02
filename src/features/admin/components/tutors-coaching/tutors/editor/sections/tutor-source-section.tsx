@@ -1,41 +1,11 @@
-import { Shield, Lock } from 'lucide-react'
+import { EditorSection } from '../../../shared/editor-kit'
 
 export function TutorSourceSection() {
   return (
-    <div id="section-source" className="bg-card border border-border rounded-xl p-5 shadow-xs space-y-4 scroll-mt-24">
-      <div className="flex items-center justify-between">
-        <h2 className="text-sm font-bold text-foreground">Source Provenance & Policy</h2>
-        <span className="flex items-center gap-1 text-[11px] text-muted-foreground font-medium bg-muted/60 px-2 py-0.5 rounded">
-          <Lock className="w-3 h-3" />
-          Read Only
-        </span>
-      </div>
-
-      <div className="space-y-3 text-xs">
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <div className="bg-muted/30 p-3 rounded-lg border border-border/50 space-y-1">
-            <span className="text-muted-foreground block text-[11px]">Provenance Source</span>
-            <span className="font-semibold text-foreground">Manual Editorial Entry</span>
-          </div>
-
-          <div className="bg-muted/30 p-3 rounded-lg border border-border/50 space-y-1">
-            <span className="text-muted-foreground block text-[11px]">Scraper Policy</span>
-            <span className="font-semibold text-foreground">Personal Data Protected</span>
-          </div>
-
-          <div className="bg-muted/30 p-3 rounded-lg border border-border/50 space-y-1">
-            <span className="text-muted-foreground block text-[11px]">Sync Mode</span>
-            <span className="font-semibold text-foreground">Manual Direct</span>
-          </div>
-        </div>
-
-        <div className="p-3 bg-muted/20 border border-border/50 rounded-lg text-muted-foreground flex items-start gap-2">
-          <Shield className="w-4 h-4 text-primary shrink-0 mt-0.5" />
-          <span>
-            Individual educator records are authored directly or imported from verified agreements. Automated web scrapers are prohibited from directly modifying educator profiles.
-          </span>
-        </div>
-      </div>
-    </div>
+    <EditorSection id="source" title="Source">
+      <p className="text-sm text-muted-foreground">
+        Tutor profiles contain personal data, so they're entered by hand or from a signed agreement with the tutor. Automatic imports never change them.
+      </p>
+    </EditorSection>
   )
 }
