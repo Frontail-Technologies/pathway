@@ -1,10 +1,11 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import { ChevronRight, ExternalLink, GraduationCap } from 'lucide-react'
+import { usePathname, useRouter } from 'next/navigation'
+import { ChevronRight, ExternalLink, GraduationCap, LogOut } from 'lucide-react'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import { useAdminSession } from '@/features/admin/auth/admin-session'
 import { findAdminNavItem } from '@/features/admin/data/admin-stats'
 import { AdminMobileNav } from './admin-mobile-nav'
 import { AdminQuickSearch } from './admin-quick-search'
@@ -38,6 +39,9 @@ function Breadcrumb() {
 }
 
 export function AdminTopbar() {
+  const router = useRouter()
+  const { session, signOut } = useAdminSession()
+  const initials = (session?.name ?? 'Admin').split(' ').map((part) => part[0]).join('').slice(0, 2).toUpperCase()
   return (
     <header className="sticky top-0 z-30 flex h-14 items-center gap-3 border-b border-border bg-card/95 px-4 backdrop-blur supports-[backdrop-filter]:bg-card/80 sm:px-6">
       <AdminMobileNav />
@@ -52,13 +56,14 @@ export function AdminTopbar() {
           render={<button type="button" className="flex items-center gap-2 rounded-full outline-none focus-visible:ring-2 focus-visible:ring-ring" aria-label="Account menu" />}
         >
           <Avatar size="sm">
-            <AvatarFallback className="bg-muted text-xs font-semibold text-foreground">DA</AvatarFallback>
+            <AvatarFallback className="bg-muted text-xs font-semibold text-foreground">{initials}</AvatarFallback>
           </Avatar>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-60">
           <DropdownMenuLabel className="font-normal">
-            <span className="block text-sm font-medium text-foreground">Demo administrator</span>
-            <span className="mt-0.5 block text-xs text-muted-foreground">Sample data · not connected to a server</span>
+            <span className="block text-sm font-medium text-foreground">{session?.name ?? 'Administrator'}</span>
+            <span className="mt-0.5 block truncate text-xs text-muted-foreground">{session?.email ?? ''}</span>
+            <span className="mt-1 block text-xs text-muted-foreground">Demo session · sample data</span>
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem render={<Link href="/" target="_blank" />}>
@@ -68,6 +73,16 @@ export function AdminTopbar() {
           <DropdownMenuItem render={<Link href="/student" />}>
             <GraduationCap className="size-4" aria-hidden="true" />
             Student space
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem
+            onClick={() => {
+              signOut()
+              router.replace('/admin/login')
+            }}
+          >
+            <LogOut className="size-4" aria-hidden="true" />
+            Sign out
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

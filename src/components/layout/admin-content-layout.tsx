@@ -1,9 +1,13 @@
 import { Suspense } from 'react'
+import { AdminAuthGuard } from '@/features/admin/auth/admin-auth-guard'
 import { AdminTopbar } from './admin-topbar'
 import { AdminSidebar } from './admin-sidebar'
 
 export function AdminContentLayout({ children }: { children: React.ReactNode }) {
   return (
+    // Guard needs useSearchParams, so it sits inside Suspense.
+    <Suspense>
+    <AdminAuthGuard>
     <div data-theme="admin" className="flex min-h-dvh bg-admin-canvas text-foreground font-body">
       <div className="hidden lg:block w-60 shrink-0 bg-admin-sidebar border-r border-admin-sidebar-border sticky top-0 h-dvh overflow-hidden z-20">
         <AdminSidebar />
@@ -19,5 +23,7 @@ export function AdminContentLayout({ children }: { children: React.ReactNode }) 
         </main>
       </div>
     </div>
+    </AdminAuthGuard>
+    </Suspense>
   )
 }
