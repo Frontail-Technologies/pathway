@@ -312,7 +312,7 @@ export function useScholarshipEditor(
       provenance: {
         sourceType: 'manual',
         syncStatus: 'manual',
-        sourceName: 'Admin Manual Entry',
+        sourceName: 'Added in admin',
       },
     }
     setDocuments((prev) => [...prev, newDoc])

@@ -96,7 +96,6 @@ export function AdminProgramsView() {
         header: ({ column }) => <SortHeader label="Stream" sorted={column.getIsSorted()} onToggle={() => column.toggleSorting(column.getIsSorted() === 'asc')} />,
         cell: ({ row }) => <Tag>{row.original.stream}</Tag>,
       },
-      { accessorKey: 'duration', header: 'Duration', cell: ({ row }) => <span className="whitespace-nowrap text-muted-foreground">{row.original.duration}</span> },
       {
         accessorKey: 'collegesOfferingCount',
         header: ({ column }) => <SortHeader label="Institutions" sorted={column.getIsSorted()} onToggle={() => column.toggleSorting(column.getIsSorted() === 'asc')} />,

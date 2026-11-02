@@ -76,7 +76,7 @@ export function AdminScholarshipsView({ initialScholarships }: { initialScholars
         accessorKey: 'name',
         header: ({ column }) => <SortHeader label="Scholarship" sorted={column.getIsSorted()} onToggle={() => column.toggleSorting(column.getIsSorted() === 'asc')} />,
         cell: ({ row }) => (
-          <div className="max-w-[320px] min-w-[220px]">
+          <div className="max-w-[280px] min-w-[200px]">
             <Link href={`/admin/scholarships/${row.original.id}`} onClick={stopRowClick} className="font-medium text-foreground hover:text-primary hover:underline">
               {row.original.name}
             </Link>
@@ -88,26 +88,10 @@ export function AdminScholarshipsView({ initialScholarships }: { initialScholars
       },
       { accessorKey: 'scholarshipType', header: 'Type', cell: ({ row }) => <Tag>{row.original.scholarshipType}</Tag> },
       {
-        accessorKey: 'educationLevels',
-        header: 'Level',
-        enableSorting: false,
-        cell: ({ row }) => {
-          const levels = row.original.educationLevels
-          if (levels.length === 0) return <span className="text-[13px] text-muted-foreground">All levels</span>
-          return (
-            <div className="flex max-w-[180px] flex-wrap gap-1">
-              {levels.map((level) => (
-                <Tag key={level}>{level}</Tag>
-              ))}
-            </div>
-          )
-        },
-      },
-      {
         accessorKey: 'benefitValue',
         header: ({ column }) => <SortHeader label="Benefit" sorted={column.getIsSorted()} onToggle={() => column.toggleSorting(column.getIsSorted() === 'asc')} />,
         cell: ({ row }) => (
-          <div className="min-w-[120px]">
+          <div className="min-w-[100px]">
             <p className="font-medium text-foreground">{row.original.benefitLabel || '—'}</p>
             <p className="text-[13px] text-muted-foreground">{row.original.benefitType}</p>
           </div>
@@ -117,7 +101,7 @@ export function AdminScholarshipsView({ initialScholarships }: { initialScholars
         accessorKey: 'deadline',
         header: ({ column }) => <SortHeader label="Deadline" sorted={column.getIsSorted()} onToggle={() => column.toggleSorting(column.getIsSorted() === 'asc')} />,
         cell: ({ row }) => (
-          <div className="min-w-[130px]">
+          <div className="min-w-[100px]">
             <p className="text-foreground">{row.original.deadlineDisplay || '—'}</p>
             <ScholarshipApplicationStatusBadge status={row.original.applicationStatus} />
           </div>

@@ -3,7 +3,7 @@ import { getAdminSeoRecords } from '@/features/admin/data/admin-seo'
 import { AdminSeoView } from '@/features/admin/components/seo/directory/admin-seo-view'
 
 export const metadata: Metadata = {
-  title: 'SEO Metadata | Admin',
+  title: 'SEO | Pathway Admin',
   description: 'Manage search-engine titles, descriptions, canonical routing, and Open Graph metadata overrides.',
 }
 

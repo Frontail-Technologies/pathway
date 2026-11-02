@@ -193,7 +193,7 @@ export function ScholarshipIdentitySection({
           </div>
         </div>
 
-        <div className="space-y-2 pt-2 border-t border-border/60">
+        <div id="provider" className="space-y-2 pt-2 border-t border-border/60 scroll-mt-20">
           <label className="text-sm font-medium text-foreground block">
             Study levels
           </label>

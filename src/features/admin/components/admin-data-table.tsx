@@ -86,7 +86,7 @@ export function AdminDataTable<TData, TValue>({
 
   return (
     <div className={cn("space-y-4", className)}>
-      <div className="hidden overflow-hidden rounded-lg border border-border bg-card md:block">
+      <div className="hidden overflow-hidden rounded-lg border border-border bg-card md:block [&_[data-slot=table-container]]:rounded-none [&_[data-slot=table-container]]:shadow-none">
         <Table className="text-sm">
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -125,7 +125,7 @@ export function AdminDataTable<TData, TValue>({
                   aria-label={getRowAriaLabel?.(row.original)}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id} className="py-3 align-middle first:pl-4 last:pr-4">
+                    <TableCell key={cell.id} className="py-3 align-middle whitespace-normal first:pl-4 last:pr-4">
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext(),

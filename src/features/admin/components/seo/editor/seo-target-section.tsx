@@ -1,6 +1,5 @@
 'use client'
 
-import { Target, ShieldAlert, Globe } from 'lucide-react'
 import {
   Select,
   SelectContent,
@@ -14,6 +13,7 @@ import {
   seoTargetTypeMap,
   SeoTargetOption,
 } from '@/features/seo/types/seo-metadata'
+import { seoTargetTypeLabels, seoTargetTypeOptions } from '../shared/seo-meta'
 
 interface SeoTargetSectionProps {
   targetType: SeoTargetType | ''
@@ -40,14 +40,15 @@ export function SeoTargetSection({
 
   return (
     <section id="target" className="scroll-mt-20 space-y-4 rounded-lg border border-border bg-card p-5 sm:p-6">
-      <h2 className="text-[15px] font-semibold text-foreground">Target Page / Canonical Entity</h2>
+      <h2 className="text-[15px] font-semibold text-foreground">Page</h2>
       <div className="space-y-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="space-y-1.5">
             <Label className="text-sm font-medium text-foreground">
-              Target Type <span className="text-destructive">*</span>
+              Type <span className="text-destructive">*</span>
             </Label>
             <Select
+              items={seoTargetTypeOptions}
               value={targetType || undefined}
               onValueChange={(val) => {
                 if (val) onTargetTypeChange(val as SeoTargetType)
@@ -55,12 +56,12 @@ export function SeoTargetSection({
               disabled={isEditing}
             >
               <SelectTrigger className="h-9 text-sm bg-background">
-                <SelectValue placeholder="Select target type" />
+                <SelectValue placeholder="Choose a type" />
               </SelectTrigger>
               <SelectContent>
                 {Object.entries(seoTargetTypeMap).map(([key, meta]) => (
                   <SelectItem key={key} value={key} className="text-sm">
-                    {meta.label}
+                    {seoTargetTypeLabels[key as SeoTargetType] ?? meta.label}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -73,16 +74,17 @@ export function SeoTargetSection({
               </p>
             ) : (
               <p className="text-[13px] text-muted-foreground">
-                Choose the public page category or entity type to target.
+                What kind of page this override is for.
               </p>
             )}
           </div>
 
           <div className="space-y-1.5">
             <Label className="text-sm font-medium text-foreground">
-              Target Page / Entity <span className="text-destructive">*</span>
+              Page <span className="text-destructive">*</span>
             </Label>
             <Select
+              items={targetOptions.map((opt) => ({ value: opt.id, label: opt.label }))}
               value={targetId || undefined}
               onValueChange={(val) => {
                 if (val) onTargetIdChange(val)
@@ -90,7 +92,7 @@ export function SeoTargetSection({
               disabled={isEditing || !targetType}
             >
               <SelectTrigger className="h-9 text-sm bg-background">
-                <SelectValue placeholder={!targetType ? 'Select target type first' : 'Select specific target'} />
+                <SelectValue placeholder={!targetType ? 'Choose a type first' : 'Choose a page'} />
               </SelectTrigger>
               <SelectContent className="max-h-64">
                 {targetOptions.map((opt) => (
@@ -111,31 +113,20 @@ export function SeoTargetSection({
               <p className="text-[13px] text-destructive">{error}</p>
             ) : targetId ? (
               <p className="text-[13px] text-muted-foreground flex items-center gap-1">
-                <Globe className="w-3 h-3" />
-                <span>Resolved route: </span>
+                <span>Path: </span>
                 <code className="font-mono text-xs bg-muted/60 px-1 py-0.5 rounded">
                   {selectedOption?.routePath || targetId}
                 </code>
               </p>
             ) : (
               <p className="text-[13px] text-muted-foreground">
-                {!targetType ? 'Disabled until target type is selected.' : 'Select the specific route or entity.'}
+                {!targetType ? 'Choose a type first.' : 'The public page this applies to.'}
               </p>
             )}
           </div>
         </div>
 
-        <div className="p-3 rounded-lg bg-muted/20 border border-border/60 text-[13px] text-muted-foreground flex items-start gap-2">
-          <ShieldAlert className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
-          <p className="leading-relaxed">
-            <strong>Public Surface Only:</strong> Private authenticated routes (
-              <code className="font-mono text-xs">/admin/*</code>,{' '}
-              <code className="font-mono text-xs">/student/*</code>,{' '}
-              <code className="font-mono text-xs">/login</code>,{' '}
-              <code className="font-mono text-xs">/register</code>
-            ) are strictly excluded from SEO configuration to prevent accidental exposure of private areas.
-          </p>
-        </div>
+        <p className="text-[13px] text-muted-foreground">Only public pages can have SEO settings. Admin, student and sign-in pages are excluded.</p>
       </div>
     </section>
   )

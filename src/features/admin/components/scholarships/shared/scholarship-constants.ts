@@ -79,8 +79,8 @@ export const scholarshipDocumentTypes: { value: ScholarshipDocumentType; label: 
 ]
 
 export const scholarshipEditorNavSections = [
-  { id: 'identity', label: 'Basics' },
-  { id: 'provider', label: 'Provider and scope' },
+  { id: 'identity', label: 'Basics and provider' },
+  { id: 'provider', label: 'Level and scope' },
   { id: 'eligibility', label: 'Eligibility' },
   { id: 'benefits', label: 'Benefits' },
   { id: 'dates', label: 'Dates' },

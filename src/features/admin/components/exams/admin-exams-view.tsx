@@ -84,7 +84,6 @@ export function AdminExamsView() {
       },
       { accessorKey: 'studyArea', header: 'Study area', cell: ({ row }) => <Tag>{row.original.studyArea}</Tag> },
       { accessorKey: 'level', header: 'Level', cell: ({ row }) => <span className="whitespace-nowrap">{row.original.level}</span> },
-      { accessorKey: 'scope', header: 'Scope', cell: ({ row }) => <span className="whitespace-nowrap">{row.original.scope}</span> },
       { accessorKey: 'conductingBody', header: 'Conducting body', cell: ({ row }) => <span className="text-muted-foreground">{row.original.conductingBody ?? 'Not recorded'}</span> },
       {
         accessorKey: 'hasDetailPage',

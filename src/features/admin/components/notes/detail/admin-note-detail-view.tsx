@@ -104,7 +104,6 @@ export function AdminNoteDetailView({ note }: { note: AdminNote }) {
             {preview?.publicUrl ? (
               <div className="aspect-video w-full max-w-lg overflow-hidden rounded-lg border border-border bg-muted">
                 {preview.mimeType?.startsWith('image/') ? (
-                  // eslint-disable-next-line @next/next/no-img-element
                   <img src={preview.publicUrl} alt="Sample preview" className="h-full w-full object-cover" />
                 ) : (
                   <iframe src={`${preview.publicUrl}#toolbar=0`} title="Sample preview" className="h-full w-full border-0" />

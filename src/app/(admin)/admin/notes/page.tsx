@@ -3,7 +3,7 @@ import { getAdminNotes } from '@/features/admin/data/admin-notes'
 import { AdminNotesView } from '@/features/admin/components/notes/directory/admin-notes-view'
 
 export const metadata: Metadata = {
-  title: 'Notes & Study Material | Admin Console',
+  title: 'Notes | Pathway Admin',
   description: 'Manage educational notes, formula sheets, revision summaries, downloadable PDF assets, and commercial pricing.',
 }
 

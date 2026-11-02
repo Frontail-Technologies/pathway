@@ -1,7 +1,7 @@
 'use client'
 
 import * as React from 'react'
-import { Type, Info, KeyRound, Plus, X, Tag } from 'lucide-react'
+import { Plus, X } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
@@ -53,75 +53,75 @@ export function SeoSearchMetadataSection({
 
   return (
     <section id="metadata" className="scroll-mt-20 space-y-4 rounded-lg border border-border bg-card p-5 sm:p-6">
-      <h2 className="text-[15px] font-semibold text-foreground">Search Metadata & Editorial Planning</h2>
+      <h2 className="text-[15px] font-semibold text-foreground">Search text</h2>
       <div className="space-y-4">
         <div className="space-y-1.5">
           <div className="flex items-center justify-between">
-            <Label className="text-sm font-medium text-foreground">Meta Title</Label>
+            <Label className="text-sm font-medium text-foreground">Title</Label>
             <span className="text-[13px] text-muted-foreground font-mono">
               {title.length} characters
             </span>
           </div>
           <Input
-            placeholder={baselineTitle || 'Enter custom meta title...'}
+            placeholder={baselineTitle || 'Search title'}
             value={title}
             onChange={(e) => onTitleChange(e.target.value)}
             className="h-9 text-sm bg-background"
           />
           <div className="flex items-center justify-between text-[13px] text-muted-foreground">
-            <span>Keep titles concise and descriptive (typically 50–60 characters).</span>
+            <span>Aim for 50–60 characters. Leave empty to use the default.</span>
             {!isTitleOverridden && (
-              <span className="text-muted-foreground">Using generated default</span>
+              <span className="text-muted-foreground">Using default</span>
             )}
           </div>
         </div>
 
         <div className="space-y-1.5">
           <div className="flex items-center justify-between">
-            <Label className="text-sm font-medium text-foreground">Meta Description</Label>
+            <Label className="text-sm font-medium text-foreground">Description</Label>
             <span className="text-[13px] text-muted-foreground font-mono">
               {description.length} characters
             </span>
           </div>
           <Textarea
-            placeholder={baselineDescription || 'Enter custom meta description...'}
+            placeholder={baselineDescription || 'Search description'}
             value={description}
             onChange={(e) => onDescriptionChange(e.target.value)}
             rows={3}
             className="text-sm bg-background resize-none leading-relaxed"
           />
           <div className="flex items-center justify-between text-[13px] text-muted-foreground">
-            <span>Summarize page content accurately (typically 140–160 characters).</span>
+            <span>Aim for 140–160 characters. Leave empty to use the default.</span>
             {!isDescOverridden && (
-              <span className="text-muted-foreground">Using generated default</span>
+              <span className="text-muted-foreground">Using default</span>
             )}
           </div>
         </div>
 
         <div className="pt-2 border-t border-border/60 space-y-4">
           <div className="flex items-center gap-1.5 text-sm font-medium text-foreground">
-            <KeyRound className="w-3.5 h-3.5 text-blue-600" />
-            <span>Editorial Focus Keywords (Planning Only)</span>
+            <span>Keywords</span>
+            <span className="text-[13px] font-normal text-muted-foreground">For planning only; not added to the page.</span>
           </div>
 
           <div className="space-y-1.5">
-            <Label className="text-sm font-medium text-foreground">Primary Focus Keyword</Label>
+            <Label className="text-sm font-medium text-foreground">Primary keyword</Label>
             <Input
-              placeholder="e.g. btech computer science admissions, iit delhi placements..."
+              placeholder="e.g. iit delhi placements"
               value={primaryKeyword}
               onChange={(e) => onPrimaryKeywordChange(e.target.value)}
               className="h-9 text-sm bg-background"
             />
             <p className="text-[13px] text-muted-foreground">
-              Main search phrase this page is intended to target.
+              The main phrase this page should rank for.
             </p>
           </div>
 
           <div className="space-y-2">
-            <Label className="text-sm font-medium text-foreground">Secondary Keywords</Label>
+            <Label className="text-sm font-medium text-foreground">Other keywords</Label>
             <div className="flex items-center gap-2">
               <Input
-                placeholder="Type keyword and press Enter or comma..."
+                placeholder="Type and press Enter"
                 value={secondaryKeywordInput}
                 onChange={(e) => onSecondaryKeywordInputChange(e.target.value)}
                 onKeyDown={handleKeyDown}
@@ -136,11 +136,11 @@ export function SeoSearchMetadataSection({
                 className="h-9 text-sm shrink-0"
               >
                 <Plus className="w-3.5 h-3.5 mr-1" />
-                Add Keyword
+                Add
               </Button>
             </div>
             <p className="text-[13px] text-muted-foreground">
-              Related search phrases used for editorial planning.
+              Related phrases.
             </p>
 
             {secondaryKeywords.length > 0 && (
@@ -149,14 +149,13 @@ export function SeoSearchMetadataSection({
                   <Badge
                     key={`${kw}-${index}`}
                     variant="secondary"
-                    className="text-[13px] font-medium pl-2.5 pr-1.5 py-1 bg-slate-100 text-slate-800 border-slate-200 flex items-center gap-1"
+                    className="text-[13px] font-medium pl-2.5 pr-1.5 py-1 flex items-center gap-1"
                   >
-                    <Tag className="w-3 h-3 text-muted-foreground" />
-                    <span>{kw}</span>
+                                        <span>{kw}</span>
                     <button
                       type="button"
                       onClick={() => onRemoveSecondaryKeyword(index)}
-                      className="w-4 h-4 rounded-full hover:bg-slate-200 inline-flex items-center justify-center text-muted-foreground hover:text-slate-700 transition-colors"
+                      className="w-4 h-4 rounded-full hover:bg-muted inline-flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
                     >
                       <X className="w-3 h-3" />
                       <span className="sr-only">Remove {kw}</span>
@@ -166,16 +165,6 @@ export function SeoSearchMetadataSection({
               </div>
             )}
           </div>
-        </div>
-
-        <div className="p-3 rounded-lg bg-muted/20 border border-border/60 text-[13px] text-muted-foreground space-y-1">
-          <div className="flex items-center gap-1.5 font-semibold text-foreground">
-            <Info className="w-3.5 h-3.5 text-blue-600" />
-            <span>Admin Planning Metadata</span>
-          </div>
-          <p className="leading-relaxed">
-            Focus keywords are internal planning metadata for content creators and editors. They are not output as obsolete <code className="font-mono text-xs">&lt;meta name=&quot;keywords&quot;&gt;</code> HTML tags and do not claim to directly influence search engine ranking algorithms.
-          </p>
         </div>
       </div>
     </section>
