@@ -11,7 +11,6 @@ import { StudentSectionTabs } from './student-section-tabs'
  
 export function StudentDashboardLayout({ children }: { children: React.ReactNode }) {
   return (
-    // pw-student-shell scopes --pw-header-h to this 56px header (safe area only in app-shell mode).
     <div className="pw-student-shell flex min-h-dvh flex-col bg-background">
       <header className="web-chrome sticky top-0 z-30 bg-primary text-primary-foreground">
         <div className="mx-auto flex h-14 w-full max-w-[1680px] items-center gap-2 px-4 sm:gap-3 sm:px-6">

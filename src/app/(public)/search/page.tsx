@@ -8,7 +8,6 @@ const first = (value: string | string[] | undefined) => (Array.isArray(value) ? 
 
 export async function generateMetadata({ searchParams }: { searchParams: SearchParams }): Promise<Metadata> {
   const q = first((await searchParams).q).trim()
-  // Result pages are thin, query-driven content: keep them out of search engines.
   return { title: q ? `Search: ${q}` : 'Search', robots: { index: false, follow: true } }
 }
 

@@ -11,7 +11,6 @@ type ExamActionBarProps = {
   rankPredictorHref: string | null
 }
 
-/** Exams can't be saved, so the bar leads to the predictors, with counselling as the fallback. */
 export function ExamActionBar({ examName, collegePredictorHref, rankPredictorHref }: ExamActionBarProps) {
   const counselling = (
     <EnquiryDialog

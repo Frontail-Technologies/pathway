@@ -4,7 +4,6 @@ import type { ResolvedSeoMetadata } from '@/features/seo/types/seo-metadata'
 const FALLBACK_TITLE = 'Pathway — Education discovery, made clearer'
 const FALLBACK_DESCRIPTION = 'A trusted education discovery platform for finding the right colleges, courses, exams, and opportunities.'
 
-/** Approximation of a search result. Search engines may rewrite it. */
 export function SeoSearchSnippet({ metadata }: { metadata: ResolvedSeoMetadata }) {
   return (
     <div className="space-y-1 rounded-lg border border-border bg-card p-4">
@@ -17,7 +16,6 @@ export function SeoSearchSnippet({ metadata }: { metadata: ResolvedSeoMetadata }
   )
 }
 
-/** Approximation of a link card on social networks and messaging apps. */
 export function SeoSocialCard({ metadata }: { metadata: ResolvedSeoMetadata }) {
   const title = metadata.ogTitle || metadata.title || FALLBACK_TITLE
   const description = metadata.ogDescription || metadata.description || FALLBACK_DESCRIPTION

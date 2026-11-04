@@ -1,14 +1,5 @@
 import { Briefcase, Calculator, Cpu, FlaskConical, Scale, Stethoscope, type LucideIcon } from 'lucide-react'
 
-/**
- * Streams: Pathway's top-level way in (Shiksha-style "Engineering", "MBA",
- * "Medical" hubs). Kept data-free so client components such as the mobile
- * menu can import it without pulling listings into the bundle.
- *
- * Each source tags subject area differently, so every stream maps explicitly:
- * course.stream, exam.studyArea, college.degree, scholarship.streams, and
- * exam names for coaching / tutors.
- */
 export type StreamSlug = 'engineering' | 'management' | 'medical' | 'law' | 'science' | 'commerce'
 
 export type StreamDefinition = {
@@ -17,15 +8,10 @@ export type StreamDefinition = {
   icon: LucideIcon
   tagline: string
   description: string
-  /** course.stream value */
   courseStream?: string
-  /** exam.studyArea value */
   studyArea?: 'Engineering' | 'Medical' | 'Management' | 'Law'
-  /** college.degree values */
   collegeDegrees: string[]
-  /** scholarship.streams value */
   scholarshipStream?: string
-  /** Exam names used to match coaching providers and tutors. */
   examKeywords: string[]
 }
 

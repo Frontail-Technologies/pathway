@@ -18,9 +18,10 @@ export function useTutorSignOut() {
   const { signOut } = useTutorSpace()
   const router = useRouter()
   return () => {
-    signOut()
-    toast.success('Signed out of the demo tutor account.')
-    router.push('/tutor-dashboard')
+    void signOut().then(() => {
+      toast.success('Signed out.')
+      router.push('/tutor-dashboard')
+    })
   }
 }
 

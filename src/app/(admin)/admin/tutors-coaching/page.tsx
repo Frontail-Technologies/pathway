@@ -1,5 +1,4 @@
 import type { Metadata } from 'next'
-import { getAdminTutors } from '@/features/admin/data/admin-tutors'
 import { getAdminCoachingProviders } from '@/features/admin/data/admin-coaching'
 import { AdminTutorsCoachingView } from '@/features/admin/components/tutors-coaching/landing/admin-tutors-coaching-view'
 
@@ -9,12 +8,10 @@ export const metadata: Metadata = {
 }
 
 export default function AdminTutorsCoachingPage() {
-  const tutors = getAdminTutors()
   const coachingProviders = getAdminCoachingProviders()
 
   return (
     <AdminTutorsCoachingView
-      tutors={tutors}
       coachingProviders={coachingProviders}
     />
   )

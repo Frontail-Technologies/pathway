@@ -200,7 +200,6 @@ export function getCourseDetail(slug: string): CourseDetailData | undefined {
   return courseDetails[slug]
 }
 
-/** Slugs that have a detail page, for generateStaticParams. */
 export function getCourseDetailSlugs(): string[] {
   return Object.keys(courseDetails)
 }

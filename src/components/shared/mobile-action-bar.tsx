@@ -3,13 +3,6 @@
 import type { ReactNode } from 'react'
 import { Bookmark } from 'lucide-react'
 
-/**
- * Sticky bottom action bar for detail pages on phones and tablets (< lg),
- * where the desktop sidebar is hidden. Sits directly above the mobile bottom
- * nav, or above the safe area in app-shell mode (both via --pw-bottom-nav-h).
- *
- * Renders a spacer in normal flow so the last content isn't hidden behind it.
- */
 export function MobileActionBar({ label, children }: { label: string; children: ReactNode }) {
   return (
     <>
@@ -21,7 +14,6 @@ export function MobileActionBar({ label, children }: { label: string; children: 
   )
 }
 
-/** Square save toggle for the action bar. */
 export function MobileActionBarSave({ saved, onToggle, entityLabel }: { saved: boolean; onToggle: () => void; entityLabel: string }) {
   return (
     <button

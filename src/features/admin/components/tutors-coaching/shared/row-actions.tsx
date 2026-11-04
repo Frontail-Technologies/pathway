@@ -6,8 +6,7 @@ import { Button } from '@/components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { stopRowClick } from '../../kit'
 
-/** "…" menu for a list row: view, edit and (when live) the public page. Doesn't trigger the row click. */
-export function RowActions({ name, viewHref, editHref, publicHref }: { name: string; viewHref: string; editHref: string; publicHref?: string }) {
+export function RowActions({ name, viewHref, editHref, publicHref }: { name: string; viewHref: string; editHref?: string; publicHref?: string }) {
   return (
     <div className="flex justify-end" onClick={stopRowClick} onKeyDown={stopRowClick}>
       <DropdownMenu>
@@ -19,10 +18,12 @@ export function RowActions({ name, viewHref, editHref, publicHref }: { name: str
             <Eye className="size-4" aria-hidden="true" />
             View
           </DropdownMenuItem>
-          <DropdownMenuItem render={<Link href={editHref} />}>
-            <Edit className="size-4" aria-hidden="true" />
-            Edit
-          </DropdownMenuItem>
+          {editHref ? (
+            <DropdownMenuItem render={<Link href={editHref} />}>
+              <Edit className="size-4" aria-hidden="true" />
+              Edit
+            </DropdownMenuItem>
+          ) : null}
           {publicHref ? (
             <>
               <DropdownMenuSeparator />

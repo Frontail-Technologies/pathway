@@ -114,7 +114,6 @@ export function useProgramEditor(program?: AdminProgram | null, mode: 'create' |
 
   const [errors, setErrors] = React.useState<Record<string, string>>({})
 
-  // Dirty tracking: compare the current form values with the last saved snapshot.
   const snapshot = JSON.stringify({
     name,
     degree,

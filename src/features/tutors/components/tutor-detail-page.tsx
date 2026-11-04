@@ -9,11 +9,11 @@ import { DetailStickySidebar } from '@/components/shared/detail-sticky-sidebar'
 import { TutorActionBar } from './tutor-action-bar'
 import { HorizontalContentRail } from '@/components/shared/horizontal-content-rail'
 import { Button } from '@/components/ui/button'
-import { getRelatedTutors, teachingSteps, type Tutor, type TutorDetail } from '../data/tutors'
+import { teachingSteps } from '../data/tutors'
+import type { DetailedTutor } from '../api/tutors-api'
 import { TutorPortrait } from './tutor-avatar'
 import { TutorProfileAction, TutorSaveAction } from './tutor-cards'
 
-type DetailedTutor = Tutor & { detail: TutorDetail }
 
 const chip = 'rounded-md bg-secondary px-2 py-0.5 text-xs font-semibold text-primary'
 
@@ -46,7 +46,6 @@ function TutorHeader({ tutor }: { tutor: DetailedTutor }) {
   return (
     <div>
       <div className="relative overflow-hidden rounded-[16px] border bg-[linear-gradient(135deg,#ffffff_45%,var(--brand-blue-light))] p-4 shadow-[0_8px_28px_rgba(30,58,138,0.06)] sm:p-6 lg:p-7">
-        { }
         <span className="pointer-events-none absolute -top-16 -right-10 size-56 rounded-full bg-primary/5" aria-hidden="true" />
         <span className="pointer-events-none absolute -right-4 bottom-6 size-24 rounded-full border border-primary/10" aria-hidden="true" />
 
@@ -116,15 +115,15 @@ function TutorHeader({ tutor }: { tutor: DetailedTutor }) {
 function AboutSection({ tutor }: { tutor: DetailedTutor }) {
   return (
     <Section id="overview" title={`About ${tutor.name.split(' ')[0]}`}>
-      <p className="text-[15px] leading-7 text-foreground">{tutor.detail.longBio}</p>
-      <ul className="mt-4 grid gap-2.5 sm:grid-cols-3">
+      <p className="text-[15px] leading-7 text-foreground">{tutor.detail.longBio || tutor.intro}</p>
+      {tutor.detail.traits.length === 0 ? null : <ul className="mt-4 grid gap-2.5 sm:grid-cols-3">
         {tutor.detail.traits.map((trait) => (
           <li key={trait} className="flex items-center gap-2.5 rounded-[10px] bg-secondary/60 px-3.5 py-3 text-sm font-medium text-foreground">
             <Check className="size-4 shrink-0 text-primary" aria-hidden="true" />
             {trait}
           </li>
         ))}
-      </ul>
+      </ul>}
     </Section>
   )
 }
@@ -174,6 +173,7 @@ function ApproachSection() {
 }
 
 function FitSection({ tutor }: { tutor: DetailedTutor }) {
+  if (tutor.detail.whoHelps.length === 0) return null
   return (
     <Section id="fit" title="Who This Tutor Helps">
       <ul className="flex flex-col gap-3">
@@ -262,7 +262,7 @@ function TutorSidebar({ tutor }: { tutor: DetailedTutor }) {
 }
 
 function RelatedTutorsSection({ tutor }: { tutor: DetailedTutor }) {
-  const related = getRelatedTutors(tutor)
+  const related = tutor.related
   if (related.length === 0) return null
   return (
     <Container className="px-4">
@@ -313,7 +313,7 @@ export function TutorDetailPage({ tutor }: { tutor: DetailedTutor }) {
     { id: 'overview', label: 'Overview' },
     { id: 'subjects', label: 'Subjects' },
     { id: 'approach', label: 'Approach' },
-    { id: 'fit', label: 'Learning Fit' },
+    ...(tutor.detail.whoHelps.length ? [{ id: 'fit', label: 'Learning Fit' }] : []),
     { id: 'languages', label: 'Languages' },
     { id: 'availability', label: 'Availability' },
   ]

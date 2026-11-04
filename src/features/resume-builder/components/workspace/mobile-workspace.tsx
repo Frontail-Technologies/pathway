@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { ArrowLeft, Eye, Save } from 'lucide-react'
+import { ArrowLeft, Download, Eye, Save } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet'
@@ -37,6 +37,7 @@ export function MobileWorkspace({ savedAt, step, data, onChange, templateId, onT
     const previous = RESUME_STEPS[stepIndex - 1]
     if (previous) onStepChange(previous.id)
   }
+  const handleExport = () => window.print()
 
   return (
     <div className="flex h-full min-h-0 w-full min-w-0 flex-col">
@@ -91,19 +92,18 @@ export function MobileWorkspace({ savedAt, step, data, onChange, templateId, onT
         <SheetContent side="bottom" showCloseButton={false} className="flex max-w-none flex-col gap-0 border-0 p-0 pt-[env(safe-area-inset-top)] data-[side=bottom]:h-dvh sm:max-w-none">
           <SheetHeader className="flex-row items-center justify-between gap-2 border-b p-3">
             <SheetTitle>Resume Preview</SheetTitle>
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center justify-end gap-2">
               <TemplatePicker data={data} templateId={templateId} onSelect={onTemplateChange} trigger={<Button type="button" variant="outline" size="sm">Change Template</Button>} />
+              <Button type="button" variant="cta" size="sm" className="gap-1.5" onClick={handleExport}>
+                <Download className="size-4" aria-hidden="true" />
+                Export
+              </Button>
               <Button type="button" variant="ghost" size="sm" onClick={() => setPreviewOpen(false)}>
                 Close
               </Button>
             </div>
           </SheetHeader>
-          {
-
-
-
- }
-          <div className="min-h-0 flex-1">{previewOpen && <ResumeDocumentViewport document={resumeDocument} resetKey={templateId} />}</div>
+          <div className="min-h-0 flex-1">{previewOpen && <ResumeDocumentViewport document={resumeDocument} resetKey={templateId} zoomable={false} />}</div>
         </SheetContent>
       </Sheet>
     </div>

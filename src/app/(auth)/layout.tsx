@@ -2,7 +2,6 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowLeft, Bookmark, GraduationCap, PhoneCall } from 'lucide-react'
 import { Logo } from '@/components/shared/logo'
-import { TutorSpaceProvider } from '@/features/tutor-space/state/tutor-space-provider'
 
 const points = [
   { icon: Bookmark, text: 'Save colleges, courses and scholarships' },
@@ -10,13 +9,8 @@ const points = [
   { icon: PhoneCall, text: 'Track enquiries and counselling call-backs' },
 ]
 
-/**
- * Auth shell: a photo panel on large screens, and a plain full-height form on phones (no floating card).
- * TutorSpaceProvider is here so the same form can sign tutors in.
- */
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
-    <TutorSpaceProvider>
       <div className="grid min-h-dvh bg-background lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] xl:grid-cols-[minmax(0,6fr)_minmax(0,5fr)]">
         <aside className="relative hidden overflow-hidden lg:block">
           <Image src="/coaching/coaching-hero.png" alt="" fill priority sizes="(min-width: 1280px) 55vw, 50vw" className="object-cover" />
@@ -54,6 +48,5 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
           </div>
         </main>
       </div>
-    </TutorSpaceProvider>
   )
 }

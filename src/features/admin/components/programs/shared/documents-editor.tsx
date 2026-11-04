@@ -13,7 +13,6 @@ type EditableDocument = {
   provenance: { sourceName?: string }
 }
 
-/** Attached documents list plus the "attach a document" form. Used by the course and offering editors. */
 export function DocumentsEditor<TType extends string>({
   documents,
   typeOptions,

@@ -39,7 +39,6 @@ const newRecords = [
   { label: 'Article', href: '/admin/content/new' },
 ]
 
-/** Overview: what's in the catalogue, what needs work, and how complete each area is. */
 export function AdminDashboardView() {
   const institutions = getAdminInstitutions()
   const programs = getAdminPrograms()

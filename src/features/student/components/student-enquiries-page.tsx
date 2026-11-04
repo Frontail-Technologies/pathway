@@ -56,7 +56,7 @@ export function StudentEnquiriesPage() {
       <p className="mt-1 text-sm text-muted-foreground sm:text-[15px]">Keep track of your counselling requests and enquiries.</p>
 
       <DashboardSection className="mt-5" title={tab.label}>
-        <div role="tablist" aria-label="Enquiry status" className="-mt-1 flex gap-1 border-b">
+        <div role="tablist" aria-label="Enquiry status" className="-mt-1 flex gap-1 overflow-x-auto border-b max-sm:[scrollbar-width:none] max-sm:[&::-webkit-scrollbar]:hidden">
           {tabs.map((item) => {
             const selected = active === item.id
             return (

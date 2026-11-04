@@ -67,7 +67,6 @@ export function AdminEnquiryDetailView({ enquiry }: { enquiry: AdminEnquiry }) {
     try {
       await navigator.clipboard.writeText(enquiry.id)
     } catch {
-      /* clipboard unavailable; still confirm so the button doesn't feel broken */
     }
     setCopied(true)
     window.setTimeout(() => setCopied(false), 2000)

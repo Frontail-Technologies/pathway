@@ -6,7 +6,7 @@ import { usePathname, useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { Bookmark, BookOpen, FileText, LayoutDashboard, LogOut, MessagesSquare, SlidersHorizontal, UserRound } from 'lucide-react'
 import { studentNavigation } from '@/config/navigation'
-import { useDemoAuth } from '@/features/student/state/demo-auth-provider'
+import { useStudentSession } from '@/features/student/state/student-session'
 
 const icons: Record<(typeof studentNavigation)[number]['id'], ComponentType<{ className?: string; 'aria-hidden'?: boolean | 'true' | 'false' }>> = {
   dashboard: LayoutDashboard,
@@ -22,7 +22,7 @@ const icons: Record<(typeof studentNavigation)[number]['id'], ComponentType<{ cl
 export function StudentNavigation({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname()
   const router = useRouter()
-  const { signOut } = useDemoAuth()
+  const { signOut } = useStudentSession()
 
   
   const logOut = () => {

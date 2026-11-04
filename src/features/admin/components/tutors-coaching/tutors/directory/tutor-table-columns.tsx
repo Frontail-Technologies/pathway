@@ -3,7 +3,8 @@
 import Link from 'next/link'
 import type { ColumnDef } from '@tanstack/react-table'
 import { TutorPortrait } from '@/features/tutors/components/tutor-avatar'
-import type { AdminTutor } from '@/features/admin/data/admin-tutors'
+import { catalogStatusLabels, type CatalogAdminTutor as AdminTutor } from '@/features/admin/data/admin-tutors-api'
+import { StatusBadge } from '../../../kit'
 import { CompletenessMeter, SortHeader, stopRowClick } from '../../../kit'
 import { RowActions } from '../../shared/row-actions'
 import { TagOverflow } from '../../shared/tags'
@@ -30,6 +31,7 @@ export const tutorColumns: ColumnDef<AdminTutor>[] = [
   },
   { id: 'subjects', header: 'Subjects', cell: ({ row }) => <TagOverflow items={row.original.subjects} /> },
   { id: 'exams', header: 'Exams', cell: ({ row }) => <TagOverflow items={row.original.exams} /> },
+  { id: 'status', header: 'Catalog', cell: ({ row }) => <StatusBadge tone={row.original.catalogStatus === 'published' ? 'success' : row.original.catalogStatus === 'archived' ? 'neutral' : 'warning'}>{catalogStatusLabels[row.original.catalogStatus]}</StatusBadge> },
   { id: 'modes', header: 'Mode', cell: ({ row }) => <span className="text-muted-foreground">{row.original.modes.join(', ') || '—'}</span> },
   {
     id: 'status',
@@ -52,8 +54,7 @@ export const tutorColumns: ColumnDef<AdminTutor>[] = [
         <RowActions
           name={tutor.name}
           viewHref={`/admin/tutors-coaching/tutors/${tutor.id}`}
-          editHref={`/admin/tutors-coaching/tutors/${tutor.id}/edit`}
-          publicHref={tutor.hasDetailPage ? `/tutors/${tutor.slug}` : undefined}
+          publicHref={tutor.catalogStatus === 'published' ? `/tutor/${tutor.slug}` : undefined}
         />
       )
     },

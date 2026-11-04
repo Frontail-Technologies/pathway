@@ -1,6 +1,6 @@
 import { Bookmark } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import type { ScholarshipDetailData } from '../data/scholarship-detail'
+import type { ScholarshipDetailData } from '../api/scholarships-api'
 
 type ScholarshipTopActionsProps = {
   scholarship: ScholarshipDetailData

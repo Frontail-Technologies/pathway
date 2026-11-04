@@ -2,7 +2,7 @@
 
 import { useMemo } from 'react'
 import { useRouter } from 'next/navigation'
-import type { AdminTutor } from '@/features/admin/data/admin-tutors'
+import type { CatalogAdminTutor as AdminTutor } from '@/features/admin/data/admin-tutors-api'
 import type { TutorExam, TutorLanguage, TutorLevel, TutorMode, TutorSubject } from '@/features/tutors/data/tutors'
 import { useUrlFilters } from '@/features/admin/hooks/use-url-filters'
 import { AdminDataTable } from '../../../admin-data-table'
@@ -19,7 +19,6 @@ const PORTRAIT_OPTIONS = (Object.keys(portraitLabel) as (keyof typeof portraitLa
 export function AdminTutorsTableView({ tutors }: { tutors: AdminTutor[] }) {
   const router = useRouter()
   const { values: f, set, active } = useUrlFilters(DEFAULT_FILTERS)
-  // Reset only this list's filters; the hook's own reset would also drop the active tab.
   const reset = () => set(DEFAULT_FILTERS)
 
   const filtered = useMemo(() => {

@@ -1,6 +1,5 @@
 import { Tag } from '../../kit'
 
-/** Up to `max` neutral tags, then a quiet "+N" for the rest. */
 export function TagOverflow({ items, max = 2 }: { items: readonly string[]; max?: number }) {
   if (items.length === 0) return <span className="text-muted-foreground">—</span>
   const rest = items.length - max
@@ -14,7 +13,6 @@ export function TagOverflow({ items, max = 2 }: { items: readonly string[]; max?
   )
 }
 
-/** Every item as a neutral tag (detail pages). */
 export function TagList({ items }: { items: readonly string[] }) {
   if (items.length === 0) return <span className="font-normal text-muted-foreground">None</span>
   return (

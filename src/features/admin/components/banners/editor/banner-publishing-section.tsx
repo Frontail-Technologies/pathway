@@ -6,7 +6,6 @@ import { bannerStatusHints, bannerStatusLabels } from '../shared/banner-constant
 import { Field, FormSection } from '../shared/banner-form'
 import type { BannerFormData } from './use-banner-editor'
 
-/** Only these can be set by hand; scheduled and ended follow from the dates. */
 const MANUAL_STATUSES: BannerStatus[] = ['draft', 'active', 'paused']
 const statusItems = MANUAL_STATUSES.map((value) => ({ value, label: bannerStatusLabels[value] }))
 

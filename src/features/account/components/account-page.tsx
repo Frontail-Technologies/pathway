@@ -25,7 +25,7 @@ import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
 import { Container } from '@/components/shared/container'
 import { savedKinds, useSavedItems } from '@/features/saved/saved-items-provider'
-import { useDemoAuth } from '@/features/student/state/demo-auth-provider'
+import { useStudentSession } from '@/features/student/state/student-session'
 import { useStudentProfile } from '@/features/student/state/student-profile-provider'
 import { getProfileCompletion, initialsOf } from '@/features/student/data/student'
 
@@ -55,13 +55,9 @@ function RowList({ title, rows }: { title: string; rows: Row[] }) {
   )
 }
 
-/**
- * /account: the bottom bar's Account tab. Lives in the public layout so the
- * bar stays visible, and links into the nested student and tutor areas.
- */
 export function AccountPage() {
   const router = useRouter()
-  const { signedIn, hydrated, signOut } = useDemoAuth()
+  const { signedIn, hydrated, signOut } = useStudentSession()
   const { profile, photoUrl } = useStudentProfile()
   const { saved, hydrated: savedHydrated } = useSavedItems()
 

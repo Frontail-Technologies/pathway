@@ -1,14 +1,4 @@
-import { colleges } from '@/features/colleges/data/colleges'
-import { getCollegeDetail } from '@/features/colleges/data/college-detail'
-import { courses } from '@/features/courses/data/courses'
-import { getCourseDetail } from '@/features/courses/data/course-detail'
-import { exams } from '@/features/exams/data/exams'
-import { scholarships } from '@/features/scholarships/data/scholarships'
-import { getScholarshipDetail } from '@/features/scholarships/data/scholarship-detail'
-import { coachingProviders } from '@/features/coaching/data/coaching'
-import { tutors } from '@/features/tutors/data/tutors'
 import { getPublishedNotes } from '@/features/notes/data/notes'
-// Taxonomy only (not stream-hub): the hub builder reads this index, so importing it here would recurse.
 import { streams } from '@/features/streams/data/stream-taxonomy'
 
 export type SearchKind = 'stream' | 'college' | 'course' | 'exam' | 'scholarship' | 'coaching' | 'tutor' | 'note' | 'tool'
@@ -31,12 +21,8 @@ export type SearchEntry = {
   title: string
   subtitle: string
   href: string
-  /** Extra searchable text that isn't displayed. */
   keywords: string
 }
-
-/** Detail page if one exists, otherwise the listing pre-filtered by name (never a 404). */
-const withFallback = (detail: string | null, listing: string, name: string) => detail ?? `${listing}?q=${encodeURIComponent(name)}`
 
 const tools: SearchEntry[] = [
   { id: 'tool-college-predictor', kind: 'tool', title: 'College Predictor', subtitle: 'Preview colleges from your exam score', href: '/college-predictor', keywords: 'predict admission chances jee neet cutoff' },
@@ -60,54 +46,6 @@ export function getSearchIndex(): SearchEntry[] {
       href: `/${s.slug}`,
       keywords: s.examKeywords.join(' '),
     })),
-    ...colleges.map((c) => ({
-      id: c.id,
-      kind: 'college' as const,
-      title: c.name,
-      subtitle: `${c.city}, ${c.state} · ${c.type} · ${c.popularCourse}`,
-      href: getCollegeDetail(c.slug) ? `/college/${c.slug}` : '/colleges',
-      keywords: `${c.degree} ${c.exam} ${c.approval}`,
-    })),
-    ...courses.map((c) => ({
-      id: c.id,
-      kind: 'course' as const,
-      title: c.name,
-      subtitle: `${c.level} · ${c.stream} · ${c.duration}`,
-      href: withFallback(getCourseDetail(c.slug) ? `/course/${c.slug}` : null, '/courses', c.name),
-      keywords: `${c.degree} ${c.specialization} ${c.entranceExams.join(' ')}`,
-    })),
-    ...exams.map((e) => ({
-      id: e.id,
-      kind: 'exam' as const,
-      title: e.shortName === e.name ? e.name : `${e.shortName} — ${e.name}`,
-      subtitle: `${e.studyArea} · ${e.scope} · ${e.level}`,
-      href: withFallback(e.hasDetailPage ? `/exam/${e.slug}` : null, '/exams', e.shortName),
-      keywords: `${e.conductingBody ?? ''} ${e.description}`,
-    })),
-    ...scholarships.map((s) => ({
-      id: s.id,
-      kind: 'scholarship' as const,
-      title: s.name,
-      subtitle: `${s.provider} · ${s.benefitLabel}`,
-      href: withFallback(getScholarshipDetail(s.slug) ? `/scholarship/${s.slug}` : null, '/scholarships', s.name),
-      keywords: `${s.scholarshipType} ${s.streams.join(' ')} ${s.educationLevels.join(' ')}`,
-    })),
-    ...coachingProviders.map((p) => ({
-      id: p.id,
-      kind: 'coaching' as const,
-      title: p.name,
-      subtitle: `${p.providerType} · ${p.location} · ${p.exams.slice(0, 3).join(', ')}`,
-      href: withFallback(p.hasDetailPage ? `/coaching/${p.slug}` : null, '/coaching', p.name),
-      keywords: `${p.exams.join(' ')} ${p.subjects.join(' ')} ${p.modes.join(' ')}`,
-    })),
-    ...tutors.map((t) => ({
-      id: t.id,
-      kind: 'tutor' as const,
-      title: t.name,
-      subtitle: t.headline,
-      href: withFallback(t.hasDetailPage ? `/tutor/${t.slug}` : null, '/tutors', t.name),
-      keywords: `${t.subjects.join(' ')} ${t.exams.join(' ')} ${t.languages.join(' ')}`,
-    })),
     ...getPublishedNotes().map((n) => ({
       id: n.id,
       kind: 'note' as const,
@@ -123,11 +61,6 @@ export function getSearchIndex(): SearchEntry[] {
 
 const normalize = (value: string) => value.toLowerCase().normalize('NFKD').replace(/[^\p{L}\p{N}]+/gu, ' ').trim()
 
-/**
- * Every query word must be the start of some word in the entry ("cat" finds
- * CAT, not "education"). Title matches rank above subtitle/keyword matches;
- * a title that starts with the whole query ranks top.
- */
 export function searchEntries(query: string): SearchEntry[] {
   const q = normalize(query)
   if (!q) return []
@@ -146,5 +79,7 @@ export function searchEntries(query: string): SearchEntry[] {
   }
   return scored.sort((a, b) => b.score - a.score).map(({ entry }) => entry)
 }
+
+export const searchLocalEntries = searchEntries
 
 export const popularSearches = ['IIT Delhi', 'B.Tech Computer Science', 'JEE Main', 'NEET', 'MBA', 'Scholarship', 'CAT', 'College Predictor']

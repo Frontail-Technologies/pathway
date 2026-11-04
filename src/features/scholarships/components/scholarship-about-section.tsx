@@ -1,4 +1,4 @@
-import type { ScholarshipDetailData } from '../data/scholarship-detail'
+import type { ScholarshipDetailData } from '../api/scholarships-api'
 
 
 

@@ -1,5 +1,5 @@
-import { scholarshipStatusStyles } from '../data/scholarships'
-import type { ScholarshipDetailData } from '../data/scholarship-detail'
+import { applicationStatusStyles as scholarshipStatusStyles } from '../data/status'
+import type { ScholarshipDetailData } from '../api/scholarships-api'
 
 
 

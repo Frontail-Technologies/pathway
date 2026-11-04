@@ -5,21 +5,14 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { AlertCircle, ArrowLeft, Eye, EyeOff, Lock } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { cn } from '@/lib/utils'
+import { ApiRequestError, signInWithPassword, signOut } from '@/features/auth/lib/session-client'
 import { AdminLoginPreview } from './admin-login-preview'
-import { safeAdminNext, startAdminSession, useAdminSession } from './admin-session'
+import { safeAdminNext, useAdminSession } from './admin-session'
 
 const EMAIL = /^\S+@\S+\.\S+$/
 const MIN_PASSWORD = 8
-const DEMO = { email: 'admin@pathway.example', password: 'pathway-demo' }
-
-/**
- * Staff sign-in for /admin. Work email + password, "Keep me signed in", show/hide password and a Caps Lock hint.
- * Demo: there is no auth server, so any work email with a password of 8+ characters signs in on this device.
- */
 export function AdminLoginForm({ next }: { next?: string }) {
   const router = useRouter()
   const ids = useId()
@@ -28,7 +21,7 @@ export function AdminLoginForm({ next }: { next?: string }) {
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [remember, setRemember] = useState(true)
+  const [formError, setFormError] = useState<string>()
   const [showPassword, setShowPassword] = useState(false)
   const [capsLock, setCapsLock] = useState(false)
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({})
@@ -45,18 +38,20 @@ export function AdminLoginForm({ next }: { next?: string }) {
     if (!EMAIL.test(email.trim())) found.email = 'Enter your work email.'
     if (password.length < MIN_PASSWORD) found.password = `Passwords are at least ${MIN_PASSWORD} characters.`
     setErrors(found)
+    setFormError(undefined)
     if (found.email || found.password) return
     setBusy(true)
-    window.setTimeout(() => {
-      startAdminSession(email.trim().toLowerCase(), remember)
-      router.replace(destination)
-    }, 500)
-  }
-
-  const fillDemo = () => {
-    setEmail(DEMO.email)
-    setPassword(DEMO.password)
-    setErrors({})
+    signInWithPassword({ email, password })
+      .then(async (user) => {
+        if (user.role !== 'staff' && user.role !== 'admin') {
+          await signOut()
+          setFormError('This account doesn’t have access to the admin console.')
+          return
+        }
+        router.replace(destination)
+      })
+      .catch((error: unknown) => setFormError(error instanceof ApiRequestError ? error.message : 'Could not sign in. Please try again.'))
+      .finally(() => setBusy(false))
   }
 
   const errorCount = Number(Boolean(errors.email)) + Number(Boolean(errors.password))
@@ -81,10 +76,10 @@ export function AdminLoginForm({ next }: { next?: string }) {
           <h1 className="font-heading text-2xl font-bold tracking-tight">Sign in</h1>
           <p className="mt-1 text-sm text-muted-foreground">For the Pathway team. Use your work email.</p>
 
-          {errorCount > 0 ? (
+          {errorCount > 0 || formError ? (
             <div role="alert" className="mt-6 flex items-start gap-2.5 rounded-lg border border-destructive/30 bg-destructive/5 px-3.5 py-3 text-sm text-destructive">
               <AlertCircle className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
-              <span>{errorCount === 2 ? 'Check your email and password.' : (errors.email ?? errors.password)}</span>
+              <span>{formError ?? (errorCount === 2 ? 'Check your email and password.' : (errors.email ?? errors.password))}</span>
             </div>
           ) : null}
 
@@ -150,11 +145,6 @@ export function AdminLoginForm({ next }: { next?: string }) {
               </p>
             </div>
 
-            <label className="flex w-fit cursor-pointer items-center gap-2.5 text-sm text-foreground">
-              <Checkbox checked={remember} onCheckedChange={(value) => setRemember(Boolean(value))} />
-              Keep me signed in on this device
-            </label>
-
             <Button type="submit" className="h-10 w-full text-sm font-semibold" disabled={busy}>
               {busy ? 'Signing in…' : 'Sign in'}
             </Button>
@@ -165,11 +155,8 @@ export function AdminLoginForm({ next }: { next?: string }) {
               <Lock className="mt-0.5 size-4 shrink-0 text-muted-foreground" aria-hidden="true" />
               <div className="min-w-0 text-[13px] leading-5 text-muted-foreground">
                 <p>
-                  <span className="font-medium text-foreground">Demo access.</span> Sign-in isn&apos;t connected to a server yet: any work email with a password of {MIN_PASSWORD}+ characters works on this device.
+                  <span className="font-medium text-foreground">Team accounts only.</span> Staff and admin accounts are created by a workspace owner; there is no public sign-up.
                 </p>
-                <button type="button" onClick={fillDemo} className={cn('mt-1.5 rounded font-medium text-primary outline-none hover:underline focus-visible:ring-2 focus-visible:ring-ring/40')}>
-                  Fill in demo details
-                </button>
               </div>
             </div>
           </div>

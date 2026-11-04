@@ -1,10 +1,7 @@
-/** Admin settings (demo): saved to this browser's localStorage only. */
-
 export type AdminSettings = {
   siteName: string
   supportEmail: string
   supportPhone: string
-  /** 'unassigned', 'owner' or a team invite id */
   defaultAssignee: string
   autoAcknowledge: boolean
   emailOnNewEnquiry: boolean

@@ -4,8 +4,7 @@ import Link from 'next/link'
 import { useSavedItem } from '@/features/saved/saved-items-provider'
 import { Bookmark, GraduationCap } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { getCourseDetail } from '../data/course-detail'
-import type { CourseListItem } from '../data/courses'
+import type { CourseListItem } from '../api/courses-api'
 
 const chip = 'rounded-md bg-secondary px-2 py-0.5 text-xs font-semibold text-primary'
 const chipMuted = 'rounded-md bg-muted px-2 py-0.5 text-xs font-medium text-foreground'
@@ -13,7 +12,7 @@ const chipMuted = 'rounded-md bg-muted px-2 py-0.5 text-xs font-medium text-fore
  
 export function CourseResultCard({ course }: { course: CourseListItem }) {
   const { saved, toggleSaved } = useSavedItem('course', course.slug, 'Course')
-  const hasDetail = !!getCourseDetail(course.slug)
+  const hasDetail = course.hasDetailPage
 
   return (
     <article className="flex gap-3 rounded-[12px] border bg-card p-4 shadow-[0_2px_10px_rgba(15,23,42,0.04)] sm:gap-4 sm:p-5">

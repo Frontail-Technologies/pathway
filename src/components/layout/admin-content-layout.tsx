@@ -5,7 +5,6 @@ import { AdminSidebar } from './admin-sidebar'
 
 export function AdminContentLayout({ children }: { children: React.ReactNode }) {
   return (
-    // Guard needs useSearchParams, so it sits inside Suspense.
     <Suspense>
     <AdminAuthGuard>
     <div data-theme="admin" className="flex min-h-dvh bg-admin-canvas text-foreground font-body">
@@ -16,7 +15,6 @@ export function AdminContentLayout({ children }: { children: React.ReactNode }) 
       <div className="flex-1 flex flex-col min-w-0 min-h-dvh">
         <AdminTopbar />
         <main className="min-w-0 flex-1 px-4 py-6 sm:px-6 lg:px-8">
-          {/* Suspense: list pages read filters from the URL (useSearchParams). */}
           <div className="mx-auto w-full max-w-[1400px]">
             <Suspense>{children}</Suspense>
           </div>

@@ -5,7 +5,6 @@ import { courseBase, courseTabHref, courseTabs, legacyCourseAnchors } from '../c
 import { CourseOverviewSection } from './course-overview-section'
 import { RelatedCoursesSection } from './related-courses-section'
 
-/** /course/[slug]: overview, tiles into every sub-page, and related courses. */
 export function CourseOverviewTab({ course }: { course: CourseDetailData }) {
   const tiles = courseTabs.filter((tab) => tab.segment).map((tab) => ({ href: courseTabHref(course.slug, tab.segment), label: tab.label, teaser: tab.teaser?.(course) }))
   return (

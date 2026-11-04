@@ -1,11 +1,7 @@
 import Link from 'next/link'
 import { ArrowRight, MapPin } from 'lucide-react'
 import { HorizontalContentRail } from '@/components/shared/horizontal-content-rail'
-import { colleges } from '@/features/colleges/data/colleges'
-import { getCollegeDetail } from '@/features/colleges/data/college-detail'
-
-
-const featuredColleges = colleges.slice(0, 4)
+import { listColleges } from '@/features/colleges/api/colleges-api'
 
 const initials = (name: string) =>
   name
@@ -17,7 +13,11 @@ const initials = (name: string) =>
     .toUpperCase()
 
  
-export function TrendingCollegesSection() {
+export async function TrendingCollegesSection() {
+  const featuredColleges = await listColleges({ limit: '4' })
+    .then((list) => list.items)
+    .catch(() => [])
+  if (featuredColleges.length === 0) return null
   return (
     <section className="bg-background py-7 sm:py-9 lg:py-12">
       <div className="container-shell">
@@ -29,7 +29,7 @@ export function TrendingCollegesSection() {
         </div>
         <HorizontalContentRail ariaLabel="Colleges and universities" edgeBleed className="mt-4 sm:mx-0" trackClassName="sm:grid sm:grid-cols-2 sm:gap-3 sm:overflow-visible sm:px-0 sm:scroll-px-0 lg:grid-cols-4">
           {featuredColleges.map((college) => {
-            const hasDetail = !!getCollegeDetail(college.slug)
+            const hasDetail = college.hasDetailPage
             return (
               <Link
                 key={college.slug}

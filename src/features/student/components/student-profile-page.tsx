@@ -24,6 +24,7 @@ import {
   type ProfileDraft,
 } from '../data/profile-form'
 import { getProfileCompletion, initialsOf, type ProfileFieldKey, type WorkExperienceType } from '../data/student'
+import { ApiRequestError } from '@/features/auth/lib/session-client'
 import { useStudentProfile } from '../state/student-profile-provider'
 import { DashboardSection } from './dashboard-parts'
 
@@ -61,7 +62,9 @@ export function StudentProfilePage() {
 }
 
 function ProfileEditor() {
-  const { profile, photoUrl, setPhotoUrl, updateProfile } = useStudentProfile()
+  const { profile, photoUrl, saveProfile, uploadPhoto, removePhoto } = useStudentProfile()
+  const [saving, setSaving] = useState(false)
+  const [photoBusy, setPhotoBusy] = useState(false)
   const [draft, setDraft] = useState<ProfileDraft>(() => toDraft(profile))
   const [errors, setErrors] = useState<DraftErrors>({})
   const [photoError, setPhotoError] = useState('')
@@ -86,7 +89,18 @@ function ProfileEditor() {
     if (!file.type.startsWith('image/')) return setPhotoError('Please choose an image file.')
     if (file.size > MAX_PHOTO_BYTES) return setPhotoError('Please choose an image under 5 MB.')
     setPhotoError('')
-    setPhotoUrl(URL.createObjectURL(file))
+    setPhotoBusy(true)
+    uploadPhoto(file)
+      .then(() => toast.success('Profile photo updated.'))
+      .catch((error: unknown) => setPhotoError(error instanceof Error ? error.message : 'The photo could not be uploaded.'))
+      .finally(() => setPhotoBusy(false))
+  }
+
+  const onRemovePhoto = () => {
+    setPhotoBusy(true)
+    removePhoto()
+      .catch(() => toast.error('Could not remove the photo. Please try again.'))
+      .finally(() => setPhotoBusy(false))
   }
 
   const onSubmit = (event: React.FormEvent) => {
@@ -97,8 +111,14 @@ function ProfileEditor() {
       requestAnimationFrame(() => formRef.current?.querySelector<HTMLElement>('[aria-invalid="true"]')?.focus())
       return
     }
-    updateProfile(applyDraft(profile, draft))
-    toast.success('Profile updated on this device.')
+    setSaving(true)
+    saveProfile(applyDraft(profile, draft))
+      .then(() => toast.success('Profile saved.'))
+      .catch((error: unknown) => {
+        if (error instanceof ApiRequestError && Object.keys(error.fields).length) setErrors(error.fields as DraftErrors)
+        toast.error(error instanceof Error ? error.message : 'Could not save your profile. Please try again.')
+      })
+      .finally(() => setSaving(false))
   }
 
   const experienceError = (id: string) => errors.experience?.[id]
@@ -126,15 +146,15 @@ function ProfileEditor() {
               </span>
               <div className="min-w-0">
                 <p className="text-sm font-semibold text-foreground">Profile photo</p>
-                <p className="text-xs text-muted-foreground">Optional. Kept in this browser session only — it is not uploaded.</p>
+                <p className="text-xs text-muted-foreground">Optional. JPG, PNG or WebP up to 5 MB. Only you can see it.</p>
                 <div className="mt-2 flex flex-wrap gap-2">
-                  <input ref={fileInput} type="file" accept="image/*" className="sr-only" aria-label="Choose profile photo" onChange={(event) => onPhoto(event.target.files?.[0])} />
-                  <Button type="button" variant="outline" className="h-8 gap-1.5 px-3 text-xs" onClick={() => fileInput.current?.click()}>
+                  <input ref={fileInput} type="file" accept="image/jpeg,image/png,image/webp" className="sr-only" aria-label="Choose profile photo" onChange={(event) => onPhoto(event.target.files?.[0])} />
+                  <Button type="button" variant="outline" className="h-8 gap-1.5 px-3 text-xs" disabled={photoBusy} onClick={() => fileInput.current?.click()}>
                     <Camera className="size-3.5" aria-hidden="true" />
-                    {photoUrl ? 'Change photo' : 'Upload photo'}
+                    {photoBusy ? 'Uploading…' : photoUrl ? 'Change photo' : 'Upload photo'}
                   </Button>
                   {photoUrl && (
-                    <Button type="button" variant="ghost" className="h-8 px-3 text-xs" onClick={() => setPhotoUrl(null)}>
+                    <Button type="button" variant="ghost" className="h-8 px-3 text-xs" disabled={photoBusy} onClick={onRemovePhoto}>
                       Remove
                     </Button>
                   )}
@@ -154,7 +174,7 @@ function ProfileEditor() {
               <Field label="Last name" required htmlFor="fp-last" error={errors.lastName}>
                 <Input id="fp-last" autoComplete="family-name" className={softInputClass} value={draft.lastName} aria-invalid={!!errors.lastName} onChange={(event) => set('lastName', event.target.value)} />
               </Field>
-              <Field label="Email" required htmlFor="fp-email" hint="Account email changes will be available once sign-in is connected.">
+              <Field label="Email" required htmlFor="fp-email" hint="Your sign-in email. Changing it needs email verification, which isn't available yet.">
                 <Input id="fp-email" type="email" className={softInputClass} value={draft.email} readOnly aria-readonly="true" />
               </Field>
               <Field label="City" required htmlFor="fp-city" error={errors.city}>
@@ -247,7 +267,6 @@ function ProfileEditor() {
             </Button>
           </DashboardSection>
 
-          { }
           <div className="sticky bottom-0 z-20 -mx-4 flex items-center gap-2 border-t bg-card px-4 pt-2.5 pb-[max(0.625rem,env(safe-area-inset-bottom))] sm:gap-3 lg:static lg:mx-0 lg:justify-between lg:border-0 lg:bg-transparent lg:p-0">
             <Button
               type="button"
@@ -258,8 +277,8 @@ function ProfileEditor() {
             >
               Back to Dashboard
             </Button>
-            <Button type="submit" variant="cta" className="h-11 flex-1 px-4 text-sm font-semibold sm:flex-none sm:px-6">
-              Save Changes
+            <Button type="submit" variant="cta" className="h-11 flex-1 px-4 text-sm font-semibold sm:flex-none sm:px-6" disabled={saving}>
+              {saving ? 'Saving…' : 'Save Changes'}
             </Button>
           </div>
         </form>

@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button'
-import type { ScholarshipDetailData } from '../data/scholarship-detail'
+import type { ScholarshipDetailData } from '../api/scholarships-api'
 
  
 export function ScholarshipApplicationSection({ scholarship }: { scholarship: ScholarshipDetailData }) {

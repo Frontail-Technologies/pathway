@@ -53,11 +53,9 @@ export function CourseIdentityHeader({ course }: { course: CourseDetailData }) {
       </div>
 
       <div className="mt-4 flex flex-col gap-2 sm:mt-5 sm:flex-row sm:items-center">
-        { }
         <Button className="h-11 px-6 text-sm font-semibold sm:h-10" nativeButton={false} render={<Link href="/colleges" />}>
           View Colleges
         </Button>
-        { }
         <Button variant="outline" className="h-11 px-6 text-sm font-semibold sm:h-10" disabled title="Course comparison is coming soon">
           Compare Courses
         </Button>

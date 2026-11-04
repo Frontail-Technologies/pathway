@@ -1,11 +1,5 @@
 import { filterGroups, getTutorBySlug, type Tutor } from '@/features/tutors/data/tutors'
 
-/**
- * Tutor Space: the signed-in area where a tutor manages their Pathway
- * presence. Frontend demo only: everything is stored on this device and the
- * demo account is the existing public tutor "Arjun Sharma", so links to the
- * public profile resolve.
- */
 export const TUTOR_AUTH_STORAGE_KEY = 'pathway.tutorAuth.demo.v1'
 export const TUTOR_SPACE_STORAGE_KEY = 'pathway.tutorSpace.demo.v1'
 
@@ -78,7 +72,6 @@ export const initialTutorSpace: TutorSpaceState = {
   },
   availability: { Mon: ['evening'], Tue: ['evening'], Wed: [], Thu: ['evening'], Fri: [], Sat: ['morning', 'afternoon'], Sun: ['morning'] },
   acceptingStudents: true,
-  // Sample data so the screens can be reviewed; public session requests are not live yet.
   requests: [
     { id: 'r1', student: 'Riya S.', subject: 'Physics', level: 'Class 11–12', mode: 'Online', preferredTime: 'Weekday evenings', message: 'Struggling with rotational motion. Looking for 2 sessions a week before JEE Main.', receivedOn: '30 Oct 2026', status: 'new' },
     { id: 'r2', student: 'Kabir M.', subject: 'Mathematics', level: 'Class 11–12', mode: 'In-person', preferredTime: 'Saturday mornings', message: 'Need help with calculus basics and regular practice tests.', receivedOn: '28 Oct 2026', status: 'new' },
@@ -88,7 +81,6 @@ export const initialTutorSpace: TutorSpaceState = {
   notifications: { newRequests: true, weeklySummary: true, productUpdates: false },
 }
 
-/** Profile items that count toward completion, with where to fix each. */
 export function profileChecklist(state: TutorSpaceState) {
   const { profile } = state
   const weeklySlots = Object.values(state.availability).reduce((sum, slots) => sum + slots.length, 0)
@@ -103,11 +95,11 @@ export function profileChecklist(state: TutorSpaceState) {
   ]
 }
 
-/** The draft rendered the way students see it in listings (for the live preview). */
 export function previewTutor(profile: TutorProfileDraft): Tutor {
   return {
     ...demoTutor,
-    name: profile.name || demoTutor.name,
+    portrait: undefined,
+    name: profile.name || 'Your name',
     headline: profile.headline || 'Your headline',
     intro: profile.intro,
     subjects: profile.subjects as Tutor['subjects'],

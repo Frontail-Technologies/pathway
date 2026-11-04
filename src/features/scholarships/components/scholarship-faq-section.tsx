@@ -1,5 +1,5 @@
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
-import type { ScholarshipDetailData } from '../data/scholarship-detail'
+import type { ScholarshipDetailData } from '../api/scholarships-api'
 
 export function ScholarshipFaqSection({ scholarship }: { scholarship: ScholarshipDetailData }) {
   return (

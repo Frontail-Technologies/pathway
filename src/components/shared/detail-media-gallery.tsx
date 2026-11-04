@@ -35,7 +35,6 @@ export function DetailMediaGallery({ images, name }: DetailMediaGalleryProps) {
 
   return (
     <div>
-      { }
       <div className="hidden sm:block">
         <button
           type="button"
@@ -62,7 +61,6 @@ export function DetailMediaGallery({ images, name }: DetailMediaGalleryProps) {
         )}
       </div>
 
-      { }
       <div className="relative sm:hidden">
         <div className="flex snap-x snap-mandatory gap-2 overflow-x-auto" onScroll={(event) => setMobileIndex(Math.round(event.currentTarget.scrollLeft / event.currentTarget.clientWidth))}>
           {images.map((image, index) => (

@@ -12,7 +12,6 @@ import { AdminQuickSearch } from './admin-quick-search'
 
 const kindLabel = { new: 'New', edit: 'Edit', detail: 'Details' } as const
 
-/** Breadcrumb derived from the nav config, so new pages never need a hand-written title map. */
 function Breadcrumb() {
   const pathname = usePathname()
   const match = findAdminNavItem(pathname)

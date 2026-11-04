@@ -24,9 +24,6 @@ export function DetailSectionNav({ items }: DetailSectionNavProps) {
       for (const item of items) {
         const node = document.getElementById(item.id)
         if (!node) continue
-        // A section is reached once its top is at its own scroll-margin, the
-        // exact spot a tab tap scrolls it to. Reading it from CSS keeps this
-        // in sync with the header-height tokens (web header vs app-shell).
         const threshold = parseFloat(getComputedStyle(node).scrollMarginTop) + 2
         if (node.getBoundingClientRect().top <= threshold) {
           current = item.id
@@ -73,7 +70,7 @@ export function DetailSectionNav({ items }: DetailSectionNavProps) {
 
     <div ref={navRef} className="sticky top-header z-20 border-y bg-card">
       <div className="container-shell px-4">
-        <div ref={scrollerRef} className="flex gap-1 overflow-x-auto">
+        <div ref={scrollerRef} className="flex gap-1 overflow-x-auto max-sm:[scrollbar-width:none] max-sm:[&::-webkit-scrollbar]:hidden">
           {items.map((item) => (
             <a
               key={item.id}

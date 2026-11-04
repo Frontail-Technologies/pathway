@@ -12,12 +12,6 @@ import { cn } from '@/lib/utils'
 
 export type SaveStatus = 'idle' | 'saving' | 'saved' | 'error'
 
-/* ------------------------------------------------------------------ dirty tracking */
-
-/**
- * Compares the form with the last saved snapshot, warns before the tab closes while dirty, and gives Cancel a
- * confirmation step so edits aren't lost by accident.
- */
 export function useEditorGuard<T>(formData: T, cancelHref: string) {
   const router = useRouter()
   const [baseline, setBaseline] = useState(() => JSON.stringify(formData))
@@ -32,8 +26,6 @@ export function useEditorGuard<T>(formData: T, cancelHref: string) {
 
   return { dirty, markSaved, cancel }
 }
-
-/* ------------------------------------------------------------------ layout */
 
 export function EditorSection({ id, title, description, children }: { id: string; title: string; description?: string; children: ReactNode }) {
   return (
@@ -62,7 +54,6 @@ export function Field({ label, htmlFor, required, hint, error, className, childr
   )
 }
 
-/** Multi-select as a row of toggle chips. Selected chips use the accent surface, not solid colour. */
 export function ChipToggleGroup({ label, required, hint, error, options, selected, onToggle, format }: { label: string; required?: boolean; hint?: string; error?: string; options: readonly string[]; selected: readonly string[]; onToggle: (value: string) => void; format?: (value: string) => string }) {
   return (
     <div className="space-y-2" role="group" aria-label={label}>
@@ -107,7 +98,6 @@ export function CheckboxField({ label, checked, onChange, hint }: { label: strin
   )
 }
 
-/** Text input + Add, with the added items listed underneath and removable. */
 export function StringListInput({ id, label, hint, placeholder, items, onAdd, onRemove }: { id: string; label: string; hint?: string; placeholder?: string; items: readonly string[]; onAdd: (value: string) => void; onRemove: (index: number) => void }) {
   const [value, setValue] = useState('')
   const add = () => {
@@ -158,8 +148,6 @@ export function RemoveButton({ label, onClick }: { label: string; onClick: () =>
   )
 }
 
-/* ------------------------------------------------------------------ save */
-
 export function EditorActions({ onCancel, onSave, saveStatus, saveLabel }: { onCancel: () => void; onSave: () => void; saveStatus: SaveStatus; saveLabel: string }) {
   return (
     <>
@@ -174,7 +162,6 @@ export function EditorActions({ onCancel, onSave, saveStatus, saveLabel }: { onC
   )
 }
 
-/** Fixed bottom bar on small screens so Save is always reachable. */
 export function MobileSaveBar({ dirty, ...actions }: { dirty: boolean; onCancel: () => void; onSave: () => void; saveStatus: SaveStatus; saveLabel: string }) {
   return (
     <div className="fixed inset-x-0 bottom-0 z-20 flex items-center justify-between gap-3 border-t border-border bg-card px-4 py-3 lg:hidden">

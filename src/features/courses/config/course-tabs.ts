@@ -2,7 +2,6 @@ import type { Metadata } from 'next'
 import { tabHref, tabMetadata, type DetailTab } from '@/lib/detail-tabs'
 import type { CourseDetailData } from '../data/course-detail'
 
-/** Course sub-pages under /course/[slug]. */
 export const courseTabs: DetailTab<CourseDetailData>[] = [
   { segment: '', label: 'Overview', heading: (c) => c.name, description: (c) => `${c.fullName}: eligibility, fees, syllabus, careers and colleges.` },
   {

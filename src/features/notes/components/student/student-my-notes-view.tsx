@@ -3,7 +3,7 @@
 import * as React from 'react'
 import { Note, formatFileSize, noteTypeMap } from '@/features/notes/types/note'
 import { getAccessibleNotesForStudent } from '@/features/notes/selectors/note-selectors'
-import { useDemoAuth } from '@/features/student/state/demo-auth-provider'
+import { useStudentSession } from '@/features/student/state/student-session'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { BookOpen, Download, FileText, Lock, ArrowRight, ShieldCheck } from 'lucide-react'
@@ -11,7 +11,7 @@ import Link from 'next/link'
 import { toast } from 'sonner'
 
 export function StudentMyNotesView() {
-  const { signedIn } = useDemoAuth()
+  const { signedIn } = useStudentSession()
   const [activeTab, setActiveTab] = React.useState<'all' | 'purchased' | 'free'>('all')
 
   

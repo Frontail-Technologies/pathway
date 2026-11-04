@@ -1,11 +1,11 @@
 import Link from 'next/link'
-import { Edit, ExternalLink } from 'lucide-react'
+import { ExternalLink } from 'lucide-react'
 import { buttonVariants } from '@/components/ui/button'
 import { TutorPortrait } from '@/features/tutors/components/tutor-avatar'
 import { teachingSteps } from '@/features/tutors/data/tutors'
-import type { AdminTutor } from '@/features/admin/data/admin-tutors'
+import { catalogStatusLabels, type CatalogAdminTutor as AdminTutor } from '@/features/admin/data/admin-tutors-api'
 import { AdminDetailStickyRail } from '../../../admin-detail-sticky-rail'
-import { AdminPageHeader, FactList, Panel } from '../../../kit'
+import { AdminPageHeader, FactList, Panel, StatusBadge } from '../../../kit'
 import { CompletenessPanel, HistoryPanel, PlainList, QualityPanel, RecordPanel, TextBlock } from '../../shared/detail-panels'
 import { TagList } from '../../shared/tags'
 import { portraitLabel, PublicPageBadge, QualityStatusBadge } from '../../shared/tutor-status-badge'
@@ -22,22 +22,19 @@ export function AdminTutorDetailView({ tutor }: { tutor: AdminTutor }) {
         description={tutor.headline}
         meta={
           <>
+            <StatusBadge tone={tutor.catalogStatus === 'published' ? 'success' : tutor.catalogStatus === 'archived' ? 'neutral' : 'warning'}>{catalogStatusLabels[tutor.catalogStatus]}</StatusBadge>
             <QualityStatusBadge status={tutor.quality.status} />
-            <PublicPageBadge live={tutor.hasDetailPage} />
+            <PublicPageBadge live={tutor.catalogStatus === 'published'} />
           </>
         }
         actions={
           <>
-            {tutor.hasDetailPage ? (
-              <Link href={`/tutors/${tutor.slug}`} target="_blank" rel="noreferrer" className={buttonVariants({ variant: 'outline', size: 'sm', className: 'gap-1.5' })}>
+            {tutor.catalogStatus === 'published' ? (
+              <Link href={`/tutor/${tutor.slug}`} target="_blank" rel="noreferrer" className={buttonVariants({ variant: 'outline', size: 'sm', className: 'gap-1.5' })}>
                 <ExternalLink className="size-4" aria-hidden="true" />
                 Open public page
               </Link>
             ) : null}
-            <Link href={`/admin/tutors-coaching/tutors/${tutor.id}/edit`} className={buttonVariants({ size: 'sm', className: 'gap-1.5' })}>
-              <Edit className="size-4" aria-hidden="true" />
-              Edit
-            </Link>
           </>
         }
       />

@@ -13,7 +13,6 @@ const qualityMeta: Record<QualityStatus, { label: string; tone: StatusTone }> = 
 
 export const QUALITY_FILTER_OPTIONS = (Object.keys(qualityMeta) as QualityStatus[]).map((value) => ({ value, label: qualityMeta[value].label }))
 
-/** The single status shown for a tutor or coaching provider: whether the record is ready to publish. */
 export function QualityStatusBadge({ status }: { status: QualityStatus }) {
   const meta = qualityMeta[status] ?? qualityMeta.Missing
   return <StatusBadge tone={meta.tone}>{meta.label}</StatusBadge>

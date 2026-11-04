@@ -4,13 +4,6 @@ import { useEffect } from 'react'
 
 const MESSAGE = 'You have unsaved changes. Leave this page and discard them?'
 
-/**
- * Guards a dirty form against every way out:
- * - closing or reloading the tab (beforeunload);
- * - clicking any in-app link — the page header's back link, the sidebar, breadcrumbs — which asks first.
- * The listener runs in the capture phase on document, before Next's <Link> handler, so declining keeps the
- * user on the page. Programmatic navigation (Save → router.push) is not intercepted.
- */
 export function useUnsavedChanges(dirty: boolean) {
   useEffect(() => {
     if (!dirty) return
@@ -26,7 +19,7 @@ export function useUnsavedChanges(dirty: boolean) {
       if (!anchor || anchor.target === '_blank' || anchor.hasAttribute('download')) return
       const url = new URL(anchor.href, window.location.href)
       if (url.origin !== window.location.origin) return
-      if (url.pathname === window.location.pathname && url.search === window.location.search) return // same-page anchors (section nav)
+      if (url.pathname === window.location.pathname && url.search === window.location.search) return
       if (!window.confirm(MESSAGE)) {
         event.preventDefault()
         event.stopPropagation()

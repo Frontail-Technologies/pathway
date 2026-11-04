@@ -4,7 +4,6 @@ import { promotionPlacementMap } from '@/features/admin/data/admin-promotions'
 
 export type { PromotionKind, PromotionPlacement, PromotionStatus, PromotionTargetType }
 
-/** Admin-facing labels, sentence case. */
 export const promotionKindLabels: Record<PromotionKind, string> = {
   featured: 'Featured',
   sponsored: 'Sponsored',
@@ -68,7 +67,6 @@ export const promotionTargetTypeOptions = toOptions(promotionTargetTypeLabels)
 
 export const placementSlots = (placement: PromotionPlacement) => promotionPlacementMap[placement]?.maxSlots
 
-/** A readable name for a placement that has no label of its own. */
 export function promotionTitle(promotion: AdminPromotion) {
   return promotion.label || promotion.targetName || promotion.targetId
 }

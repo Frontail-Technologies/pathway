@@ -1,7 +1,3 @@
-/**
- * Activity log (demo). There is no server-side audit trail, so this records only the actions taken in this
- * browser's admin. Nothing is pre-filled: an empty log is the honest starting point.
- */
 import { ADMIN_STORAGE_KEYS, readAdminStorage, writeAdminStorage } from './admin-demo-storage'
 
 export const ADMIN_ACTIVITY_AREAS = ['Exams', 'Streams', 'Team', 'Settings'] as const
@@ -12,11 +8,9 @@ export type AdminActivityAction = (typeof ADMIN_ACTIVITY_ACTIONS)[number]
 
 export type AdminActivityEntry = {
   id: string
-  /** ISO timestamp */
   at: string
   area: AdminActivityArea
   action: AdminActivityAction
-  /** What was changed, e.g. "JEE Main" */
   label: string
   href?: string
   actor: string

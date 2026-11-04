@@ -8,12 +8,6 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 
-/**
- * What the visitor asked for. Drives copy, required fields and the toast.
- * - enquiry: general question about an entity (college, course…)
- * - brochure: brochure request; email is required so it can be delivered
- * - counselling: free counselling call request
- */
 export type EnquiryIntent = 'enquiry' | 'brochure' | 'counselling'
 
 export const enquiryIntentCopy: Record<EnquiryIntent, { title: (entity?: string) => string; submit: string; done: (entity?: string) => string }> = {
@@ -39,20 +33,13 @@ const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 type EnquiryFormProps = {
   intent?: EnquiryIntent
-  /** Name of the college / course / exam the request is about. */
   entityName?: string
-  /** Options for the "Interested in" select (courses, programmes, streams…). */
   interestOptions?: readonly string[]
   interestLabel?: string
-  /** Pre-selected interest, e.g. the course row the visitor tapped. */
   defaultInterest?: string
   onSubmitted?: () => void
 }
 
-/**
- * Shared lead form used by every detail page and the counselling page.
- * Demo only: nothing is sent; a toast confirms the request.
- */
 export function EnquiryForm({ intent = 'enquiry', entityName, interestOptions = [], interestLabel = 'Interested in', defaultInterest, onSubmitted }: EnquiryFormProps) {
   const initialInterest = defaultInterest && interestOptions.includes(defaultInterest) ? defaultInterest : interestOptions[0]
   const id = useId()

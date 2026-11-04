@@ -281,6 +281,7 @@ export const adminNavigationGroups: AdminNavGroup[] = [
     items: [
       { id: 'students', label: 'Students', href: '/admin/students', icon: 'UserCheck', available: true },
       { id: 'tutors', label: 'Tutors & coaching', href: '/admin/tutors-coaching', icon: 'Users', available: true },
+      { id: 'tutor-reviews', label: 'Tutor reviews', href: '/admin/tutor-accounts', icon: 'ShieldCheck', available: true },
       { id: 'enquiries', label: 'Enquiries', href: '/admin/enquiries', icon: 'Inbox', available: true },
       { id: 'reviews', label: 'Reviews', href: '/admin/reviews', icon: 'MessageSquare', available: true },
     ],
@@ -314,7 +315,6 @@ export const adminNavigationGroups: AdminNavGroup[] = [
   },
 ]
 
-/** The nav item (and group) that owns a pathname, plus what kind of page it is. Drives breadcrumbs. */
 export function findAdminNavItem(pathname: string) {
   for (const group of adminNavigationGroups) {
     for (const item of group.items) {

@@ -24,13 +24,9 @@ function SaveButton({ tutor, className = '' }: { tutor: Tutor; className?: strin
 
  
 function ProfileAction({ tutor, className = 'h-9 px-4 text-sm', variant = 'cta' }: { tutor: Tutor; className?: string; variant?: 'cta' | 'outline' }) {
-  return tutor.hasDetailPage ? (
+  return (
     <Button variant={variant} className={className} nativeButton={false} render={<Link href={`/tutor/${tutor.slug}`} />}>
       View Profile
-    </Button>
-  ) : (
-    <Button variant="outline" className={className} disabled title="Profile coming soon">
-      Profile Soon
     </Button>
   )
 }

@@ -7,10 +7,6 @@ import { CollegePreviewCard } from './college-preview-card'
 
 const PREVIEW_ROWS = 3
 
-/**
- * /college/[slug]: the overview plus a short summary of every other tab, each
- * linking into its sub-page (Shiksha's summary-then-drill-down pattern).
- */
 export function CollegeOverviewTab({ college }: { college: CollegeDetailData }) {
   const href = (segment: string) => collegeTabHref(college.slug, segment)
 

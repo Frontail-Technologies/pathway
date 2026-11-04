@@ -8,7 +8,7 @@ import { useSavedItem } from '@/features/saved/saved-items-provider'
 import { MobileActionBar, MobileActionBarSave } from '@/components/shared/mobile-action-bar'
 import { Button } from '@/components/ui/button'
 import { CoachingEnquiryDialog } from './coaching-enquiry-dialog'
-import type { CoachingProvider } from '../data/coaching'
+import type { CoachingDetail } from '../api/coaching-api'
 import { CoachingIdentityHero } from './coaching-identity-hero'
 import { CoachingAboutSection } from './coaching-about-section'
 import { CoachingProgramsSection } from './coaching-programs-section'
@@ -29,7 +29,7 @@ const NAV_SECTIONS = [
   { id: 'faqs', label: 'FAQs' },
 ]
 
-export function CoachingDetailPage({ provider }: { provider: CoachingProvider }) {
+export function CoachingDetailPage({ provider }: { provider: CoachingDetail }) {
   const { saved, toggleSaved } = useSavedItem('coaching', provider.slug, 'Provider')
 
   return (
@@ -44,33 +44,15 @@ export function CoachingDetailPage({ provider }: { provider: CoachingProvider })
       <DetailSectionNav items={NAV_SECTIONS} />
 
       <Container className="px-4">
-        {
-
-
-
-
-
-
-
-
- }
         <div className="grid gap-x-6 gap-y-8 lg:grid-cols-[1fr_18.75rem]">
           <div className="min-w-0 lg:col-start-1 lg:row-start-1">
             <CoachingAboutSection provider={provider} />
             <CoachingProgramsSection provider={provider} />
             <CoachingFacultySection provider={provider} />
             <CoachingLocationSection provider={provider} />
-            {
-
- }
             <div className="lg:hidden">
               <SimilarCoachingInstitutes provider={provider} />
             </div>
-            {
-
-
-
- }
             <CoachingFaqSection provider={provider} />
           </div>
 

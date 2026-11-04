@@ -14,7 +14,6 @@ type EnquiryDialogProps = {
   description?: string
 }
 
-/** Opens the shared enquiry / brochure / counselling form in a dialog. */
 export function EnquiryDialog({ trigger, intent = 'enquiry', entityName, interestOptions, interestLabel, defaultInterest, description }: EnquiryDialogProps) {
   const [open, setOpen] = useState(false)
   const copy = enquiryIntentCopy[intent]

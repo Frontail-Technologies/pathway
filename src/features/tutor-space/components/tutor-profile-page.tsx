@@ -16,10 +16,10 @@ type Errors = Partial<Record<'name' | 'headline' | 'subjects' | 'levels' | 'mode
 const toggle = (list: string[], value: string) => (list.includes(value) ? list.filter((v) => v !== value) : [...list, value])
 
 export function TutorProfilePage() {
-  const { state, update } = useTutorSpace()
+  const { state, saveProfile } = useTutorSpace()
+  const [saving, setSaving] = useState(false)
   const [draft, setDraft] = useState<TutorProfileDraft>(state.profile)
   const [errors, setErrors] = useState<Errors>({})
-  // Pick up stored data once the provider has hydrated.
   useEffect(() => setDraft(state.profile), [state.profile])
 
   const dirty = JSON.stringify(draft) !== JSON.stringify(state.profile)
@@ -28,17 +28,16 @@ export function TutorProfilePage() {
   const save = () => {
     const next: Errors = {}
     if (!draft.name.trim()) next.name = 'Enter your name.'
-    if (draft.headline.trim().length < 10) next.headline = 'Write a headline of at least 10 characters.'
-    if (draft.subjects.length === 0) next.subjects = 'Choose at least one subject.'
-    if (draft.levels.length === 0) next.levels = 'Choose at least one class level.'
-    if (draft.modes.length === 0) next.modes = 'Choose how you teach.'
     setErrors(next)
     if (Object.keys(next).length > 0) {
       toast.error('Please fix the highlighted fields.')
       return
     }
-    update({ profile: { ...draft, name: draft.name.trim(), headline: draft.headline.trim(), intro: draft.intro.trim(), city: draft.city.trim() } })
-    toast.success('Profile saved on this device (demo).')
+    setSaving(true)
+    saveProfile(draft)
+      .then(() => toast.success('Profile saved to your account.'))
+      .catch((error: unknown) => toast.error(error instanceof Error ? error.message : 'Could not save your profile. Please try again.'))
+      .finally(() => setSaving(false))
   }
 
   return (
@@ -102,7 +101,7 @@ export function TutorProfilePage() {
           <Button variant="outline" className="h-10 px-4 text-sm" disabled={!dirty} onClick={() => { setDraft(state.profile); setErrors({}) }}>
             Discard
           </Button>
-          <Button variant="cta" className="h-10 px-5 text-sm font-semibold" disabled={!dirty} onClick={save}>
+          <Button variant="cta" className="h-10 px-5 text-sm font-semibold" disabled={!dirty || saving} onClick={save}>
             Save Profile
           </Button>
         </div>
@@ -110,7 +109,6 @@ export function TutorProfilePage() {
 
       <aside aria-label="Listing preview" className="min-w-0 xl:sticky xl:top-20 xl:self-start">
         <DashboardSection title="Live preview" description="How your card appears in tutor listings.">
-          {/* inert: the preview card's own buttons (save, view profile) must not act from here */}
           <div inert>
             <TutorResultCard tutor={previewTutor(draft)} />
           </div>

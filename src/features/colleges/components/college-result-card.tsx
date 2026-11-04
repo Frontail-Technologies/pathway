@@ -7,8 +7,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Button } from '@/components/ui/button'
 import { VerifiedBadge } from '@/components/shared/verified-badge'
 import { SponsoredBadge } from '@/components/shared/sponsored-badge'
-import { getCollegeDetail } from '../data/college-detail'
-import type { CollegeListItem } from '../data/colleges'
+import type { CollegeListItem } from '../api/colleges-api'
 
 type CollegeResultCardProps = {
   college: CollegeListItem
@@ -27,7 +26,7 @@ const chipMuted = 'rounded-md bg-muted px-2 py-0.5 text-xs font-medium text-fore
  
 export function CollegeResultCard({ college, compared, onToggleCompare }: CollegeResultCardProps) {
   const { saved, toggleSaved } = useSavedItem('college', college.slug, 'College')
-  const hasDetail = !!getCollegeDetail(college.slug)
+  const hasDetail = college.hasDetailPage
 
   return (
     <article className="flex gap-3 rounded-[12px] border bg-card p-4 shadow-[0_2px_10px_rgba(15,23,42,0.04)] sm:gap-4 sm:p-5">

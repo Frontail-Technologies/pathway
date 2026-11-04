@@ -1,7 +1,3 @@
-/**
- * Team & access (demo). There are no accounts behind the admin, so the team is the demo administrator plus any
- * invites added on this device. No email is ever sent.
- */
 import { ADMIN_STORAGE_KEYS, readAdminStorage } from './admin-demo-storage'
 
 export const TEAM_ROLES = ['Owner', 'Editor', 'Viewer'] as const
@@ -31,7 +27,6 @@ export type TeamMember = {
   email: string
   role: TeamRole
   status: 'active' | 'pending'
-  /** ISO timestamp, for pending invites */
   invitedAt?: string
 }
 

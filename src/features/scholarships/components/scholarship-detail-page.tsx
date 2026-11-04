@@ -8,7 +8,7 @@ import { useSavedItem } from '@/features/saved/saved-items-provider'
 import { MobileActionBar, MobileActionBarSave } from '@/components/shared/mobile-action-bar'
 import { EnquiryDialog } from '@/features/enquiries/components/enquiry-dialog'
 import { Button } from '@/components/ui/button'
-import type { ScholarshipDetailData } from '../data/scholarship-detail'
+import type { ScholarshipDetailData } from '../api/scholarships-api'
 import { ScholarshipIdentityHeader } from './scholarship-identity-header'
 import { ScholarshipOpportunitySnapshot } from './scholarship-opportunity-snapshot'
 import { ScholarshipEligibilitySnapshot } from './scholarship-eligibility-snapshot'
@@ -43,14 +43,6 @@ export function ScholarshipDetailPage({ scholarship }: { scholarship: Scholarshi
 
   return (
     <div className="bg-background">
-      {
-
-
-
-
-
-
- }
       <Container className="px-4 pt-5 lg:pt-6">
         <Breadcrumbs items={['Home', { label: 'Scholarships', href: '/scholarships' }, scholarship.name]} />
         <div className="mt-4 border-b pb-5 sm:pb-6">
@@ -77,9 +69,6 @@ export function ScholarshipDetailPage({ scholarship }: { scholarship: Scholarshi
             <ScholarshipFaqSection scholarship={scholarship} />
           </div>
 
-          {
-
- }
           <DetailStickySidebar>
             <ScholarshipActionSidebar scholarship={scholarship} saved={saved} onToggleSaved={toggleSaved} />
           </DetailStickySidebar>

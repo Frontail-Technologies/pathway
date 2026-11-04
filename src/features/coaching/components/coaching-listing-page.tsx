@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import type { ReactNode } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
@@ -9,17 +9,20 @@ import { ArrowRight, BookOpen, ChevronRight, GraduationCap, Loader2, MapPin, Mon
 import { Container } from '@/components/shared/container'
 import { EmptyState } from '@/components/feedback'
 import { Button } from '@/components/ui/button'
-import { coachingProviders, getCoachingFeed, type CoachingProvider } from '../data/coaching'
+import { ListingError, ListingLoading } from '@/features/catalog/listing-states'
+import { useCatalogList } from '@/hooks/use-catalog-list'
+import { apiQueryFrom } from '@/lib/search-params'
+import type { CatalogList, CatalogQuery } from '@/services/api/catalog'
+import { toCoachingListItem, type CoachingListDto, type CoachingListItem } from '../api/coaching-api'
 import { getCoachingVisual } from '../data/visuals'
 import {
   emptyFilters,
-  matchesFilters,
-  matchesSearch,
+  examOptions,
+  modeOptions,
   parseCoachingFilters,
   parseCoachingSearch,
   parseCoachingSort,
   serializeCoachingFilters,
-  sortCoachingProviders,
   type FilterKey,
   type FilterState,
   type SortValue,
@@ -32,9 +35,9 @@ import { CoachingResultsToolbar } from './coaching-results-toolbar'
 
 
 
-const BATCH_SIZE = 6
+const PAGE_SIZE = 12
 
-export function CoachingListingPage() {
+export function CoachingListingPage({ initial, initialQuery, recommended: recommendedProviders, providerCount }: { initial?: CatalogList<CoachingListItem> | null; initialQuery?: CatalogQuery; recommended: CoachingListItem[]; providerCount: number | null }) {
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
@@ -43,24 +46,11 @@ export function CoachingListingPage() {
   const sort = useMemo(() => parseCoachingSort(searchParams), [searchParams])
   const query = useMemo(() => parseCoachingSearch(searchParams), [searchParams])
 
-  const [visibleCount, setVisibleCount] = useState(BATCH_SIZE)
-  const [loadingMore, setLoadingMore] = useState(false)
-
-  const feed = useMemo(() => getCoachingFeed(), [])
-  const recommendedProviders = useMemo(() => sortCoachingProviders(coachingProviders, 'recommended').slice(0, 3), [])
-  const allResults = useMemo(
-    () => sortCoachingProviders(feed.filter((provider) => matchesFilters(provider, filters) && matchesSearch(provider, query)), sort),
-    [feed, filters, query, sort]
-  )
-  const visibleResults = allResults.slice(0, visibleCount)
-  const hasMore = visibleCount < allResults.length
-
-  useEffect(() => {
-    setVisibleCount(BATCH_SIZE)
-  }, [filters, query, sort])
+  const apiQuery = useMemo(() => apiQueryFrom(serializeCoachingFilters(filters, sort, query)), [filters, sort, query])
+  const list = useCatalogList<CoachingListDto, CoachingListItem>({ path: '/coaching', query: apiQuery, map: toCoachingListItem, limit: PAGE_SIZE, initial, initialQuery })
+  const { items: visibleResults, hasMore, loadingMore, loadMore } = list
 
   const sentinelRef = useRef<HTMLDivElement>(null)
-  const loadingRef = useRef(false)
 
   useEffect(() => {
     if (!hasMore) return
@@ -69,21 +59,13 @@ export function CoachingListingPage() {
 
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0]?.isIntersecting && !loadingRef.current) {
-          loadingRef.current = true
-          setLoadingMore(true)
-          window.setTimeout(() => {
-            setVisibleCount((prev) => Math.min(prev + BATCH_SIZE, allResults.length))
-            setLoadingMore(false)
-            loadingRef.current = false
-          }, 500)
-        }
+        if (entries[0]?.isIntersecting) loadMore()
       },
       { rootMargin: '200px' }
     )
     observer.observe(node)
     return () => observer.disconnect()
-  }, [hasMore, allResults.length])
+  }, [hasMore, loadMore])
 
   const updateUrl = (nextFilters: FilterState, nextSort: SortValue, nextQuery: string) => {
     const queryString = serializeCoachingFilters(nextFilters, nextSort, nextQuery)
@@ -108,7 +90,7 @@ export function CoachingListingPage() {
   return (
     <div className="bg-background pb-9 lg:pb-14">
       <Container className="max-w-[1360px] px-4 pt-5 lg:pt-7">
-        <CoachingHero />
+        <CoachingHero providerCount={providerCount} />
 
         <div className="relative z-10 -mt-5 px-0 sm:-mt-6 lg:px-8">
           <CoachingResultsToolbar query={query} onSearchChange={handleSearchChange} />
@@ -117,7 +99,7 @@ export function CoachingListingPage() {
         <RecommendedProviders providers={recommendedProviders} />
 
         <CoachingResultsHeader
-          resultCount={allResults.length}
+          resultCount={list.total}
           filters={filters}
           onApplyMobileFilters={applyMobileFilters}
           onRemoveFilter={removeFilter}
@@ -132,7 +114,11 @@ export function CoachingListingPage() {
           </div>
 
           <div className="min-w-0 flex-1">
-            {allResults.length === 0 ? (
+            {list.status === 'loading' ? (
+                <ListingLoading label="Loading coaching institutes" />
+              ) : list.status === 'error' ? (
+                <ListingError message={list.error} onRetry={list.retry} />
+              ) : visibleResults.length === 0 ? (
               <div className="flex flex-col items-center gap-4">
                 <EmptyState title="No coaching providers match these filters." />
                 <Button variant="outline" onClick={() => updateUrl(emptyFilters, 'recommended', '')}>
@@ -168,16 +154,12 @@ export function CoachingListingPage() {
   )
 }
 
-function CoachingHero() {
-  const examCount = new Set(coachingProviders.flatMap((provider) => provider.exams)).size
-  const modeCount = new Set(coachingProviders.flatMap((provider) => provider.modes)).size
+function CoachingHero({ providerCount }: { providerCount: number | null }) {
+  const examCount = examOptions.length
+  const modeCount = modeOptions.length
 
   return (
     <section className="overflow-hidden rounded-[14px] border bg-card shadow-[0_16px_42px_rgba(15,23,42,0.08)]">
-      {
-
-
- }
       <div className="grid min-h-[250px] lg:min-h-[300px] lg:grid-cols-[minmax(0,0.95fr)_minmax(420px,0.85fr)] lg:grid-rows-[auto_auto]">
         <div className="relative z-10 order-1 flex flex-col justify-center p-5 sm:p-7 lg:order-0 lg:col-start-1 lg:row-start-1 lg:p-8">
           <CoachingBreadcrumb />
@@ -198,7 +180,7 @@ function CoachingHero() {
           <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(248,250,252,0)_45%,rgba(248,250,252,0.78)_100%)] lg:bg-[linear-gradient(90deg,#ffffff_0%,rgba(255,255,255,0.58)_18%,rgba(255,255,255,0)_48%)]" />
         </div>
         <div className="relative z-10 order-3 flex flex-wrap gap-x-6 gap-y-3 px-5 pb-5 sm:px-7 sm:pb-7 lg:order-0 lg:col-start-1 lg:row-start-2 lg:px-8 lg:pb-8">
-          <HeroStat icon={<GraduationCap className="size-4" aria-hidden="true" />} title={`${coachingProviders.length}+ Providers`} label="Coaching institutes & academies" />
+          <HeroStat icon={<GraduationCap className="size-4" aria-hidden="true" />} title={providerCount ? `${providerCount} Providers` : 'Coaching Providers'} label="Coaching institutes & academies" />
           <HeroStat icon={<BookOpen className="size-4" aria-hidden="true" />} title={`${examCount} Exam Categories`} label="JEE, NEET, CAT & more" />
           <HeroStat icon={<MonitorPlay className="size-4" aria-hidden="true" />} title={`${modeCount} Learning Modes`} label="Online, offline, hybrid" />
         </div>
@@ -235,7 +217,7 @@ function HeroStat({ icon, title, label }: { icon: ReactNode; title: string; labe
   )
 }
 
-function RecommendedProviders({ providers }: { providers: CoachingProvider[] }) {
+function RecommendedProviders({ providers }: { providers: CoachingListItem[] }) {
   return (
     <section className="mt-7 sm:mt-8">
       <div className="flex items-end justify-between gap-3">
@@ -257,7 +239,7 @@ function RecommendedProviders({ providers }: { providers: CoachingProvider[] }) 
   )
 }
 
-function RecommendedProviderCard({ provider }: { provider: CoachingProvider }) {
+function RecommendedProviderCard({ provider }: { provider: CoachingListItem }) {
   const visual = getCoachingVisual(provider)
   
   

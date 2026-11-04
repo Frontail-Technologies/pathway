@@ -2,11 +2,6 @@ import type { Metadata } from 'next'
 import { tabHref, tabMetadata, type DetailTab } from '@/lib/detail-tabs'
 import type { CollegeDetailData } from '../data/college-detail'
 
-/**
- * College detail sub-pages (Shiksha-style): each topic is its own URL under
- * /college/[slug], sharing one header + tab bar layout. `segment: ''` is the
- * overview at /college/[slug].
- */
 export const collegeTabs: DetailTab<CollegeDetailData>[] = [
   {
     segment: '',
@@ -65,10 +60,6 @@ export function collegeTabMetadata(college: CollegeDetailData | undefined, segme
   return tabMetadata(collegeTabs, college, segment, (c) => collegeBase(c.slug), 'College Not Found')
 }
 
-/**
- * Old single-page anchors (/college/x#placements) → new sub-page segment.
- * Used to forward legacy links and bookmarks.
- */
 export const legacyCollegeAnchors: Record<string, string> = {
   overview: '',
   courses: 'courses',

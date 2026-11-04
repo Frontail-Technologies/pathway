@@ -21,12 +21,12 @@ const statusStyle: Record<RequestStatus, string> = {
 }
 
 export function TutorRequestsPage() {
-  const { state, update } = useTutorSpace()
+  const { state, updateRequests } = useTutorSpace()
   const [filter, setFilter] = useState<RequestStatus | 'all'>('new')
   const list = state.requests.filter((r) => filter === 'all' || r.status === filter)
 
   const setStatus = (id: string, status: RequestStatus) => {
-    update((current) => ({ requests: current.requests.map((r) => (r.id === id ? { ...r, status } : r)) }))
+    updateRequests((current) => current.map((r) => (r.id === id ? { ...r, status } : r)))
     toast.success(status === 'accepted' ? 'Request accepted. Messaging students is coming soon.' : status === 'declined' ? 'Request declined.' : 'Moved back to new.')
   }
 

@@ -3,8 +3,8 @@
 import Image from 'next/image'
 import { Plus, X } from 'lucide-react'
 import { VerifiedBadge } from '@/components/shared/verified-badge'
-import { maxComparisonSlots } from '../data/college-compare'
-import type { ComparisonEntry } from '../data/comparison-sections'
+import { getCollegeInitials, maxComparisonSlots } from '../data/college-compare'
+import type { CompareEntry as ComparisonEntry } from '../api/compare-api'
 import { CollegeCoursePickerDialog, type Selection } from './college-course-picker-dialog'
 import { MOBILE_COMPARE_GRID_COLS } from './compare-grid'
 
@@ -63,7 +63,7 @@ function FilledCell({
     <div className="flex flex-col gap-1 border-l border-border/60 bg-card px-2.5 py-3 first:border-l-0">
       <div className="flex items-start justify-between gap-1">
         <div className="relative size-9 shrink-0 overflow-hidden rounded-lg bg-secondary">
-          <Image src={college.logo} alt="" fill sizes="36px" className="object-cover" />
+          {college.logo ? <Image src={college.logo} alt="" fill sizes="36px" className="object-cover" /> : <span className="flex size-full items-center justify-center text-xs font-bold text-primary">{getCollegeInitials(college.shortName)}</span>}
         </div>
         <button
           type="button"
@@ -78,11 +78,10 @@ function FilledCell({
       <p className="truncate text-[11px] text-muted-foreground">
         {program.degree} · {program.course}
       </p>
-      { }
       {college.verified && <VerifiedBadge />}
       <CollegeCoursePickerDialog
         excludeSlugs={excludeSlugs.filter((slug) => slug !== college.slug)}
-        initial={{ collegeSlug: college.slug, degree: program.degree, course: program.course }}
+        initial={{ collegeSlug: college.slug, program: program.slug }}
         onApply={onModify}
         trigger={
           <button

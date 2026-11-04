@@ -19,7 +19,6 @@ const TYPE_OPTIONS = COACHING_PROVIDER_TYPES.map((value) => ({ value, label: sen
 export function AdminCoachingTableView({ providers }: { providers: AdminCoachingProvider[] }) {
   const router = useRouter()
   const { values: f, set, active } = useUrlFilters(DEFAULT_FILTERS)
-  // Reset only this list's filters so ?tab=coaching stays (the hook's own reset clears the whole query).
   const reset = () => set(DEFAULT_FILTERS)
   const locationOptions = useMemo(() => toOptions([...new Set(providers.map((provider) => provider.location))].sort()), [providers])
 

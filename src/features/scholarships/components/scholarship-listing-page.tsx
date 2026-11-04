@@ -1,22 +1,23 @@
 'use client'
 
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { Loader2 } from 'lucide-react'
 import { Container } from '@/components/shared/container'
 import { Breadcrumbs } from '@/components/shared/breadcrumbs'
 import { EmptyState } from '@/components/feedback'
 import { Button } from '@/components/ui/button'
-import { getScholarshipFeed } from '../data/scholarships'
+import { ListingError, ListingLoading } from '@/features/catalog/listing-states'
+import { useCatalogList } from '@/hooks/use-catalog-list'
+import { apiQueryFrom } from '@/lib/search-params'
+import type { CatalogList, CatalogQuery } from '@/services/api/catalog'
+import { toScholarshipListItem, type ScholarshipListDto, type ScholarshipListItem } from '../api/scholarships-api'
 import {
   emptyFilters,
-  matchesFilters,
-  matchesScholarshipQuery,
   parseScholarshipFilters,
   parseScholarshipSearch,
   parseScholarshipSort,
   serializeScholarshipFilters,
-  sortScholarships,
   type FilterKey,
   type FilterState,
   type SortValue,
@@ -26,9 +27,9 @@ import { ScholarshipResultsToolbar } from './scholarship-results-toolbar'
 import { ScholarshipResultCard } from './scholarship-result-card'
 import { ScholarshipHero } from './scholarship-hero'
 
-const BATCH_SIZE = 8
+const PAGE_SIZE = 12
 
-export function ScholarshipListingPage() {
+export function ScholarshipListingPage({ initial, initialQuery }: { initial?: CatalogList<ScholarshipListItem> | null; initialQuery?: CatalogQuery }) {
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
@@ -41,24 +42,11 @@ export function ScholarshipListingPage() {
   const sort = useMemo(() => parseScholarshipSort(searchParams), [searchParams])
   const query = useMemo(() => parseScholarshipSearch(searchParams), [searchParams])
 
-  const [visibleCount, setVisibleCount] = useState(BATCH_SIZE)
-  const [loadingMore, setLoadingMore] = useState(false)
-
-  const feed = useMemo(() => getScholarshipFeed(), [])
-  const allResults = useMemo(
-    () => sortScholarships(feed.filter((scholarship) => matchesFilters(scholarship, filters) && matchesScholarshipQuery(scholarship, query)), sort),
-    [feed, filters, query, sort],
-  )
-  const visibleResults = allResults.slice(0, visibleCount)
-  const hasMore = visibleCount < allResults.length
-
-  
-  useEffect(() => {
-    setVisibleCount(BATCH_SIZE)
-  }, [filters, sort, query])
+  const apiQuery = useMemo(() => apiQueryFrom(serializeScholarshipFilters(filters, sort, query)), [filters, sort, query])
+  const list = useCatalogList<ScholarshipListDto, ScholarshipListItem>({ path: '/scholarships', query: apiQuery, map: toScholarshipListItem, limit: PAGE_SIZE, initial, initialQuery })
+  const { items: visibleResults, hasMore, loadingMore, loadMore } = list
 
   const sentinelRef = useRef<HTMLDivElement>(null)
-  const loadingRef = useRef(false)
 
   useEffect(() => {
     if (!hasMore) return
@@ -67,21 +55,13 @@ export function ScholarshipListingPage() {
 
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0]?.isIntersecting && !loadingRef.current) {
-          loadingRef.current = true
-          setLoadingMore(true)
-          window.setTimeout(() => {
-            setVisibleCount((prev) => Math.min(prev + BATCH_SIZE, allResults.length))
-            setLoadingMore(false)
-            loadingRef.current = false
-          }, 500)
-        }
+        if (entries[0]?.isIntersecting) loadMore()
       },
       { rootMargin: '200px' }
     )
     observer.observe(node)
     return () => observer.disconnect()
-  }, [hasMore, allResults.length])
+  }, [hasMore, loadMore])
 
   
   
@@ -118,16 +98,15 @@ export function ScholarshipListingPage() {
 
       <Container className="px-4 pt-8">
         <div>
-        <p className="text-sm font-semibold text-primary">250+ Scholarships available</p>
+        <p className="text-sm font-semibold text-primary">{list.status === 'ready' ? `${list.total.toLocaleString('en-IN')} ${list.total === 1 ? 'Scholarship' : 'Scholarships'} available` : 'Scholarships'}</p>
         <div className="mt-5 flex flex-col gap-6 lg:flex-row lg:items-start lg:gap-8">
-          { }
           <div className="sticky top-header-gap hidden max-h-[calc(100dvh-var(--pw-header-h)-2rem)] overflow-y-auto lg:block">
             <ScholarshipFilterSidebar filters={filters} onToggle={toggleFilter} onClearAll={clearAllFilters} />
           </div>
 
           <div className="min-w-0 flex-1">
             <ScholarshipResultsToolbar
-              resultCount={allResults.length}
+              resultCount={list.total}
               filters={filters}
               onApplyMobileFilters={applyMobileFilters}
               onToggleFilter={toggleFilter}
@@ -137,7 +116,11 @@ export function ScholarshipListingPage() {
               onSortChange={handleSortChange}
             />
 
-            {allResults.length === 0 ? (
+            {list.status === 'loading' ? (
+                <ListingLoading label="Loading scholarships" />
+              ) : list.status === 'error' ? (
+                <ListingError message={list.error} onRetry={list.retry} />
+              ) : visibleResults.length === 0 ? (
               <div className="flex flex-col items-center gap-4">
                 <EmptyState title="No scholarships found. Try adjusting your filters." />
                 <div className="flex flex-wrap justify-center gap-2">

@@ -13,11 +13,9 @@ import { ExamActionBar } from './exam-action-bar'
 import { HorizontalContentRail } from '@/components/shared/horizontal-content-rail'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
 import { Button } from '@/components/ui/button'
-import { getCollegeDetail } from '@/features/colleges/data/college-detail'
-import { getCourseDetail } from '@/features/courses/data/course-detail'
 import { examFromSlug } from '@/features/college-predictor/data/predictor'
 import { rankExamFromSlug } from '@/features/rank-predictor/data/rank'
-import { getRelatedExams, type Exam } from '../data/exams'
+import type { Exam } from '../data/exams'
 import { examBase, examColleges, examCourses, examTabHref, examTabs, legacyExamAnchors, type DetailedExam } from '../config/exam-tabs'
 
 const monogram = (exam: Exam) => exam.shortName.split(' ')[0].slice(0, 4).toUpperCase()
@@ -214,10 +212,9 @@ export function CollegesSection({ exam }: { exam: DetailedExam }) {
             <p className="mt-0.5 text-xs text-muted-foreground">
               {college.city} · {college.type}
             </p>
-            <p className="mt-2 flex-1 text-[13px] text-foreground">{college.popularCourse}</p>
-            <p className="mt-1 text-xs text-muted-foreground">Listed exam: {college.exam}</p>
+            <p className="mt-2 flex-1 text-xs text-muted-foreground">Related to {exam.shortName}</p>
             <div className="mt-3">
-              {getCollegeDetail(college.slug) ? (
+              {college.hasDetailPage ? (
                 <Button variant="outline" className="h-9 px-4 text-sm" nativeButton={false} render={<Link href={`/college/${college.slug}`} />}>
                   View College
                 </Button>
@@ -249,10 +246,10 @@ export function CoursesSection({ exam }: { exam: DetailedExam }) {
             <div className="min-w-0">
               <p className="text-sm font-semibold text-foreground">{course.name}</p>
               <p className="mt-0.5 text-xs text-muted-foreground">
-                {course.level} · {course.duration} · {course.eligibility}
+                {course.degree}
               </p>
             </div>
-            {getCourseDetail(course.slug) ? (
+            {course.hasDetailPage ? (
               <Button variant="outline" className="h-9 shrink-0 px-4 text-sm" nativeButton={false} render={<Link href={`/course/${course.slug}`} />}>
                 View Course
               </Button>
@@ -323,7 +320,7 @@ function ExamSidebar({ exam }: { exam: DetailedExam }) {
 }
 
 function RelatedExamsSection({ exam }: { exam: DetailedExam }) {
-  const related = getRelatedExams(exam)
+  const related = exam.related
   if (related.length === 0) return null
   return (
     <Container className="px-4">
@@ -385,7 +382,6 @@ function FinalCta({ exam }: { exam: DetailedExam }) {
   )
 }
 
-/** /exam/[slug]: about the exam plus tiles into every other sub-page. */
 export function ExamOverviewTab({ exam }: { exam: DetailedExam }) {
   const tiles = examTabs
     .filter((tab) => tab.segment && (!tab.available || tab.available(exam)))
@@ -399,10 +395,6 @@ export function ExamOverviewTab({ exam }: { exam: DetailedExam }) {
   )
 }
 
-/**
- * Shared frame for every /exam/[slug]/* page: breadcrumbs, header, sticky tab
- * bar, desktop sidebar, related exams, closing CTA and the mobile action bar.
- */
 export function ExamDetailShell({ exam, children }: { exam: DetailedExam; children: ReactNode }) {
   const base = examBase(exam.slug)
   const tabs = tabLinks(examTabs, exam, base)

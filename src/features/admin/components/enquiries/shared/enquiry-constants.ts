@@ -1,7 +1,6 @@
 import type { EnquirySource, LeadStatus } from '@/features/admin/data/admin-enquiries'
 import type { StatusTone } from '@/features/admin/components/kit'
 
-/** Sentence-case labels for the admin UI (the shared enquiry types use title case). */
 export const leadStatusLabels: Record<LeadStatus, string> = {
   new: 'New',
   contacted: 'Contacted',

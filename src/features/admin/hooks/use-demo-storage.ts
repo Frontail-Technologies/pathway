@@ -3,10 +3,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { ADMIN_STORAGE_EVENT, readAdminStorage, writeAdminStorage, type AdminStorageKey } from '@/features/admin/data/admin-demo-storage'
 
-/**
- * State mirrored to localStorage (demo only). Starts with the fallback so server and client render the same,
- * then loads the stored value after mount. `loaded` lets views avoid flashing an empty state.
- */
 export function useDemoStorage<T>(key: AdminStorageKey, fallback: T) {
   const [value, setValue] = useState<T>(fallback)
   const [loaded, setLoaded] = useState(false)

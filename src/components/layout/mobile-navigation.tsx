@@ -59,7 +59,6 @@ export function MobileNavigation() {
   const pathname = usePathname()
   const [open, setOpen] = useState(false)
 
-  // Close the menu once a link navigates; otherwise it stays over the new page.
   useEffect(() => {
     setOpen(false)
   }, [pathname])
@@ -159,11 +158,6 @@ export function MobileNavigation() {
   )
 }
 
-/**
- * Rule: every tab must open a top-level page that renders this bar (the public
- * or student-tools layouts). Tabs into nested areas with their own layout,
- * such as /student/* or /tutor-dashboard/*, make the bar disappear.
- */
 export function MobileBottomNavigation() {
   const pathname = usePathname()
   const items = [

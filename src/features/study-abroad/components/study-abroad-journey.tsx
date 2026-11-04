@@ -10,7 +10,6 @@ export function StudyAbroadJourney() {
         <div className="mt-6 flex flex-col gap-0 sm:mt-8 lg:flex-row lg:items-start lg:gap-0">
           {journeySteps.map((step, index) => (
             <div key={step.title} className="relative flex flex-1 gap-4 pb-8 last:pb-0 lg:flex-col lg:gap-0 lg:pb-0">
-              { }
               {index < journeySteps.length - 1 && (
                 <span className="absolute top-4 left-4 h-[calc(100%-1rem)] w-px -translate-x-1/2 bg-border lg:top-4 lg:right-0 lg:left-auto lg:h-px lg:w-[calc(100%-2rem)] lg:translate-x-4" aria-hidden="true" />
               )}

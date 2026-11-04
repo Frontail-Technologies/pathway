@@ -6,16 +6,6 @@ import { useEffect, useRef } from 'react'
 
 export type DetailTabNavItem = { href: string; label: string }
 
-/**
- * Sticky tab bar whose tabs are real routes (Shiksha-style sub-pages), unlike
- * DetailSectionNav which scrolls between in-page anchors.
- *
- * Scroll handling: Next.js keeps the scroll position while the shared layout
- * stays visible, which would drop the reader mid-way into the new tab. So
- * tabs opt out (scroll={false}) and, after the route changes, the window is
- * moved so the new content starts right under the tab bar, but only when the
- * reader had already scrolled past it.
- */
 export function DetailTabNav({ items, label, className = '' }: { items: DetailTabNavItem[]; label: string; className?: string }) {
   const pathname = usePathname()
   const sentinelRef = useRef<HTMLDivElement>(null)

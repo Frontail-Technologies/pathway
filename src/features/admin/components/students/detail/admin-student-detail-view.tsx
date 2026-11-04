@@ -32,7 +32,6 @@ export function AdminStudentDetailView({ student }: { student: AdminStudent }) {
     try {
       await navigator.clipboard.writeText(student.id)
     } catch {
-      /* clipboard unavailable */
     }
     setCopied(true)
     window.setTimeout(() => setCopied(false), 2000)

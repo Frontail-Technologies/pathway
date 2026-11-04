@@ -1,13 +1,15 @@
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
 import { HorizontalContentRail } from '@/components/shared/horizontal-content-rail'
-import { exams } from '@/features/exams/data/exams'
+import { listExams } from '@/features/exams/api/exams-api'
 
 const monogram = (shortName: string) => shortName.split(' ')[0].slice(0, 4).toUpperCase()
-const featuredExams = exams.filter((exam) => exam.popular).slice(0, 6)
 
- 
-export function TopExamsSection() {
+export async function TopExamsSection() {
+  const featuredExams = await listExams({ sort: 'popular', limit: '24' })
+    .then((list) => list.items.filter((exam) => exam.popular).slice(0, 6))
+    .catch(() => [])
+  if (featuredExams.length === 0) return null
   return (
     <section className="bg-muted pt-6 pb-7 sm:pt-8 sm:pb-9 lg:pb-12">
       <div className="container-shell">

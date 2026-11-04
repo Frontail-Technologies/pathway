@@ -107,7 +107,6 @@ export function ImageAssetInput({
 
   return (
     <div className="space-y-3">
-      {/* The caller renders the field label; this is only the source switch. */}
       <div role="radiogroup" aria-label={`${label} source`} className="flex w-fit items-center gap-0.5 rounded-lg bg-muted p-0.5">
         {modeButton('upload', 'Upload', Upload)}
         {modeButton('url', 'From URL', LinkIcon)}

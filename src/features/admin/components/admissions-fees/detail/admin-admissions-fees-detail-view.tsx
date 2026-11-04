@@ -28,7 +28,6 @@ const qualityItems: { key: keyof AdminProgramOffering['qualityBreakdown']; label
   { key: 'source', label: 'Source' },
 ]
 
-// Only these records have a public page in the demo data.
 const PUBLIC_COLLEGE_SLUGS = new Set(['iit-delhi'])
 const PUBLIC_COURSE_SLUGS = new Set(['btech-computer-science'])
 

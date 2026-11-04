@@ -1,5 +1,5 @@
 import { CircleCheck } from 'lucide-react'
-import type { ScholarshipDetailData } from '../data/scholarship-detail'
+import type { ScholarshipDetailData } from '../api/scholarships-api'
 
  
 export function ScholarshipEligibilitySnapshot({ scholarship }: { scholarship: ScholarshipDetailData }) {

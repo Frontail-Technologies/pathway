@@ -25,7 +25,6 @@ export function ScholarshipFilterSidebar({ filters, onToggle, onClearAll }: Scho
             Clear
           </button>
         </div>
-        { }
         <Accordion multiple defaultValue={filterGroups.slice(0, 3).map((group) => group.key)} className="mt-1">
           {filterGroups.map((group) => (
             <FilterGroupSection key={group.key} groupKey={group.key} title={group.title} options={group.options} selected={filters[group.key]} onToggle={onToggle} />

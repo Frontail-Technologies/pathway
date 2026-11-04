@@ -1,22 +1,12 @@
 import type { Metadata } from 'next'
 import { tabHref, tabMetadata, type DetailTab } from '@/lib/detail-tabs'
-import { colleges } from '@/features/colleges/data/colleges'
-import { courses } from '@/features/courses/data/courses'
-import { exams, getExamBySlug, type Exam, type ExamDetail } from '../data/exams'
+import type { DetailedExam } from '../api/exams-api'
 
-export type DetailedExam = Exam & { detail: ExamDetail }
+export type { DetailedExam }
 
-export function getDetailedExam(slug: string): DetailedExam | undefined {
-  const exam = getExamBySlug(slug)
-  return exam?.hasDetailPage && exam.detail ? { ...exam, detail: exam.detail } : undefined
-}
+export const examColleges = (exam: DetailedExam) => exam.colleges
+export const examCourses = (exam: DetailedExam) => exam.courses
 
-export const getDetailedExamSlugs = () => exams.filter((exam) => exam.hasDetailPage && exam.detail).map((exam) => exam.slug)
-
-export const examColleges = (exam: DetailedExam) => (exam.detail.collegeSlugs ?? []).map((slug) => colleges.find((college) => college.slug === slug)).filter((college) => !!college)
-export const examCourses = (exam: DetailedExam) => courses.filter((course) => course.entranceExams.includes(exam.shortName))
-
-/** Exam sub-pages under /exam/[slug]. Colleges and Courses only appear when the exam has data for them. */
 export const examTabs: DetailTab<DetailedExam>[] = [
   { segment: '', label: 'Overview', heading: (e) => `${e.shortName}: ${e.name}`, description: (e) => e.description },
   {

@@ -1,7 +1,6 @@
 import type { ModerationStatus, ReviewEntityType, ReviewSource } from '@/features/admin/data/admin-reviews'
 import type { StatusTone } from '@/features/admin/components/kit'
 
-/** Sentence-case labels for the admin UI (the shared review types use longer title-case labels). */
 export const reviewSourceLabels: Record<ReviewSource, string> = {
   google: 'Google',
   pathway: 'Pathway',

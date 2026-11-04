@@ -1,14 +1,16 @@
 import Link from 'next/link'
 import { ArrowRight, Clock, GraduationCap } from 'lucide-react'
 import { HorizontalContentRail } from '@/components/shared/horizontal-content-rail'
-import { courses } from '@/features/courses/data/courses'
-
+import { listCourses } from '@/features/courses/api/courses-api'
+import { inCuratedOrder } from '@/features/catalog/curated'
 
 const curatedSlugs = ['btech-computer-science', 'mba', 'mbbs', 'bca']
-const popularCourses = curatedSlugs.flatMap((slug) => courses.find((course) => course.slug === slug) ?? [])
 
- 
-export function TrendingCoursesSection() {
+export async function TrendingCoursesSection() {
+  const popularCourses = await listCourses({ slugs: curatedSlugs.join(','), limit: String(curatedSlugs.length) })
+    .then((list) => inCuratedOrder(list.items, curatedSlugs))
+    .catch(() => [])
+  if (popularCourses.length === 0) return null
   return (
     <section className="bg-muted py-7 sm:py-9 lg:py-12">
       <div className="container-shell">

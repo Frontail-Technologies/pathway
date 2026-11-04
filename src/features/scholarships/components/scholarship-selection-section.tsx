@@ -1,5 +1,5 @@
 import { ChevronDown, CircleCheck } from 'lucide-react'
-import type { ScholarshipDetailData } from '../data/scholarship-detail'
+import type { ScholarshipDetailData } from '../api/scholarships-api'
 
  
 export function ScholarshipSelectionSection({ scholarship }: { scholarship: ScholarshipDetailData }) {

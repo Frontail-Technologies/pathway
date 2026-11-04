@@ -25,12 +25,10 @@ export const COACHING_COURSE_TYPE_OPTIONS = [
 
 export const COACHING_EXAM_OPTIONS = ['JEE Main', 'JEE Advanced', 'NEET UG', 'CUET UG', 'CAT', 'XAT', 'GATE', 'CLAT', 'NID DAT', 'UCEED', 'CA Foundation', 'Olympiad'] as const
 
-/** Display label for stored title-case values such as provider types and course formats ("Coaching Institute" → "Coaching institute"). */
 export function sentenceCase(value: string) {
   return value.charAt(0) + value.slice(1).toLowerCase()
 }
 
-/** Plain option list for AdminFilterSelect. */
 export function toOptions(values: readonly string[]) {
   return values.map((value) => ({ value, label: value }))
 }
@@ -40,13 +38,11 @@ export const PUBLIC_PAGE_FILTER_OPTIONS = [
   { value: 'none', label: 'Listing only' },
 ]
 
-/** "2026-09-15" → "15 Sep 2026" */
 export function formatDate(value: string) {
   const date = new Date(`${value}T00:00:00`)
   return Number.isNaN(date.getTime()) ? value : date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
 }
 
-/** "Kota, Rajasthan" (or just the location when there's no state, e.g. "Online"). */
 export function providerPlace(provider: { location: string; state?: string }) {
   return provider.state ? `${provider.location}, ${provider.state}` : provider.location
 }

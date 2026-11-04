@@ -54,7 +54,6 @@ export function AdminExamEditor({ exam, mode }: { exam?: Exam; mode: 'add' | 'ed
   const [activeSection, setActiveSection] = React.useState('basics')
   const [slugTouched, setSlugTouched] = React.useState(mode === 'edit')
 
-  // Start from edits already saved on this device, if any.
   React.useEffect(() => {
     if (!exam) return
     const stored = readExamEdits()[exam.id]

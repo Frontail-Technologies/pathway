@@ -1,5 +1,6 @@
 import type { CollegeListItem } from './colleges'
 
+
 export const stateOptions = ['Delhi', 'Maharashtra', 'Tamil Nadu', 'Rajasthan', 'Karnataka', 'Punjab'] as const
 export const cityOptions = ['New Delhi', 'Mumbai', 'Chennai', 'Pilani', 'Vellore', 'Manipal'] as const
 export const courseOptions = ['B.Tech', 'B.E.', 'B.Com', 'BBA', 'MBA', 'BCA'] as const
@@ -43,6 +44,48 @@ export const filterGroups: { key: FilterKey; title: string; options: readonly st
   { key: 'ratings', title: 'Rating', options: ratingOptions },
   { key: 'exams', title: 'Entrance Exam', options: examOptions },
 ]
+
+const slugOf = (value: string) => value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
+const filterSlugs: Record<FilterKey, Record<string, string>> = {
+  states: Object.fromEntries(stateOptions.map((option) => [option, slugOf(option)])),
+  cities: Object.fromEntries(cityOptions.map((option) => [option, slugOf(option)])),
+  courses: { 'B.Tech': 'btech', 'B.E.': 'be', 'B.Com': 'bcom', BBA: 'bba', MBA: 'mba', BCA: 'bca' },
+  fees: { 'Under ₹1 Lakh': 'under-1-lakh', '₹1–3 Lakh': '1-3-lakh', '₹3–6 Lakh': '3-6-lakh', '₹6+ Lakh': '6-plus-lakh' },
+  instituteTypes: { Government: 'government', Private: 'private', Deemed: 'deemed' },
+  studyModes: { 'Full-time': 'full-time', Distance: 'distance', Online: 'online' },
+  ratings: { '4★ & above': '4-plus', '3★ & above': '3-plus' },
+  exams: { 'JEE Main': 'jee-main', 'JEE Advanced': 'jee-advanced', 'NEET UG': 'neet-ug', CAT: 'cat', 'CUET UG': 'cuet-ug', BITSAT: 'bitsat' },
+}
+const filterLabels = Object.fromEntries(
+  (Object.keys(filterSlugs) as FilterKey[]).map((key) => [key, Object.fromEntries(Object.entries(filterSlugs[key]).map(([label, slug]) => [slug, label]))]),
+) as Record<FilterKey, Record<string, string>>
+
+export function serializeCollegeFilters(filters: FilterState, sort: SortValue, query = ''): string {
+  const params = new URLSearchParams()
+  if (query.trim()) params.set('q', query.trim())
+  for (const group of filterGroups) {
+    const slugs = filters[group.key].map((value) => filterSlugs[group.key][value]).filter(Boolean)
+    if (slugs.length) params.set(group.key, slugs.join(','))
+  }
+  if (sort !== 'popularity') params.set('sort', sort)
+  return params.toString()
+}
+
+export function parseCollegeFilters(params: URLSearchParams): FilterState {
+  const result: FilterState = { ...emptyFilters }
+  for (const group of filterGroups) {
+    const raw = params.get(group.key)
+    result[group.key] = raw ? raw.split(',').map((slug) => filterLabels[group.key][slug]).filter((label): label is string => Boolean(label)) : []
+  }
+  return result
+}
+
+export const parseCollegeSearch = (params: URLSearchParams) => params.get('q') ?? ''
+
+export function parseCollegeSort(params: URLSearchParams): SortValue {
+  const raw = params.get('sort')
+  return sortOptions.find((option) => option.value === raw)?.value ?? 'popularity'
+}
 
 function feesMatchesBucket(feesValue: number, bucket: string): boolean {
   if (bucket === 'Under ₹1 Lakh') return feesValue < 1

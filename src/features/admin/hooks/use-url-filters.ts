@@ -3,10 +3,6 @@
 import { useCallback, useMemo } from 'react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 
-/**
- * List filters kept in the URL (?q=…&type=…), so Back, refresh and shared links keep the same view.
- * Defaults are omitted from the URL. Uses replace() so typing in search doesn't flood history.
- */
 export function useUrlFilters<T extends Record<string, string>>(defaults: T) {
   const router = useRouter()
   const pathname = usePathname()
@@ -34,7 +30,6 @@ export function useUrlFilters<T extends Record<string, string>>(defaults: T) {
     [defaults, params, pathname, router],
   )
 
-  // Clears only this hook's keys, so other params (e.g. ?tab=) survive "Clear".
   const reset = useCallback(() => {
     const next = new URLSearchParams(params.toString())
     for (const key of Object.keys(defaults)) next.delete(key)

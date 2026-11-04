@@ -1,32 +1,11 @@
-/**
- * App-shell (native WebView) mode.
- *
- * When Pathway is loaded inside the Pathway mobile app, the native layer owns
- * the top bar and the tab bar. The web app then hides its own chrome
- * (header, footer, bottom nav) and talks to the native layer through a small
- * message bridge. See docs/system-design/webview-integration.md.
- *
- * Detection happens in an inline script before first paint (no flash of web
- * chrome, and pages stay statically rendered). Any one of these enables it:
- *   - `?app=1` on the entry URL (persisted in a session cookie)
- *   - a `PathwayApp/<version>` token in the WebView user agent
- *   - an injected bridge object (ReactNativeWebView, webkit handler, Android)
- * `?app=0` clears the cookie (useful for QA in a normal browser).
- */
-
 export const APP_SHELL_ATTRIBUTE = 'data-app-shell'
 export const APP_SHELL_COOKIE = 'pw_app'
 export const APP_SHELL_QUERY_PARAM = 'app'
 export const APP_SHELL_USER_AGENT_TOKEN = 'PathwayApp/'
 
-/** iOS: WKScriptMessageHandler name. Android: @JavascriptInterface object name. */
 export const IOS_MESSAGE_HANDLER = 'pathway'
 export const ANDROID_INTERFACE = 'PathwayAndroid'
 
-/**
- * Runs inline in <head>, before the body paints. Kept dependency-free and
- * ES5-safe because old Android System WebViews still exist in the wild.
- */
 export const appShellBootScript = `(function(){try{
 var d=document.documentElement,w=window,
 q=new URLSearchParams(location.search).get('${APP_SHELL_QUERY_PARAM}'),
@@ -41,11 +20,9 @@ export function isAppShell(): boolean {
   return typeof document !== 'undefined' && document.documentElement.hasAttribute(APP_SHELL_ATTRIBUTE)
 }
 
-/** Messages the web app sends to the native layer. Versioned so native can evolve safely. */
 export type NativeMessage =
   | { type: 'ready' }
   | { type: 'route'; path: string; title: string }
-  /** Sent when <title> changes after a route message (Next applies it asynchronously). */
   | { type: 'title'; title: string }
   | { type: 'openExternal'; url: string }
 
@@ -57,14 +34,12 @@ type BridgeWindow = Window & {
 
 export const BRIDGE_PROTOCOL_VERSION = 1
 
-/** True when a native receiver is present (not just `?app=1` in a browser). */
 export function hasNativeBridge(): boolean {
   if (typeof window === 'undefined') return false
   const w = window as BridgeWindow
   return Boolean(w.ReactNativeWebView || w.webkit?.messageHandlers?.[IOS_MESSAGE_HANDLER] || w.PathwayAndroid)
 }
 
-/** Sends a message to the native layer. Returns false if no bridge is present. */
 export function postToNative(message: NativeMessage): boolean {
   if (typeof window === 'undefined') return false
   const w = window as BridgeWindow
@@ -84,7 +59,6 @@ export function postToNative(message: NativeMessage): boolean {
       return true
     }
   } catch {
-    // A broken bridge must never break the page.
   }
   return false
 }

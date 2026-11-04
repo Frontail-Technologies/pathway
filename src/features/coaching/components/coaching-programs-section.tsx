@@ -17,7 +17,6 @@ export function CoachingProgramsSection({ provider }: { provider: CoachingProvid
         ))}
       </div>
 
-      { }
       <HorizontalContentRail ariaLabel={`${provider.name} programs`} edgeBleed className="mt-4 sm:hidden">
         {provider.programs.map((program) => (
           <div key={program.name} className="w-[78vw] shrink-0 snap-start">

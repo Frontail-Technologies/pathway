@@ -1,49 +1,55 @@
 'use client'
 
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowRight, Loader2, MapPin, SlidersHorizontal } from 'lucide-react'
 import { Container } from '@/components/shared/container'
 import { Breadcrumbs } from '@/components/shared/breadcrumbs'
 import { HorizontalContentRail } from '@/components/shared/horizontal-content-rail'
 import { EmptyState } from '@/components/feedback'
+import { ListingError, ListingLoading } from '@/features/catalog/listing-states'
+import { useCatalogList } from '@/hooks/use-catalog-list'
+import { apiQueryFrom } from '@/lib/search-params'
+import type { CatalogList, CatalogQuery } from '@/services/api/catalog'
+import { toCollegeListItem, type CollegeListItem, type InstitutionListDto } from '../api/colleges-api'
 import { Button } from '@/components/ui/button'
-import { colleges, getCollegeFeed } from '../data/colleges'
-import { emptyFilters, matchesFilters, matchesQuery, sortColleges, type FilterKey, type FilterState, type SortValue } from '../data/filters'
+import { emptyFilters, parseCollegeFilters, parseCollegeSearch, parseCollegeSort, serializeCollegeFilters, type FilterKey, type FilterState, type SortValue } from '../data/filters'
 import { CollegeFilterSidebar } from './college-filter-sidebar'
 import { CollegeResultsToolbar } from './college-results-toolbar'
 import { CollegeResultCard } from './college-result-card'
 import { CollegeHero } from './college-hero'
 import { FeaturedCollegeTile } from './featured-colleges'
 
-const BATCH_SIZE = 8
-const FEATURED_COUNT = 3
+const PAGE_SIZE = 12
 
-export function CollegeListingPage() {
-  const [filters, setFilters] = useState<FilterState>(emptyFilters)
-  const [sort, setSort] = useState<SortValue>('popularity')
-  const [query, setQuery] = useState('')
+export function CollegeListingPage({
+  initial,
+  initialQuery,
+  featured,
+}: {
+  initial?: CatalogList<CollegeListItem> | null
+  initialQuery?: CatalogQuery
+  featured: CollegeListItem[]
+}) {
+  const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+  const filters = useMemo(() => parseCollegeFilters(searchParams), [searchParams])
+  const sort = useMemo(() => parseCollegeSort(searchParams), [searchParams])
+  const query = useMemo(() => parseCollegeSearch(searchParams), [searchParams])
   const [compared, setCompared] = useState<string[]>([])
-  const [visibleCount, setVisibleCount] = useState(BATCH_SIZE)
-  const [loadingMore, setLoadingMore] = useState(false)
 
-  const feed = useMemo(() => getCollegeFeed(), [])
-  const allResults = useMemo(
-    () => sortColleges(feed.filter((college) => matchesFilters(college, filters) && matchesQuery(college, query)), sort),
-    [feed, filters, query, sort],
-  )
-  const visibleResults = allResults.slice(0, visibleCount)
-  const hasMore = visibleCount < allResults.length
-  
-  const featured = useMemo(() => colleges.slice(0, FEATURED_COUNT), [])
+  const apiQuery = useMemo(() => apiQueryFrom(serializeCollegeFilters(filters, sort, query)), [filters, sort, query])
+  const list = useCatalogList<InstitutionListDto, CollegeListItem>({ path: '/institutions', query: apiQuery, map: toCollegeListItem, limit: PAGE_SIZE, initial, initialQuery })
+  const { items: visibleResults, hasMore, loadingMore, loadMore } = list
 
-  
-  useEffect(() => {
-    setVisibleCount(BATCH_SIZE)
-  }, [filters, sort, query])
+  const updateUrl = (nextFilters: FilterState, nextSort: SortValue, nextQuery: string) => {
+    const next = serializeCollegeFilters(nextFilters, nextSort, nextQuery)
+    router.push(next ? `${pathname}?${next}` : pathname, { scroll: false })
+  }
 
   const sentinelRef = useRef<HTMLDivElement>(null)
-  const loadingRef = useRef(false)
 
   useEffect(() => {
     if (!hasMore) return
@@ -52,35 +58,22 @@ export function CollegeListingPage() {
 
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0]?.isIntersecting && !loadingRef.current) {
-          loadingRef.current = true
-          setLoadingMore(true)
-          window.setTimeout(() => {
-            setVisibleCount((prev) => Math.min(prev + BATCH_SIZE, allResults.length))
-            setLoadingMore(false)
-            loadingRef.current = false
-          }, 500)
-        }
+        if (entries[0]?.isIntersecting) loadMore()
       },
       { rootMargin: '200px' },
     )
     observer.observe(node)
     return () => observer.disconnect()
-  }, [hasMore, allResults.length])
+  }, [hasMore, loadMore])
 
   const toggleFilter = (key: FilterKey, value: string) => {
-    setFilters((prev) => {
-      const current = prev[key]
-      const next = current.includes(value) ? current.filter((item) => item !== value) : [...current, value]
-      return { ...prev, [key]: next }
-    })
+    const current = filters[key]
+    updateUrl({ ...filters, [key]: current.includes(value) ? current.filter((item) => item !== value) : [...current, value] }, sort, query)
   }
 
-  const removeFilter = (key: FilterKey, value: string) => {
-    setFilters((prev) => ({ ...prev, [key]: prev[key].filter((item) => item !== value) }))
-  }
+  const removeFilter = (key: FilterKey, value: string) => updateUrl({ ...filters, [key]: filters[key].filter((item) => item !== value) }, sort, query)
 
-  const clearAllFilters = () => setFilters(emptyFilters)
+  const clearAllFilters = () => updateUrl(emptyFilters, sort, query)
 
   const toggleCompare = (id: string) => {
     setCompared((prev) => (prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]))
@@ -91,44 +84,48 @@ export function CollegeListingPage() {
       <Container className="px-4 py-3">
         <Breadcrumbs items={['Home', 'Colleges']} />
       </Container>
-      <CollegeHero query={query} onSearch={setQuery} />
+      <CollegeHero query={query} onSearch={(value) => updateUrl(filters, sort, value)} />
 
       <Container className="px-4 pt-8">
         <div>
+          {featured.length > 0 ? (
           <section aria-labelledby="featured-colleges">
             <h2 id="featured-colleges" className="font-heading text-xl font-bold text-foreground">
               Featured Colleges
             </h2>
-            { }
             <HorizontalContentRail ariaLabel="Featured colleges" edgeBleed className="mt-4 sm:mx-0" trackClassName="sm:grid sm:grid-cols-3 sm:gap-3 sm:overflow-visible sm:px-0 sm:scroll-px-0">
               {featured.map((college) => (
                 <FeaturedCollegeTile key={college.id} college={college} />
               ))}
             </HorizontalContentRail>
           </section>
+          ) : null}
 
           <section className="mt-10" aria-labelledby="all-colleges">
             <h2 id="all-colleges" className="sr-only">
               All Colleges
             </h2>
             <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:gap-8">
-              { }
               <div className="sticky top-header-gap hidden max-h-[calc(100dvh-var(--pw-header-h)-2rem)] overflow-y-auto lg:block">
                 <CollegeFilterSidebar filters={filters} onToggle={toggleFilter} onClearAll={clearAllFilters} />
               </div>
 
               <div className="min-w-0 flex-1">
                 <CollegeResultsToolbar
-                  resultCount={allResults.length}
+                  resultCount={list.total}
                   filters={filters}
-                  onApplyMobileFilters={setFilters}
+                  onApplyMobileFilters={(next) => updateUrl(next, sort, query)}
                   onRemoveFilter={removeFilter}
                   onClearAll={clearAllFilters}
                   sort={sort}
-                  onSortChange={setSort}
+                  onSortChange={(next) => updateUrl(filters, next, query)}
                 />
 
-                {allResults.length === 0 ? (
+                {list.status === 'loading' ? (
+                  <ListingLoading label="Loading colleges" />
+                ) : list.status === 'error' ? (
+                  <ListingError message={list.error} onRetry={list.retry} />
+                ) : visibleResults.length === 0 ? (
                   <div className="flex flex-col items-center gap-4">
                     <EmptyState title="No colleges match these filters." />
                     <div className="flex flex-wrap justify-center gap-2">
@@ -136,7 +133,7 @@ export function CollegeListingPage() {
                         Clear Filters
                       </Button>
                       {query && (
-                        <Button variant="outline" onClick={() => setQuery('')}>
+                        <Button variant="outline" onClick={() => updateUrl(filters, sort, '')}>
                           Clear Search
                         </Button>
                       )}

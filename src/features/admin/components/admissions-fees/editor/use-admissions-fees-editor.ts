@@ -73,7 +73,6 @@ export function useAdmissionsFeesEditor(
   const [activeSection, setActiveSection] = React.useState<string>('identity')
   const [errors, setErrors] = React.useState<Record<string, string>>({})
 
-  // Dirty tracking: compare the current form values with the last saved snapshot.
   const snapshot = JSON.stringify({
     institutionId,
     programId,

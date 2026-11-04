@@ -31,7 +31,6 @@ function useSearchIndex() {
   }, [])
 }
 
-/** ⌘K / Ctrl+K (or "/") opens a jump-to box for every admin page and record. */
 export function AdminQuickSearch() {
   const router = useRouter()
   const [open, setOpen] = useState(false)

@@ -1,9 +1,14 @@
 'use client'
 
+import { useQuery } from '@tanstack/react-query'
+import { queryKeys } from '@/lib/query-client'
 import Link from 'next/link'
 import { Plus } from 'lucide-react'
 import { buttonVariants } from '@/components/ui/button'
-import type { AdminTutor } from '@/features/admin/data/admin-tutors'
+import { useAdminSession } from '@/features/admin/auth/admin-session'
+import { listCatalogAdminTutors, type CatalogAdminTutor } from '@/features/admin/data/admin-tutors-api'
+import { ApiRequestError } from '@/features/auth/lib/session-client'
+import { Button } from '@/components/ui/button'
 import type { AdminCoachingProvider } from '@/features/admin/data/admin-coaching'
 import { useUrlFilters } from '@/features/admin/hooks/use-url-filters'
 import { cn } from '@/lib/utils'
@@ -18,8 +23,18 @@ const TABS = [
   { value: 'coaching', label: 'Coaching providers', href: '/admin/tutors-coaching?tab=coaching' },
 ] as const
 
-export function AdminTutorsCoachingView({ tutors, coachingProviders }: { tutors: AdminTutor[]; coachingProviders: AdminCoachingProvider[] }) {
+type TutorsLoad = { state: 'loading' } | { state: 'error'; message: string } | { state: 'ready'; tutors: CatalogAdminTutor[] }
+
+export function AdminTutorsCoachingView({ coachingProviders }: { coachingProviders: AdminCoachingProvider[] }) {
   const { values } = useUrlFilters(TAB_DEFAULTS)
+  const { hydrated, session } = useAdminSession()
+  const query = useQuery({ queryKey: queryKeys.adminCatalogTutors, queryFn: listCatalogAdminTutors, enabled: hydrated && Boolean(session) })
+  const load: TutorsLoad = query.isError
+    ? { state: 'error', message: query.error instanceof ApiRequestError ? query.error.message : 'Could not load tutors.' }
+    : query.data
+      ? { state: 'ready', tutors: query.data }
+      : { state: 'loading' }
+  const tutors = load.state === 'ready' ? load.tutors : []
   const tab = values.tab === 'coaching' ? 'coaching' : 'tutors'
   const counts = { tutors: tutors.length, coaching: coachingProviders.length }
 
@@ -37,7 +52,6 @@ export function AdminTutorsCoachingView({ tutors, coachingProviders }: { tutors:
         }
       />
 
-      {/* Switching tabs drops the other list's filters, so each tab opens clean. */}
       <nav aria-label="Record type" className="flex gap-6 border-b border-border">
         {TABS.map((item) => {
           const active = item.value === tab
@@ -60,7 +74,20 @@ export function AdminTutorsCoachingView({ tutors, coachingProviders }: { tutors:
         })}
       </nav>
 
-      {tab === 'tutors' ? <AdminTutorsTableView tutors={tutors} /> : <AdminCoachingTableView providers={coachingProviders} />}
+      {tab === 'coaching' ? (
+        <AdminCoachingTableView providers={coachingProviders} />
+      ) : load.state === 'ready' ? (
+        <AdminTutorsTableView tutors={tutors} />
+      ) : (
+        <div className="flex flex-col items-center gap-3 rounded-lg border border-border bg-card px-4 py-14 text-center">
+          <p className="text-sm text-muted-foreground">{load.state === 'loading' ? 'Loading tutors…' : load.message}</p>
+          {load.state === 'error' ? (
+            <Button variant="outline" size="sm" onClick={() => void query.refetch()}>
+              Try again
+            </Button>
+          ) : null}
+        </div>
+      )}
     </div>
   )
 }

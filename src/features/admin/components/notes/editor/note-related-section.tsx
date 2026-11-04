@@ -38,7 +38,6 @@ export function NoteRelatedSection({
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        { }
         <div className="space-y-3 p-4 rounded-lg border border-border">
           <div className="flex items-center gap-2">
             <span className="text-sm font-medium text-foreground">Courses</span>
@@ -79,7 +78,6 @@ export function NoteRelatedSection({
           </div>
         </div>
 
-        { }
         <div className="space-y-3 p-4 rounded-lg border border-border">
           <div className="flex items-center gap-2">
             <span className="text-sm font-medium text-foreground">Exams</span>

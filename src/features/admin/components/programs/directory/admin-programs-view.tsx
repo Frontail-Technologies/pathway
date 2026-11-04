@@ -57,7 +57,6 @@ export function AdminProgramsView() {
   const options = React.useMemo(() => getAdminProgramFilterOptions(), [])
   const { values: f, set, reset, active } = useUrlFilters(DEFAULT_FILTERS)
 
-  // Links from other screens may pass an institution slug; resolve it to the id the filter uses.
   const institution = options.institutions.find((i) => i.id === f.institution || i.slug === f.institution)
   const institutionValue = institution?.id ?? f.institution
 

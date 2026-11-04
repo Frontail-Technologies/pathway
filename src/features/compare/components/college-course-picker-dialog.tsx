@@ -1,64 +1,82 @@
 'use client'
 
-import { type ReactElement, useEffect, useState } from 'react'
-import Image from 'next/image'
+import { type ReactElement, useEffect, useMemo, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { queryKeys } from '@/lib/query-client'
 import { ChevronLeft, Search } from 'lucide-react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Button } from '@/components/ui/button'
 import { Rating } from '@/components/shared/rating'
-import { collegeComparisonItems, getCollegeComparisonItem } from '../data/college-compare'
-import { collegeDegrees, coursesByDegree, type Degree } from '../data/programs'
+import { getComparison, listPickerColleges, type PickerCollege, type ProgramOption } from '../api/compare-api'
+import { getCollegeInitials } from '../data/college-compare'
 
-export type Selection = { collegeSlug: string; degree: Degree; course: string }
+export type Selection = { collegeSlug: string; program: string; college: { name: string; shortName: string; location: string } }
 
 type CollegeCoursePickerDialogProps = {
   excludeSlugs: string[]
   onApply: (selection: Selection) => void
   trigger: ReactElement
-   
-  initial?: Selection
+  initial?: { collegeSlug: string; program: string }
 }
+
 
 export function CollegeCoursePickerDialog({ excludeSlugs, onApply, trigger, initial }: CollegeCoursePickerDialogProps) {
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState('')
   const [collegeSlug, setCollegeSlug] = useState<string | undefined>(initial?.collegeSlug)
-  const [degree, setDegree] = useState<Degree | undefined>(initial?.degree)
-  const [course, setCourse] = useState<string | undefined>(initial?.course)
+  const [degree, setDegree] = useState<string | undefined>()
+  const [program, setProgram] = useState<string | undefined>(initial?.program)
   const [step, setStep] = useState<'college' | 'program'>(initial ? 'program' : 'college')
+  const collegesQuery = useQuery({ queryKey: queryKeys.comparePickerColleges, queryFn: listPickerColleges, enabled: open, staleTime: 5 * 60_000 })
+  const optionsQuery = useQuery({
+    queryKey: queryKeys.compareProgramOptions(collegeSlug ?? ''),
+    queryFn: () => getComparison([collegeSlug!]).then((result): ProgramOption[] => result.entries[0]?.options ?? []),
+    enabled: open && Boolean(collegeSlug),
+  })
 
-  
   useEffect(() => {
     if (!open) return
     setCollegeSlug(initial?.collegeSlug)
-    setDegree(initial?.degree)
-    setCourse(initial?.course)
+    setProgram(initial?.program)
+    setDegree(undefined)
     setStep(initial ? 'program' : 'college')
     setQuery('')
-  }, [open, initial])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, initial?.collegeSlug, initial?.program])
 
-  const college = collegeSlug ? getCollegeComparisonItem(collegeSlug) : undefined
-  const availableColleges = collegeComparisonItems.filter((item) => !excludeSlugs.includes(item.slug) || item.slug === initial?.collegeSlug)
-  const filteredColleges = query.trim() ? availableColleges.filter((item) => item.name.toLowerCase().includes(query.trim().toLowerCase())) : availableColleges
+  const optionsData = optionsQuery.data
 
-  const degreeOptions = collegeSlug ? collegeDegrees[collegeSlug].map((value) => ({ value, label: value })) : []
-  const courseOptions = degree ? coursesByDegree[degree].map((value) => ({ value, label: value })) : []
+  const allColleges: PickerCollege[] = collegesQuery.data ?? []
+  const college = allColleges.find((item) => item.slug === collegeSlug)
+  const available = allColleges.filter((item) => !excludeSlugs.includes(item.slug) || item.slug === initial?.collegeSlug)
+  const filtered = query.trim() ? available.filter((item) => item.name.toLowerCase().includes(query.trim().toLowerCase())) : available
+
+  const programOptions = optionsData ?? []
+  const activeDegree = degree ?? programOptions.find((option) => option.slug === program)?.degree
+  const degreeOptions = useMemo(() => [...new Set(programOptions.map((option) => option.degree))].map((value) => ({ value, label: value })), [programOptions])
+  const courseOptions = programOptions.filter((option) => option.degree === activeDegree).map((option) => ({ value: option.slug, label: option.course || option.name }))
 
   const selectCollege = (slug: string) => {
     setCollegeSlug(slug)
     setDegree(undefined)
-    setCourse(undefined)
+    setProgram(undefined)
     setStep('program')
   }
 
-  const canApply = Boolean(collegeSlug && degree && course)
+  const canApply = Boolean(college && program && courseOptions.some((option) => option.value === program))
 
   const handleApply = () => {
-    if (!collegeSlug || !degree || !course) return
-    onApply({ collegeSlug, degree, course })
+    if (!college || !program) return
+    onApply({ collegeSlug: college.slug, program, college: { name: college.name, shortName: college.shortName, location: college.location } })
     setOpen(false)
   }
+
+  const retry = (
+    <Button variant="outline" size="sm" onClick={() => void (step === 'college' ? collegesQuery.refetch() : optionsQuery.refetch())}>
+      Try again
+    </Button>
+  )
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -84,21 +102,28 @@ export function CollegeCoursePickerDialog({ excludeSlugs, onApply, trigger, init
             </div>
 
             <div className="min-h-0 flex-1 overflow-y-auto px-4 pb-4">
-              <p className="px-1 pb-2.5 text-xs font-semibold tracking-wide text-muted-foreground uppercase">Suggested Colleges</p>
-              {filteredColleges.length === 0 ? (
+              <p className="px-1 pb-2.5 text-xs font-semibold tracking-wide text-muted-foreground uppercase">Colleges</p>
+              {collegesQuery.isError ? (
+                <div className="flex flex-col items-center gap-2 py-4 text-center">
+                  <p className="text-sm text-muted-foreground">Colleges couldn&apos;t be loaded.</p>
+                  {retry}
+                </div>
+              ) : collegesQuery.isPending ? (
+                <p role="status" className="px-1 py-4 text-center text-sm text-muted-foreground">
+                  Loading colleges…
+                </p>
+              ) : filtered.length === 0 ? (
                 <p className="px-1 py-4 text-center text-sm text-muted-foreground">No colleges match your search.</p>
               ) : (
                 <div className="flex flex-col gap-1.5">
-                  {filteredColleges.map((item) => (
+                  {filtered.map((item) => (
                     <button
                       key={item.slug}
                       type="button"
                       onClick={() => selectCollege(item.slug)}
                       className="flex cursor-pointer items-center gap-3 rounded-lg p-2.5 text-left outline-none transition-colors hover:bg-muted focus-visible:ring-2 focus-visible:ring-primary/40"
                     >
-                      <div className="relative size-9 shrink-0 overflow-hidden rounded-lg bg-secondary">
-                        <Image src={item.logo} alt="" fill sizes="36px" className="object-cover" />
-                      </div>
+                      <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-secondary text-[11px] font-bold text-primary">{getCollegeInitials(item.shortName)}</div>
                       <div className="min-w-0 flex-1">
                         <p className="truncate text-sm font-semibold text-foreground">{item.name}</p>
                         <p className="truncate text-xs text-muted-foreground">
@@ -128,9 +153,7 @@ export function CollegeCoursePickerDialog({ excludeSlugs, onApply, trigger, init
                 <div className="mt-3">
                   <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">Selected College</p>
                   <div className="mt-1.5 flex items-center gap-2.5">
-                    <div className="relative size-10 shrink-0 overflow-hidden rounded-lg bg-secondary">
-                      <Image src={college.logo} alt="" fill sizes="40px" className="object-cover" />
-                    </div>
+                    <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-secondary text-xs font-bold text-primary">{getCollegeInitials(college.shortName)}</div>
                     <div className="min-w-0">
                       <p className="truncate text-sm font-semibold text-foreground">{college.name}</p>
                       <p className="truncate text-xs text-muted-foreground">{college.location}</p>
@@ -139,46 +162,59 @@ export function CollegeCoursePickerDialog({ excludeSlugs, onApply, trigger, init
                 </div>
               )}
 
-              <div className="mt-4 flex flex-col gap-3">
-                <div>
-                  <p className="mb-1.5 text-xs font-semibold text-foreground">Degree</p>
-                  <Select
-                    items={degreeOptions}
-                    value={degree}
-                    onValueChange={(value) => {
-                      setDegree(value as Degree)
-                      setCourse(undefined)
-                    }}
-                  >
-                    <SelectTrigger className="w-full data-[size=default]:h-10">
-                      <SelectValue placeholder="Select Degree" />
-                    </SelectTrigger>
-                    <SelectContent side="bottom" align="start" alignItemWithTrigger={false}>
-                      {degreeOptions.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+              {optionsQuery.isError ? (
+                <div className="mt-4 flex flex-col items-start gap-2">
+                  <p className="text-sm text-muted-foreground">This college&apos;s courses couldn&apos;t be loaded.</p>
+                  {retry}
                 </div>
+              ) : optionsQuery.isPending ? (
+                <p role="status" className="mt-4 text-sm text-muted-foreground">
+                  Loading courses…
+                </p>
+              ) : programOptions.length === 0 ? (
+                <p className="mt-4 text-sm text-muted-foreground">No published courses at this college yet.</p>
+              ) : (
+                <div className="mt-4 flex flex-col gap-3">
+                  <div>
+                    <p className="mb-1.5 text-xs font-semibold text-foreground">Degree</p>
+                    <Select
+                      items={degreeOptions}
+                      value={activeDegree}
+                      onValueChange={(value) => {
+                        setDegree(value as string)
+                        setProgram(undefined)
+                      }}
+                    >
+                      <SelectTrigger className="w-full data-[size=default]:h-10">
+                        <SelectValue placeholder="Select Degree" />
+                      </SelectTrigger>
+                      <SelectContent side="bottom" align="start" alignItemWithTrigger={false}>
+                        {degreeOptions.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
 
-                <div>
-                  <p className="mb-1.5 text-xs font-semibold text-foreground">Course</p>
-                  <Select items={courseOptions} value={course} onValueChange={(value) => setCourse(value as string)} disabled={!degree}>
-                    <SelectTrigger className="w-full data-[size=default]:h-10">
-                      <SelectValue placeholder="Select Course" />
-                    </SelectTrigger>
-                    <SelectContent side="bottom" align="start" alignItemWithTrigger={false}>
-                      {courseOptions.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <div>
+                    <p className="mb-1.5 text-xs font-semibold text-foreground">Course</p>
+                    <Select items={courseOptions} value={program} onValueChange={(value) => setProgram(value as string)} disabled={!activeDegree}>
+                      <SelectTrigger className="w-full data-[size=default]:h-10">
+                        <SelectValue placeholder="Select Course" />
+                      </SelectTrigger>
+                      <SelectContent side="bottom" align="start" alignItemWithTrigger={false}>
+                        {courseOptions.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
 
             <div className="flex shrink-0 justify-end border-t bg-muted/30 p-3">

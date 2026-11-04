@@ -157,6 +157,5 @@ export function ToolExamCard({ exam, active, onClick }: { exam: string; active: 
 
  
 export function StudentToolPageFrame({ children }: { children: React.ReactNode }) {
-  // Fill the viewport below the sticky header (header height comes from the layout tokens; 0 in app-shell mode).
   return <div className="flex min-h-[calc(100dvh-var(--pw-header-h))] flex-col bg-background">{children}</div>
 }

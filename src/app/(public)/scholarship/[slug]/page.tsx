@@ -1,23 +1,17 @@
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
-import { getScholarshipDetail } from '@/features/scholarships/data/scholarship-detail'
+import { getScholarshipDetail } from '@/features/scholarships/api/scholarships-api'
 import { ScholarshipDetailPage } from '@/features/scholarships/components/scholarship-detail-page'
-
-export function generateStaticParams() {
-  return [{ slug: 'aicte-pragati-scholarship-girls' }]
-}
-
-export const dynamicParams = false
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params
-  const scholarship = getScholarshipDetail(slug)
+  const scholarship = await getScholarshipDetail(slug)
   return { title: scholarship ? scholarship.name : 'Scholarship Not Found' }
 }
 
 export default async function ScholarshipDetailRoute({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
-  const scholarship = getScholarshipDetail(slug)
+  const scholarship = await getScholarshipDetail(slug)
   if (!scholarship) notFound()
 
   return (

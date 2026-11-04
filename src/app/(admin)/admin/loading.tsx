@@ -1,6 +1,5 @@
 import { Skeleton } from '@/components/ui/skeleton'
 
-/** Shown while an admin page loads, in the same shape as a list page (header → toolbar → table). */
 export default function AdminLoading() {
   return (
     <div className="space-y-5" aria-busy="true" aria-label="Loading">

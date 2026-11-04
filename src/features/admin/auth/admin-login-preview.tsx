@@ -5,10 +5,6 @@ import { getAdminPrograms } from '../data/admin-programs'
 import { getAdminScholarships } from '../data/admin-scholarships'
 import { getAdminTutors } from '../data/admin-tutors'
 
-/**
- * Right-hand panel on the admin sign-in page: a full-bleed classroom photo (site asset) with a short line and
- * the live catalogue counts, so the page shows what staff look after. Decorative, hidden from screen readers.
- */
 export function AdminLoginPreview() {
   const stats = [
     { label: 'Institutions', value: getAdminInstitutions().length },
@@ -20,7 +16,6 @@ export function AdminLoginPreview() {
   return (
     <aside className="relative hidden overflow-hidden lg:block" aria-hidden="true">
       <Image src="/coaching/coaching-institute.png" alt="" fill priority sizes="55vw" className="object-cover" />
-      {/* Darken the lower half so the text and counts read on any part of the photo. */}
       <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(15,23,42,0)_35%,rgba(15,23,42,0.55)_65%,rgba(15,23,42,0.88)_100%)]" />
       <div className="absolute inset-x-0 bottom-0 p-10 text-white xl:p-14">
         <p className="max-w-md font-heading text-[30px] leading-tight font-bold tracking-tight">Keep the catalogue accurate.</p>

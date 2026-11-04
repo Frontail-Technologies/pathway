@@ -1,10 +1,8 @@
 import Link from 'next/link'
 import { ChevronRight } from 'lucide-react'
-import { getPublishedStreams } from '@/features/streams/data/stream-hub'
+import { streams } from '@/features/streams/data/stream-taxonomy'
 
-/** Stream-first entry point (Shiksha-style): one tile per published stream hub. */
 export function StreamPickerSection() {
-  const streams = getPublishedStreams()
   if (streams.length === 0) return null
   return (
     <section aria-labelledby="stream-picker-title" className="bg-background pt-7 sm:pt-9 lg:pt-12">

@@ -85,7 +85,6 @@ export function PersonalDetailsStep({ personal, onChange }: { personal: ResumePe
 }
 
 function Field({ label, required, children }: { label: string; required?: boolean; children: React.ReactNode }) {
-  // Link the label to the wrapped control so it is announced and tapping the label focuses it.
   const generatedId = useId()
   const control = isValidElement<{ id?: string; required?: boolean }>(children) ? children : null
   const id = control?.props.id ?? generatedId

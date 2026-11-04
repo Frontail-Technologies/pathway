@@ -20,7 +20,6 @@ export function AdminReviewDetailView({ review }: { review: AdminReview }) {
     try {
       await navigator.clipboard.writeText(review.id)
     } catch {
-      /* clipboard unavailable */
     }
     setCopied(true)
     window.setTimeout(() => setCopied(false), 2000)

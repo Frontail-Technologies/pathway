@@ -16,8 +16,6 @@ export function CourseExamsSection({ course }: { course: CourseDetailData }) {
                   {exam.level} · {exam.purpose}
                 </p>
               </div>
-              {
- }
               <Button variant="outline" className="h-9 w-fit px-4 text-sm" disabled title="Exam details are coming soon">
                 View Exam
               </Button>

@@ -70,11 +70,6 @@ export function CoachingResultCard({ provider }: { provider: CoachingProvider })
                 {tag}
               </span>
             ))}
-            {
-
-
-
- }
             {detailHref ? (
               <Link href={detailHref} className="ml-auto flex shrink-0 items-center gap-0.5 text-[11px] font-semibold text-primary md:hidden">
                 View Details

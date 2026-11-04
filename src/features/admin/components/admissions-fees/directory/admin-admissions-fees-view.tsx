@@ -65,7 +65,6 @@ export function AdminAdmissionsFeesView() {
   const programs = React.useMemo(() => uniqueBy(data, 'program'), [data])
   const { values: f, set, reset, active } = useUrlFilters(DEFAULT_FILTERS)
 
-  // Links from other screens may pass a slug instead of an id.
   const institutionValue = institutions.find((i) => i.value === f.institution || i.slug === f.institution)?.value ?? f.institution
   const programValue = programs.find((p) => p.value === f.program || p.slug === f.program)?.value ?? f.program
 

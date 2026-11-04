@@ -6,7 +6,6 @@ import { logAdminActivity } from '@/features/admin/data/admin-activity'
 import type { AdminStream, StreamPublishOverrides } from '@/features/admin/data/admin-streams'
 import { useDemoStorage } from '@/features/admin/hooks/use-demo-storage'
 
-/** Published state per hub: the live value unless changed on this device (demo). */
 export function useStreamPublish() {
   const [overrides, setOverrides] = useDemoStorage<StreamPublishOverrides>(ADMIN_STORAGE_KEYS.streamPublish, {})
 

@@ -2,7 +2,6 @@ import type { StatusTone } from '@/features/admin/components/kit'
 import type { BannerPlacement, BannerStatus } from '@/features/banners/types/banner'
 import { bannerPlacementMap } from '@/features/banners/types/banner'
 
-/** Admin-facing labels, sentence case. */
 export const bannerStatusLabels: Record<BannerStatus, string> = {
   draft: 'Draft',
   scheduled: 'Scheduled',

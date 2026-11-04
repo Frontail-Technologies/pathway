@@ -2,7 +2,6 @@ import type { ReactNode } from 'react'
 import Link from 'next/link'
 import { ChevronRight } from 'lucide-react'
 
-/** Overview-page summary of one sub-page, ending in a "View all" link into it. */
 export function CollegePreviewCard({ title, href, linkLabel, children }: { title: string; href: string; linkLabel: string; children: ReactNode }) {
   return (
     <section className="border-b py-7 lg:py-9">

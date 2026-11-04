@@ -3,8 +3,8 @@
 import Image from 'next/image'
 import { Plus, X } from 'lucide-react'
 import { VerifiedBadge } from '@/components/shared/verified-badge'
-import { maxComparisonSlots } from '../data/college-compare'
-import type { ComparisonEntry } from '../data/comparison-sections'
+import { getCollegeInitials, maxComparisonSlots } from '../data/college-compare'
+import type { CompareEntry as ComparisonEntry } from '../api/compare-api'
 import { CollegeCoursePickerDialog, type Selection } from './college-course-picker-dialog'
 import { COMPARE_ATTR_COL_WIDTH, COMPARE_GRID_COLS_DATA } from './compare-grid'
 
@@ -73,7 +73,7 @@ function FilledHeaderCell({
       <div className="flex items-start justify-between gap-2">
         <div className="flex min-w-0 items-center gap-2">
           <div className="relative size-11 shrink-0 overflow-hidden rounded-lg bg-secondary sm:size-12">
-            <Image src={college.logo} alt="" fill sizes="48px" className="object-cover" />
+            {college.logo ? <Image src={college.logo} alt="" fill sizes="48px" className="object-cover" /> : <span className="flex size-full items-center justify-center text-xs font-bold text-primary">{getCollegeInitials(college.shortName)}</span>}
           </div>
           <p className="min-w-0 truncate text-sm font-bold text-foreground">{college.shortName}</p>
         </div>
@@ -90,11 +90,10 @@ function FilledHeaderCell({
         {program.degree} · {program.course}
       </p>
       <p className="truncate text-xs text-muted-foreground">{college.location}</p>
-      { }
       {college.verified && <div className="flex flex-wrap items-center gap-1.5"><VerifiedBadge /></div>}
       <CollegeCoursePickerDialog
         excludeSlugs={excludeSlugs.filter((slug) => slug !== college.slug)}
-        initial={{ collegeSlug: college.slug, degree: program.degree, course: program.course }}
+        initial={{ collegeSlug: college.slug, program: program.slug }}
         onApply={onModify}
         trigger={
           <button

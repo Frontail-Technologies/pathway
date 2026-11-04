@@ -1,6 +1,5 @@
 const rtf = typeof Intl !== 'undefined' ? new Intl.RelativeTimeFormat('en', { numeric: 'auto' }) : null
 
-/** "3 minutes ago" style label for demo timestamps. */
 export function formatRelative(iso: string, now = Date.now()): string {
   const diff = (new Date(iso).getTime() - now) / 1000
   if (!rtf || Number.isNaN(diff)) return iso

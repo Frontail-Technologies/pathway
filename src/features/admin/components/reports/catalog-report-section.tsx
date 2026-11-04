@@ -22,7 +22,6 @@ function DistributionChart({ data, label }: { data: CatalogDistributionItem[]; l
   )
 }
 
-/** Horizontal share bars: one colour, the number does the talking. */
 function ShareList({ items, total, noun }: { items: CatalogDistributionItem[]; total: number; noun: string }) {
   if (items.length === 0) return <p className="text-sm text-muted-foreground">No {noun} yet.</p>
   return (

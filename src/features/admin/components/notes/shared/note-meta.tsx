@@ -7,7 +7,6 @@ const statusTone: Record<NoteStatus, StatusTone> = {
   archived: 'neutral',
 }
 
-/** Note type and level labels come from the public site in Title Case; the admin shows sentence case. */
 export function sentenceCase(value: string) {
   return value.charAt(0).toUpperCase() + value.slice(1).toLowerCase()
 }

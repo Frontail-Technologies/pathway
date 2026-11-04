@@ -3,20 +3,22 @@ import { ArrowRight, Brain, GraduationCap } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { SectionHeader } from '@/components/shared/section-header'
 import { CounsellingCtaSection } from '@/features/home/components/counselling-cta-section'
-import { courses } from '@/features/courses/data/courses'
+import { listCourses } from '@/features/courses/api/courses-api'
+import { inCuratedOrder } from '@/features/catalog/curated'
 import { CareersHero } from './careers-hero'
 import { careerCategories, featuredCareerPaths, journeySteps } from '../data/careers'
 
 
 const connectionSlugs = ['btech-computer-science', 'mbbs', 'mba', 'ba-llb']
-const connectedCourses = connectionSlugs.flatMap((slug) => courses.find((course) => course.slug === slug) ?? [])
 
-export function CareersListingPage() {
+export async function CareersListingPage() {
+  const connectedCourses = await listCourses({ slugs: connectionSlugs.join(','), limit: String(connectionSlugs.length) })
+    .then((list) => inCuratedOrder(list.items, connectionSlugs))
+    .catch(() => [])
   return (
     <div className="bg-background">
       <CareersHero />
 
-      { }
       <section id="categories" className="py-8 sm:py-10 lg:py-14">
         <div className="container-shell mx-auto px-4">
           <SectionHeader title="Career Categories" description="Broad fields to help you get oriented — not a ranked or exhaustive list." />
@@ -55,7 +57,6 @@ export function CareersListingPage() {
         </div>
       </section>
 
-      { }
       <section className="bg-muted py-8 sm:py-10 lg:py-14">
         <div className="container-shell mx-auto px-4">
           <SectionHeader title="Featured Career Paths" description="A look at what the work commonly involves and where it typically starts." />
@@ -81,7 +82,6 @@ export function CareersListingPage() {
         </div>
       </section>
 
-      { }
       <section className="py-8 sm:py-10 lg:py-14">
         <div className="container-shell mx-auto px-4">
           <div className="flex flex-col items-start gap-3 rounded-[16px] border bg-card p-5 shadow-[0_2px_10px_rgba(15,23,42,0.04)] sm:flex-row sm:items-center sm:justify-between sm:p-8">
@@ -103,7 +103,6 @@ export function CareersListingPage() {
         </div>
       </section>
 
-      { }
       <section className="bg-muted py-8 sm:py-10 lg:py-14">
         <div className="container-shell mx-auto px-4">
           <div className="flex flex-wrap items-center justify-between gap-2">
@@ -135,7 +134,6 @@ export function CareersListingPage() {
         </div>
       </section>
 
-      { }
       <section className="py-8 sm:py-10 lg:py-14">
         <div className="container-shell mx-auto px-4">
           <SectionHeader title="Plan Your Path" />

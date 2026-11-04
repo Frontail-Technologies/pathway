@@ -3,7 +3,8 @@ import { Award, BookOpen, ChevronRight, FileText, Landmark, Search } from 'lucid
 import { SearchResultRow } from './search-result-row'
 import { Button } from '@/components/ui/button'
 import { Container } from '@/components/shared/container'
-import { popularSearches, searchEntries, searchKinds, type SearchKind } from '../data/search-index'
+import { popularSearches, searchKinds, searchLocalEntries, type SearchKind } from '../data/search-index'
+import { searchCatalog } from '../api/catalog-search'
 
 const GROUP_PREVIEW = 4
 
@@ -28,10 +29,13 @@ function SuggestionChips({ title }: { title: string }) {
   )
 }
 
-export function SearchResultsPage({ query, type }: { query: string; type?: SearchKind }) {
-  const results = searchEntries(query)
-  const counts = new Map<SearchKind, number>()
-  for (const entry of results) counts.set(entry.kind, (counts.get(entry.kind) ?? 0) + 1)
+export async function SearchResultsPage({ query, type }: { query: string; type?: SearchKind }) {
+  const local = query ? searchLocalEntries(query) : []
+  const catalog = query ? await searchCatalog(query, { type, perKind: GROUP_PREVIEW }) : { entries: [], counts: new Map<SearchKind, number>(), failed: [] }
+  const results = [...catalog.entries, ...local]
+  const counts = new Map<SearchKind, number>(catalog.counts)
+  for (const entry of local) counts.set(entry.kind, (counts.get(entry.kind) ?? 0) + 1)
+  const totalCount = [...counts.values()].reduce((sum, value) => sum + value, 0)
   const activeType = type && counts.has(type) ? type : undefined
   const visibleKinds = searchKinds.filter(({ kind }) => counts.has(kind))
 
@@ -70,7 +74,13 @@ export function SearchResultsPage({ query, type }: { query: string; type?: Searc
           </div>
         )}
 
-        {query && results.length === 0 && (
+        {query && catalog.failed.length > 0 && (
+          <p role="alert" className="mt-4 rounded-[10px] border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-foreground">
+            Some results couldn&apos;t be loaded right now. Please try again in a moment.
+          </p>
+        )}
+
+        {query && results.length === 0 && catalog.failed.length === 0 && (
           <div className="mt-8 flex flex-col gap-8">
             <div className="rounded-[12px] border border-dashed bg-card p-6 text-center">
               <p className="font-heading font-bold text-foreground">No matches for &ldquo;{query}&rdquo;</p>
@@ -88,7 +98,7 @@ export function SearchResultsPage({ query, type }: { query: string; type?: Searc
             <nav aria-label="Filter results by type" className="-mx-4 mt-4 overflow-x-auto px-4">
               <div className="flex w-max gap-2">
                 <Link href={searchHref(query)} aria-current={!activeType ? 'page' : undefined} className={`rounded-full border px-3.5 py-1.5 text-sm font-medium whitespace-nowrap outline-none focus-visible:ring-2 focus-visible:ring-primary/40 ${!activeType ? 'border-primary bg-primary text-primary-foreground' : 'bg-card text-foreground hover:border-primary'}`}>
-                  All · {results.length}
+                  All · {totalCount}
                 </Link>
                 {visibleKinds.map(({ kind, plural }) => (
                   <Link key={kind} href={searchHref(query, kind)} aria-current={activeType === kind ? 'page' : undefined} className={`rounded-full border px-3.5 py-1.5 text-sm font-medium whitespace-nowrap outline-none focus-visible:ring-2 focus-visible:ring-primary/40 ${activeType === kind ? 'border-primary bg-primary text-primary-foreground' : 'bg-card text-foreground hover:border-primary'}`}>
@@ -102,6 +112,7 @@ export function SearchResultsPage({ query, type }: { query: string; type?: Searc
               {(activeType ? visibleKinds.filter(({ kind }) => kind === activeType) : visibleKinds).map(({ kind, plural }) => {
                 const group = results.filter((entry) => entry.kind === kind)
                 const shown = activeType ? group : group.slice(0, GROUP_PREVIEW)
+                const groupTotal = counts.get(kind) ?? group.length
                 return (
                   <section key={kind} aria-labelledby={`results-${kind}`} className="overflow-hidden rounded-[12px] border bg-card">
                     <h2 id={`results-${kind}`} className="border-b px-4 py-3 text-sm font-bold text-foreground">
@@ -112,9 +123,9 @@ export function SearchResultsPage({ query, type }: { query: string; type?: Searc
                         <SearchResultRow key={entry.id} entry={entry} />
                       ))}
                     </ul>
-                    {shown.length < group.length && (
+                    {shown.length < groupTotal && !activeType && (
                       <Link href={searchHref(query, kind)} className="flex h-11 items-center justify-center gap-1 border-t text-sm font-semibold text-primary outline-none hover:bg-secondary/60 focus-visible:bg-secondary">
-                        See all {group.length} {plural.toLowerCase()}
+                        See all {groupTotal} {plural.toLowerCase()}
                         <ChevronRight className="size-4" aria-hidden="true" />
                       </Link>
                     )}

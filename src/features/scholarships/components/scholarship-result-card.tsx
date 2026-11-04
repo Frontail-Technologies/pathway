@@ -5,8 +5,8 @@ import { useSavedItem } from '@/features/saved/saved-items-provider'
 import { Bookmark, Building2, CalendarDays, GraduationCap, IndianRupee, MapPin } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { SponsoredBadge } from '@/components/shared'
-import { getDaysRemaining, scholarshipStatusStyles, type ScholarshipListItem } from '../data/scholarships'
-import { getScholarshipDetail } from '../data/scholarship-detail'
+import { applicationStatusStyles as scholarshipStatusStyles } from '../data/status'
+import type { ScholarshipListItem } from '../api/scholarships-api'
 
 export function ScholarshipResultCard({ scholarship }: { scholarship: ScholarshipListItem }) {
   const { saved, toggleSaved } = useSavedItem('scholarship', scholarship.slug, 'Scholarship')
@@ -14,8 +14,8 @@ export function ScholarshipResultCard({ scholarship }: { scholarship: Scholarshi
   
   
   
-  const detail = getScholarshipDetail(scholarship.slug)
-  const daysRemaining = scholarship.status === 'closing-soon' ? getDaysRemaining(scholarship.deadline) : null
+  const detail = scholarship.hasDetailPage
+  const daysRemaining = scholarship.status === 'closing-soon' ? scholarship.daysRemaining : null
 
 
   const summary = [scholarship.educationLevels[0], scholarship.streams[0] ?? 'All Streams', scholarship.states[0] ?? 'All India'].filter(Boolean).join(' · ')
@@ -28,9 +28,6 @@ export function ScholarshipResultCard({ scholarship }: { scholarship: Scholarshi
             {scholarship.providerInitials}
           </div>
           <div className="min-w-0">
-            {
-
- }
             <h3 className="text-base font-bold text-foreground">{scholarship.name}</h3>
             <p className="mt-0.5 flex flex-wrap items-center gap-1.5 text-xs text-muted-foreground sm:text-sm">
               <span className="flex items-center gap-1">
@@ -57,9 +54,6 @@ export function ScholarshipResultCard({ scholarship }: { scholarship: Scholarshi
         <span className="rounded-md bg-secondary px-2 py-0.5 text-xs font-medium text-primary">{summary}</span>
       </div>
 
-      {
-
- }
       <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-3 border-t pt-3 sm:mt-4 sm:grid-cols-4 sm:pt-4">
         <DetailBlock icon={IndianRupee} label="Benefit" value={scholarship.benefitLabel} />
         <DetailBlock icon={CalendarDays} label="Application Deadline" value={scholarship.deadlineDisplay} helper={daysRemaining !== null ? `Closing in ${daysRemaining} days` : undefined} />

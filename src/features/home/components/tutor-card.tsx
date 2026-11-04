@@ -4,7 +4,7 @@ import type { Tutor } from '@/features/tutors/data/tutors'
 
  
 export function HomeTutorCard({ tutor }: { tutor: Tutor }) {
-  const href = tutor.hasDetailPage ? `/tutor/${tutor.slug}` : '/tutors'
+  const href = `/tutor/${tutor.slug}`
   return (
     <Link
       href={href}
@@ -26,7 +26,7 @@ export function HomeTutorCard({ tutor }: { tutor: Tutor }) {
       </div>
       <div className="mt-auto flex items-center justify-between border-t pt-2.5">
         <span className="text-xs text-muted-foreground">{tutor.modes.join(' & ')}</span>
-        <span className="text-sm font-semibold text-primary group-hover:underline">{tutor.hasDetailPage ? 'View Profile' : 'Details Soon'}</span>
+        <span className="text-sm font-semibold text-primary group-hover:underline">View Profile</span>
       </div>
     </Link>
   )

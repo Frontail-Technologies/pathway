@@ -55,7 +55,7 @@ export function CoachingDetailNav({ sections }: CoachingDetailNavProps) {
   return (
     <div className="sticky top-header z-20 border-y bg-card">
       <div className="container-shell px-4">
-        <div ref={scrollerRef} className="flex gap-1 overflow-x-auto">
+        <div ref={scrollerRef} className="flex gap-1 overflow-x-auto max-sm:[scrollbar-width:none] max-sm:[&::-webkit-scrollbar]:hidden">
           {sections.map((section) => (
             <a
               key={section.id}

@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { scholarshipStatusStyles } from '../data/scholarships'
-import type { ScholarshipDetailData } from '../data/scholarship-detail'
+import { applicationStatusStyles as scholarshipStatusStyles } from '../data/status'
+import type { ScholarshipDetailData } from '../api/scholarships-api'
 
 export function ScholarshipRelatedSection({ scholarship }: { scholarship: ScholarshipDetailData }) {
   if (scholarship.relatedScholarships.length === 0) return null

@@ -36,7 +36,6 @@ export function AdminSettingsView() {
   const [errors, setErrors] = React.useState<Errors>({})
   const [resetOpen, setResetOpen] = React.useState(false)
 
-  // Whenever the saved settings change (first load, save, reset), start the form from them.
   React.useEffect(() => {
     setValues(saved)
     setErrors({})

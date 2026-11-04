@@ -20,7 +20,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { LogOut } from "lucide-react";
-import { useDemoAuth } from "@/features/student/state/demo-auth-provider";
+import { useStudentSession } from "@/features/student/state/student-session";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import {
@@ -118,9 +118,8 @@ const missingPrompts: Record<
 
 
  
-/** Also reachable in the app, where the header menu (and its Log out) is hidden. */
 function LogOutButton() {
-  const { signOut } = useDemoAuth();
+  const { signOut } = useStudentSession();
   const router = useRouter();
   return (
     <button
@@ -221,7 +220,6 @@ export function StudentDashboardPage() {
         </div>
       </section>
 
-      { }
       <div className="flex min-w-0 flex-col gap-5 max-xl:contents">
         <DashboardSection
           className="max-xl:order-4"

@@ -4,17 +4,6 @@ import { useEffect } from 'react'
 import { usePathname, useSearchParams } from 'next/navigation'
 import { hasNativeBridge, isAppShell, postToNative } from '@/lib/app-shell'
 
-/**
- * Keeps the native layer in sync with the web app when running in app-shell
- * mode. Renders nothing; a no-op in a normal browser.
- *
- * - `ready` once on mount, so native can hide its splash/loader.
- * - `route` on every client-side navigation, so native can update its title
- *   bar and back-button state (soft navigations never reach the WebView's
- *   own navigation callbacks), then `title` whenever <title> changes.
- * - `openExternal` for links that leave Pathway or use target="_blank", which
- *   most WebViews otherwise ignore or open inside the app.
- */
 export function AppShellBridge() {
   const pathname = usePathname()
   const searchParams = useSearchParams()
@@ -24,11 +13,8 @@ export function AppShellBridge() {
     if (!isAppShell()) return
     postToNative({ type: 'ready' })
 
-    // Next.js applies route metadata asynchronously, so forward title changes
-    // separately rather than guessing when the route's title is final.
     let lastTitle = document.title
     const observer = new MutationObserver(() => {
-      // Next briefly clears the title mid-navigation; ignore that transient state.
       if (!document.title || document.title === lastTitle) return
       lastTitle = document.title
       postToNative({ type: 'title', title: lastTitle })
@@ -39,7 +25,6 @@ export function AppShellBridge() {
 
   useEffect(() => {
     if (!isAppShell()) return
-    // Wait a frame so the new route's <title> has been applied.
     const frame = requestAnimationFrame(() => {
       postToNative({ type: 'route', path: search ? `${pathname}?${search}` : pathname, title: document.title })
     })

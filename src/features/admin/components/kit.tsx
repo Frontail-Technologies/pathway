@@ -1,21 +1,11 @@
 'use client'
 
-/**
- * Admin kit: the one way to build an admin page.
- *
- * Hierarchy on every page: PageHeader (title, plain count, one primary action) → Toolbar (search + filters)
- * → content (table / sections). Colour is reserved for meaning: primary for the main action and links,
- * success / warning / danger for status. Everything else is neutral. Body text is 14px; 12px only for meta.
- */
-
 import Link from 'next/link'
 import type { ReactNode } from 'react'
 import { ArrowLeft, Search, X } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { cn } from '@/lib/utils'
-
-/* ------------------------------------------------------------------ page header */
 
 export function AdminPageHeader({
   title,
@@ -27,11 +17,9 @@ export function AdminPageHeader({
 }: {
   title: string
   description?: string
-  /** Plain text such as "8 institutions"; shown next to the title, not as a coloured pill. */
   count?: string
   actions?: ReactNode
   back?: { href: string; label: string }
-  /** Small line under the title, e.g. status badges on a detail page. */
   meta?: ReactNode
 }) {
   return (
@@ -57,11 +45,8 @@ export function AdminPageHeader({
   )
 }
 
-/* ------------------------------------------------------------------ toolbar & filters */
-
 export type FilterOption = { value: string; label: string }
 
-/** Search + filters on one row, sitting directly above the table (no extra card). */
 export function AdminToolbar({
   search,
   onSearchChange,
@@ -77,7 +62,6 @@ export function AdminToolbar({
   children?: ReactNode
   hasActiveFilters?: boolean
   onReset?: () => void
-  /** e.g. "Showing 4 of 8" */
   summary?: ReactNode
 }) {
   return (
@@ -109,10 +93,6 @@ export function AdminToolbar({
   )
 }
 
-/**
- * Filter dropdown. Shows "Type: All" style labels so the toolbar reads at a glance, and uses the design-system
- * Select instead of the browser's native control.
- */
 export function AdminFilterSelect({ label, value, onChange, options, allLabel = 'All' }: { label: string; value: string; onChange: (value: string) => void; options: FilterOption[]; allLabel?: string }) {
   const items = [{ value: 'all', label: allLabel }, ...options.filter((option) => option.value !== 'all')]
   const current = items.find((item) => item.value === value) ?? items[0]!
@@ -134,8 +114,6 @@ export function AdminFilterSelect({ label, value, onChange, options, allLabel = 
   )
 }
 
-/* ------------------------------------------------------------------ status */
-
 export type StatusTone = 'neutral' | 'success' | 'warning' | 'danger' | 'info'
 
 const toneDot: Record<StatusTone, string> = {
@@ -153,7 +131,6 @@ const toneText: Record<StatusTone, string> = {
   info: 'text-primary',
 }
 
-/** A dot and a word. Quiet enough to repeat in every row; the colour carries the meaning. */
 export function StatusBadge({ tone = 'neutral', children, className }: { tone?: StatusTone; children: ReactNode; className?: string }) {
   return (
     <span className={cn('inline-flex items-center gap-1.5 text-[13px] font-medium whitespace-nowrap', toneText[tone], className)}>
@@ -163,7 +140,6 @@ export function StatusBadge({ tone = 'neutral', children, className }: { tone?: 
   )
 }
 
-/** Maps the legacy badge variants used across admin data to tones. */
 export function toneFromVariant(variant?: string | null): StatusTone {
   switch (variant) {
     case 'success':
@@ -180,12 +156,10 @@ export function toneFromVariant(variant?: string | null): StatusTone {
   }
 }
 
-/** Neutral tag for categories (type, level, stream) — never coloured. */
 export function Tag({ children, className }: { children: ReactNode; className?: string }) {
   return <span className={cn('inline-flex items-center rounded-md border border-border bg-card px-1.5 py-0.5 text-xs font-medium whitespace-nowrap text-foreground', className)}>{children}</span>
 }
 
-/** Completeness as a thin single-colour bar with the number; green only when the record is complete. */
 export function CompletenessMeter({ value, className }: { value: number; className?: string }) {
   const pct = Math.max(0, Math.min(100, Math.round(value)))
   return (
@@ -198,9 +172,6 @@ export function CompletenessMeter({ value, className }: { value: number; classNa
   )
 }
 
-/* ------------------------------------------------------------------ stats */
-
-/** KPI tile: label, big number, optional context line. No coloured icons. */
 export function StatTile({ label, value, hint, href }: { label: string; value: ReactNode; hint?: ReactNode; href?: string }) {
   const body = (
     <>
@@ -223,9 +194,6 @@ export function StatGrid({ children, className }: { children: ReactNode; classNa
   return <div className={cn('grid grid-cols-2 gap-3 lg:grid-cols-4', className)}>{children}</div>
 }
 
-/* ------------------------------------------------------------------ surfaces */
-
-/** Plain bordered panel with an optional heading row. */
 export function Panel({ title, description, action, children, className, bodyClassName }: { title?: string; description?: string; action?: ReactNode; children: ReactNode; className?: string; bodyClassName?: string }) {
   return (
     <section className={cn('rounded-lg border border-border bg-card', className)}>
@@ -243,7 +211,6 @@ export function Panel({ title, description, action, children, className, bodyCla
   )
 }
 
-/** Label / value list for detail pages. */
 export function FactList({ items, columns = 2 }: { items: { label: string; value: ReactNode }[]; columns?: 1 | 2 | 3 }) {
   return (
     <dl className={cn('grid gap-x-6 gap-y-4', columns === 1 ? 'grid-cols-1' : columns === 2 ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-1 sm:grid-cols-3')}>
@@ -257,9 +224,6 @@ export function FactList({ items, columns = 2 }: { items: { label: string; value
   )
 }
 
-/* ------------------------------------------------------------------ table helpers */
-
-/** Sortable column header: sentence case, shows the current direction. */
 export function SortHeader({ label, sorted, onToggle }: { label: string; sorted: false | 'asc' | 'desc'; onToggle: () => void }) {
   return (
     <button type="button" onClick={onToggle} className="-ml-1 inline-flex items-center gap-1 rounded px-1 py-0.5 text-[13px] font-medium text-muted-foreground outline-none hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring/40">
@@ -272,7 +236,6 @@ export function SortHeader({ label, sorted, onToggle }: { label: string; sorted:
   )
 }
 
-/** Row actions: a quiet "…" menu trigger that doesn't trigger the row click. */
 export function stopRowClick(event: { stopPropagation: () => void }) {
   event.stopPropagation()
 }

@@ -3,7 +3,6 @@ import type { ContentCategory, ContentStatus, ContentType, RelatedEntityType } f
 
 export type { ContentCategory, ContentStatus, ContentType, RelatedEntityType }
 
-/** Admin-facing labels, sentence case. The shared content maps carry public-facing copy. */
 export const contentTypeLabels: Record<ContentType, string> = {
   article: 'Article',
   guide: 'Guide',

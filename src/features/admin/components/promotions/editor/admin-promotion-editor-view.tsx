@@ -26,7 +26,6 @@ import {
 } from '../shared/promotion-constants'
 import { Field, FormNotice, FormSection } from '../shared/promotion-form'
 
-/** Only these can be set by hand; scheduled and ended follow from the dates. */
 const statusItems = (['active', 'draft', 'paused'] as PromotionStatus[]).map((value) => ({ value, label: promotionStatusLabels[value] }))
 
 type FormState = {

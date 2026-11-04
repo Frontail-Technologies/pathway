@@ -2,7 +2,6 @@ import { buildStreamHub } from '@/features/streams/data/stream-hub'
 import { streams } from '@/features/streams/data/stream-taxonomy'
 import { ADMIN_STORAGE_KEYS, readAdminStorage, writeAdminStorage } from './admin-demo-storage'
 
-/** A hub is published on the public site when it has content in at least two sections (see stream-hub.ts). */
 const MIN_SECTIONS = 2
 
 export type AdminStreamSection = {
@@ -13,13 +12,11 @@ export type AdminStreamSection = {
   entries: { id: string; title: string; subtitle?: string; href: string }[]
 }
 
-/** Serializable summary of a stream hub (safe to pass from a server page to a client view). */
 export type AdminStream = {
   slug: string
   name: string
   tagline: string
   description: string
-  /** Whether the public site publishes this hub today (derived from its content). */
   livePublished: boolean
   collegeCount: number
   courseCount: number
@@ -57,8 +54,6 @@ export function getAdminStream(slug: string): AdminStream | undefined {
 }
 
 export const STREAM_MIN_SECTIONS = MIN_SECTIONS
-
-/* ------------------------------------------------------------------ demo publish overrides (this device) */
 
 export type StreamPublishOverrides = Record<string, boolean>
 

@@ -13,7 +13,6 @@ import { PopularSearchChips } from './popular-searches'
 export function HeroSection() {
   return (
     <section className="relative overflow-hidden bg-brand-blue-light">
-      { }
       <div className="absolute inset-0" aria-hidden="true">
         <Image
           src="https://images.unsplash.com/photo-1498243691581-b145c3f54a5a?auto=format&fit=crop&w=1800&q=70"

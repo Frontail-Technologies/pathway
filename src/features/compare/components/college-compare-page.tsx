@@ -1,90 +1,77 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useMemo, useState, type ReactNode } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { queryKeys } from '@/lib/query-client'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { FileDown } from 'lucide-react'
 import Link from 'next/link'
 import { Container } from '@/components/shared/container'
 import { Breadcrumbs } from '@/components/shared/breadcrumbs'
 import { Button } from '@/components/ui/button'
-import { defaultComparisonSlugs, getCollegeComparisonItem, maxComparisonSlots, parseComparisonSlugs } from '../data/college-compare'
-import { getProgramSnapshot, parseProgramSlug, serializeProgramSlug, type Degree } from '../data/programs'
-import type { ComparisonEntry } from '../data/comparison-sections'
+import { ListingError } from '@/features/catalog/listing-states'
+import { CatalogRequestError } from '@/services/api/catalog'
+import { maxComparisonSlots } from '../data/college-compare'
 import { comparisonSections } from '../data/comparison-sections'
+import { getComparison, parseCompareQuery, type CompareEntry } from '../api/compare-api'
 import { ComparePageHeader } from './compare-page-header'
 import { CollegeCompareHeaderRow } from './college-compare-header-row'
 import { ComparisonSection } from './comparison-section'
 import { MobileComparisonHeaderRow } from './mobile-comparison-header-row'
 import { MobileComparisonSection } from './mobile-comparison-section'
-import { PopularComparisonsSection } from './popular-comparisons-section'
 import type { Selection } from './college-course-picker-dialog'
 
-type SlotSelection = { collegeSlug: string; degree: Degree; course: string }
+type Slot = { collegeSlug: string; program: string }
 
-function buildComparisonQuery(selections: SlotSelection[]): string {
-  if (selections.length === 0) return ''
+function buildComparisonQuery(slots: Slot[]): string {
+  if (slots.length === 0) return ''
   const params = new URLSearchParams()
-  params.set('colleges', selections.map((s) => s.collegeSlug).join(','))
-  params.set('programs', selections.map((s) => serializeProgramSlug(s.degree, s.course)).join(','))
+  params.set('colleges', slots.map((slot) => slot.collegeSlug).join(','))
+  params.set('programs', slots.map((slot) => slot.program).join(','))
   return params.toString()
 }
 
-export function CollegeComparePage() {
+export function CollegeComparePage({ initial, initialKey, popular }: { initial: CompareEntry[] | null; initialKey: string; popular?: ReactNode }) {
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
+  const selection = useMemo(() => parseCompareQuery(searchParams), [searchParams])
+  const seeded = initial && initialKey === JSON.stringify(selection)
+  const comparison = useQuery({
+    queryKey: queryKeys.comparison(selection),
+    queryFn: () => getComparison(selection.colleges, selection.programs).then((result) => result.entries),
+    initialData: seeded ? initial : undefined,
+    placeholderData: (previous) => previous,
+  })
+  const load = {
+    state: comparison.isError ? 'error' : comparison.isPending ? 'loading' : 'ready',
+    entries: comparison.isError ? [] : (comparison.data ?? []),
+    message: comparison.error instanceof CatalogRequestError ? comparison.error.message : undefined,
+  }
 
-  
-  
-  
-  
-  
-  const collegeSlugs = useMemo(() => {
-    const urlSlugs = parseComparisonSlugs(searchParams)
-    return urlSlugs.length > 0 ? urlSlugs : defaultComparisonSlugs
-  }, [searchParams])
+  const entries = load.entries
 
-  const programSlugs = useMemo(() => searchParams.get('programs')?.split(',') ?? [], [searchParams])
+  const currentSlots = (): Slot[] => entries.map((entry) => ({ collegeSlug: entry.college.slug, program: entry.program.slug }))
 
-  const entries: ComparisonEntry[] = useMemo(
-    () =>
-      collegeSlugs
-        .map((slug, index) => {
-          const college = getCollegeComparisonItem(slug)
-          if (!college) return undefined
-          const { degree, course } = parseProgramSlug(slug, programSlugs[index])
-          return { college, program: getProgramSnapshot(slug, degree, course) }
-        })
-        .filter((entry): entry is ComparisonEntry => Boolean(entry)),
-    [collegeSlugs, programSlugs]
-  )
-
-  const currentSelections = (): SlotSelection[] => entries.map((entry) => ({ collegeSlug: entry.college.slug, degree: entry.program.degree, course: entry.program.course }))
-
-  const updateUrl = (nextSelections: SlotSelection[]) => {
-    const query = buildComparisonQuery(nextSelections)
+  const updateUrl = (next: Slot[]) => {
+    const query = buildComparisonQuery(next)
     router.push(query ? `${pathname}?${query}` : pathname, { scroll: false })
   }
 
-  const addCollege = (selection: Selection) => {
-    const current = currentSelections()
-    if (current.some((entry) => entry.collegeSlug === selection.collegeSlug) || current.length >= maxComparisonSlots) return
-    updateUrl([...current, selection])
+  const addCollege = (next: Selection) => {
+    const current = currentSlots()
+    if (current.some((slot) => slot.collegeSlug === next.collegeSlug) || current.length >= maxComparisonSlots) return
+    updateUrl([...current, { collegeSlug: next.collegeSlug, program: next.program }])
   }
 
   const removeCollege = (slug: string) => {
-    updateUrl(currentSelections().filter((entry) => entry.collegeSlug !== slug))
+    updateUrl(currentSlots().filter((slot) => slot.collegeSlug !== slug))
   }
 
-  const modifyCollege = (previousSlug: string, selection: Selection) => {
-    updateUrl(currentSelections().map((entry) => (entry.collegeSlug === previousSlug ? selection : entry)))
+  const modifyCollege = (previousSlug: string, next: Selection) => {
+    updateUrl(currentSlots().map((slot) => (slot.collegeSlug === previousSlug ? { collegeSlug: next.collegeSlug, program: next.program } : slot)))
   }
 
-  
-  
-  
-  
-  
   const [scrollLeft, setScrollLeft] = useState(0)
   const [mobileScrollLeft, setMobileScrollLeft] = useState(0)
 
@@ -98,10 +85,15 @@ export function CollegeComparePage() {
           <ComparePageHeader />
         </div>
 
+        {load.state === 'error' ? (
+          <div className="mt-4">
+            <ListingError message={load.message ?? 'The comparison couldn’t be loaded.'} onRetry={() => void comparison.refetch()} />
+          </div>
+        ) : null}
+
         {entries.length > 2 && <p className="mt-3 text-xs text-muted-foreground md:hidden print:hidden">Swipe to see more →</p>}
 
         <div className="mt-3 lg:mt-4">
-          { }
           <div className="hidden md:block print:block">
             <CollegeCompareHeaderRow entries={entries} onRemove={removeCollege} onAdd={addCollege} onModify={modifyCollege} scrollLeft={scrollLeft} />
             <div
@@ -114,7 +106,6 @@ export function CollegeComparePage() {
             </div>
           </div>
 
-          { }
           <div className="md:hidden print:hidden">
             <MobileComparisonHeaderRow entries={entries} onRemove={removeCollege} onAdd={addCollege} onModify={modifyCollege} scrollLeft={mobileScrollLeft} />
             <div onScroll={(event) => setMobileScrollLeft(event.currentTarget.scrollLeft)} className="overflow-x-auto rounded-b-[10px] border border-t-0">
@@ -143,9 +134,7 @@ export function CollegeComparePage() {
           </Button>
         </div>
 
-        <div className="mt-6">
-          <PopularComparisonsSection />
-        </div>
+        {popular ? <div className="mt-6">{popular}</div> : null}
 
         <div className="mt-6 flex flex-col items-start gap-3 rounded-[12px] border bg-card p-4 shadow-[0_2px_10px_rgba(15,23,42,0.04)] sm:flex-row sm:items-center sm:justify-between print:hidden">
           <div>

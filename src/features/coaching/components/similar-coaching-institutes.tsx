@@ -4,11 +4,11 @@ import { ChevronRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { DetailSectionHeader } from '@/components/shared/detail-section-header'
 import { HorizontalContentRail } from '@/components/shared/horizontal-content-rail'
-import { getSimilarCoachingProviders, type CoachingProvider } from '../data/coaching'
+import type { CoachingDetail, CoachingListItem } from '../api/coaching-api'
 import { getCoachingVisual } from '../data/visuals'
 
 type SimilarCoachingInstitutesProps = {
-  provider: CoachingProvider
+  provider: CoachingDetail
    
   compact?: boolean
 }
@@ -20,7 +20,7 @@ type SimilarCoachingInstitutesProps = {
 
  
 export function SimilarCoachingInstitutes({ provider, compact = false }: SimilarCoachingInstitutesProps) {
-  const similar = getSimilarCoachingProviders(provider, 3)
+  const similar = provider.similar
   if (similar.length === 0) return null
 
   if (compact) {
@@ -46,7 +46,6 @@ export function SimilarCoachingInstitutes({ provider, compact = false }: Similar
         ))}
       </div>
 
-      { }
       <HorizontalContentRail ariaLabel="Similar coaching institutes" edgeBleed className="mt-4 sm:hidden">
         {similar.map((item) => (
           <div key={item.slug} className="w-[72vw] shrink-0 snap-start">
@@ -58,7 +57,7 @@ export function SimilarCoachingInstitutes({ provider, compact = false }: Similar
   )
 }
 
-function CompactSimilarRow({ item }: { item: CoachingProvider }) {
+function CompactSimilarRow({ item }: { item: CoachingListItem }) {
   const visual = getCoachingVisual(item)
   const href = item.hasDetailPage ? `/coaching/${item.slug}` : '/coaching'
   const tags = [...item.exams, ...item.subjects].slice(0, 2)
@@ -84,7 +83,7 @@ function CompactSimilarRow({ item }: { item: CoachingProvider }) {
   )
 }
 
-function SimilarCard({ item }: { item: CoachingProvider }) {
+function SimilarCard({ item }: { item: CoachingListItem }) {
   const visual = getCoachingVisual(item)
   const href = item.hasDetailPage ? `/coaching/${item.slug}` : '/coaching'
   const tags = [...item.exams, ...item.subjects].slice(0, 2)

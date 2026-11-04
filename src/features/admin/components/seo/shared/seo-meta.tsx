@@ -1,7 +1,6 @@
 import type { SeoTargetType } from '@/features/seo/types/seo-metadata'
 import { StatusBadge, type StatusTone } from '../../kit'
 
-/** Short, plain names for what an SEO record applies to. */
 export const seoTargetTypeLabels: Record<SeoTargetType, string> = {
   static_page: 'Page',
   institution: 'Institution',

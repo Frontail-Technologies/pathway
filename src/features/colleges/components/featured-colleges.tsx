@@ -1,11 +1,10 @@
 import Link from 'next/link'
 import { Landmark, MapPin } from 'lucide-react'
-import { getCollegeDetail } from '../data/college-detail'
-import type { CollegeListItem } from '../data/colleges'
+import type { CollegeListItem } from '../api/colleges-api'
 
  
 export function FeaturedCollegeTile({ college }: { college: CollegeListItem }) {
-  const hasDetail = !!getCollegeDetail(college.slug)
+  const hasDetail = college.hasDetailPage
   const body = (
     <>
       <span className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-secondary text-primary" aria-hidden="true">

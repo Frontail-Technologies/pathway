@@ -29,8 +29,9 @@ const providerPhotosBySlug: Record<string, ProviderPhoto> = {
 
 const fallbackPhoto: ProviderPhoto = { src: '/coaching/coaching-institute.png', alt: 'Classroom setup with study materials', objectPosition: 'center center' }
 
-export function getCoachingVisual(provider: CoachingProvider) {
+export function getCoachingVisual(provider: CoachingProvider & { coverImageUrl?: string }) {
   const badge = providerTypeBadge[provider.providerType]
-  const photo = providerPhotosBySlug[provider.slug] ?? fallbackPhoto
+  const curated = providerPhotosBySlug[provider.slug]
+  const photo = provider.coverImageUrl ? { ...(curated ?? fallbackPhoto), src: provider.coverImageUrl, alt: curated?.alt ?? `${provider.name}` } : (curated ?? fallbackPhoto)
   return { ...photo, ...badge }
 }

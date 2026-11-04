@@ -6,7 +6,6 @@ import { DashboardSection } from '@/features/student/components/dashboard-parts'
 import { DAYS, SLOTS, type Availability, type Day, type SlotId } from '../data/tutor-space'
 import { useTutorSpace } from '../state/tutor-space-provider'
 
-/** Build a full week from a per-day rule. */
 const week = (slotsFor: (day: Day) => SlotId[]): Availability => Object.fromEntries(DAYS.map((day) => [day, slotsFor(day)])) as Record<Day, SlotId[]>
 
 const isWeekend = (day: Day) => day === 'Sat' || day === 'Sun'
@@ -18,21 +17,24 @@ const presets: { label: string; build: () => Availability }[] = [
 ]
 
 export function TutorAvailabilityPage() {
-  const { state, update } = useTutorSpace()
+  const { state, saveAvailability } = useTutorSpace()
   const total = Object.values(state.availability).reduce((sum, slots) => sum + slots.length, 0)
 
+  const save = (next: typeof state.availability, success?: string) =>
+    saveAvailability(next)
+      .then(() => success && toast.success(success))
+      .catch(() => toast.error('Could not save your availability. Please try again.'))
+
   const toggle = (day: Day, slot: SlotId) => {
-    update((current) => {
-      const slots = current.availability[day]
-      return { availability: { ...current.availability, [day]: slots.includes(slot) ? slots.filter((s) => s !== slot) : [...slots, slot] } }
-    })
+    const slots = state.availability[day]
+    void save({ ...state.availability, [day]: slots.includes(slot) ? slots.filter((s) => s !== slot) : [...slots, slot] })
   }
 
   return (
     <div className="mx-auto flex w-full max-w-4xl flex-col gap-5">
       <div>
         <h1 className="font-heading text-2xl font-extrabold text-foreground sm:text-3xl">Availability</h1>
-        <p className="mt-1 text-sm text-muted-foreground">Tap a time slot to switch it on or off. Changes save automatically on this device.</p>
+        <p className="mt-1 text-sm text-muted-foreground">Tap a time slot to switch it on or off. Changes are saved to your account automatically.</p>
       </div>
 
       <DashboardSection
@@ -46,8 +48,7 @@ export function TutorAvailabilityPage() {
               variant="outline"
               className="h-9 px-3 text-xs"
               onClick={() => {
-                update({ availability: preset.build() })
-                toast.success(preset.label === 'Clear all' ? 'Availability cleared.' : `Set to ${preset.label.toLowerCase()}.`)
+                void save(preset.build(), preset.label === 'Clear all' ? 'Availability cleared.' : `Set to ${preset.label.toLowerCase()}.`)
               }}
             >
               {preset.label}
@@ -56,7 +57,6 @@ export function TutorAvailabilityPage() {
         </div>
 
         <div>
-          {/* Fixed layout: day column + three equal slot columns fit a 320px phone without sideways scrolling. */}
           <table className="w-full table-fixed border-separate border-spacing-1 text-sm sm:border-spacing-1.5">
             <caption className="sr-only">Weekly availability by day and time of day</caption>
             <thead>

@@ -1,6 +1,5 @@
 import { Star } from 'lucide-react'
 
-/** Rating as a number with a quiet star; no gold colour (colour is reserved for status). */
 export function Rating({ value }: { value?: number }) {
   if (!value) return <span className="text-muted-foreground">—</span>
   return (

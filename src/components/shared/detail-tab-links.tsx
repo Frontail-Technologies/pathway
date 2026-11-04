@@ -1,7 +1,6 @@
 import Link from 'next/link'
 import { ChevronRight } from 'lucide-react'
 
-/** "Explore" tiles on an overview tab, one per other sub-page. */
 export function DetailTabLinks({ title, items }: { title: string; items: { href: string; label: string; teaser?: string }[] }) {
   if (items.length === 0) return null
   return (

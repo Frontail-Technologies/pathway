@@ -12,7 +12,6 @@ export function CollegeCoursesSection({ college }: { college: CollegeDetailData 
         <div className="divide-y">
           {college.courses.map((course) => (
             <div key={course.name} className="p-5">
-              { }
               <div className="sm:hidden">
                 <p className="text-sm font-semibold text-foreground">{course.name}</p>
                 <p className="mt-0.5 text-xs text-muted-foreground">
@@ -36,7 +35,6 @@ export function CollegeCoursesSection({ college }: { college: CollegeDetailData 
                 </div>
               </div>
 
-              { }
               <div className="hidden sm:flex sm:items-center sm:gap-6">
                 <div className="sm:w-56 sm:shrink-0">
                   <p className="text-[15px] font-semibold text-foreground">{course.name}</p>

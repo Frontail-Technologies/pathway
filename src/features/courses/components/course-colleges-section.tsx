@@ -22,7 +22,6 @@ export function CourseCollegesSection({ course }: { course: CourseDetailData }) 
                 </p>
               </div>
               <div className="flex shrink-0 items-center gap-3">
-                { }
                 <Button variant="outline" className="h-9 px-4 text-sm" nativeButton={false} render={<Link href={college.href} />}>
                   View College
                 </Button>
@@ -33,9 +32,6 @@ export function CourseCollegesSection({ course }: { course: CourseDetailData }) 
       </div>
 
       <div className="mt-4 text-center">
-        {
-
- }
         <Link
           href="/colleges"
           className="cursor-pointer text-sm font-semibold text-primary outline-none hover:underline focus-visible:ring-2 focus-visible:ring-primary/40"

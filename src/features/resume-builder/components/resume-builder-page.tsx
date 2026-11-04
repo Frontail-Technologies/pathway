@@ -41,10 +41,6 @@ export function ResumeBuilderPage() {
 
   return (
     <div className="h-full w-full">
-      {
-
-
- }
       <div className="hidden h-full w-full lg:flex">
         <DesktopWorkspace {...workspaceProps} />
       </div>

@@ -26,7 +26,8 @@ export function StudentPreferencesPage() {
 }
 
 function PreferencesEditor() {
-  const { profile, updateProfile } = useStudentProfile()
+  const { profile, savePreferences } = useStudentProfile()
+  const [saving, setSaving] = useState(false)
   const initial = useMemo<PreferenceDraft>(
     () => ({ studyGoal: profile.studyGoal ?? '', streams: profile.preferredStreams ?? [], courses: profile.preferredCourses, exams: profile.preferredExams, locations: profile.preferredLocations }),
     [profile],
@@ -42,7 +43,8 @@ function PreferencesEditor() {
   
   const save = () => {
     const keptCourses = draft.courses.filter((name) => courseChoices.includes(name) || !courses.some((course) => course.name === name))
-    updateProfile({
+    setSaving(true)
+    savePreferences({
       ...profile,
       studyGoal: draft.studyGoal || undefined,
       preferredStreams: draft.streams,
@@ -50,8 +52,12 @@ function PreferencesEditor() {
       preferredExams: draft.exams,
       preferredLocations: draft.locations,
     })
-    setDraft((prev) => ({ ...prev, courses: keptCourses }))
-    toast.success('Preferences updated on this device.')
+      .then(() => {
+        setDraft((prev) => ({ ...prev, courses: keptCourses }))
+        toast.success('Preferences saved.')
+      })
+      .catch((error: unknown) => toast.error(error instanceof Error ? error.message : 'Could not save your preferences. Please try again.'))
+      .finally(() => setSaving(false))
   }
 
   return (
@@ -139,8 +145,8 @@ function PreferencesEditor() {
           >
             Back to Dashboard
           </Button>
-          <Button type="submit" variant="cta" className="h-11 flex-1 px-4 text-sm font-semibold sm:flex-none sm:px-6">
-            Save Preferences
+          <Button type="submit" variant="cta" className="h-11 flex-1 px-4 text-sm font-semibold sm:flex-none sm:px-6" disabled={saving}>
+            {saving ? 'Saving…' : 'Save Preferences'}
           </Button>
         </div>
       </form>

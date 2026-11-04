@@ -34,7 +34,6 @@ const completenessItems = [
   { key: 'media', label: 'Photos' },
 ] as const
 
-/** A quiet "needs a source" line for sections whose figures have no recorded provenance. */
 function SourceWarning({ children }: { children: ReactNode }) {
   return (
     <div className="mb-4 flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px] text-muted-foreground">

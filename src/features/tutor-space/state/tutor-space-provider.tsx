@@ -1,78 +1,71 @@
 'use client'
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
-import { TUTOR_AUTH_STORAGE_KEY, TUTOR_SPACE_STORAGE_KEY, initialTutorSpace, isStoredTutorSpace, type TutorSpaceState } from '../data/tutor-space'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { queryKeys } from '@/lib/query-client'
+import { apiRequest } from '@/features/auth/lib/session-client'
+import { useRoleSession } from '@/features/auth/state/auth-session-provider'
+import { initialTutorSpace, TUTOR_SPACE_STORAGE_KEY, type Availability, type SessionRequest, type TutorNotificationSettings, type TutorProfileDraft, type TutorSpaceState } from '../data/tutor-space'
+import { availabilityFromApi, availabilityToApi, profileFromApi, profileToApi, type ApiTutorAccount } from '../data/tutor-account-api'
 
 type TutorSpaceContextValue = {
   hydrated: boolean
   signedIn: boolean
-  signIn: () => void
-  signOut: () => void
+  signOut: () => Promise<void>
+  account: ApiTutorAccount | null
   state: TutorSpaceState
-  update: (patch: Partial<TutorSpaceState> | ((current: TutorSpaceState) => Partial<TutorSpaceState>)) => void
-  reset: () => void
+  saveProfile: (draft: TutorProfileDraft) => Promise<void>
+  saveAvailability: (availability: Availability) => Promise<void>
+  saveSettings: (patch: { acceptingStudents?: boolean; notifications?: Partial<TutorNotificationSettings> }) => Promise<void>
+  submitForReview: () => Promise<void>
+  updateRequests: (next: (current: SessionRequest[]) => SessionRequest[]) => void
 }
 
 const TutorSpaceContext = createContext<TutorSpaceContextValue | null>(null)
 
-const read = <T,>(key: string): T | null => {
-  try {
-    return JSON.parse(window.localStorage.getItem(key) ?? 'null') as T | null
-  } catch {
-    return null
-  }
-}
-const write = (key: string, value: unknown) => {
-  try {
-    if (value === null) window.localStorage.removeItem(key)
-    else window.localStorage.setItem(key, JSON.stringify(value))
-  } catch {
-    // Storage can be unavailable (private mode); the session still works in memory.
-  }
-}
-
-/**
- * Demo state for Tutor Space, kept separate from the student demo account so
- * the two roles never mix. Persisted on this device only.
- */
 export function TutorSpaceProvider({ children }: { children: React.ReactNode }) {
-  const [hydrated, setHydrated] = useState(false)
-  const [signedIn, setSignedIn] = useState(false)
-  const [state, setState] = useState<TutorSpaceState>(initialTutorSpace)
+  const { hydrated: sessionReady, signedIn, user, signOut } = useRoleSession('tutor')
+  const [requests, setRequests] = useState<SessionRequest[]>(initialTutorSpace.requests)
+  const tutorId = user?.id
+  const queryClient = useQueryClient()
 
   useEffect(() => {
-    setSignedIn(read<{ signedIn?: boolean }>(TUTOR_AUTH_STORAGE_KEY)?.signedIn === true)
-    const stored = read<unknown>(TUTOR_SPACE_STORAGE_KEY)
-    if (isStoredTutorSpace(stored)) setState(stored)
-    setHydrated(true)
+    try {
+      window.localStorage.removeItem(TUTOR_SPACE_STORAGE_KEY)
+    } catch {
+    }
   }, [])
 
-  const update = useCallback<TutorSpaceContextValue['update']>((patch) => {
-    setState((current) => {
-      const next = { ...current, ...(typeof patch === 'function' ? patch(current) : patch) }
-      write(TUTOR_SPACE_STORAGE_KEY, next)
-      return next
-    })
-  }, [])
+  const query = useQuery({ queryKey: queryKeys.tutorAccount(tutorId ?? ''), queryFn: () => apiRequest<ApiTutorAccount>('GET', '/tutor/account'), enabled: sessionReady && Boolean(tutorId) })
+  const account = query.data ?? null
+  const loaded = !tutorId || !query.isPending
+  const adopt = useCallback((next: ApiTutorAccount) => void queryClient.setQueryData(queryKeys.tutorAccount(tutorId ?? ''), next), [queryClient, tutorId])
 
-  const signIn = useCallback(() => {
-    setSignedIn(true)
-    write(TUTOR_AUTH_STORAGE_KEY, { signedIn: true })
-  }, [])
+  const saveProfile = useCallback(async (draft: TutorProfileDraft) => adopt(await apiRequest<ApiTutorAccount>('PATCH', '/tutor/account/profile', profileToApi(draft))), [adopt])
+  const saveAvailability = useCallback(async (availability: Availability) => adopt(await apiRequest<ApiTutorAccount>('PUT', '/tutor/account/availability', availabilityToApi(availability))), [adopt])
+  const saveSettings = useCallback(
+    async (patch: { acceptingStudents?: boolean; notifications?: Partial<TutorNotificationSettings> }) => adopt(await apiRequest<ApiTutorAccount>('PATCH', '/tutor/account/settings', patch)),
+    [adopt],
+  )
+  const submitForReview = useCallback(async () => adopt(await apiRequest<ApiTutorAccount>('POST', '/tutor/account/submit')), [adopt])
+  const updateRequests = useCallback((next: (current: SessionRequest[]) => SessionRequest[]) => setRequests(next), [])
 
-  const signOut = useCallback(() => {
-    setSignedIn(false)
-    write(TUTOR_AUTH_STORAGE_KEY, null)
-  }, [])
+  const state = useMemo<TutorSpaceState>(
+    () =>
+      account
+        ? { profile: profileFromApi(account), availability: availabilityFromApi(account), acceptingStudents: account.settings.acceptingStudents, notifications: account.settings.notifications, requests }
+        : { ...initialTutorSpace, profile: { ...initialTutorSpace.profile, name: '', headline: '', intro: '', city: '', subjects: [], exams: [], levels: [], languages: [], modes: [] }, availability: availabilityToEmpty(), requests },
+    [account, requests],
+  )
 
-  const reset = useCallback(() => {
-    setState(initialTutorSpace)
-    write(TUTOR_SPACE_STORAGE_KEY, null)
-  }, [])
-
-  const value = useMemo(() => ({ hydrated, signedIn, signIn, signOut, state, update, reset }), [hydrated, signedIn, signIn, signOut, state, update, reset])
+  const value = useMemo<TutorSpaceContextValue>(
+    () => ({ hydrated: sessionReady && loaded, signedIn, signOut, account, state, saveProfile, saveAvailability, saveSettings, submitForReview, updateRequests }),
+    [sessionReady, loaded, signedIn, signOut, account, state, saveProfile, saveAvailability, saveSettings, submitForReview, updateRequests],
+  )
   return <TutorSpaceContext.Provider value={value}>{children}</TutorSpaceContext.Provider>
 }
+
+const availabilityToEmpty = (): Availability => ({ Mon: [], Tue: [], Wed: [], Thu: [], Fri: [], Sat: [], Sun: [] })
 
 export function useTutorSpace() {
   const context = useContext(TutorSpaceContext)

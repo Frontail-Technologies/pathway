@@ -12,11 +12,6 @@ import { TutorSignIn } from './tutor-sign-in'
 
 const tabs = tutorSpaceNavigation.map(({ href, label }) => ({ href, label }))
 
-/**
- * Frame for /tutor-dashboard/*, mirroring the student space: own 56px header
- * (hidden in app-shell mode), sticky section tabs on phones, sidebar on
- * desktop. Signed-out visitors see the demo sign-in panel instead of content.
- */
 export function TutorSpaceLayout({ children }: { children: React.ReactNode }) {
   return (
     <TutorSpaceProvider>

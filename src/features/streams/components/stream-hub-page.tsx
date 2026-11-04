@@ -10,7 +10,6 @@ import type { StreamDefinition } from '../data/stream-taxonomy'
 
 const SECTION_PREVIEW = 5
 
-/** /[stream]: everything Pathway has for one stream, each section linking to its filtered listing. */
 export function StreamHubPage({ hub, otherStreams }: { hub: StreamHub; otherStreams: StreamDefinition[] }) {
   const { stream, sections } = hub
   const Icon = stream.icon

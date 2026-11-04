@@ -13,10 +13,6 @@ import { CourseIdentityHeader } from './course-identity-header'
 import { CourseDiscoverySidebar } from './course-discovery-sidebar'
 import { CourseActionBar } from './course-action-bar'
 
-/**
- * Shared frame for every /course/[slug]/* page: breadcrumbs, identity header,
- * sticky tab bar, desktop sidebar, closing CTA and the mobile action bar.
- */
 export function CourseDetailShell({ course, children }: { course: CourseDetailData; children: ReactNode }) {
   const base = courseBase(course.slug)
   const tabs = tabLinks(courseTabs, course, base)

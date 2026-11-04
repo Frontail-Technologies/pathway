@@ -11,17 +11,19 @@ import { StudentToolHero } from '@/components/shared/student-tool/student-tool-h
 import { EmptyState } from '@/components/feedback'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { ListingError, ListingLoading } from '@/features/catalog/listing-states'
+import { useCatalogList } from '@/hooks/use-catalog-list'
+import { apiQueryFrom } from '@/lib/search-params'
+import type { CatalogList, CatalogQuery } from '@/services/api/catalog'
+import { toTutor, type TutorListDto } from '../api/tutors-api'
 import {
   emptyFilters,
-  matchesFilters,
-  matchesSearch,
   parseTutorFilters,
   parseTutorSearch,
   parseTutorSort,
   serializeTutorFilters,
-  sortTutors,
-  tutors,
   type FilterKey,
+  type Tutor,
   type FilterState,
   type SortValue,
 } from '../data/tutors'
@@ -30,6 +32,8 @@ import { FeaturedTutorCard, TutorResultCard } from './tutor-cards'
 import { TutorFilterSidebar, TutorResultsHeader } from './tutor-filters'
 
  
+const heroArtTutor = { name: 'Tutor', avatar: { skin: '#e0b088', hair: '#2b2118', shirt: '#3b6fd6', style: 'short', glasses: true } } as const
+
 function TutorHeroArt() {
   return (
     <div className="relative hidden h-52 w-96 shrink-0 lg:block" aria-hidden="true">
@@ -38,7 +42,7 @@ function TutorHeroArt() {
         <br />
         one subject at a time
       </div>
-      <TutorPortrait tutor={tutors[0]} className="absolute right-12 bottom-6 h-44 w-36 rounded-2xl shadow-[0_16px_30px_rgba(30,58,138,0.18)]" />
+      <TutorPortrait tutor={heroArtTutor} className="absolute right-12 bottom-6 h-44 w-36 rounded-2xl shadow-[0_16px_30px_rgba(30,58,138,0.18)]" />
       <svg viewBox="0 0 120 60" className="absolute right-0 bottom-0 h-20 w-44 drop-shadow-[0_10px_16px_rgba(30,58,138,0.2)]">
         <path d="M22 4h76a4 4 0 0 1 4 4v38H18V8a4 4 0 0 1 4-4Z" fill="#1e3a8a" />
         <rect x="24" y="10" width="72" height="30" rx="2" fill="#dbe6fb" />
@@ -82,7 +86,7 @@ const howItWorks = [
   { icon: MessageSquareText, title: 'Get in touch', text: 'Session requests will open here once scheduling is connected.' },
 ]
 
-export function TutorListingPage() {
+export function TutorListingPage({ initial, initialQuery, featured }: { initial?: CatalogList<Tutor> | null; initialQuery?: CatalogQuery; featured: Tutor[] }) {
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
@@ -91,8 +95,9 @@ export function TutorListingPage() {
   const sort = useMemo(() => parseTutorSort(searchParams), [searchParams])
   const query = useMemo(() => parseTutorSearch(searchParams), [searchParams])
 
-  const featured = useMemo(() => tutors.filter((tutor) => tutor.featured).slice(0, 3), [])
-  const results = useMemo(() => sortTutors(tutors.filter((tutor) => matchesFilters(tutor, filters) && matchesSearch(tutor, query)), sort), [filters, query, sort])
+  const apiQuery = useMemo(() => apiQueryFrom(serializeTutorFilters(filters, sort, query)), [filters, sort, query])
+  const list = useCatalogList<TutorListDto, Tutor>({ path: '/tutors', query: apiQuery, map: toTutor, limit: 20, initial, initialQuery })
+  const results = list.items
 
   const updateUrl = (nextFilters: FilterState, nextSort: SortValue, nextQuery: string) => {
     const queryString = serializeTutorFilters(nextFilters, nextSort, nextQuery)
@@ -113,7 +118,7 @@ export function TutorListingPage() {
 
       <Container className="px-4 pb-10">
         <div>
-          <section className="pt-8" aria-labelledby="featured-tutors">
+          {featured.length === 0 ? null : <section className="pt-8" aria-labelledby="featured-tutors">
             <h2 id="featured-tutors" className="font-heading text-xl font-bold text-foreground">
               Featured Tutors
             </h2>
@@ -122,7 +127,7 @@ export function TutorListingPage() {
                 <FeaturedTutorCard key={tutor.id} tutor={tutor} />
               ))}
             </HorizontalContentRail>
-          </section>
+          </section>}
 
           <section className="pt-10" aria-labelledby="all-tutors">
             <h2 id="all-tutors" className="font-heading text-xl font-bold text-foreground">
@@ -130,7 +135,7 @@ export function TutorListingPage() {
             </h2>
             <div className="mt-4">
               <TutorResultsHeader
-                resultCount={results.length}
+                resultCount={list.total}
                 filters={filters}
                 sort={sort}
                 onSortChange={(next) => updateUrl(filters, next, query)}
@@ -146,7 +151,11 @@ export function TutorListingPage() {
               </div>
 
               <div className="min-w-0 flex-1">
-                {results.length === 0 ? (
+                {list.status === 'loading' ? (
+                  <ListingLoading label="Loading tutors" />
+                ) : list.status === 'error' ? (
+                  <ListingError message={list.error} onRetry={list.retry} />
+                ) : results.length === 0 ? (
                   <div className="flex flex-col items-center gap-4">
                     <EmptyState title="No tutors match these filters." />
                     <div className="flex flex-wrap justify-center gap-2">
@@ -163,6 +172,11 @@ export function TutorListingPage() {
                     {results.map((tutor) => (
                       <TutorResultCard key={tutor.id} tutor={tutor} />
                     ))}
+                    {list.hasMore ? (
+                      <Button variant="outline" className="self-center" disabled={list.loadingMore} onClick={list.loadMore}>
+                        {list.loadingMore ? 'Loading…' : 'Load more tutors'}
+                      </Button>
+                    ) : null}
                   </div>
                 )}
               </div>

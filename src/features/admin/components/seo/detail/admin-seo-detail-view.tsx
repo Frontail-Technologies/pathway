@@ -7,7 +7,6 @@ import { AdminPageHeader, FactList, Panel, StatusBadge, Tag } from '../../kit'
 import { SeoIndexingBadge, seoTargetTypeLabels } from '../shared/seo-meta'
 import { SeoSearchSnippet, SeoSocialCard } from '../shared/seo-previews'
 
-/** Value with a quiet "custom" / "default" note beside its label. */
 function sourceNote(isCustom: boolean) {
   return isCustom ? <StatusBadge tone="info">Custom</StatusBadge> : <StatusBadge>Default</StatusBadge>
 }

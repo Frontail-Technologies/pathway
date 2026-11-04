@@ -15,7 +15,6 @@ const checkIcon: Record<Exclude<QualityCheck['status'], 'info'>, ReactNode> = {
   failed: <AlertCircle className="mt-0.5 size-4 shrink-0 text-destructive" aria-label="Failed" />,
 }
 
-/** Data quality: overall status, score and each check. Informational policy checks are left to the record panel. */
 export function QualityPanel({ quality }: { quality: { status: AdminTutorQualityAssessment['status']; score: number; checks: QualityCheck[] } }) {
   const checks = quality.checks.filter((check) => check.status !== 'info')
   return (
@@ -71,7 +70,6 @@ const syncLabel: Record<string, string> = {
   Unsynced: 'Out of sync',
 }
 
-/** Where the record came from, plus a quiet "Copy ID" for support requests. */
 export function RecordPanel({ id, sourceInfo, note }: { id: string; sourceInfo: { source: string; lastUpdated: string; syncStatus: string }; note: string }) {
   const [copied, setCopied] = useState(false)
   const copy = () => {
@@ -102,7 +100,6 @@ export function RecordPanel({ id, sourceInfo, note }: { id: string; sourceInfo: 
   )
 }
 
-/** Label + paragraph for long text on detail pages (FactList values are too heavy for prose). */
 export function TextBlock({ label, children }: { label: string; children: ReactNode }) {
   return (
     <div>
@@ -112,7 +109,6 @@ export function TextBlock({ label, children }: { label: string; children: ReactN
   )
 }
 
-/** Plain bulleted list for highlights / "who this helps". */
 export function PlainList({ items }: { items: readonly string[] }) {
   return (
     <ul className="list-disc space-y-1 pl-5 text-sm text-foreground marker:text-muted-foreground">

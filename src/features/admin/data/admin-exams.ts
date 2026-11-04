@@ -4,7 +4,6 @@ import { ADMIN_STORAGE_KEYS, readAdminStorage, writeAdminStorage } from './admin
 export const examLevelOptions: ExamLevel[] = ['Undergraduate', 'Postgraduate']
 export { scopeOptions as examScopeOptions, studyAreaOptions as examStudyAreaOptions }
 
-/** Detail sections a public exam page can show, in page order. */
 export const EXAM_DETAIL_SECTIONS = [
   { id: 'overview', label: 'Overview' },
   { id: 'eligibility', label: 'Eligibility' },
@@ -30,7 +29,6 @@ export function examSectionCounts(exam: Exam): Record<ExamDetailSectionId, numbe
   }
 }
 
-/** Simple derived score: listing basics plus each public-page section that has content. */
 export function examCompleteness(exam: Exam): number {
   const counts = examSectionCounts(exam)
   const checks = [
@@ -57,8 +55,6 @@ export function getAdminExams(): AdminExam[] {
 export function getAdminExamById(idOrSlug: string): Exam | undefined {
   return exams.find((exam) => exam.id === idOrSlug || exam.slug === idOrSlug)
 }
-
-/* ------------------------------------------------------------------ editor values */
 
 export type PairRow = { a: string; b: string }
 
@@ -111,7 +107,6 @@ export function examToFormValues(exam?: Exam): ExamFormValues {
 
 const cleanRows = (rows: PairRow[]) => rows.filter((row) => row.a.trim() || row.b.trim())
 
-/** Applies saved demo edits on top of the fixture record. */
 export function applyExamFormValues(exam: Exam, values: ExamFormValues): Exam {
   const syllabus = values.syllabus
     .split(',')
@@ -145,8 +140,6 @@ export function applyExamFormValues(exam: Exam, values: ExamFormValues): Exam {
         : undefined,
   }
 }
-
-/* ------------------------------------------------------------------ demo edits (this device) */
 
 type ExamEdits = Record<string, { values: ExamFormValues; savedAt: string }>
 

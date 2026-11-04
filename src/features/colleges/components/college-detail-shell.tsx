@@ -13,11 +13,6 @@ import { CollegeIdentityHeader } from './college-identity-header'
 import { CollegeEnquirySidebar } from './college-enquiry-sidebar'
 import { CollegeActionBar } from './college-action-bar'
 
-/**
- * Shared frame for every /college/[slug]/* page: breadcrumbs, identity header,
- * sticky tab bar, desktop sidebar, closing CTA and the mobile action bar.
- * Only `children` (the active tab) changes between sub-pages.
- */
 export function CollegeDetailShell({ college, children }: { college: CollegeDetailData; children: ReactNode }) {
   const base = collegeBase(college.slug)
   const tabs = tabLinks(collegeTabs, college, base)

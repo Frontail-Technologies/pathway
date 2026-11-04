@@ -9,7 +9,10 @@ import { emptyFilters as emptyCoachingFilters, serializeCoachingFilters } from '
 import { tutors, emptyFilters as emptyTutorFilters, serializeTutorFilters } from '@/features/tutors/data/tutors'
 import { examFromSlug } from '@/features/college-predictor/data/predictor'
 import { rankExamFromSlug } from '@/features/rank-predictor/data/rank'
-import { getSearchIndex, type SearchEntry, type SearchKind } from '@/features/search/data/search-index'
+import { getCollegeDetail } from '@/features/colleges/data/college-detail'
+import { getCourseDetail } from '@/features/courses/data/course-detail'
+import { getScholarshipDetail } from '@/features/scholarships/data/scholarship-detail'
+import type { SearchEntry, SearchKind } from '@/features/search/data/search-index'
 import { getStream, streams, type StreamDefinition } from './stream-taxonomy'
 
 export type StreamSection = {
@@ -17,7 +20,6 @@ export type StreamSection = {
   title: string
   kind: SearchKind
   entries: SearchEntry[]
-  /** Listing pre-filtered to this stream where the listing supports it. */
   viewAllHref?: string
 }
 
@@ -25,10 +27,66 @@ export type StreamHub = { stream: StreamDefinition; sections: StreamSection[] }
 
 const withQuery = (path: string, query: string) => (query ? `${path}?${query}` : path)
 
-/** Reuse the search index so titles, subtitles and "never 404" links match search results. */
+const withFallback = (detail: string | null, listing: string, name: string) => detail ?? `${listing}?q=${encodeURIComponent(name)}`
+
+let fixtureEntries: SearchEntry[] | null = null
+function getFixtureEntries(): SearchEntry[] {
+  fixtureEntries ??= [
+    ...colleges.map((c) => ({
+      id: c.id,
+      kind: 'college' as const,
+      title: c.name,
+      subtitle: `${c.city}, ${c.state} · ${c.type} · ${c.popularCourse}`,
+      href: getCollegeDetail(c.slug) ? `/college/${c.slug}` : '/colleges',
+      keywords: `${c.degree} ${c.exam} ${c.approval}`,
+    })),
+    ...courses.map((c) => ({
+      id: c.id,
+      kind: 'course' as const,
+      title: c.name,
+      subtitle: `${c.level} · ${c.stream} · ${c.duration}`,
+      href: withFallback(getCourseDetail(c.slug) ? `/course/${c.slug}` : null, '/courses', c.name),
+      keywords: `${c.degree} ${c.specialization} ${c.entranceExams.join(' ')}`,
+    })),
+    ...exams.map((e) => ({
+      id: e.id,
+      kind: 'exam' as const,
+      title: e.shortName === e.name ? e.name : `${e.shortName} — ${e.name}`,
+      subtitle: `${e.studyArea} · ${e.scope} · ${e.level}`,
+      href: withFallback(e.hasDetailPage ? `/exam/${e.slug}` : null, '/exams', e.shortName),
+      keywords: `${e.conductingBody ?? ''} ${e.description}`,
+    })),
+    ...scholarships.map((s) => ({
+      id: s.id,
+      kind: 'scholarship' as const,
+      title: s.name,
+      subtitle: `${s.provider} · ${s.benefitLabel}`,
+      href: withFallback(getScholarshipDetail(s.slug) ? `/scholarship/${s.slug}` : null, '/scholarships', s.name),
+      keywords: `${s.scholarshipType} ${s.streams.join(' ')} ${s.educationLevels.join(' ')}`,
+    })),
+    ...coachingProviders.map((p) => ({
+      id: p.id,
+      kind: 'coaching' as const,
+      title: p.name,
+      subtitle: `${p.providerType} · ${p.location} · ${p.exams.slice(0, 3).join(', ')}`,
+      href: withFallback(p.hasDetailPage ? `/coaching/${p.slug}` : null, '/coaching', p.name),
+      keywords: `${p.exams.join(' ')} ${p.subjects.join(' ')} ${p.modes.join(' ')}`,
+    })),
+    ...tutors.map((t) => ({
+      id: t.id,
+      kind: 'tutor' as const,
+      title: t.name,
+      subtitle: t.headline,
+      href: withFallback(t.hasDetailPage ? `/tutor/${t.slug}` : null, '/tutors', t.name),
+      keywords: `${t.subjects.join(' ')} ${t.exams.join(' ')} ${t.languages.join(' ')}`,
+    })),
+  ]
+  return fixtureEntries
+}
+
 function entriesFor(kind: SearchKind, ids: string[]): SearchEntry[] {
   const wanted = new Set(ids)
-  return getSearchIndex().filter((entry) => entry.kind === kind && wanted.has(entry.id))
+  return getFixtureEntries().filter((entry) => entry.kind === kind && wanted.has(entry.id))
 }
 
 export function buildStreamHub(stream: StreamDefinition): StreamHub {
@@ -89,7 +147,6 @@ export function buildStreamHub(stream: StreamDefinition): StreamHub {
   return { stream, sections: sections.filter((section) => section.entries.length > 0) }
 }
 
-/** A hub is only published when it has real content in at least two sections. */
 const MIN_SECTIONS = 2
 
 export function getStreamHub(slug: string): StreamHub | undefined {

@@ -8,16 +8,16 @@ import { Container } from '@/components/shared/container'
 import { Breadcrumbs } from '@/components/shared/breadcrumbs'
 import { EmptyState } from '@/components/feedback'
 import { Button } from '@/components/ui/button'
+import { ListingError, ListingLoading } from '@/features/catalog/listing-states'
+import { useCatalogList } from '@/hooks/use-catalog-list'
+import type { CatalogList, CatalogQuery } from '@/services/api/catalog'
+import type { Exam } from '../data/exams'
+import { examApiQuery, toExam, type ExamListDto } from '../api/exams-api'
 import {
   emptyFilters,
-  exams,
-  matchesFilters,
-  matchesSearch,
   parseExamFilters,
-  parseExamSearch,
   parseExamSort,
   serializeExamFilters,
-  sortExams,
   type FilterKey,
   type FilterState,
   type SortValue,
@@ -26,17 +26,17 @@ import { ExamHero } from './exam-hero'
 import { ExamCard, PopularExamTile } from './exam-cards'
 import { ExamFilterSidebar, ExamResultsHeader } from './exam-filters'
 
-export function ExamListingPage() {
+export function ExamListingPage({ initial, initialQuery, popular }: { initial?: CatalogList<Exam> | null; initialQuery?: CatalogQuery; popular: Exam[] }) {
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
 
   const filters = useMemo(() => parseExamFilters(searchParams), [searchParams])
   const sort = useMemo(() => parseExamSort(searchParams), [searchParams])
-  const query = useMemo(() => parseExamSearch(searchParams), [searchParams])
-
-  const popular = useMemo(() => exams.filter((exam) => exam.popular), [])
-  const results = useMemo(() => sortExams(exams.filter((exam) => matchesFilters(exam, filters) && matchesSearch(exam, query)), sort), [filters, query, sort])
+  const query = searchParams.get('q') ?? ''
+  const apiQuery = useMemo(() => examApiQuery(searchParams), [searchParams])
+  const list = useCatalogList<ExamListDto, Exam>({ path: '/exams', query: apiQuery, map: toExam, limit: 100, initial, initialQuery })
+  const results = list.items
 
   const updateUrl = (nextFilters: FilterState, nextSort: SortValue, nextQuery: string) => {
     const queryString = serializeExamFilters(nextFilters, nextSort, nextQuery)
@@ -62,11 +62,11 @@ export function ExamListingPage() {
             <h2 id="popular-exams" className="font-heading text-xl font-bold text-foreground">
               Popular Exams
             </h2>
-            <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+            {popular.length === 0 ? null : <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
               {popular.map((exam) => (
                 <PopularExamTile key={exam.id} exam={exam} />
               ))}
-            </div>
+            </div>}
           </section>
 
           <section className="pt-10" aria-labelledby="all-exams">
@@ -75,7 +75,7 @@ export function ExamListingPage() {
             </h2>
             <div className="mt-4">
               <ExamResultsHeader
-                resultCount={results.length}
+                resultCount={list.total}
                 filters={filters}
                 sort={sort}
                 onSortChange={(next) => updateUrl(filters, next, query)}
@@ -91,7 +91,11 @@ export function ExamListingPage() {
               </div>
 
               <div className="min-w-0 flex-1">
-                {results.length === 0 ? (
+                {list.status === 'loading' ? (
+                  <ListingLoading label="Loading exams" />
+                ) : list.status === 'error' ? (
+                  <ListingError message={list.error} onRetry={list.retry} />
+                ) : results.length === 0 ? (
                   <div className="flex flex-col items-center gap-4">
                     <EmptyState title="No exams match these filters." />
                     <div className="flex flex-wrap justify-center gap-2">

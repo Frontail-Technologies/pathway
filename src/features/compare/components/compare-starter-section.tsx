@@ -2,11 +2,9 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import Image from 'next/image'
 import { Plus, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { getCollegeComparisonItem, maxComparisonSlots } from '../data/college-compare'
-import { serializeProgramSlug } from '../data/programs'
+import { getCollegeInitials, maxComparisonSlots } from '../data/college-compare'
 import { CollegeCoursePickerDialog, type Selection } from './college-course-picker-dialog'
 
 export function CompareStarterSection() {
@@ -36,7 +34,7 @@ export function CompareStarterSection() {
     if (filled.length === 0) return
     const query = new URLSearchParams({
       colleges: filled.map((selection) => selection.collegeSlug).join(','),
-      programs: filled.map((selection) => serializeProgramSlug(selection.degree, selection.course)).join(','),
+      programs: filled.map((selection) => selection.program).join(','),
     }).toString()
     router.push(`/compare/colleges?${query}`)
   }
@@ -77,14 +75,11 @@ export function CompareStarterSection() {
 }
 
 function FilledStarterSlot({ selection, onRemove }: { selection: Selection; onRemove: () => void }) {
-  const college = getCollegeComparisonItem(selection.collegeSlug)
-  if (!college) return null
+  const { college } = selection
 
   return (
     <div className="flex h-24 items-center gap-3 rounded-lg border bg-background px-3">
-      <div className="relative size-11 shrink-0 overflow-hidden rounded-lg bg-secondary">
-        <Image src={college.logo} alt="" fill sizes="44px" className="object-cover" />
-      </div>
+      <div className="flex size-11 shrink-0 items-center justify-center rounded-lg bg-secondary text-xs font-bold text-primary">{getCollegeInitials(college.shortName)}</div>
       <div className="min-w-0 flex-1">
         <p className="truncate text-sm font-semibold text-foreground">{college.shortName}</p>
         <p className="truncate text-xs text-muted-foreground">{college.location}</p>

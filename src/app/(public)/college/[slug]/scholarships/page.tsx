@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { getCollegeDetail } from '@/features/colleges/data/college-detail'
+import { getCollegeDetail } from '@/features/colleges/api/colleges-api'
 import { collegeTabMetadata } from '@/features/colleges/config/college-tabs'
 import { CollegeScholarshipsSection } from '@/features/colleges/components/college-scholarships-section'
 
@@ -8,12 +8,12 @@ type Props = { params: Promise<{ slug: string }> }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
-  return collegeTabMetadata(getCollegeDetail(slug), 'scholarships')
+  return collegeTabMetadata(await getCollegeDetail(slug), 'scholarships')
 }
 
 export default async function CollegeScholarshipsRoute({ params }: Props) {
   const { slug } = await params
-  const college = getCollegeDetail(slug)
+  const college = await getCollegeDetail(slug)
   if (!college) notFound()
   return (
     <>

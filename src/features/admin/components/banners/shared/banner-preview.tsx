@@ -14,10 +14,6 @@ export type BannerPreviewData = {
   imageAlt?: string
 }
 
-/**
- * Neutral mock of the banner as it appears on the site: real artwork, plain text, no decorative backdrop.
- * Shows placeholder copy when fields are empty so the editor preview is never blank.
- */
 export function BannerPreview({ data, placeholders = false }: { data: BannerPreviewData; placeholders?: boolean }) {
   const [device, setDevice] = React.useState<'desktop' | 'mobile'>('desktop')
   const image = device === 'mobile' && data.mobileImage ? data.mobileImage : data.image
