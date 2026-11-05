@@ -1,5 +1,3 @@
-import { colleges, type CollegeListItem } from '@/features/colleges/data/colleges'
-import { getCollegeDetail } from '@/features/colleges/data/college-detail'
 
 
 
@@ -137,8 +135,4 @@ export const previewBuckets: PreviewBucket[] = [
   { id: 'safer', title: 'Safer Options', description: 'Colleges where your profile may be more comfortable.', slugs: ['manipal-university', 'chandigarh-university'] },
 ]
 
-export function getPreviewCollege(slug: string): { college: CollegeListItem; hasDetailPage: boolean } | undefined {
-  const college = colleges.find((item) => item.slug === slug)
-  if (!college) return undefined
-  return { college, hasDetailPage: Boolean(getCollegeDetail(slug)) }
-}
+export const previewSlugs = previewBuckets.flatMap((bucket) => bucket.slugs)

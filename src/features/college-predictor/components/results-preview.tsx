@@ -1,8 +1,12 @@
 import Link from 'next/link'
+import { useQuery } from '@tanstack/react-query'
 import { FlaskConical, MapPin } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { StepHeading } from '@/components/shared/student-tool/tool-fields'
-import { getPreviewCollege, previewBuckets, type CollegePredictorDraft } from '../data/predictor'
+import { toCollegeListItem, type InstitutionListDto } from '@/features/colleges/api/colleges-api'
+import { queryKeys } from '@/lib/query-client'
+import { catalogList } from '@/services/api/catalog'
+import { previewBuckets, previewSlugs, type CollegePredictorDraft } from '../data/predictor'
 
 
 
@@ -11,6 +15,11 @@ import { getPreviewCollege, previewBuckets, type CollegePredictorDraft } from '.
  
 export function ResultsPreview({ draft }: { draft: CollegePredictorDraft }) {
   const context = [draft.exams.join(' + '), draft.counselling].filter(Boolean).join(' · ')
+  const preview = useQuery({
+    queryKey: queryKeys.predictorPreview(previewSlugs),
+    queryFn: () => catalogList('/institutions', { slugs: previewSlugs.join(','), limit: String(previewSlugs.length) }, (dto: InstitutionListDto) => toCollegeListItem(dto)),
+    select: (result) => new Map(result.items.map((college) => [college.slug, college])),
+  })
 
   return (
     <div className="flex flex-col gap-6">
@@ -38,9 +47,9 @@ export function ResultsPreview({ draft }: { draft: CollegePredictorDraft }) {
 
           <div className="mt-3 grid gap-3 md:grid-cols-2">
             {bucket.slugs.map((slug) => {
-              const preview = getPreviewCollege(slug)
-              if (!preview) return null
-              const { college, hasDetailPage } = preview
+              const college = preview.data?.get(slug)
+              if (!college) return null
+              const { hasDetailPage } = college
               return (
                 <div key={slug} className="flex flex-col rounded-[12px] border border-dashed border-primary/25 bg-card p-5 shadow-[0_2px_10px_rgba(15,23,42,0.04)]">
                   <div className="flex items-start justify-between gap-3">
@@ -81,6 +90,8 @@ export function ResultsPreview({ draft }: { draft: CollegePredictorDraft }) {
           </div>
         </section>
       ))}
+
+      {preview.isError ? <p className="text-xs leading-5 text-muted-foreground">The sample colleges couldn&apos;t load. The layout above still shows how results will be grouped.</p> : null}
 
       <p className="text-xs leading-5 text-muted-foreground">Predictions will depend on verified historical cutoff and counselling data once the prediction engine is connected.</p>
     </div>

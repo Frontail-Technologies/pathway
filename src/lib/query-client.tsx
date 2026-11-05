@@ -29,6 +29,7 @@ export const queryKeys = {
   savedResolve: (kind: string, slugs: readonly string[]) => ['catalog', 'saved', kind, slugs] as const,
   comparison: (selection: { colleges: string[]; programs: string[] }) => ['catalog', 'compare', selection] as const,
   comparePickerColleges: ['catalog', 'compare', 'picker-colleges'] as const,
+  predictorPreview: (slugs: readonly string[]) => ['catalog', 'predictor-preview', slugs] as const,
   compareProgramOptions: (collegeSlug: string) => ['catalog', 'compare', 'options', collegeSlug] as const,
   adminCatalogTutors: ['admin', 'catalog-tutors'] as const,
   adminCatalogTutor: (id: string) => ['admin', 'catalog-tutors', id] as const,
