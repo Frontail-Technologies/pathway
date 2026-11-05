@@ -28,9 +28,12 @@ export const leadStatusTones: Record<LeadStatus, StatusTone> = {
 export const enquirySourceLabels: Record<EnquirySource, string> = {
   college: 'College',
   course: 'Course',
+  exam: 'Exam',
+  scholarship: 'Scholarship',
   tutor: 'Tutor session',
   coaching: 'Coaching',
   counselling: 'Counselling',
+  contact: 'Contact page',
   general: 'General',
 }
 

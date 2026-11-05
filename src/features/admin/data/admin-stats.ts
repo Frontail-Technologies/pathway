@@ -8,13 +8,11 @@ import { tutors } from '@/features/tutors/data/tutors'
 import { coachingProviders } from '@/features/coaching/data/coaching'
 import { exams } from '@/features/exams/data/exams'
 import { getAdminOfferings } from './admin-admissions-fees'
-import { getLeadPipelineStats } from '@/features/admin/data/admin-enquiries'
 import type {
   AdminKPI,
   AdminNavGroup,
   CatalogDomainItem,
   ContentCompletenessItem,
-  LeadPipelineStage,
   OperationalAttentionTask,
 } from '../types/dashboard'
 
@@ -249,17 +247,6 @@ export function getNeedsAttentionTasks(): OperationalAttentionTask[] {
 
 
  
-export function getLeadPipelineStages(): LeadPipelineStage[] {
-  const stats = getLeadPipelineStats()
-  const total = Object.values(stats).reduce((a, b) => a + b, 0) || 1
-  return [
-    { id: 'new', label: 'New', count: stats.new, percentage: Math.round((stats.new / total) * 100) },
-    { id: 'contacted', label: 'Contacted', count: stats.contacted, percentage: Math.round((stats.contacted / total) * 100) },
-    { id: 'qualified', label: 'Qualified', count: stats.qualified, percentage: Math.round((stats.qualified / total) * 100) },
-    { id: 'converted', label: 'Converted', count: stats.converted, percentage: Math.round((stats.converted / total) * 100) },
-    { id: 'closed', label: 'Closed', count: stats.closed, percentage: Math.round((stats.closed / total) * 100) },
-  ]
-}
 
 export const adminNavigationGroups: AdminNavGroup[] = [
   { id: 'overview', title: 'Overview', items: [{ id: 'dashboard', label: 'Dashboard', href: '/admin', icon: 'LayoutDashboard', available: true }] },

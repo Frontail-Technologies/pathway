@@ -2,12 +2,18 @@
 
 import * as React from 'react'
 import Link from 'next/link'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { Check, Copy } from 'lucide-react'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
-import type { AdminEnquiry, LeadStatus } from '@/features/admin/data/admin-enquiries'
+import { toAdminEnquiry, type AdminEnquiry, type LeadStatus } from '@/features/admin/data/admin-enquiries'
+import { formatDateTime } from '@/features/admin/components/demo/relative-time'
+import { useAdminEnquiry } from '@/features/admin/hooks/use-admin-enquiries'
+import { ApiRequestError } from '@/features/auth/lib/session-client'
+import { addStaffEnquiryNote, setStaffEnquiryStatus, type StaffEnquiry } from '@/features/enquiries/api/enquiries-api'
+import { queryKeys } from '@/lib/query-client'
 import { AdminPageHeader, FactList, Panel, Tag } from '../../kit'
 import { LeadStatusBadge } from '../shared/lead-status-badge'
 import { enquirySourceLabels, enquiryTitle, leadStatusDescriptions, leadStatusLabels, leadStatusOptions } from '../shared/enquiry-constants'
@@ -48,19 +54,63 @@ function NotProvided() {
   return <span className="font-normal text-muted-foreground">Not provided</span>
 }
 
-export function AdminEnquiryDetailView({ enquiry }: { enquiry: AdminEnquiry }) {
-  const [status, setStatus] = React.useState<LeadStatus>(enquiry.status)
+const errorMessage = (error: unknown) => (error instanceof ApiRequestError ? error.message : 'Something went wrong. Please try again.')
+
+export function AdminEnquiryDetailView({ enquiryId }: { enquiryId: string }) {
+  const query = useAdminEnquiry(enquiryId)
+  if (query.data) return <EnquiryDetail enquiry={toAdminEnquiry(query.data)} />
+  if (query.isError) {
+    const missing = query.error instanceof ApiRequestError && query.error.status === 404
+    return (
+      <div className="space-y-6">
+        <AdminPageHeader back={{ href: '/admin/enquiries', label: 'Enquiries' }} title={missing ? 'Enquiry not found' : 'Enquiry'} />
+        <div className="flex flex-col items-center gap-3 rounded-lg border border-border bg-card px-4 py-14 text-center">
+          <p className="text-sm text-foreground">{missing ? 'This enquiry does not exist or has been removed.' : errorMessage(query.error)}</p>
+          {missing ? null : (
+            <Button variant="outline" size="sm" onClick={() => void query.refetch()}>
+              Try again
+            </Button>
+          )}
+        </div>
+      </div>
+    )
+  }
+  return <div className="rounded-lg border border-border bg-card px-4 py-14 text-center text-sm text-muted-foreground">Loading enquiry…</div>
+}
+
+function EnquiryDetail({ enquiry }: { enquiry: AdminEnquiry }) {
+  const queryClient = useQueryClient()
   const [noteText, setNoteText] = React.useState('')
   const [copied, setCopied] = React.useState(false)
   const followups = enquiry.followups ?? []
   const notes = enquiry.notes ?? []
 
+  const adopt = (updated: StaffEnquiry) => {
+    queryClient.setQueryData(queryKeys.adminEnquiry(enquiry.id), updated)
+    void queryClient.invalidateQueries({ queryKey: queryKeys.adminEnquiries, exact: true })
+  }
+  const statusMutation = useMutation({
+    mutationFn: (next: LeadStatus) => setStaffEnquiryStatus(enquiry.id, next),
+    onSuccess: (updated) => {
+      adopt(updated)
+      toast.success(`Status set to ${leadStatusLabels[updated.status].toLowerCase()}`)
+    },
+    onError: (error) => toast.error(errorMessage(error)),
+  })
+  const noteMutation = useMutation({
+    mutationFn: (content: string) => addStaffEnquiryNote(enquiry.id, content),
+    onSuccess: (updated) => {
+      adopt(updated)
+      setNoteText('')
+      toast.success('Note added')
+    },
+    onError: (error) => toast.error(errorMessage(error)),
+  })
+  const status = statusMutation.isPending && statusMutation.variables ? statusMutation.variables : enquiry.status
+
   function changeStatus(next: LeadStatus) {
-    if (next === status) return
-    setStatus(next)
-    toast(`Status set to ${leadStatusLabels[next].toLowerCase()}`, {
-      description: 'This change is not saved yet: the admin API is not connected.',
-    })
+    if (next === status || statusMutation.isPending) return
+    statusMutation.mutate(next)
   }
 
   async function copyId() {
@@ -81,7 +131,7 @@ export function AdminEnquiryDetailView({ enquiry }: { enquiry: AdminEnquiry }) {
           <>
             <LeadStatusBadge status={status} />
             <Tag>{enquirySourceLabels[enquiry.source] ?? enquiry.sourceLabel}</Tag>
-            <span className="text-[13px] text-muted-foreground">Received {enquiry.createdAt}</span>
+            <span className="text-[13px] text-muted-foreground">Received {formatDateTime(enquiry.createdAt)}</span>
           </>
         }
         actions={
@@ -122,6 +172,7 @@ export function AdminEnquiryDetailView({ enquiry }: { enquiry: AdminEnquiry }) {
                 { label: 'Contact type', value: enquiry.isRegisteredStudent ? 'Registered student' : 'Guest' },
                 { label: 'Email', value: enquiry.contactEmail ?? <NotProvided /> },
                 { label: 'Phone', value: enquiry.contactPhone ?? <NotProvided /> },
+                { label: 'City', value: enquiry.contactCity ?? <NotProvided /> },
               ]}
             />
           </Panel>
@@ -156,7 +207,7 @@ export function AdminEnquiryDetailView({ enquiry }: { enquiry: AdminEnquiry }) {
                         {followupLabels[item.type] ?? item.type}
                         <span className="font-normal text-muted-foreground"> by {item.performedBy}</span>
                       </p>
-                      <span className="text-[13px] text-muted-foreground tabular-nums">{item.performedAt}</span>
+                      <span className="text-[13px] text-muted-foreground tabular-nums">{formatDateTime(item.performedAt)}</span>
                     </div>
                     <p className="mt-0.5 text-sm text-muted-foreground">{item.summary}</p>
                   </li>
@@ -175,7 +226,7 @@ export function AdminEnquiryDetailView({ enquiry }: { enquiry: AdminEnquiry }) {
                     <li key={note.id} className="rounded-md border border-border p-3">
                       <div className="flex items-baseline justify-between gap-3 text-[13px]">
                         <span className="font-medium text-foreground">{note.author}</span>
-                        <span className="text-muted-foreground tabular-nums">{note.createdAt}</span>
+                        <span className="text-muted-foreground tabular-nums">{formatDateTime(note.createdAt)}</span>
                       </div>
                       <p className="mt-1 text-sm whitespace-pre-wrap text-foreground">{note.content}</p>
                     </li>
@@ -184,9 +235,9 @@ export function AdminEnquiryDetailView({ enquiry }: { enquiry: AdminEnquiry }) {
               ) : null}
               <Textarea value={noteText} onChange={(event) => setNoteText(event.target.value)} placeholder="Add a note or next step for this enquiry" className="min-h-20" aria-label="New note" />
               <div className="flex flex-col-reverse gap-2 sm:flex-row sm:items-center sm:justify-between">
-                <p className="text-[13px] text-muted-foreground">Saving notes needs the admin API, which is not connected yet.</p>
-                <Button size="sm" disabled className="self-end sm:self-auto">
-                  Add note
+                <p className="text-[13px] text-muted-foreground">Notes are saved to this enquiry&apos;s history with your name.</p>
+                <Button size="sm" disabled={!noteText.trim() || noteMutation.isPending} onClick={() => noteMutation.mutate(noteText.trim())} className="self-end sm:self-auto">
+                  {noteMutation.isPending ? 'Adding…' : 'Add note'}
                 </Button>
               </div>
             </div>
@@ -200,8 +251,9 @@ export function AdminEnquiryDetailView({ enquiry }: { enquiry: AdminEnquiry }) {
               items={[
                 { label: 'Status', value: <span className="font-normal text-muted-foreground">{leadStatusDescriptions[status]}</span> },
                 { label: 'Assigned to', value: enquiry.assignedTo ?? <span className="font-normal text-muted-foreground">Unassigned</span> },
-                { label: 'Received', value: enquiry.createdAt },
-                { label: 'Last updated', value: enquiry.updatedAt ?? enquiry.createdAt },
+                { label: 'Received', value: formatDateTime(enquiry.createdAt) },
+                { label: 'Last updated', value: formatDateTime(enquiry.updatedAt ?? enquiry.createdAt) },
+                { label: 'Submitted from', value: enquiry.channel === 'app' ? 'Mobile app' : 'Website' },
                 {
                   label: 'Enquiry ID',
                   value: (
@@ -214,7 +266,7 @@ export function AdminEnquiryDetailView({ enquiry }: { enquiry: AdminEnquiry }) {
                 },
               ]}
             />
-            <p className="mt-4 text-[13px] text-muted-foreground">Assigning enquiries to team members will be available once staff accounts are set up.</p>
+            <p className="mt-4 text-[13px] text-muted-foreground">Assigning enquiries to team members isn&apos;t available yet.</p>
           </Panel>
         </div>
       </div>

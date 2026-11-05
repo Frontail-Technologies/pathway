@@ -13,6 +13,7 @@ export function CollegeEnquirySidebar({ college }: { college: CollegeDetailData 
       <div className="mt-4 flex flex-col gap-2">
         <EnquiryDialog
           entityName={college.name}
+          entity={{ kind: 'college', slug: college.slug }}
           interestOptions={college.courses.map((course) => course.name)}
           interestLabel="Course"
           trigger={<Button variant="cta" className="h-10 w-full text-sm font-semibold">Enquire Now</Button>}
@@ -20,6 +21,7 @@ export function CollegeEnquirySidebar({ college }: { college: CollegeDetailData 
         <EnquiryDialog
           intent="brochure"
           entityName={college.name}
+          entity={{ kind: 'college', slug: college.slug }}
           interestOptions={college.courses.map((course) => course.name)}
           interestLabel="Course"
           trigger={<Button variant="outline" className="h-10 w-full text-sm font-semibold">Download Brochure</Button>}

@@ -19,6 +19,7 @@ export function CourseActionBar({ course }: { course: CourseDetailData }) {
       <EnquiryDialog
         intent="counselling"
         entityName={course.name}
+        entity={{ kind: 'course', slug: course.slug }}
         description={`Talk to a counsellor about ${course.name}: colleges, fees, exams and career options.`}
         trigger={<Button variant="cta" className="h-11 flex-[1.3] px-3 text-sm font-semibold">Free Counselling</Button>}
       />

@@ -54,6 +54,7 @@ export function StreamHubPage({ hub, otherStreams }: { hub: StreamHub; otherStre
             <EnquiryDialog
               intent="counselling"
               entityName={stream.name}
+              topic={stream.name}
               description={`Talk to a counsellor about ${stream.name.toLowerCase()} colleges, courses and exams.`}
               trigger={<Button variant="cta" className="h-11 px-6 text-sm font-semibold">Get Free Counselling</Button>}
             />

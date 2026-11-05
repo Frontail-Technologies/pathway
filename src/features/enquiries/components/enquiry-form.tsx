@@ -1,7 +1,12 @@
 'use client'
 
 import { type FormEvent, useId, useState } from 'react'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
+import { ApiRequestError } from '@/features/auth/lib/session-client'
+import { useRoleSession } from '@/features/auth/state/auth-session-provider'
+import { useStudentProfile } from '@/features/student/state/student-profile-provider'
+import { submitEnquiry, type EnquiryEntityRef, type EnquirySourceInput } from '../api/enquiries-api'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -34,25 +39,57 @@ const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 type EnquiryFormProps = {
   intent?: EnquiryIntent
   entityName?: string
+  entity?: EnquiryEntityRef
+  source?: EnquirySourceInput
+  topic?: string
   interestOptions?: readonly string[]
   interestLabel?: string
   defaultInterest?: string
   onSubmitted?: () => void
 }
 
-export function EnquiryForm({ intent = 'enquiry', entityName, interestOptions = [], interestLabel = 'Interested in', defaultInterest, onSubmitted }: EnquiryFormProps) {
+export function EnquiryForm({ intent = 'enquiry', entityName, entity, source, topic, interestOptions = [], interestLabel = 'Interested in', defaultInterest, onSubmitted }: EnquiryFormProps) {
   const initialInterest = defaultInterest && interestOptions.includes(defaultInterest) ? defaultInterest : interestOptions[0]
   const id = useId()
   const copy = enquiryIntentCopy[intent]
   const emailRequired = intent === 'brochure'
 
-  const [name, setName] = useState('')
-  const [phone, setPhone] = useState('')
-  const [email, setEmail] = useState('')
-  const [city, setCity] = useState('')
+  const { signedIn } = useRoleSession('student')
+  const { profile } = useStudentProfile()
+  const queryClient = useQueryClient()
+  const [name, setName] = useState(signedIn ? profile.name : '')
+  const [phone, setPhone] = useState(signedIn ? (profile.phone ?? '') : '')
+  const [email, setEmail] = useState(signedIn ? profile.email : '')
+  const [city, setCity] = useState(signedIn ? (profile.city ?? '') : '')
   const [interest, setInterest] = useState<string | undefined>(initialInterest)
   const [message, setMessage] = useState('')
   const [errors, setErrors] = useState<Partial<Record<'name' | 'phone' | 'email', string>>>({})
+
+  const submit = useMutation({
+    mutationFn: submitEnquiry,
+    onSuccess: (receipt) => {
+      toast.success(receipt.duplicate ? `We already have this request${entityName ? ` for ${entityName}` : ''}. Our team will be in touch.` : copy.done(entityName))
+      setMessage('')
+      void queryClient.invalidateQueries({ queryKey: ['me'] })
+      onSubmitted?.()
+    },
+    onError: (error) => {
+      if (error instanceof ApiRequestError) {
+        const fields = error.fields
+        if (fields.phone || fields.email || fields.name) {
+          setErrors({ name: fields.name, phone: fields.phone, email: fields.email })
+          return
+        }
+        if (error.code === 'RATE_LIMITED') {
+          toast.error('Too many requests from this number. Please try again later.')
+          return
+        }
+        toast.error(error.message)
+        return
+      }
+      toast.error('Something went wrong. Please try again.')
+    },
+  })
 
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault()
@@ -65,14 +102,7 @@ export function EnquiryForm({ intent = 'enquiry', entityName, interestOptions = 
     setErrors(next)
     if (Object.keys(next).length > 0) return
 
-    toast.success(`${copy.done(entityName)} This is a demo preview — no request is sent.`)
-    setName('')
-    setPhone('')
-    setEmail('')
-    setCity('')
-    setMessage('')
-    setInterest(initialInterest)
-    onSubmitted?.()
+    submit.mutate({ intent, entity, source, topic, interest, name, phone: digits, email, city, message: intent === 'brochure' ? undefined : message })
   }
 
   const field = (key: string) => `${id}-${key}`
@@ -130,8 +160,8 @@ export function EnquiryForm({ intent = 'enquiry', entityName, interestOptions = 
         </div>
       )}
 
-      <Button type="submit" variant="cta" className="mt-1 h-11 w-full text-sm font-semibold">
-        {copy.submit}
+      <Button type="submit" variant="cta" disabled={submit.isPending} className="mt-1 h-11 w-full text-sm font-semibold">
+        {submit.isPending ? 'Sending…' : copy.submit}
       </Button>
       <p className="text-center text-[11px] leading-4 text-muted-foreground">
         By submitting, you agree to be contacted about your request. See our{' '}

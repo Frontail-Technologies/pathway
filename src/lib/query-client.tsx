@@ -40,4 +40,7 @@ export const queryKeys = {
   studentProfile: (userId: string) => ['me', userId, 'profile'] as const,
   studentSaved: (userId: string) => ['me', userId, 'saved-items'] as const,
   tutorAccount: (userId: string) => ['tutor', userId, 'account'] as const,
+  studentEnquiries: (userId: string) => ['me', userId, 'enquiries'] as const,
+  adminEnquiries: ['admin', 'enquiries'] as const,
+  adminEnquiry: (id: string) => ['admin', 'enquiries', id] as const,
 }

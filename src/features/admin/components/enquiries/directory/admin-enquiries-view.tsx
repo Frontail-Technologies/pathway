@@ -8,6 +8,9 @@ import { ExternalLink, Eye, Inbox, MoreHorizontal } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import type { AdminEnquiry } from '@/features/admin/data/admin-enquiries'
+import { formatDateTime } from '@/features/admin/components/demo/relative-time'
+import { useAdminEnquiries } from '@/features/admin/hooks/use-admin-enquiries'
+import { ApiRequestError } from '@/features/auth/lib/session-client'
 import { useUrlFilters } from '@/features/admin/hooks/use-url-filters'
 import { AdminDataTable } from '../../admin-data-table'
 import { AdminEmptyState } from '../../admin-empty-state'
@@ -48,14 +51,16 @@ function RowActions({ enquiry }: { enquiry: AdminEnquiry }) {
   )
 }
 
-export function AdminEnquiriesView({ initialEnquiries }: { initialEnquiries: AdminEnquiry[] }) {
+export function AdminEnquiriesView() {
   const router = useRouter()
+  const query = useAdminEnquiries()
+  const initialEnquiries = React.useMemo(() => query.data ?? [], [query.data])
   const { values: f, set, reset, active } = useUrlFilters(DEFAULT_FILTERS)
 
   const filtered = React.useMemo(() => {
     const query = f.q.trim().toLowerCase()
     return initialEnquiries.filter((enquiry) => {
-      if (query && ![enquiry.contactName, enquiry.contactEmail ?? '', enquiry.subject ?? '', enquiry.targetName ?? ''].some((value) => value.toLowerCase().includes(query))) return false
+      if (query && ![enquiry.contactName, enquiry.contactEmail ?? '', enquiry.contactPhone ?? '', enquiry.subject ?? '', enquiry.targetName ?? ''].some((value) => value.toLowerCase().includes(query))) return false
       if (f.status !== 'all' && enquiry.status !== f.status) return false
       if (f.source !== 'all' && enquiry.source !== f.source) return false
       if (f.assignee === 'unassigned' && enquiry.assignedTo) return false
@@ -92,7 +97,7 @@ export function AdminEnquiriesView({ initialEnquiries }: { initialEnquiries: Adm
       {
         accessorKey: 'createdAt',
         header: ({ column }) => <SortHeader label="Received" sorted={column.getIsSorted()} onToggle={() => column.toggleSorting(column.getIsSorted() === 'asc')} />,
-        cell: ({ row }) => <span className="text-[13px] whitespace-nowrap text-muted-foreground tabular-nums">{row.original.createdAt}</span>,
+        cell: ({ row }) => <span className="text-[13px] whitespace-nowrap text-muted-foreground tabular-nums">{formatDateTime(row.original.createdAt)}</span>,
       },
       { id: 'actions', header: () => <span className="sr-only">Actions</span>, cell: ({ row }) => <RowActions enquiry={row.original} /> },
     ],
@@ -105,12 +110,21 @@ export function AdminEnquiriesView({ initialEnquiries }: { initialEnquiries: Adm
     <div className="space-y-5">
       <AdminPageHeader title="Enquiries" count={total > 0 ? `${total} total` : undefined} description="Questions, brochure requests and call-backs from students." />
 
-      {total === 0 ? (
+      {query.isError ? (
+        <div className="flex flex-col items-center gap-3 rounded-lg border border-border bg-card px-4 py-14 text-center">
+          <p className="text-sm text-foreground">{query.error instanceof ApiRequestError ? query.error.message : 'Could not load enquiries.'}</p>
+          <Button variant="outline" size="sm" onClick={() => void query.refetch()}>
+            Try again
+          </Button>
+        </div>
+      ) : !query.data ? (
+        <div className="rounded-lg border border-border bg-card px-4 py-14 text-center text-sm text-muted-foreground">Loading enquiries…</div>
+      ) : total === 0 ? (
         <div className="rounded-lg border border-border bg-card">
           <AdminEmptyState
             icon={Inbox}
             title="No enquiries yet"
-            description="Enquiries from college, course, tutor and counselling forms will appear here once form submissions are connected."
+            description="Enquiries, brochure requests and counselling call-backs from the website and app will appear here as they arrive."
             className="py-14"
           />
         </div>
@@ -119,7 +133,7 @@ export function AdminEnquiriesView({ initialEnquiries }: { initialEnquiries: Adm
           <AdminToolbar
             search={f.q}
             onSearchChange={(q) => set({ q })}
-            searchPlaceholder="Search name, email or subject"
+            searchPlaceholder="Search name, phone, email or subject"
             hasActiveFilters={active}
             onReset={reset}
             summary={active ? `${filtered.length} of ${total} match` : undefined}
@@ -150,7 +164,7 @@ export function AdminEnquiriesView({ initialEnquiries }: { initialEnquiries: Adm
                     <LeadStatusBadge status={enquiry.status} />
                   </div>
                   <p className="text-[13px] text-muted-foreground">
-                    {enquirySourceLabels[enquiry.source]} · {enquiry.targetName ?? 'General guidance'} · {enquiry.createdAt}
+                    {enquirySourceLabels[enquiry.source]} · {enquiry.targetName ?? 'General guidance'} · {formatDateTime(enquiry.createdAt)}
                   </p>
                 </Link>
               )

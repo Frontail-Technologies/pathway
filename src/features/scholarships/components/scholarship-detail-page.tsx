@@ -80,6 +80,7 @@ export function ScholarshipDetailPage({ scholarship }: { scholarship: Scholarshi
         <EnquiryDialog
           intent="counselling"
           entityName={scholarship.name}
+          entity={{ kind: 'scholarship', slug: scholarship.slug }}
           description={`Get help checking eligibility and applying for ${scholarship.name}.`}
           trigger={<Button variant={scholarship.officialApplyUrl ? 'outline' : 'cta'} className="h-11 flex-1 px-3 text-sm font-semibold">Get Help</Button>}
         />

@@ -1,37 +1,16 @@
 import type { Metadata } from 'next'
-import { notFound } from 'next/navigation'
-import { getAdminEnquiryById, getAdminEnquiries } from '@/features/admin/data/admin-enquiries'
 import { AdminEnquiryDetailView } from '@/features/admin/components/enquiries/detail/admin-enquiry-detail-view'
 
 type Props = {
   params: Promise<{ enquiryId: string }>
 }
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { enquiryId } = await params
-  const enquiry = getAdminEnquiryById(enquiryId)
-  if (!enquiry) return { title: 'Enquiry not found | Pathway Admin' }
-
-  return {
-    title: `${enquiry.subject || `Enquiry from ${enquiry.contactName}`} | Pathway Admin`,
-    description: `Administrative overview and follow-up history for enquiry #${enquiry.id}.`,
-  }
-}
-
-export async function generateStaticParams() {
-  const enquiries = getAdminEnquiries()
-  return enquiries.map((e) => ({
-    enquiryId: e.id,
-  }))
+export const metadata: Metadata = {
+  title: 'Enquiry | Pathway Admin',
+  description: 'Contact details, status and follow-up history for a student enquiry.',
 }
 
 export default async function AdminEnquiryDetailPage({ params }: Props) {
   const { enquiryId } = await params
-  const enquiry = getAdminEnquiryById(enquiryId)
-
-  if (!enquiry) {
-    notFound()
-  }
-
-  return <AdminEnquiryDetailView enquiry={enquiry} />
+  return <AdminEnquiryDetailView enquiryId={enquiryId} />
 }

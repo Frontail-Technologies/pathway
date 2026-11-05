@@ -421,7 +421,7 @@ export function ExamDetailShell({ exam, children }: { exam: DetailedExam; childr
 
       <RelatedExamsSection exam={exam} />
       <FinalCta exam={exam} />
-      <ExamActionBar examName={exam.shortName} collegePredictorHref={predictorLinks(exam).college} rankPredictorHref={predictorLinks(exam).rank} />
+      <ExamActionBar examName={exam.shortName} examSlug={exam.slug} collegePredictorHref={predictorLinks(exam).college} rankPredictorHref={predictorLinks(exam).rank} />
     </div>
   )
 }

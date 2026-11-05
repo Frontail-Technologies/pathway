@@ -60,6 +60,7 @@ export function CollegeIdentityHeader({ college }: { college: CollegeDetailData 
         <>
           <EnquiryDialog
             entityName={college.name}
+            entity={{ kind: 'college', slug: college.slug }}
             interestOptions={college.courses.map((course) => course.name)}
             interestLabel="Course"
             trigger={<Button variant="cta" className="h-11 px-6 text-sm font-semibold sm:h-10">Enquire Now</Button>}
@@ -67,6 +68,7 @@ export function CollegeIdentityHeader({ college }: { college: CollegeDetailData 
           <EnquiryDialog
             intent="brochure"
             entityName={college.name}
+            entity={{ kind: 'college', slug: college.slug }}
             interestOptions={college.courses.map((course) => course.name)}
             interestLabel="Course"
             trigger={<Button variant="outline" className="h-11 px-6 text-sm font-semibold sm:h-10">Download Brochure</Button>}

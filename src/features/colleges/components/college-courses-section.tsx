@@ -27,6 +27,7 @@ export function CollegeCoursesSection({ college }: { college: CollegeDetailData 
                   </Button>
                   <EnquiryDialog
                     entityName={college.name}
+                    entity={{ kind: 'college', slug: college.slug }}
                     interestOptions={college.courses.map((c) => c.name)}
                     interestLabel="Course"
                     defaultInterest={course.name}
@@ -64,6 +65,7 @@ export function CollegeCoursesSection({ college }: { college: CollegeDetailData 
                   </Button>
                   <EnquiryDialog
                     entityName={college.name}
+                    entity={{ kind: 'college', slug: college.slug }}
                     interestOptions={college.courses.map((c) => c.name)}
                     interestLabel="Course"
                     defaultInterest={course.name}

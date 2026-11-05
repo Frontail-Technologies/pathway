@@ -1,7 +1,12 @@
 'use client'
 
 import { type FormEvent, useState } from 'react'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
+import { ApiRequestError } from '@/features/auth/lib/session-client'
+import { useRoleSession } from '@/features/auth/state/auth-session-provider'
+import { submitEnquiry } from '@/features/enquiries/api/enquiries-api'
+import { useStudentProfile } from '@/features/student/state/student-profile-provider'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -23,27 +28,47 @@ type CoachingEnquiryFormProps = {
 
  
 export function CoachingEnquiryForm({ provider, onSubmitted, compact = false }: CoachingEnquiryFormProps) {
-  const [name, setName] = useState('')
-  const [email, setEmail] = useState('')
-  const [phone, setPhone] = useState('')
+  const { signedIn } = useRoleSession('student')
+  const { profile } = useStudentProfile()
+  const queryClient = useQueryClient()
+  const [name, setName] = useState(signedIn ? profile.name : '')
+  const [email, setEmail] = useState(signedIn ? profile.email : '')
+  const [phone, setPhone] = useState(signedIn ? (profile.phone ?? '') : '')
   const [interestedIn, setInterestedIn] = useState<string | undefined>(provider.exams[0])
   const [message, setMessage] = useState('')
 
   const programOptions = provider.programs?.length ? provider.programs.map((program) => program.name) : provider.exams
 
+  const submit = useMutation({
+    mutationFn: submitEnquiry,
+    onSuccess: (receipt) => {
+      toast.success(receipt.duplicate ? `We already have your enquiry for ${provider.name}. The team will be in touch.` : `Your enquiry for ${provider.name} has been sent. The team will be in touch.`)
+      setMessage('')
+      void queryClient.invalidateQueries({ queryKey: ['me'] })
+      onSubmitted?.()
+    },
+    onError: (error) => {
+      if (error instanceof ApiRequestError && error.code === 'RATE_LIMITED') toast.error('Too many requests from this number. Please try again later.')
+      else toast.error(error instanceof ApiRequestError ? (Object.values(error.fields).find(Boolean) ?? error.message) : 'Something went wrong. Please try again.')
+    },
+  })
+
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault()
-    if (!name.trim() || (!email.trim() && !phone.trim())) {
-      toast.error('Please share your name and at least an email or phone number.')
+    const digits = phone.replace(/\D/g, '').replace(/^91(?=\d{10}$)/, '')
+    if (name.trim().length < 2) {
+      toast.error('Please enter your name.')
       return
     }
-    toast.success(`Your enquiry for ${provider.name} has been noted. This is a demo preview — no enquiry is sent to a real provider.`)
-    setName('')
-    setEmail('')
-    setPhone('')
-    setInterestedIn(provider.exams[0])
-    setMessage('')
-    onSubmitted?.()
+    if (!/^[6-9]\d{9}$/.test(digits)) {
+      toast.error('Enter a valid 10-digit mobile number so the team can reach you.')
+      return
+    }
+    if (email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+      toast.error('Enter a valid email address.')
+      return
+    }
+    submit.mutate({ intent: 'enquiry', entity: { kind: 'coaching', slug: provider.slug }, interest: interestedIn, name, phone: digits, email, message: compact ? undefined : message })
   }
 
   return (
@@ -58,7 +83,7 @@ export function CoachingEnquiryForm({ provider, onSubmitted, compact = false }: 
       </div>
       <div className="flex flex-col gap-1.5">
         <Label htmlFor={`enquiry-phone-${provider.slug}`}>Phone</Label>
-        <Input id={`enquiry-phone-${provider.slug}`} type="tel" value={phone} onChange={(event) => setPhone(event.target.value)} placeholder="Your phone number" />
+        <Input id={`enquiry-phone-${provider.slug}`} type="tel" value={phone} onChange={(event) => setPhone(event.target.value)} placeholder="10-digit mobile number" />
       </div>
       {programOptions.length > 0 && (
         <div className="flex flex-col gap-1.5">
@@ -83,8 +108,8 @@ export function CoachingEnquiryForm({ provider, onSubmitted, compact = false }: 
           <Textarea id={`enquiry-message-${provider.slug}`} value={message} onChange={(event) => setMessage(event.target.value)} placeholder="Anything specific you'd like to ask?" />
         </div>
       )}
-      <Button type="submit" variant="cta" className="h-10 w-full text-sm font-semibold">
-        Send Enquiry
+      <Button type="submit" variant="cta" disabled={submit.isPending} className="h-10 w-full text-sm font-semibold">
+        {submit.isPending ? 'Sending…' : 'Send Enquiry'}
       </Button>
     </form>
   )

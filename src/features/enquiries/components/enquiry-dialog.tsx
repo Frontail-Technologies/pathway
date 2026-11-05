@@ -3,18 +3,22 @@
 import { type ReactElement, useState } from 'react'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { EnquiryForm, enquiryIntentCopy, type EnquiryIntent } from './enquiry-form'
+import type { EnquiryEntityRef, EnquirySourceInput } from '../api/enquiries-api'
 
 type EnquiryDialogProps = {
   trigger: ReactElement
   intent?: EnquiryIntent
   entityName?: string
+  entity?: EnquiryEntityRef
+  source?: EnquirySourceInput
+  topic?: string
   interestOptions?: readonly string[]
   interestLabel?: string
   defaultInterest?: string
   description?: string
 }
 
-export function EnquiryDialog({ trigger, intent = 'enquiry', entityName, interestOptions, interestLabel, defaultInterest, description }: EnquiryDialogProps) {
+export function EnquiryDialog({ trigger, intent = 'enquiry', entityName, entity, source, topic, interestOptions, interestLabel, defaultInterest, description }: EnquiryDialogProps) {
   const [open, setOpen] = useState(false)
   const copy = enquiryIntentCopy[intent]
 
@@ -27,7 +31,7 @@ export function EnquiryDialog({ trigger, intent = 'enquiry', entityName, interes
           {description && <DialogDescription>{description}</DialogDescription>}
         </DialogHeader>
         <div className="min-h-0 flex-1 overflow-y-auto p-4">
-          <EnquiryForm intent={intent} entityName={entityName} interestOptions={interestOptions} interestLabel={interestLabel} defaultInterest={defaultInterest} onSubmitted={() => setOpen(false)} />
+          <EnquiryForm intent={intent} entityName={entityName} entity={entity} source={source} topic={topic} interestOptions={interestOptions} interestLabel={interestLabel} defaultInterest={defaultInterest} onSubmitted={() => setOpen(false)} />
         </div>
       </DialogContent>
     </Dialog>

@@ -7,15 +7,17 @@ import { EnquiryDialog } from '@/features/enquiries/components/enquiry-dialog'
 
 type ExamActionBarProps = {
   examName: string
+  examSlug: string
   collegePredictorHref: string | null
   rankPredictorHref: string | null
 }
 
-export function ExamActionBar({ examName, collegePredictorHref, rankPredictorHref }: ExamActionBarProps) {
+export function ExamActionBar({ examName, examSlug, collegePredictorHref, rankPredictorHref }: ExamActionBarProps) {
   const counselling = (
     <EnquiryDialog
       intent="counselling"
       entityName={examName}
+      entity={{ kind: 'exam', slug: examSlug }}
       description={`Talk to a counsellor about ${examName} preparation, cut-offs and college options.`}
       trigger={
         <Button variant={collegePredictorHref ? 'outline' : 'cta'} className="h-11 flex-1 px-3 text-sm font-semibold">

@@ -1,148 +1,82 @@
-import { demoStudent } from '@/features/student/data/student'
-import { colleges } from '@/features/colleges/data/colleges'
-import { courses } from '@/features/courses/data/courses'
-import { tutors } from '@/features/tutors/data/tutors'
-import { coachingProviders } from '@/features/coaching/data/coaching'
+import type { StaffEnquiry, StaffEnquirySummary } from '@/features/enquiries/api/enquiries-api'
 import type {
   Enquiry,
-  LeadStatus,
-  EnquirySource,
   EnquiryEntityType,
-  EnquiryPriority,
-  GuestContact,
   EnquiryFollowup,
   EnquiryNote,
+  EnquiryPriority,
+  EnquirySource,
+  GuestContact,
+  LeadStatus,
 } from '@/features/enquiries/types/enquiry'
-import { leadStatusMap, enquirySourceMap } from '@/features/enquiries/types/enquiry'
-import { canonicalEnquiries } from '@/features/enquiries/data/enquiries'
+import { enquirySourceMap, leadStatusMap } from '@/features/enquiries/types/enquiry'
 
-export type {
-  Enquiry,
-  LeadStatus,
-  EnquirySource,
-  EnquiryEntityType,
-  EnquiryPriority,
-  GuestContact,
-  EnquiryFollowup,
-  EnquiryNote,
-}
-export { leadStatusMap, enquirySourceMap }
+export type { Enquiry, EnquiryEntityType, EnquiryFollowup, EnquiryNote, EnquiryPriority, EnquirySource, GuestContact, LeadStatus }
+export { enquirySourceMap, leadStatusMap }
 
 export type AdminEnquiry = Enquiry & {
   contactName: string
   contactEmail?: string
   contactPhone?: string
+  contactCity?: string
   targetName?: string
   targetAdminUrl?: string
   statusLabel: string
   sourceLabel: string
   isRegisteredStudent: boolean
+  studentEmail?: string
+  channel: 'web' | 'app'
+  consentAt?: string
   scraperExcluded: boolean
 }
 
-export function resolveEntityDetails(
-  type?: EnquiryEntityType,
-  id?: string
-): { name?: string; adminUrl?: string } {
-  if (!type || !id) return {}
-
-  switch (type) {
-    case 'college': {
-      const col = colleges.find((c) => c.slug === id || c.id === id)
-      return {
-        name: col?.name ?? id,
-        adminUrl: col ? `/admin/institutions/${col.id || col.slug}` : undefined,
-      }
-    }
-    case 'course': {
-      const crs = courses.find((c) => c.slug === id || c.id === id)
-      return {
-        name: crs?.name ?? id,
-        adminUrl: crs ? `/admin/programs/${crs.id || crs.slug}` : undefined,
-      }
-    }
-    case 'tutor': {
-      const tut = tutors.find((t) => t.slug === id || t.id === id)
-      return {
-        name: tut?.name ?? id,
-        adminUrl: tut ? `/admin/tutors-coaching/tutors/${tut.id || tut.slug}` : undefined,
-      }
-    }
-    case 'coaching': {
-      const coa = coachingProviders.find((c) => c.slug === id || c.id === id)
-      return {
-        name: coa?.name ?? id,
-        adminUrl: coa ? `/admin/tutors-coaching/coaching/${coa.id || coa.slug}` : undefined,
-      }
-    }
-    default:
-      return { name: id }
-  }
+const adminPaths: Partial<Record<EnquiryEntityType, string>> = {
+  college: '/admin/institutions',
+  course: '/admin/programs',
+  exam: '/admin/exams',
+  scholarship: '/admin/scholarships',
 }
 
-export function mapToAdminEnquiry(enquiry: Enquiry): AdminEnquiry {
-  let contactName = 'Guest'
-  let contactEmail: string | undefined = undefined
-  let contactPhone: string | undefined = undefined
-  let isRegisteredStudent = false
+const intentLabels: Record<StaffEnquirySummary['intent'], string> = { enquiry: 'Enquiry', brochure: 'Brochure request', counselling: 'Counselling call-back' }
 
-  if (enquiry.studentId && enquiry.studentId === demoStudent.id) {
-    contactName = demoStudent.name
-    contactEmail = demoStudent.email
-    contactPhone = demoStudent.phone
-    isRegisteredStudent = true
-  } else if (enquiry.guestContact) {
-    contactName = enquiry.guestContact.name
-    contactEmail = enquiry.guestContact.email
-    contactPhone = enquiry.guestContact.phone
-  }
+function subjectOf(item: StaffEnquirySummary) {
+  const detail = item.interest ?? item.topic
+  return detail ? `${intentLabels[item.intent]} · ${detail}` : intentLabels[item.intent]
+}
 
-  const resolved = resolveEntityDetails(enquiry.entityType, enquiry.entityId)
-
+export function toAdminEnquiry(item: StaffEnquirySummary | StaffEnquiry): AdminEnquiry {
+  const events = 'events' in item ? item.events : []
+  const actor = (event: StaffEnquiry['events'][number]) => event.actor?.email ?? 'Pathway team'
+  const entityKind = item.entity?.kind
+  const adminPath = entityKind ? adminPaths[entityKind] : undefined
   return {
-    ...enquiry,
-    contactName,
-    contactEmail,
-    contactPhone,
-    targetName: resolved.name,
-    targetAdminUrl: resolved.adminUrl,
-    statusLabel: leadStatusMap[enquiry.status]?.label ?? enquiry.status,
-    sourceLabel: enquirySourceMap[enquiry.source]?.label ?? enquiry.source,
-    isRegisteredStudent,
+    id: item.id,
+    studentId: undefined,
+    guestContact: { name: item.name, email: item.email ?? undefined, phone: item.phone, city: item.city ?? undefined },
+    source: item.source,
+    entityType: entityKind,
+    entityId: item.entity?.slug,
+    subject: subjectOf(item),
+    message: 'message' in item ? (item.message ?? undefined) : undefined,
+    status: item.status,
+    createdAt: item.createdAt,
+    updatedAt: item.updatedAt,
+    followups: events
+      .filter((event) => event.type === 'status_change')
+      .map((event) => ({ id: event.id, type: 'status_change' as const, summary: event.summary, performedBy: actor(event), performedAt: event.createdAt })),
+    notes: events.filter((event) => event.type === 'note').map((event) => ({ id: event.id, content: event.summary, author: actor(event), createdAt: event.createdAt })),
+    contactName: item.name,
+    contactEmail: item.email ?? undefined,
+    contactPhone: item.phone,
+    contactCity: item.city ?? undefined,
+    targetName: item.entity?.name,
+    targetAdminUrl: adminPath && item.entity ? `${adminPath}/${item.entity.slug}` : undefined,
+    statusLabel: leadStatusMap[item.status].label,
+    sourceLabel: enquirySourceMap[item.source].label,
+    isRegisteredStudent: Boolean(item.student),
+    studentEmail: item.student?.email,
+    channel: item.channel,
+    consentAt: 'consentAt' in item ? item.consentAt : undefined,
     scraperExcluded: true,
   }
-}
-
-export function getAdminEnquiries(): AdminEnquiry[] {
-  return canonicalEnquiries.map(mapToAdminEnquiry)
-}
-
-export function getAdminEnquiryById(id: string): AdminEnquiry | undefined {
-  const item = canonicalEnquiries.find((e) => e.id === id)
-  if (!item) return undefined
-  return mapToAdminEnquiry(item)
-}
-
-export function getEnquiriesByStudentId(studentId: string): AdminEnquiry[] {
-  return canonicalEnquiries
-    .filter((e) => e.studentId === studentId)
-    .map(mapToAdminEnquiry)
-}
-
-export function getLeadPipelineStats(): Record<LeadStatus, number> {
-  const stats: Record<LeadStatus, number> = {
-    new: 0,
-    contacted: 0,
-    qualified: 0,
-    converted: 0,
-    closed: 0,
-  }
-
-  canonicalEnquiries.forEach((item) => {
-    if (stats[item.status] !== undefined) {
-      stats[item.status] += 1
-    }
-  })
-
-  return stats
 }

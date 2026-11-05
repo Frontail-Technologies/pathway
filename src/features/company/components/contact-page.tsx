@@ -44,7 +44,7 @@ export function ContactPage() {
           <div id="contact-form" className="scroll-mt-header rounded-[14px] border bg-card p-4 shadow-[0_4px_16px_rgba(15,23,42,0.06)] sm:p-5">
             <h2 className="font-heading text-lg font-bold text-foreground">Send a message</h2>
             <p className="mt-0.5 mb-4 text-sm text-muted-foreground">All fields except name and mobile number are optional.</p>
-            <EnquiryForm intent="enquiry" interestOptions={topics} interestLabel="Topic" />
+            <EnquiryForm intent="enquiry" source="contact" interestOptions={topics} interestLabel="Topic" />
           </div>
         </div>
       </Container>

@@ -1,8 +1,8 @@
 export type LeadStatus = 'new' | 'contacted' | 'qualified' | 'converted' | 'closed'
 
-export type EnquirySource = 'college' | 'course' | 'tutor' | 'coaching' | 'counselling' | 'general'
+export type EnquirySource = 'college' | 'course' | 'exam' | 'scholarship' | 'tutor' | 'coaching' | 'counselling' | 'contact' | 'general'
 
-export type EnquiryEntityType = 'college' | 'course' | 'tutor' | 'coaching'
+export type EnquiryEntityType = 'college' | 'course' | 'exam' | 'scholarship' | 'tutor' | 'coaching'
 
 export type EnquiryPriority = 'urgent' | 'high' | 'medium' | 'low'
 
@@ -57,8 +57,11 @@ export const leadStatusMap: Record<LeadStatus, { label: string; description: str
 export const enquirySourceMap: Record<EnquirySource, { label: string; description: string }> = {
   college: { label: 'College', description: 'Institution profile enquiry' },
   course: { label: 'Program / Course', description: 'Degree curriculum inquiry' },
+  exam: { label: 'Exam', description: 'Entrance exam guidance request' },
+  scholarship: { label: 'Scholarship', description: 'Scholarship eligibility or application help' },
   tutor: { label: 'Tutor Session', description: 'Educator session request' },
   coaching: { label: 'Coaching Institute', description: 'Coaching batch enquiry' },
   counselling: { label: 'General Counselling', description: 'Academic counselling request' },
+  contact: { label: 'Contact Page', description: 'Message sent from the contact page' },
   general: { label: 'General Enquiry', description: 'Platform general enquiry' },
 }

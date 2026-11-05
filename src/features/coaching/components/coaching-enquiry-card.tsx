@@ -19,7 +19,7 @@ export function CoachingEnquiryCard({ provider, saved, onToggleSaved }: Coaching
       <div className="mt-4">
         <CoachingEnquiryForm provider={provider} compact />
       </div>
-      <p className="mt-2 text-center text-[11px] text-muted-foreground">This is a demo preview — no enquiry is sent to a real provider.</p>
+      <p className="mt-2 text-center text-[11px] text-muted-foreground">By submitting, you agree to be contacted about your request.</p>
 
       <Button variant="outline" className="mt-3 h-10 w-full gap-1.5 text-sm font-semibold" onClick={onToggleSaved} aria-pressed={saved}>
         <Bookmark className={saved ? 'size-4 fill-primary text-primary' : 'size-4'} aria-hidden="true" />

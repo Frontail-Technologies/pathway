@@ -16,12 +16,14 @@ export function CollegeActionBar({ college }: { college: CollegeDetailData }) {
       <EnquiryDialog
         intent="brochure"
         entityName={college.name}
+        entity={{ kind: 'college', slug: college.slug }}
         interestOptions={courseNames}
         interestLabel="Course"
         trigger={<Button variant="outline" className="h-11 flex-1 px-3 text-sm font-semibold">Brochure</Button>}
       />
       <EnquiryDialog
         entityName={college.name}
+        entity={{ kind: 'college', slug: college.slug }}
         interestOptions={courseNames}
         interestLabel="Course"
         trigger={<Button variant="cta" className="h-11 flex-[1.4] px-3 text-sm font-semibold">Enquire Now</Button>}

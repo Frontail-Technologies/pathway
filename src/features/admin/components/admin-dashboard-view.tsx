@@ -5,7 +5,7 @@ import { ChevronDown, ChevronRight, Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { getAdminCoachingProviders } from '../data/admin-coaching'
-import { getAdminEnquiries } from '../data/admin-enquiries'
+import { useAdminEnquiries } from '../hooks/use-admin-enquiries'
 import { getAdminInstitutions } from '../data/admin-institutions'
 import { getAdminPrograms } from '../data/admin-programs'
 import { getAdminScholarships } from '../data/admin-scholarships'
@@ -45,7 +45,8 @@ export function AdminDashboardView() {
   const scholarships = getAdminScholarships()
   const tutors = getAdminTutors()
   const coaching = getAdminCoachingProviders()
-  const enquiries = getAdminEnquiries()
+  const enquiriesQuery = useAdminEnquiries()
+  const enquiries = enquiriesQuery.data ?? []
   const completeness = getContentCompleteness()
   const tasks = getNeedsAttentionTasks()
   const incomplete = (list: { completeness?: unknown }[]) =>
@@ -131,8 +132,12 @@ export function AdminDashboardView() {
           </Link>
         }
       >
-        {enquiries.length === 0 ? (
-          <p className="text-sm text-muted-foreground">No enquiries yet. Student enquiries, brochure requests and counselling call-backs will appear here once the form submissions are connected to the server.</p>
+        {enquiriesQuery.isError ? (
+          <p className="text-sm text-muted-foreground">Enquiries couldn&apos;t load right now.</p>
+        ) : !enquiriesQuery.data ? (
+          <p className="text-sm text-muted-foreground">Loading enquiries…</p>
+        ) : enquiries.length === 0 ? (
+          <p className="text-sm text-muted-foreground">No enquiries yet. Student enquiries, brochure requests and counselling call-backs from the website and app will appear here as they arrive.</p>
         ) : (
           <ul className="divide-y divide-border">
             {enquiries.slice(0, 5).map((enquiry) => (
