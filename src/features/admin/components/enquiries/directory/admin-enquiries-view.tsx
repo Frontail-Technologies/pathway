@@ -133,16 +133,16 @@ export function AdminEnquiriesView() {
       <AdminPageHeader title="Enquiries" count={total > 0 ? `${total} total` : undefined} description="Questions, brochure requests and call-backs from students." />
 
       {query.isError ? (
-        <div className="flex flex-col items-center gap-3 rounded-lg border border-border bg-card px-4 py-14 text-center">
+        <div className="flex flex-col items-center gap-3 rounded-xl border border-border bg-card shadow-sm px-4 py-14 text-center">
           <p className="text-sm text-foreground">{query.error instanceof ApiRequestError ? query.error.message : 'Could not load enquiries.'}</p>
           <Button variant="outline" size="sm" onClick={() => void query.refetch()}>
             Try again
           </Button>
         </div>
       ) : !query.data ? (
-        <div className="rounded-lg border border-border bg-card px-4 py-14 text-center text-sm text-muted-foreground">Loading enquiries…</div>
+        <div className="rounded-xl border border-border bg-card shadow-sm px-4 py-14 text-center text-sm text-muted-foreground">Loading enquiries…</div>
       ) : total === 0 ? (
-        <div className="rounded-lg border border-border bg-card">
+        <div className="rounded-xl border border-border bg-card shadow-sm">
           <AdminEmptyState
             icon={Inbox}
             title="No enquiries yet"

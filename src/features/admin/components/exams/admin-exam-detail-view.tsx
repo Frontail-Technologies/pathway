@@ -51,7 +51,7 @@ export function AdminExamDetailView({ exam: fixture }: { exam: Exam }) {
       />
 
       {localEdit ? (
-        <div className="flex flex-col gap-2 rounded-lg border border-border bg-card px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-2 rounded-xl border border-border bg-card shadow-sm px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
           <DemoNote>Showing edits saved on this device on {formatDateTime(localEdit.savedAt)}. The public site still shows the original record.</DemoNote>
           <Button
             type="button"

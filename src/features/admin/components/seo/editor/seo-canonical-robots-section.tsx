@@ -32,7 +32,7 @@ export function SeoCanonicalRobotsSection({
   const isCustomCanonical = canonicalPath.trim().length > 0
 
   return (
-    <section id="canonical" className="scroll-mt-20 space-y-4 rounded-lg border border-border bg-card p-5 sm:p-6">
+    <section id="canonical" className="scroll-mt-20 space-y-4 rounded-xl border border-border bg-card shadow-sm p-5 sm:p-6">
       <h2 className="text-[15px] font-semibold text-foreground">Canonical and indexing</h2>
       <div className="space-y-4">
         <div className="space-y-1.5">

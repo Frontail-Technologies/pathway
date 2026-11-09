@@ -31,7 +31,7 @@ export function AdminSection({
   return (
     <section
       className={cn(
-        'flex flex-col overflow-hidden rounded-lg border border-border bg-card',
+        'flex flex-col overflow-hidden rounded-xl border border-border bg-card shadow-sm',
         fill ? 'h-full' : 'h-auto',
         className
       )}

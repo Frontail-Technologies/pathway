@@ -119,7 +119,7 @@ export function AdminReviewsView({ initialReviews }: { initialReviews: AdminRevi
       <AdminPageHeader title="Reviews" count={total > 0 ? `${total} total` : undefined} description="Student reviews and imported Google reviews for institutions, coaching and tutors." />
 
       {total === 0 ? (
-        <div className="rounded-lg border border-border bg-card">
+        <div className="rounded-xl border border-border bg-card shadow-sm">
           <AdminEmptyState
             icon={MessageSquare}
             title="No reviews yet"
@@ -154,7 +154,7 @@ export function AdminReviewsView({ initialReviews }: { initialReviews: AdminRevi
             mobileCardRender={(row) => {
               const review = row.original
               return (
-                <Link href={`/admin/reviews/${review.id}`} className="block space-y-2 rounded-lg border border-border bg-card p-4">
+                <Link href={`/admin/reviews/${review.id}`} className="block space-y-2 rounded-xl border border-border bg-card shadow-sm p-4">
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
                       <p className="font-medium text-foreground">{review.title || 'Untitled review'}</p>

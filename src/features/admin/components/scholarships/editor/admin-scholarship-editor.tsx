@@ -64,7 +64,7 @@ export function AdminScholarshipEditor({
       />
 
       {form.submitNotice ? (
-        <div role="status" className="flex items-center gap-2.5 rounded-lg border border-border bg-card px-4 py-3 text-sm text-foreground">
+        <div role="status" className="flex items-center gap-2.5 rounded-xl border border-border bg-card shadow-sm px-4 py-3 text-sm text-foreground">
           <Info className="size-4 shrink-0 text-muted-foreground" aria-hidden="true" />
           {form.submitNotice}
         </div>

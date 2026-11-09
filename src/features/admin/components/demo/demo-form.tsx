@@ -19,7 +19,7 @@ export function DemoNote({ children = 'Demo: changes are saved on this device on
 
 export function FormSection({ id, title, description, children, className }: { id?: string; title: string; description?: string; children: ReactNode; className?: string }) {
   return (
-    <section id={id} className={cn('scroll-mt-24 rounded-lg border border-border bg-card', className)}>
+    <section id={id} className={cn('scroll-mt-24 rounded-xl border border-border bg-card shadow-sm', className)}>
       <div className="border-b border-border px-5 py-3.5">
         <h2 className="text-[15px] font-semibold text-foreground">{title}</h2>
         {description ? <p className="mt-0.5 text-[13px] text-muted-foreground">{description}</p> : null}
@@ -104,7 +104,7 @@ export function PairRowsEditor({ idPrefix, rows, onChange, aLabel, bLabel, aPlac
 export function StickySaveBar({ visible, onDiscard, saveLabel = 'Save changes', message = 'You have unsaved changes', formId, className }: { visible: boolean; onDiscard: () => void; saveLabel?: string; message?: string; formId?: string; className?: string }) {
   if (!visible) return null
   return (
-    <div role="region" aria-label="Unsaved changes" className={cn('sticky bottom-4 z-30 flex items-center justify-between gap-3 rounded-lg border border-border bg-card px-4 py-3', className)}>
+    <div role="region" aria-label="Unsaved changes" className={cn('sticky bottom-4 z-30 flex items-center justify-between gap-3 rounded-xl border border-border bg-card shadow-sm px-4 py-3', className)}>
       <p className="text-sm text-foreground">{message}</p>
       <div className="flex items-center gap-2">
         <Button type="button" variant="outline" size="sm" onClick={onDiscard}>

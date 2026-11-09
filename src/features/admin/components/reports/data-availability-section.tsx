@@ -42,7 +42,7 @@ export function DataAvailabilitySection({ items }: { items: DomainAvailabilityIt
       data={items}
       pageSize={50}
       mobileCardRender={(row) => (
-        <div className="space-y-1.5 rounded-lg border border-border bg-card p-4">
+        <div className="space-y-1.5 rounded-xl border border-border bg-card shadow-sm p-4">
           <div className="flex items-start justify-between gap-3">
             <p className="font-medium text-foreground">{row.original.domain}</p>
             <AvailabilityStatus status={row.original.status} />

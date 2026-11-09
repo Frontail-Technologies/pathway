@@ -25,7 +25,7 @@ export function NotePublishingSection({
   onChange: <K extends keyof NoteFormData>(field: K, value: NoteFormData[K]) => void
 }) {
   return (
-    <div id="publishing" className="space-y-4 rounded-lg border border-border bg-card p-5 sm:p-6">
+    <div id="publishing" className="space-y-4 rounded-xl border border-border bg-card shadow-sm p-5 sm:p-6">
       <h2 className="text-[15px] font-semibold text-foreground">Publishing</h2>
       <div className="max-w-sm space-y-1.5">
         <Label htmlFor="note-status" className="text-sm font-medium text-foreground">

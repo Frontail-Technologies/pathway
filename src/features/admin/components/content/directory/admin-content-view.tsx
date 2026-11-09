@@ -103,7 +103,7 @@ export function AdminContentView({ initialContent }: { initialContent: AdminCont
     return (
       <div className="space-y-5">
         <AdminPageHeader title="Articles" description="Guides, news and explainers written by the Pathway team." />
-        <div className="flex flex-col items-center rounded-lg border border-border bg-card px-6 py-14 text-center">
+        <div className="flex flex-col items-center rounded-xl border border-border bg-card shadow-sm px-6 py-14 text-center">
           <p className="text-[15px] font-semibold text-foreground">No articles yet</p>
           <p className="mt-1 max-w-sm text-sm text-muted-foreground">Write the first guide or news post. It stays a draft until you publish it.</p>
           <div className="mt-5">
@@ -143,7 +143,7 @@ export function AdminContentView({ initialContent }: { initialContent: AdminCont
         mobileCardRender={(row) => {
           const entry = row.original
           return (
-            <Link href={`/admin/content/${entry.id}`} className="block space-y-2 rounded-lg border border-border bg-card p-4">
+            <Link href={`/admin/content/${entry.id}`} className="block space-y-2 rounded-xl border border-border bg-card shadow-sm p-4">
               <div className="flex items-start justify-between gap-3">
                 <p className="line-clamp-2 min-w-0 font-medium text-foreground">{entry.title}</p>
                 <StatusBadge tone={contentStatusTones[entry.status]}>{contentStatusLabels[entry.status]}</StatusBadge>

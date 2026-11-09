@@ -11,6 +11,7 @@ import type { AdminInstitution } from '@/features/admin/types/institutions'
 import { ImageAssetInput } from '@/features/admin/components/shared/image-asset-input'
 import { useUnsavedChanges } from '@/features/admin/hooks/use-unsaved-changes'
 import { CompletenessMeter, FactList, Panel } from '../kit'
+import { AdminFormFooter } from '../admin-form-footer'
 
 export type InstitutionFormValues = {
   name: string
@@ -160,6 +161,7 @@ export function AdminInstitutionForm({ institution, mode = 'add', onCancel }: Ad
   const inputClass = 'h-9 text-sm'
 
   return (
+    <>
     <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-12">
       <form id="institution-form" onSubmit={handleSubmit} noValidate className="space-y-6 lg:col-span-8">
         <Panel title="Basics">
@@ -275,20 +277,6 @@ export function AdminInstitutionForm({ institution, mode = 'add', onCancel }: Ad
       </form>
 
       <aside className="space-y-6 lg:sticky lg:top-[4.5rem] lg:col-span-4">
-        <Panel>
-          <div className="space-y-3">
-            <div className="flex gap-2">
-              <Button type="submit" form="institution-form" className="h-9 flex-1">
-                {isEdit ? 'Save changes' : 'Create institution'}
-              </Button>
-              <Button type="button" variant="outline" className="h-9" onClick={handleCancel}>
-                Cancel
-              </Button>
-            </div>
-            <p className="text-[13px] text-muted-foreground">{dirty ? 'You have unsaved changes.' : isEdit ? 'No changes yet.' : 'Fields marked * are required.'}</p>
-          </div>
-        </Panel>
-
         <Panel title="Summary">
           <div className="space-y-4">
             <FactList
@@ -313,5 +301,12 @@ export function AdminInstitutionForm({ institution, mode = 'add', onCancel }: Ad
         </Panel>
       </aside>
     </div>
+      <AdminFormFooter
+        formId="institution-form"
+        submitLabel={isEdit ? 'Save changes' : 'Create institution'}
+        onCancel={handleCancel}
+        status={dirty ? 'You have unsaved changes.' : isEdit ? 'No changes yet.' : 'Fields marked * are required.'}
+      />
+    </>
   )
 }

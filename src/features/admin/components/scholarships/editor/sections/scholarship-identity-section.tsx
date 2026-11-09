@@ -98,7 +98,7 @@ export function ScholarshipIdentitySection({
   errors: Record<string, string>
 }) {
   return (
-    <section id="identity" className="rounded-lg border border-border bg-card p-5 sm:p-6 space-y-5 scroll-mt-20">
+    <section id="identity" className="rounded-xl border border-border bg-card shadow-sm p-5 sm:p-6 space-y-5 scroll-mt-20">
       <h2 className="text-[15px] font-semibold text-foreground">
         Basics
       </h2>

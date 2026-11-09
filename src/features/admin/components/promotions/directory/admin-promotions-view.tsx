@@ -124,7 +124,7 @@ export function AdminPromotionsView({ initialPromotions }: { initialPromotions: 
     return (
       <div className="space-y-5">
         <AdminPageHeader title="Featured listings" description={description} />
-        <div className="flex flex-col items-center rounded-lg border border-border bg-card px-6 py-14 text-center">
+        <div className="flex flex-col items-center rounded-xl border border-border bg-card shadow-sm px-6 py-14 text-center">
           <p className="text-[15px] font-semibold text-foreground">No featured listings yet</p>
           <p className="mt-1 max-w-sm text-sm text-muted-foreground">Feature a college, course or tutor in a homepage or list-page slot. Paid listings are labelled as sponsored.</p>
           <div className="mt-5">
@@ -165,7 +165,7 @@ export function AdminPromotionsView({ initialPromotions }: { initialPromotions: 
         mobileCardRender={(row) => {
           const promotion = row.original
           return (
-            <Link href={`/admin/promotions/${promotion.id}`} className="block space-y-1.5 rounded-lg border border-border bg-card p-4">
+            <Link href={`/admin/promotions/${promotion.id}`} className="block space-y-1.5 rounded-xl border border-border bg-card shadow-sm p-4">
               <div className="flex items-start justify-between gap-3">
                 <p className="min-w-0 truncate font-medium text-foreground">{promotionTitle(promotion)}</p>
                 <StatusBadge tone={promotionStatusTones[promotion.effectiveStatus]}>{promotionStatusLabels[promotion.effectiveStatus]}</StatusBadge>

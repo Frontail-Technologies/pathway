@@ -116,7 +116,7 @@ export function AdminBannersView({ initialBanners }: { initialBanners: AdminBann
     return (
       <div className="space-y-5">
         <AdminPageHeader title="Banners" description="Promotional strips shown on the homepage and study abroad page." />
-        <div className="flex flex-col items-center rounded-lg border border-border bg-card px-6 py-14 text-center">
+        <div className="flex flex-col items-center rounded-xl border border-border bg-card shadow-sm px-6 py-14 text-center">
           <p className="text-[15px] font-semibold text-foreground">No banners yet</p>
           <p className="mt-1 max-w-sm text-sm text-muted-foreground">Create a banner, pick where it shows, and schedule when it runs.</p>
           <div className="mt-5">
@@ -155,7 +155,7 @@ export function AdminBannersView({ initialBanners }: { initialBanners: AdminBann
         mobileCardRender={(row) => {
           const banner = row.original
           return (
-            <Link href={`/admin/banners/${banner.id}`} className="flex items-start gap-3 rounded-lg border border-border bg-card p-4">
+            <Link href={`/admin/banners/${banner.id}`} className="flex items-start gap-3 rounded-xl border border-border bg-card shadow-sm p-4">
               <Thumb banner={banner} />
               <div className="min-w-0 flex-1 space-y-1">
                 <div className="flex items-start justify-between gap-3">

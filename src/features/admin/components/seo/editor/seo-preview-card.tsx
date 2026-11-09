@@ -6,7 +6,7 @@ import { SeoSearchSnippet, SeoSocialCard } from '../shared/seo-previews'
 
 export function SeoPreviewCard({ metadata }: { metadata: ResolvedSeoMetadata }) {
   return (
-    <section id="preview" className="space-y-4 rounded-lg border border-border bg-card p-5 sm:p-6">
+    <section id="preview" className="space-y-4 rounded-xl border border-border bg-card shadow-sm p-5 sm:p-6">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
         <h2 className="text-[15px] font-semibold text-foreground">Preview</h2>
         <span className="font-mono text-[13px] text-muted-foreground">{metadata.targetRoutePath}</span>

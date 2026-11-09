@@ -100,7 +100,7 @@ export function AdminActivityView() {
       />
 
       {!loaded ? null : entries.length === 0 ? (
-        <div className="rounded-lg border border-border bg-card py-10">
+        <div className="rounded-xl border border-border bg-card shadow-sm py-10">
           <AdminEmptyState icon={History} title="No activity yet" description="Changes you make in the admin will be listed here." />
         </div>
       ) : (
@@ -122,7 +122,7 @@ export function AdminActivityView() {
             mobileCardRender={(row) => {
               const entry = row.original
               return (
-                <div className="space-y-1 rounded-lg border border-border bg-card p-4">
+                <div className="space-y-1 rounded-xl border border-border bg-card shadow-sm p-4">
                   <div className="flex items-center justify-between gap-3">
                     <StatusBadge tone={actionTone[entry.action] ?? 'neutral'}>{entry.action}</StatusBadge>
                     <span className="text-[13px] text-muted-foreground">{formatRelative(entry.at)}</span>

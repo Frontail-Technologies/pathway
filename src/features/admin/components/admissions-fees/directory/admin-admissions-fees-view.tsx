@@ -182,7 +182,7 @@ export function AdminAdmissionsFeesView() {
           const item = row.original
           const quality = qualityStyles[item.qualityStatus]
           return (
-            <Link href={`/admin/admissions-fees/${item.id}`} className="block space-y-2.5 rounded-lg border border-border bg-card p-4">
+            <Link href={`/admin/admissions-fees/${item.id}`} className="block space-y-2.5 rounded-xl border border-border bg-card shadow-sm p-4">
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
                   <p className="font-medium text-foreground">{item.programName}</p>

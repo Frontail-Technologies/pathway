@@ -88,7 +88,7 @@ export function AdminStreamsView({ streams }: { streams: AdminStream[] }) {
         mobileCardRender={(row) => {
           const item = row.original
           return (
-            <Link href={`/admin/streams/${item.slug}`} className="block space-y-1.5 rounded-lg border border-border bg-card p-4">
+            <Link href={`/admin/streams/${item.slug}`} className="block space-y-1.5 rounded-xl border border-border bg-card shadow-sm p-4">
               <div className="flex items-start justify-between gap-3">
                 <p className="font-medium text-foreground">{item.name}</p>
                 {item.published ? <StatusBadge tone="success">Published</StatusBadge> : <StatusBadge>Not published</StatusBadge>}

@@ -122,7 +122,7 @@ export function AdminSeoView({ initialRecords }: { initialRecords: AdminSeoRecor
     return (
       <div className="space-y-5">
         <AdminPageHeader title="SEO" description={DESCRIPTION} />
-        <div className="flex flex-col items-center rounded-lg border border-border bg-card px-6 py-14 text-center">
+        <div className="flex flex-col items-center rounded-xl border border-border bg-card shadow-sm px-6 py-14 text-center">
           <p className="text-[15px] font-semibold text-foreground">No SEO overrides yet</p>
           <p className="mt-1 max-w-sm text-sm text-muted-foreground">Every page uses its default title and description. Add an override when a page needs different search text.</p>
           <div className="mt-5">
@@ -161,7 +161,7 @@ export function AdminSeoView({ initialRecords }: { initialRecords: AdminSeoRecor
         mobileCardRender={(row) => {
           const record = row.original
           return (
-            <Link href={`/admin/seo/${record.id}`} className="block space-y-1 rounded-lg border border-border bg-card p-4">
+            <Link href={`/admin/seo/${record.id}`} className="block space-y-1 rounded-xl border border-border bg-card shadow-sm p-4">
               <div className="flex items-start justify-between gap-3">
                 <p className="min-w-0 font-medium text-foreground">{record.targetLabel}</p>
                 <SeoIndexingBadge robotsIndex={record.robotsIndex} robotsFollow={record.robotsFollow} />

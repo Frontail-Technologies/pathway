@@ -62,7 +62,7 @@ export function ScholarshipDocsSection({
   const fileInputRef = React.useRef<HTMLInputElement>(null)
 
   return (
-    <section id="documents" className="rounded-lg border border-border bg-card p-5 sm:p-6 space-y-5 scroll-mt-20">
+    <section id="documents" className="rounded-xl border border-border bg-card shadow-sm p-5 sm:p-6 space-y-5 scroll-mt-20">
       <h2 className="text-[15px] font-semibold text-foreground">
         Documents
       </h2>

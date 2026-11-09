@@ -117,7 +117,7 @@ export function AdminStudentsView({ initialStudents }: { initialStudents: AdminS
       <AdminPageHeader title="Students" count={total > 0 ? `${total} total` : undefined} description="Student accounts and the study preferences they have shared." />
 
       {total === 0 ? (
-        <div className="rounded-lg border border-border bg-card">
+        <div className="rounded-xl border border-border bg-card shadow-sm">
           <AdminEmptyState icon={Users} title="No students yet" description="Student accounts will appear here once sign-up is connected." className="py-14" />
         </div>
       ) : (
@@ -147,7 +147,7 @@ export function AdminStudentsView({ initialStudents }: { initialStudents: AdminS
             mobileCardRender={(row) => {
               const student = row.original
               return (
-                <Link href={`/admin/students/${student.id}`} className="block space-y-2.5 rounded-lg border border-border bg-card p-4">
+                <Link href={`/admin/students/${student.id}`} className="block space-y-2.5 rounded-xl border border-border bg-card shadow-sm p-4">
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
                       <p className="font-medium text-foreground">{student.name}</p>

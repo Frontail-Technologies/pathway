@@ -29,7 +29,7 @@ export function useEditorGuard<T>(formData: T, cancelHref: string) {
 
 export function EditorSection({ id, title, description, children }: { id: string; title: string; description?: string; children: ReactNode }) {
   return (
-    <section id={`section-${id}`} aria-labelledby={`section-${id}-title`} className="scroll-mt-24 rounded-lg border border-border bg-card">
+    <section id={`section-${id}`} aria-labelledby={`section-${id}-title`} className="scroll-mt-24 rounded-xl border border-border bg-card shadow-sm">
       <div className="border-b border-border px-5 py-3.5">
         <h2 id={`section-${id}-title`} className="text-[15px] font-semibold text-foreground">
           {title}

@@ -146,7 +146,7 @@ export function AdminTeamView() {
         mobileCardRender={(row) => {
           const member = row.original
           return (
-            <div className="space-y-3 rounded-lg border border-border bg-card p-4">
+            <div className="space-y-3 rounded-xl border border-border bg-card shadow-sm p-4">
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
                   <p className="truncate font-medium text-foreground">{member.name}</p>

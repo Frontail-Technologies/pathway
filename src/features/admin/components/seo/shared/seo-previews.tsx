@@ -6,7 +6,7 @@ const FALLBACK_DESCRIPTION = 'A trusted education discovery platform for finding
 
 export function SeoSearchSnippet({ metadata }: { metadata: ResolvedSeoMetadata }) {
   return (
-    <div className="space-y-1 rounded-lg border border-border bg-card p-4">
+    <div className="space-y-1 rounded-xl border border-border bg-card shadow-sm p-4">
       <p className="truncate text-[13px] text-muted-foreground">
         Pathway › <span className="font-mono">{metadata.canonicalPath}</span>
       </p>
@@ -20,7 +20,7 @@ export function SeoSocialCard({ metadata }: { metadata: ResolvedSeoMetadata }) {
   const title = metadata.ogTitle || metadata.title || FALLBACK_TITLE
   const description = metadata.ogDescription || metadata.description || FALLBACK_DESCRIPTION
   return (
-    <div className="max-w-md overflow-hidden rounded-lg border border-border bg-card">
+    <div className="max-w-md overflow-hidden rounded-xl border border-border bg-card shadow-sm">
       <div className="relative flex aspect-[1200/630] items-center justify-center bg-muted">
         {metadata.ogImage ? (
           <Image src={metadata.ogImage} alt={title} fill className="object-cover" unoptimized />

@@ -25,7 +25,7 @@ export function AdminTutorDetailLoader({ tutorId }: { tutorId: string }) {
   return (
     <div className="space-y-5">
       <AdminPageHeader title="Tutor" back={{ href: '/admin/tutors-coaching', label: 'Tutors & coaching' }} />
-      <div className="flex flex-col items-center gap-3 rounded-lg border border-border bg-card px-4 py-14 text-center">
+      <div className="flex flex-col items-center gap-3 rounded-xl border border-border bg-card shadow-sm px-4 py-14 text-center">
         <p className="text-sm text-muted-foreground">{load.state === 'loading' ? 'Loading tutor…' : load.message}</p>
         {load.state === 'error' ? (
           <Button variant="outline" size="sm" onClick={() => void query.refetch()}>

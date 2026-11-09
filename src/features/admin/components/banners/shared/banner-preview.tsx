@@ -38,7 +38,7 @@ export function BannerPreview({ data, placeholders = false }: { data: BannerPrev
         ))}
       </div>
 
-      <div className={cn('overflow-hidden rounded-lg border border-border bg-card', device === 'desktop' ? 'flex flex-col sm:flex-row' : 'mx-auto max-w-[280px]')}>
+      <div className={cn('overflow-hidden rounded-xl border border-border bg-card shadow-sm', device === 'desktop' ? 'flex flex-col sm:flex-row' : 'mx-auto max-w-[280px]')}>
         {image ? (
           // eslint-disable-next-line @next/next/no-img-element -- previews arbitrary URLs and local object URLs
           <img src={image} alt={alt} className={cn('object-cover', device === 'desktop' ? 'aspect-video w-full sm:aspect-auto sm:w-2/5' : 'aspect-video w-full')} />

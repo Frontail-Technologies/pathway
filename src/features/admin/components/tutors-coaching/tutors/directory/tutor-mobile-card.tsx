@@ -6,7 +6,7 @@ import { QualityStatusBadge } from '../../shared/tutor-status-badge'
 
 export function TutorMobileCard({ tutor }: { tutor: AdminTutor }) {
   return (
-    <Link href={`/admin/tutors-coaching/tutors/${tutor.id}`} className="block space-y-2.5 rounded-lg border border-border bg-card p-4">
+    <Link href={`/admin/tutors-coaching/tutors/${tutor.id}`} className="block space-y-2.5 rounded-xl border border-border bg-card shadow-sm p-4">
       <div className="flex items-start justify-between gap-3">
         <div className="flex min-w-0 items-center gap-3">
           <TutorPortrait tutor={tutor} className="size-9 shrink-0 rounded-full" />

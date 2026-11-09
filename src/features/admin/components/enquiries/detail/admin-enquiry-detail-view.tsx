@@ -64,7 +64,7 @@ export function AdminEnquiryDetailView({ enquiryId }: { enquiryId: string }) {
     return (
       <div className="space-y-6">
         <AdminPageHeader back={{ href: '/admin/enquiries', label: 'Enquiries' }} title={missing ? 'Enquiry not found' : 'Enquiry'} />
-        <div className="flex flex-col items-center gap-3 rounded-lg border border-border bg-card px-4 py-14 text-center">
+        <div className="flex flex-col items-center gap-3 rounded-xl border border-border bg-card shadow-sm px-4 py-14 text-center">
           <p className="text-sm text-foreground">{missing ? 'This enquiry does not exist or has been removed.' : errorMessage(query.error)}</p>
           {missing ? null : (
             <Button variant="outline" size="sm" onClick={() => void query.refetch()}>
@@ -75,7 +75,7 @@ export function AdminEnquiryDetailView({ enquiryId }: { enquiryId: string }) {
       </div>
     )
   }
-  return <div className="rounded-lg border border-border bg-card px-4 py-14 text-center text-sm text-muted-foreground">Loading enquiry…</div>
+  return <div className="rounded-xl border border-border bg-card shadow-sm px-4 py-14 text-center text-sm text-muted-foreground">Loading enquiry…</div>
 }
 
 function EnquiryDetail({ enquiry }: { enquiry: AdminEnquiry }) {

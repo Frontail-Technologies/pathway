@@ -39,7 +39,7 @@ export function SeoTargetSection({
   const selectedOption = targetOptions.find((o) => o.id === targetId)
 
   return (
-    <section id="target" className="scroll-mt-20 space-y-4 rounded-lg border border-border bg-card p-5 sm:p-6">
+    <section id="target" className="scroll-mt-20 space-y-4 rounded-xl border border-border bg-card shadow-sm p-5 sm:p-6">
       <h2 className="text-[15px] font-semibold text-foreground">Page</h2>
       <div className="space-y-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

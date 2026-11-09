@@ -91,16 +91,16 @@ export function AdminTutorAccountsView() {
       </AdminToolbar>
 
       {load.state === 'loading' ? (
-        <div className="rounded-lg border border-border bg-card px-4 py-14 text-center text-sm text-muted-foreground">Loading tutor accounts…</div>
+        <div className="rounded-xl border border-border bg-card shadow-sm px-4 py-14 text-center text-sm text-muted-foreground">Loading tutor accounts…</div>
       ) : load.state === 'error' ? (
-        <div className="flex flex-col items-center gap-3 rounded-lg border border-border bg-card px-4 py-14 text-center">
+        <div className="flex flex-col items-center gap-3 rounded-xl border border-border bg-card shadow-sm px-4 py-14 text-center">
           <p className="text-sm text-foreground">{load.message}</p>
           <Button variant="outline" size="sm" onClick={() => void query.refetch()}>
             Try again
           </Button>
         </div>
       ) : load.rows.length === 0 ? (
-        <div className="rounded-lg border border-border bg-card">
+        <div className="rounded-xl border border-border bg-card shadow-sm">
           <AdminEmptyState icon={UserCheck} title={status === 'pending_review' ? 'Nothing waiting for review' : 'No tutor accounts'} description={status === 'pending_review' ? 'Profiles appear here when tutors submit them from Tutor Space.' : 'Try a different review status.'} className="py-14" />
         </div>
       ) : (
@@ -116,7 +116,7 @@ export function AdminTutorAccountsView() {
           mobileCardRender={(row) => {
             const tutor = row.original
             return (
-              <Link href={`/admin/tutor-accounts/${tutor.userId}`} className="block space-y-2 rounded-lg border border-border bg-card p-4">
+              <Link href={`/admin/tutor-accounts/${tutor.userId}`} className="block space-y-2 rounded-xl border border-border bg-card shadow-sm p-4">
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
                     <p className="font-medium text-foreground">{tutor.displayName || 'Unnamed tutor'}</p>

@@ -2,7 +2,7 @@
 
 import type { ReactNode } from 'react'
 import Link from 'next/link'
-import { ExternalLink } from 'lucide-react'
+import { BadgeCheck, CalendarDays, ExternalLink, MapPin } from 'lucide-react'
 import { buttonVariants } from '@/components/ui/button'
 import type { AdminInstitutionDetail } from '@/features/admin/types/institutions'
 import {
@@ -10,7 +10,7 @@ import {
   institutionDetailQualityBadgeStyles as qualityBadgeStyles,
   institutionQualityCheckStyles as qualityCheckStyles,
 } from '@/features/admin/constants/institutions'
-import { AdminPageHeader, CompletenessMeter, FactList, Panel, StatusBadge, Tag, toneFromVariant } from '../kit'
+import { CompletenessMeter, FactList, Monogram, Panel, RecordHeader, StatusBadge, Tag, toneFromVariant } from '../kit'
 
 const qualityItems = [
   { key: 'identity', label: 'Identity and approval' },
@@ -49,18 +49,21 @@ export function AdminInstitutionDetailView({ data }: { data: AdminInstitutionDet
 
   return (
     <div className="space-y-6">
-      <AdminPageHeader
+      <RecordHeader
         back={{ href: '/admin/institutions', label: 'Institutions' }}
         title={institution.name}
-        meta={
+        media={<Monogram name={institution.name} size="lg" />}
+        chips={
           <>
             <StatusBadge tone={toneFromVariant(quality.variant)}>{quality.label}</StatusBadge>
             <Tag>{institution.type}</Tag>
-            <span className="text-[13px] text-muted-foreground">
-              {[`${institution.city}, ${institution.state}`, institution.approval, detail?.established ? `Est. ${detail.established}` : null].filter(Boolean).join(' · ')}
-            </span>
           </>
         }
+        meta={[
+          { icon: MapPin, label: `${institution.city}, ${institution.state}` },
+          ...(institution.approval ? [{ icon: BadgeCheck, label: institution.approval }] : []),
+          ...(detail?.established ? [{ icon: CalendarDays, label: `Est. ${detail.established}` }] : []),
+        ]}
         actions={
           <>
             {institution.hasDetailPage ? (
