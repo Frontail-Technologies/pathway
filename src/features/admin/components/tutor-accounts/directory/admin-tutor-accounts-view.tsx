@@ -23,6 +23,7 @@ import { useUrlFilters } from '@/features/admin/hooks/use-url-filters'
 import { AdminDataTable } from '../../admin-data-table'
 import { AdminEmptyState } from '../../admin-empty-state'
 import { AdminFilterSelect, AdminPageHeader, AdminToolbar, SortHeader, StatusBadge, stopRowClick } from '../../kit'
+import { AdminTableSkeleton } from '../../admin-skeletons'
 
 const DEFAULT_FILTERS = { q: '', status: 'pending_review' }
 const statusOptions = (Object.keys(verificationLabels) as VerificationStatus[]).map((value) => ({ value, label: verificationLabels[value] }))
@@ -91,7 +92,7 @@ export function AdminTutorAccountsView() {
       </AdminToolbar>
 
       {load.state === 'loading' ? (
-        <div className="rounded-xl border border-border bg-card shadow-sm px-4 py-14 text-center text-sm text-muted-foreground">Loading tutor accounts…</div>
+        <AdminTableSkeleton rows={5} columns={5} header={false} />
       ) : load.state === 'error' ? (
         <div className="flex flex-col items-center gap-3 rounded-xl border border-border bg-card shadow-sm px-4 py-14 text-center">
           <p className="text-sm text-foreground">{load.message}</p>

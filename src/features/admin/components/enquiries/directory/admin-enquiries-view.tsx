@@ -4,7 +4,7 @@ import * as React from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import type { ColumnDef } from '@tanstack/react-table'
-import { Download, ExternalLink, Eye, Inbox, MoreHorizontal } from 'lucide-react'
+import { Download, ExternalLink, Eye, MoreHorizontal } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import type { AdminEnquiry } from '@/features/admin/data/admin-enquiries'
@@ -15,6 +15,7 @@ import { downloadCsv } from '@/features/admin/utils/export-csv'
 import { useUrlFilters } from '@/features/admin/hooks/use-url-filters'
 import { AdminDataTable } from '../../admin-data-table'
 import { AdminEmptyState } from '../../admin-empty-state'
+import { AdminTableSkeleton } from '../../admin-skeletons'
 import { AdminFilterSelect, AdminPageHeader, AdminToolbar, Monogram, SortHeader, stopRowClick, Tag } from '../../kit'
 import { LeadStatusBadge } from '../shared/lead-status-badge'
 import { assignmentOptions, enquirySourceLabels, enquirySourceOptions, enquiryTitle, leadStatusOptions } from '../shared/enquiry-constants'
@@ -140,11 +141,11 @@ export function AdminEnquiriesView() {
           </Button>
         </div>
       ) : !query.data ? (
-        <div className="rounded-xl border border-border bg-card shadow-sm px-4 py-14 text-center text-sm text-muted-foreground">Loading enquiries…</div>
+        <AdminTableSkeleton rows={5} columns={6} />
       ) : total === 0 ? (
         <div className="rounded-xl border border-border bg-card shadow-sm">
           <AdminEmptyState
-            icon={Inbox}
+            art="inboxEmpty"
             title="No enquiries yet"
             description="Enquiries, brochure requests and counselling call-backs from the website and app will appear here as they arrive."
             className="py-14"

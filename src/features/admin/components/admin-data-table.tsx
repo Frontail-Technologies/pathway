@@ -14,12 +14,13 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import { ChevronLeft, ChevronRight, Inbox, RotateCcw, X } from 'lucide-react'
+import { ChevronLeft, ChevronRight, RotateCcw, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { cn } from '@/lib/utils'
+import { AdminIllustration } from './admin-illustration'
 import { CountBadge } from './kit'
 
 export type StatusTabOption = { value: string; label: string; count?: number }
@@ -101,10 +102,8 @@ function pageList(current: number, count: number): (number | 'gap')[] {
 
 function EmptyBlock({ title, description, onReset, hasActiveFilters }: { title: string; description: string; onReset?: () => void; hasActiveFilters: boolean }) {
   return (
-    <div className="flex flex-col items-center justify-center px-4 py-12 text-center">
-      <div className="mb-3 flex size-12 items-center justify-center rounded-2xl bg-primary/10 text-primary" aria-hidden="true">
-        <Inbox className="size-5" />
-      </div>
+    <div className="flex flex-col items-center justify-center px-4 py-10 text-center">
+      <AdminIllustration name="noResults" width={160} className="mb-1" />
       <p className="text-[15px] font-semibold text-foreground">{title}</p>
       <p className="mt-1 max-w-sm text-sm text-muted-foreground">{description}</p>
       {hasActiveFilters && onReset ? (

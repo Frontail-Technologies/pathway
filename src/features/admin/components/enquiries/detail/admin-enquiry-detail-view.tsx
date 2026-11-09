@@ -15,6 +15,7 @@ import { ApiRequestError } from '@/features/auth/lib/session-client'
 import { addStaffEnquiryNote, setStaffEnquiryStatus, type StaffEnquiry } from '@/features/enquiries/api/enquiries-api'
 import { queryKeys } from '@/lib/query-client'
 import { AdminPageHeader, FactList, Panel, Tag } from '../../kit'
+import { AdminPanelSkeleton } from '../../admin-skeletons'
 import { LeadStatusBadge } from '../shared/lead-status-badge'
 import { enquirySourceLabels, enquiryTitle, leadStatusDescriptions, leadStatusLabels, leadStatusOptions } from '../shared/enquiry-constants'
 
@@ -75,7 +76,16 @@ export function AdminEnquiryDetailView({ enquiryId }: { enquiryId: string }) {
       </div>
     )
   }
-  return <div className="rounded-xl border border-border bg-card shadow-sm px-4 py-14 text-center text-sm text-muted-foreground">Loading enquiry…</div>
+  return (
+    <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-12">
+      <div className="space-y-6 lg:col-span-8">
+        <AdminPanelSkeleton lines={3} />
+        <AdminPanelSkeleton lines={4} />
+        <AdminPanelSkeleton lines={4} />
+      </div>
+      <AdminPanelSkeleton lines={5} className="lg:col-span-4" />
+    </div>
+  )
 }
 
 function EnquiryDetail({ enquiry }: { enquiry: AdminEnquiry }) {
