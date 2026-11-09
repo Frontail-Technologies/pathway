@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { ChevronDown, ChevronRight, Plus } from 'lucide-react'
+import { Award, BookOpen, ChevronDown, ChevronRight, GraduationCap, Plus, Users } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { getAdminCoachingProviders } from '../data/admin-coaching'
@@ -79,10 +79,10 @@ export function AdminDashboardView() {
       />
 
       <StatGrid>
-        <StatTile label="Institutions" value={institutions.length} hint={`${incomplete(institutions)} incomplete`} href="/admin/institutions" />
-        <StatTile label="Courses" value={programs.length} hint={`${incomplete(programs)} incomplete`} href="/admin/programs" />
-        <StatTile label="Scholarships" value={scholarships.length} hint="Open, upcoming and closed" href="/admin/scholarships" />
-        <StatTile label="Tutors & coaching" value={tutors.length + coaching.length} hint={`${tutors.length} tutors · ${coaching.length} providers`} href="/admin/tutors-coaching" />
+        <StatTile icon={GraduationCap} label="Institutions" value={institutions.length} hint={`${incomplete(institutions)} incomplete`} href="/admin/institutions" />
+        <StatTile icon={BookOpen} tone="success" label="Courses" value={programs.length} hint={`${incomplete(programs)} incomplete`} href="/admin/programs" />
+        <StatTile icon={Award} tone="warning" label="Scholarships" value={scholarships.length} hint="Open, upcoming and closed" href="/admin/scholarships" />
+        <StatTile icon={Users} tone="neutral" label="Tutors & coaching" value={tutors.length + coaching.length} hint={`${tutors.length} tutors · ${coaching.length} providers`} href="/admin/tutors-coaching" />
       </StatGrid>
 
       <div className="grid gap-6 lg:grid-cols-12">

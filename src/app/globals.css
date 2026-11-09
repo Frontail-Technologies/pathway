@@ -95,6 +95,8 @@
 }
 
 [data-theme='admin'] {
+  --admin-pad: 1.25rem;
+  --admin-pad-y: 1rem;
   /* Same brand as the public site; neutrals do the work, colour is reserved for status and the primary action.
      Every text pair meets WCAG AA (4.5:1) on white and on the canvas. */
   --background: #f6f7f9;
@@ -137,6 +139,11 @@
   --chart-3: #94a3b8;
   --chart-4: #1e3a8a;
   --chart-5: #cbd5e1;
+}
+
+[data-theme='admin'][data-density='compact'] {
+  --admin-pad: 1rem;
+  --admin-pad-y: 0.75rem;
 }
 
 [data-theme='admin'][data-mode='dark'] {
