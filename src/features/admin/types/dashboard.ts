@@ -42,19 +42,6 @@ export type LeadPipelineStage = {
   percentage: number
 }
 
-export type AdminNavGroup = {
-  id: string
-  title: string
-  items: {
-    id: string
-    label: string
-    href: string
-    icon: string
-    active?: boolean
-    available: boolean
-    badge?: string
-  }[]
-}
 
 export type EnquiryTrendPoint = {
   date: string

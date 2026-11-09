@@ -10,7 +10,6 @@ import { exams } from '@/features/exams/data/exams'
 import { getAdminOfferings } from './admin-admissions-fees'
 import type {
   AdminKPI,
-  AdminNavGroup,
   CatalogDomainItem,
   ContentCompletenessItem,
   OperationalAttentionTask,
@@ -18,7 +17,6 @@ import type {
 
 export type {
   AdminKPI,
-  AdminNavGroup,
   CatalogDomainItem,
   ContentCompletenessItem,
   LeadPipelineStage,
@@ -248,69 +246,3 @@ export function getNeedsAttentionTasks(): OperationalAttentionTask[] {
 
  
 
-export const adminNavigationGroups: AdminNavGroup[] = [
-  { id: 'overview', title: 'Overview', items: [{ id: 'dashboard', label: 'Dashboard', href: '/admin', icon: 'LayoutDashboard', available: true }] },
-  {
-    id: 'catalogue',
-    title: 'Catalogue',
-    items: [
-      { id: 'institutions', label: 'Institutions', href: '/admin/institutions', icon: 'GraduationCap', available: true },
-      { id: 'programs', label: 'Courses', href: '/admin/programs', icon: 'BookOpen', available: true },
-      { id: 'admissions', label: 'Admissions & fees', href: '/admin/admissions-fees', icon: 'Banknote', available: true },
-      { id: 'exams', label: 'Exams', href: '/admin/exams', icon: 'ClipboardList', available: true },
-      { id: 'scholarships', label: 'Scholarships', href: '/admin/scholarships', icon: 'Award', available: true },
-      { id: 'streams', label: 'Streams', href: '/admin/streams', icon: 'Compass', available: true },
-    ],
-  },
-  {
-    id: 'people',
-    title: 'People',
-    items: [
-      { id: 'students', label: 'Students', href: '/admin/students', icon: 'UserCheck', available: true },
-      { id: 'tutors', label: 'Tutors & coaching', href: '/admin/tutors-coaching', icon: 'Users', available: true },
-      { id: 'tutor-reviews', label: 'Tutor reviews', href: '/admin/tutor-accounts', icon: 'ShieldCheck', available: true },
-      { id: 'enquiries', label: 'Enquiries', href: '/admin/enquiries', icon: 'Inbox', available: true },
-      { id: 'reviews', label: 'Reviews', href: '/admin/reviews', icon: 'MessageSquare', available: true },
-    ],
-  },
-  {
-    id: 'content',
-    title: 'Content',
-    items: [
-      { id: 'content', label: 'Articles', href: '/admin/content', icon: 'FileText', available: true },
-      { id: 'notes', label: 'Notes', href: '/admin/notes', icon: 'BookMarked', available: true },
-      { id: 'banners', label: 'Banners', href: '/admin/banners', icon: 'Image', available: true },
-      { id: 'featured', label: 'Featured listings', href: '/admin/promotions', icon: 'Sparkles', available: true },
-      { id: 'seo', label: 'SEO', href: '/admin/seo', icon: 'SearchCode', available: true },
-    ],
-  },
-  {
-    id: 'insights',
-    title: 'Insights',
-    items: [
-      { id: 'reports', label: 'Reports', href: '/admin/reports', icon: 'BarChart3', available: true },
-      { id: 'activity', label: 'Activity log', href: '/admin/activity', icon: 'History', available: true },
-    ],
-  },
-  {
-    id: 'workspace',
-    title: 'Workspace',
-    items: [
-      { id: 'team', label: 'Team & access', href: '/admin/team', icon: 'ShieldCheck', available: true },
-      { id: 'settings', label: 'Settings', href: '/admin/settings', icon: 'Settings', available: true },
-    ],
-  },
-]
-
-export function findAdminNavItem(pathname: string) {
-  for (const group of adminNavigationGroups) {
-    for (const item of group.items) {
-      if (item.href === '/admin' ? pathname === '/admin' : pathname === item.href || pathname.startsWith(`${item.href}/`)) {
-        const rest = pathname.slice(item.href.length)
-        const kind: 'index' | 'new' | 'edit' | 'detail' = !rest || rest === '/' ? 'index' : rest.endsWith('/new') ? 'new' : rest.endsWith('/edit') ? 'edit' : 'detail'
-        return { group, item, kind }
-      }
-    }
-  }
-  return null
-}

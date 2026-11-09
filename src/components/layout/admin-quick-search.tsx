@@ -9,7 +9,7 @@ import { getAdminExams } from '@/features/admin/data/admin-exams'
 import { getAdminInstitutions } from '@/features/admin/data/admin-institutions'
 import { getAdminPrograms } from '@/features/admin/data/admin-programs'
 import { getAdminScholarships } from '@/features/admin/data/admin-scholarships'
-import { adminNavigationGroups } from '@/features/admin/data/admin-stats'
+import { adminModuleGroups, adminModules } from '@/features/admin/navigation/modules'
 import { getAdminStudents } from '@/features/admin/data/admin-students'
 import { getAdminTutors } from '@/features/admin/data/admin-tutors'
 
@@ -26,7 +26,7 @@ function useSearchIndex() {
       { group: 'Coaching', items: getAdminCoachingProviders().map((c) => ({ id: `coa-${c.slug}`, label: c.name, hint: 'Coaching', href: `/admin/tutors-coaching/coaching/${c.slug}` })) },
       { group: 'Students', items: getAdminStudents().map((s) => ({ id: `stu-${s.id}`, label: s.name, hint: 'Student', href: `/admin/students/${s.id}` })) },
     ]
-    const pages: Entry[] = adminNavigationGroups.flatMap((group) => group.items.map((item) => ({ id: `nav-${item.id}`, label: item.label, hint: group.title, href: item.href })))
+    const pages: Entry[] = adminModules.map((module) => ({ id: `nav-${module.id}`, label: module.label, hint: adminModuleGroups.find((group) => group.id === module.group)?.label ?? '', href: module.href }))
     return { pages, records }
   }, [])
 }
