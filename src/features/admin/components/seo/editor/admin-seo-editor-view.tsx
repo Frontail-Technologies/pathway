@@ -14,6 +14,7 @@ import { SeoSearchMetadataSection } from './seo-search-metadata-section'
 import { SeoCanonicalRobotsSection } from './seo-canonical-robots-section'
 import { SeoSocialSection } from './seo-social-section'
 import { SeoPreviewCard } from './seo-preview-card'
+import { AdminFormFooter } from '../../admin-form-footer'
 
 export function AdminSeoEditorView({
   initialRecord,
@@ -54,23 +55,11 @@ export function AdminSeoEditorView({
     router.push(backHref)
   }
   const saveLabel = isEditing ? 'Save changes' : 'Create override'
-  const actions = (
-    <>
-      <Button type="button" variant="outline" size="sm" onClick={handleCancel}>
-        Cancel
-      </Button>
-      <Button type="submit" size="sm" disabled={isSubmitting}>
-        {isSubmitting ? 'Saving…' : saveLabel}
-      </Button>
-    </>
-  )
-
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form id="seo-editor-form" onSubmit={handleSubmit} className="space-y-6">
       <AdminPageHeader
         back={{ href: backHref, label: isEditing ? 'SEO override' : 'SEO' }}
         title={isEditing ? `Edit SEO for ${initialRecord?.targetLabel ?? 'page'}` : 'New SEO override'}
-        actions={actions}
       />
 
         <AdminEditorLayout
@@ -139,9 +128,8 @@ export function AdminSeoEditorView({
             />
 
             <SeoPreviewCard metadata={resolvedMetadata} />
-
-            <div className="flex items-center justify-end gap-2">{actions}</div>
         </AdminEditorLayout>
+      <AdminFormFooter formId="seo-editor-form" submitLabel={isSubmitting ? 'Saving…' : saveLabel} onCancel={handleCancel} submitting={isSubmitting} />
     </form>
   )
 }

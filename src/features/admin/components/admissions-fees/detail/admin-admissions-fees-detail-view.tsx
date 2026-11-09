@@ -6,7 +6,7 @@ import { Edit, ExternalLink } from 'lucide-react'
 import { buttonVariants } from '@/components/ui/button'
 import type { AdminProgramOffering, AdminProgramOfferingDetail } from '@/features/admin/data/admin-admissions-fees'
 import { AdminDetailStickyRail } from '../../admin-detail-sticky-rail'
-import { AdminPageHeader, CompletenessMeter, FactList, Panel, StatusBadge, Tag, toneFromVariant } from '../../kit'
+import { CompletenessMeter, FactList, Panel, StatusBadge, Tag, toneFromVariant, Monogram, RecordHeader } from '../../kit'
 import { DocumentRow, EmptyNote, StatusChecklist } from '../../programs/shared/section-kit'
 import { admissionModes, completenessStatusStyles, feeComponentTypes, feePeriods, offeringDocumentTypes, qualityBadgeStyles, qualityCheckStyles } from '../shared/admissions-fees-constants'
 
@@ -40,11 +40,12 @@ export function AdminAdmissionsFeesDetailView({ data }: { data: AdminProgramOffe
 
   return (
     <div className="space-y-6">
-      <AdminPageHeader
+      <RecordHeader
         back={{ href: '/admin/admissions-fees', label: 'Admissions & fees' }}
         title={offering.programName}
+        media={<Monogram name={offering.programName} size="lg" />}
         description={`${offering.institutionName} · ${offering.institutionCity}, ${offering.institutionState}`}
-        meta={
+        chips={
           <>
             <StatusBadge tone={toneFromVariant(quality.variant)}>{quality.label}</StatusBadge>
             {offering.annualFee ? null : <StatusBadge tone="warning">Fee not set</StatusBadge>}

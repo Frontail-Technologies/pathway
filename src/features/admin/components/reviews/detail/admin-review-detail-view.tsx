@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { Check, Copy, ExternalLink } from 'lucide-react'
 import { Button, buttonVariants } from '@/components/ui/button'
 import type { AdminReview } from '@/features/admin/data/admin-reviews'
-import { AdminPageHeader, FactList, Panel, Tag } from '../../kit'
+import { FactList, Panel, Tag, Monogram, RecordHeader } from '../../kit'
 import { ModerationStatusBadge } from '../shared/moderation-status-badge'
 import { Rating } from '../shared/review-rating'
 import { formatReviewDate, moderationStatusDescriptions, reviewEntityTypeLabels, reviewSourceLabels } from '../shared/review-constants'
@@ -27,10 +27,11 @@ export function AdminReviewDetailView({ review }: { review: AdminReview }) {
 
   return (
     <div className="space-y-6">
-      <AdminPageHeader
+      <RecordHeader
         back={{ href: '/admin/reviews', label: 'Reviews' }}
         title={review.title || `Review of ${review.targetName || review.entityId}`}
-        meta={
+        media={<Monogram name={review.title || `Review of ${review.targetName || review.entityId}`} size="lg" />}
+        chips={
           <>
             <ModerationStatusBadge status={review.moderationStatus} />
             <Tag>{reviewSourceLabels[review.source]}</Tag>

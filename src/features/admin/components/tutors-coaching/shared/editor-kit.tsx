@@ -164,7 +164,7 @@ export function EditorActions({ onCancel, onSave, saveStatus, saveLabel }: { onC
 
 export function MobileSaveBar({ dirty, ...actions }: { dirty: boolean; onCancel: () => void; onSave: () => void; saveStatus: SaveStatus; saveLabel: string }) {
   return (
-    <div className="fixed inset-x-0 bottom-0 z-20 flex items-center justify-between gap-3 border-t border-border bg-card px-4 py-3 lg:hidden">
+    <div className="sticky bottom-0 z-10 -mx-4 -mb-5 mt-6 flex items-center justify-between gap-3 border-t border-border bg-card/95 px-4 py-3 backdrop-blur supports-[backdrop-filter]:bg-card/85 lg:-mx-6 lg:-mb-6 lg:px-6">
       <span className="truncate text-[13px] text-muted-foreground">{dirty ? 'Unsaved changes' : 'No changes'}</span>
       <div className="flex shrink-0 items-center gap-2">
         <EditorActions {...actions} />

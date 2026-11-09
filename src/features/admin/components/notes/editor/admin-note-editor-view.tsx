@@ -19,6 +19,7 @@ import { Info } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useUnsavedChanges } from '@/features/admin/hooks/use-unsaved-changes'
 import { AdminPageHeader } from '../../kit'
+import { AdminFormFooter } from '../../admin-form-footer'
 
 export function AdminNoteEditorView({
   initialNote,
@@ -80,20 +81,10 @@ export function AdminNoteEditorView({
   })
 
   return (
-    <form onSubmit={onSubmit} className="space-y-6">
+    <form id="note-editor-form" onSubmit={onSubmit} className="space-y-6">
       <AdminPageHeader
         back={{ href: backHref, label: isEditing ? 'Note' : 'Notes' }}
         title={isEditing ? `Edit ${initialNote?.title ?? 'note'}` : 'New note'}
-        actions={
-          <>
-            <Button type="button" variant="outline" size="sm" onClick={handleCancel}>
-              Cancel
-            </Button>
-            <Button type="submit" size="sm">
-              {saveLabel}
-            </Button>
-          </>
-        }
       />
 
       {apiNotice ? (
@@ -169,14 +160,7 @@ export function AdminNoteEditorView({
 
           <NotePublishingSection formData={formData} onChange={handleFieldChange} />
 
-          <div className="flex items-center justify-end gap-2">
-            <Button type="button" variant="outline" size="sm" onClick={handleCancel}>
-              Cancel
-            </Button>
-            <Button type="submit" size="sm">
-              {saveLabel}
-            </Button>
-          </div>
+          <AdminFormFooter formId="note-editor-form" submitLabel={saveLabel} onCancel={handleCancel} />
       </AdminEditorLayout>
     </form>
   )

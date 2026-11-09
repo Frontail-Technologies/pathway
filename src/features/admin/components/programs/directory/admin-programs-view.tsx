@@ -136,24 +136,24 @@ export function AdminProgramsView() {
           </Link>
         }
       />
-
-      <AdminToolbar
-        search={f.q}
-        onSearchChange={(q) => set({ q })}
-        searchPlaceholder="Search name, degree or stream"
-        hasActiveFilters={active}
-        onReset={reset}
-        summary={active ? `${filtered.length} of ${data.length} match` : undefined}
-      >
-        <AdminFilterSelect label="Level" value={f.level} onChange={(level) => set({ level })} options={options.levels.map((l) => ({ value: l, label: l }))} />
-        <AdminFilterSelect label="Stream" value={f.stream} onChange={(stream) => set({ stream })} options={options.streams.map((s) => ({ value: s, label: s }))} />
-        <AdminFilterSelect label="Duration" value={f.duration} onChange={(duration) => set({ duration })} options={options.durations.map((d) => ({ value: d, label: d }))} />
-        <AdminFilterSelect label="Quality" value={f.quality} onChange={(quality) => set({ quality })} options={options.qualityStatuses.filter((q) => q.value !== 'all').map((q) => ({ value: q.value, label: qualityStyles[q.value as keyof typeof qualityStyles]?.label ?? q.label }))} />
-        <AdminFilterSelect label="Public page" value={f.page} onChange={(page) => set({ page })} options={[{ value: 'live', label: 'Live' }, { value: 'none', label: 'Not published' }]} />
-        <AdminFilterSelect label="Institution" value={institutionValue} onChange={(next) => set({ institution: next })} options={options.institutions.map((i) => ({ value: i.id, label: i.name }))} />
-      </AdminToolbar>
-
-      <AdminDataTable
+<AdminDataTable
+  tabs={{ value: f.quality, onChange: (value) => set({ quality: value }), options: options.qualityStatuses.filter((q) => q.value !== 'all').map((q) => ({ value: q.value, label: qualityStyles[q.value as keyof typeof qualityStyles]?.label ?? q.label })) }}
+  toolbar={
+    <AdminToolbar
+          search={f.q}
+          onSearchChange={(q) => set({ q })}
+          searchPlaceholder="Search name, degree or stream"
+          hasActiveFilters={active}
+          onReset={reset}
+          summary={active ? `${filtered.length} of ${data.length} match` : undefined}
+        >
+          <AdminFilterSelect label="Level" value={f.level} onChange={(level) => set({ level })} options={options.levels.map((l) => ({ value: l, label: l }))} />
+          <AdminFilterSelect label="Stream" value={f.stream} onChange={(stream) => set({ stream })} options={options.streams.map((s) => ({ value: s, label: s }))} />
+          <AdminFilterSelect label="Duration" value={f.duration} onChange={(duration) => set({ duration })} options={options.durations.map((d) => ({ value: d, label: d }))} />
+          <AdminFilterSelect label="Public page" value={f.page} onChange={(page) => set({ page })} options={[{ value: 'live', label: 'Live' }, { value: 'none', label: 'Not published' }]} />
+          <AdminFilterSelect label="Institution" value={institutionValue} onChange={(next) => set({ institution: next })} options={options.institutions.map((i) => ({ value: i.id, label: i.name }))} />
+        </AdminToolbar>
+  }
         columns={columns}
         data={filtered}
         onRowClick={(item) => router.push(`/admin/programs/${item.id}`)}

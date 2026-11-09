@@ -16,6 +16,7 @@ import { AdminEditorSectionNav } from '../admin-editor-section-nav'
 import { AdminEditorLayout } from '../shared/admin-editor-layout'
 import { AdminPageHeader } from '../kit'
 import { DemoNote, Field, FormSection, FormSelect, PairRowsEditor, ToggleRow } from '../demo/demo-form'
+import { AdminFormFooter } from '../admin-form-footer'
 
 const SECTIONS = [
   { id: 'basics', label: 'Basics', icon: Info },
@@ -109,22 +110,12 @@ export function AdminExamEditor({ exam, mode }: { exam?: Exam; mode: 'add' | 'ed
   const fieldError = (key: keyof Errors) => (errors[key] ? { 'aria-invalid': true as const, 'aria-describedby': `${fieldIds[key]}-error` } : {})
 
   return (
-    <form onSubmit={submit} className="space-y-5 pb-8" noValidate>
+    <form id="exam-editor-form" onSubmit={submit} className="space-y-5" noValidate>
       <AdminPageHeader
         back={exam ? { href: `/admin/exams/${exam.id}`, label: exam.shortName } : { href: '/admin/exams', label: 'Exams' }}
         title={mode === 'edit' ? `Edit ${exam?.shortName ?? 'exam'}` : 'Add exam'}
         description={mode === 'edit' ? 'Update the listing and the content of the public exam page.' : 'Create a listing for an entrance exam.'}
         meta={<DemoNote />}
-        actions={
-          <>
-            <Button type="button" variant="outline" size="sm" onClick={cancel}>
-              Cancel
-            </Button>
-            <Button type="submit" size="sm">
-              {mode === 'edit' ? 'Save changes' : 'Create exam'}
-            </Button>
-          </>
-        }
       />
 
       <AdminEditorLayout navigation={<AdminEditorSectionNav sections={SECTIONS} activeSectionId={activeSection} onSectionChange={goTo} />}>
@@ -232,14 +223,7 @@ export function AdminExamEditor({ exam, mode }: { exam?: Exam; mode: 'add' | 'ed
           </div>
         </FormSection>
 
-        <div className="flex items-center justify-end gap-2">
-          <Button type="button" variant="outline" size="sm" onClick={cancel}>
-            Cancel
-          </Button>
-          <Button type="submit" size="sm">
-            {mode === 'edit' ? 'Save changes' : 'Create exam'}
-          </Button>
-        </div>
+        <AdminFormFooter formId="exam-editor-form" submitLabel={mode === 'edit' ? 'Save changes' : 'Create exam'} onCancel={cancel} />
       </AdminEditorLayout>
     </form>
   )

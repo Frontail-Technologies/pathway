@@ -13,6 +13,7 @@ import { useUrlFilters } from '@/features/admin/hooks/use-url-filters'
 import { AdminDataTable } from '../../admin-data-table'
 import { AdminFilterSelect, AdminPageHeader, AdminToolbar, SortHeader, stopRowClick, Tag } from '../../kit'
 import { NoteStatusBadge, noteStudyLevelOptions, sentenceCase } from '../shared/note-meta'
+import { AdminEmptyState } from '../../admin-empty-state'
 
 const DEFAULT_FILTERS = { q: '', type: 'all', level: 'all', pricing: 'all', status: 'all' }
 
@@ -138,12 +139,8 @@ export function AdminNotesView({ initialNotes }: { initialNotes: AdminNote[] }) 
     return (
       <div className="space-y-5">
         <AdminPageHeader title="Notes" description="Study notes, formula sheets and practice material students can download." />
-        <div className="flex flex-col items-center rounded-xl border border-border bg-card shadow-sm px-6 py-14 text-center">
-          <p className="text-[15px] font-semibold text-foreground">No notes yet</p>
-          <p className="mt-1 max-w-sm text-sm text-muted-foreground">Add a note with its PDF, price and the courses or exams it covers.</p>
-          <div className="mt-5">
-            <AddNoteLink />
-          </div>
+        <div className="rounded-xl border border-border bg-card shadow-sm">
+          <AdminEmptyState art="noNotes" title="No notes yet" description="Add a note with its PDF, price and the courses or exams it covers." action={<AddNoteLink />} className="py-12" />
         </div>
       </div>
     )
@@ -152,22 +149,22 @@ export function AdminNotesView({ initialNotes }: { initialNotes: AdminNote[] }) 
   return (
     <div className="space-y-5">
       <AdminPageHeader title="Notes" count={`${data.length} total`} description="Study notes, formula sheets and practice material students can download." actions={<AddNoteLink />} />
-
-      <AdminToolbar
-        search={f.q}
-        onSearchChange={(q) => set({ q })}
-        searchPlaceholder="Search title, subject or author"
-        hasActiveFilters={active}
-        onReset={reset}
-        summary={active ? `${filtered.length} of ${data.length} match` : undefined}
-      >
-        <AdminFilterSelect label="Type" value={f.type} onChange={(type) => set({ type })} options={typeOptions} />
-        <AdminFilterSelect label="Level" value={f.level} onChange={(level) => set({ level })} options={noteStudyLevelOptions} />
-        <AdminFilterSelect label="Price" value={f.pricing} onChange={(pricing) => set({ pricing })} options={[{ value: 'free', label: 'Free' }, { value: 'paid', label: 'Paid' }]} />
-        <AdminFilterSelect label="Status" value={f.status} onChange={(status) => set({ status })} options={statusOptions} />
-      </AdminToolbar>
-
-      <AdminDataTable
+<AdminDataTable
+  tabs={{ value: f.status, onChange: (value) => set({ status: value }), options: statusOptions }}
+  toolbar={
+    <AdminToolbar
+          search={f.q}
+          onSearchChange={(q) => set({ q })}
+          searchPlaceholder="Search title, subject or author"
+          hasActiveFilters={active}
+          onReset={reset}
+          summary={active ? `${filtered.length} of ${data.length} match` : undefined}
+        >
+          <AdminFilterSelect label="Type" value={f.type} onChange={(type) => set({ type })} options={typeOptions} />
+          <AdminFilterSelect label="Level" value={f.level} onChange={(level) => set({ level })} options={noteStudyLevelOptions} />
+          <AdminFilterSelect label="Price" value={f.pricing} onChange={(pricing) => set({ pricing })} options={[{ value: 'free', label: 'Free' }, { value: 'paid', label: 'Paid' }]} />
+        </AdminToolbar>
+  }
         columns={columns}
         data={filtered}
         onRowClick={(note) => router.push(`/admin/notes/${note.id}`)}

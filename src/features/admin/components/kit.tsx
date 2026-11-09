@@ -405,7 +405,7 @@ export function ScoreMeter({ value, tone = 'info', label, size = 96, className }
 
 export type RecordMeta = { icon: LucideIcon; label: string }
 
-export function RecordHeader({ title, media, chips, meta, actions, back }: { title: string; media?: ReactNode; chips?: ReactNode; meta?: RecordMeta[]; actions?: ReactNode; back?: { href: string; label: string } }) {
+export function RecordHeader({ title, media, chips, meta, description, actions, back }: { title: string; media?: ReactNode; chips?: ReactNode; meta?: RecordMeta[]; description?: string; actions?: ReactNode; back?: { href: string; label: string } }) {
   return (
     <header className="flex flex-col gap-3">
       {back ? (
@@ -435,6 +435,7 @@ export function RecordHeader({ title, media, chips, meta, actions, back }: { tit
                 })}
               </ul>
             ) : null}
+            {description ? <p className="max-w-2xl text-sm text-muted-foreground">{description}</p> : null}
           </div>
         </div>
         {actions ? <div className="flex shrink-0 flex-wrap items-center gap-2">{actions}</div> : null}

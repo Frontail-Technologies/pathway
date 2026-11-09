@@ -130,13 +130,13 @@ export function AdminTeamView() {
           </Button>
         }
       />
-
-      <AdminToolbar search={f.q} onSearchChange={(q) => set({ q })} searchPlaceholder="Search name or email" hasActiveFilters={active} onReset={reset} summary={active ? `${filtered.length} of ${members.length} match` : undefined}>
-        <AdminFilterSelect label="Role" value={f.role} onChange={(role) => set({ role })} options={TEAM_ROLES.map((r) => ({ value: r, label: r }))} />
-        <AdminFilterSelect label="Status" value={f.status} onChange={(status) => set({ status })} options={[{ value: 'active', label: 'Active' }, { value: 'pending', label: 'Invite pending' }]} />
-      </AdminToolbar>
-
-      <AdminDataTable
+<AdminDataTable
+  tabs={{ value: f.status, onChange: (value) => set({ status: value }), options: [{ value: 'active', label: 'Active' }, { value: 'pending', label: 'Invite pending' }] }}
+  toolbar={
+    <AdminToolbar search={f.q} onSearchChange={(q) => set({ q })} searchPlaceholder="Search name or email" hasActiveFilters={active} onReset={reset} summary={active ? `${filtered.length} of ${members.length} match` : undefined}>
+          <AdminFilterSelect label="Role" value={f.role} onChange={(role) => set({ role })} options={TEAM_ROLES.map((r) => ({ value: r, label: r }))} />
+        </AdminToolbar>
+  }
         columns={columns}
         data={filtered}
         hasActiveFilters={active}

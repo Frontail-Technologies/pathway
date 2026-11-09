@@ -113,22 +113,22 @@ export function AdminExamsView() {
           </Link>
         }
       />
-
-      <AdminToolbar
-        search={f.q}
-        onSearchChange={(q) => set({ q })}
-        searchPlaceholder="Search name or conducting body"
-        hasActiveFilters={active}
-        onReset={reset}
-        summary={active ? `${filtered.length} of ${data.length} match` : undefined}
-      >
-        <AdminFilterSelect label="Study area" value={f.area} onChange={(area) => set({ area })} options={toOptions(examStudyAreaOptions)} />
-        <AdminFilterSelect label="Level" value={f.level} onChange={(level) => set({ level })} options={toOptions(examLevelOptions)} />
-        <AdminFilterSelect label="Scope" value={f.scope} onChange={(scope) => set({ scope })} options={toOptions(examScopeOptions)} />
-        <AdminFilterSelect label="Public page" value={f.page} onChange={(page) => set({ page })} options={[{ value: 'live', label: 'Live' }, { value: 'none', label: 'Listing only' }]} />
-      </AdminToolbar>
-
-      <AdminDataTable
+<AdminDataTable
+  toolbar={
+    <AdminToolbar
+          search={f.q}
+          onSearchChange={(q) => set({ q })}
+          searchPlaceholder="Search name or conducting body"
+          hasActiveFilters={active}
+          onReset={reset}
+          summary={active ? `${filtered.length} of ${data.length} match` : undefined}
+        >
+          <AdminFilterSelect label="Study area" value={f.area} onChange={(area) => set({ area })} options={toOptions(examStudyAreaOptions)} />
+          <AdminFilterSelect label="Level" value={f.level} onChange={(level) => set({ level })} options={toOptions(examLevelOptions)} />
+          <AdminFilterSelect label="Scope" value={f.scope} onChange={(scope) => set({ scope })} options={toOptions(examScopeOptions)} />
+          <AdminFilterSelect label="Public page" value={f.page} onChange={(page) => set({ page })} options={[{ value: 'live', label: 'Live' }, { value: 'none', label: 'Listing only' }]} />
+        </AdminToolbar>
+  }
         columns={columns}
         data={filtered}
         onRowClick={(item) => router.push(`/admin/exams/${item.id}`)}

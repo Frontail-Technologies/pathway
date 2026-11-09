@@ -4,7 +4,6 @@ import * as React from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import type { ColumnDef } from '@tanstack/react-table'
-import { History } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { ADMIN_STORAGE_KEYS } from '@/features/admin/data/admin-demo-storage'
@@ -101,15 +100,17 @@ export function AdminActivityView() {
 
       {!loaded ? null : entries.length === 0 ? (
         <div className="rounded-xl border border-border bg-card shadow-sm py-10">
-          <AdminEmptyState icon={History} title="No activity yet" description="Changes you make in the admin will be listed here." />
+          <AdminEmptyState art="noActivity" title="No activity yet" description="Changes you make in the admin will be listed here." />
         </div>
       ) : (
         <>
-          <AdminToolbar search={f.q} onSearchChange={(q) => set({ q })} searchPlaceholder="Search items" hasActiveFilters={active} onReset={reset} summary={active ? `${filtered.length} of ${entries.length} match` : undefined}>
-            <AdminFilterSelect label="Area" value={f.area} onChange={(area) => set({ area })} options={toOptions(ADMIN_ACTIVITY_AREAS)} />
-            <AdminFilterSelect label="Action" value={f.action} onChange={(action) => set({ action })} options={toOptions(ADMIN_ACTIVITY_ACTIONS)} />
-          </AdminToolbar>
-          <AdminDataTable
+<AdminDataTable
+  toolbar={
+    <AdminToolbar search={f.q} onSearchChange={(q) => set({ q })} searchPlaceholder="Search items" hasActiveFilters={active} onReset={reset} summary={active ? `${filtered.length} of ${entries.length} match` : undefined}>
+              <AdminFilterSelect label="Area" value={f.area} onChange={(area) => set({ area })} options={toOptions(ADMIN_ACTIVITY_AREAS)} />
+              <AdminFilterSelect label="Action" value={f.action} onChange={(action) => set({ action })} options={toOptions(ADMIN_ACTIVITY_ACTIONS)} />
+            </AdminToolbar>
+  }
             columns={columns}
             data={filtered}
             pageSize={20}

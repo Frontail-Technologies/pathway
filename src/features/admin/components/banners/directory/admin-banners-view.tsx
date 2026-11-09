@@ -12,6 +12,7 @@ import { useUrlFilters } from '@/features/admin/hooks/use-url-filters'
 import { AdminDataTable } from '../../admin-data-table'
 import { AdminFilterSelect, AdminPageHeader, AdminToolbar, SortHeader, StatusBadge, stopRowClick, Tag } from '../../kit'
 import { bannerPlacementOptions, bannerStatusLabels, bannerStatusOptions, bannerStatusTones, formatBannerWindow, placementLabel } from '../shared/banner-constants'
+import { AdminEmptyState } from '../../admin-empty-state'
 
 const DEFAULT_FILTERS = { q: '', placement: 'all', status: 'all' }
 
@@ -116,12 +117,8 @@ export function AdminBannersView({ initialBanners }: { initialBanners: AdminBann
     return (
       <div className="space-y-5">
         <AdminPageHeader title="Banners" description="Promotional strips shown on the homepage and study abroad page." />
-        <div className="flex flex-col items-center rounded-xl border border-border bg-card shadow-sm px-6 py-14 text-center">
-          <p className="text-[15px] font-semibold text-foreground">No banners yet</p>
-          <p className="mt-1 max-w-sm text-sm text-muted-foreground">Create a banner, pick where it shows, and schedule when it runs.</p>
-          <div className="mt-5">
-            <NewBannerLink />
-          </div>
+        <div className="rounded-xl border border-border bg-card shadow-sm">
+          <AdminEmptyState art="noBanners" title="No banners yet" description="Create a banner, pick where it shows, and schedule when it runs." action={<NewBannerLink />} className="py-12" />
         </div>
       </div>
     )
@@ -130,20 +127,20 @@ export function AdminBannersView({ initialBanners }: { initialBanners: AdminBann
   return (
     <div className="space-y-5">
       <AdminPageHeader title="Banners" count={`${initialBanners.length} total`} description="Promotional strips shown on the homepage and study abroad page." actions={<NewBannerLink />} />
-
-      <AdminToolbar
-        search={f.q}
-        onSearchChange={(q) => set({ q })}
-        searchPlaceholder="Search name, headline or button"
-        hasActiveFilters={active}
-        onReset={reset}
-        summary={active ? `${filtered.length} of ${initialBanners.length} match` : undefined}
-      >
-        <AdminFilterSelect label="Placement" value={f.placement} onChange={(placement) => set({ placement })} options={bannerPlacementOptions} />
-        <AdminFilterSelect label="Status" value={f.status} onChange={(status) => set({ status })} options={bannerStatusOptions} />
-      </AdminToolbar>
-
-      <AdminDataTable
+<AdminDataTable
+  tabs={{ value: f.status, onChange: (value) => set({ status: value }), options: bannerStatusOptions }}
+  toolbar={
+    <AdminToolbar
+          search={f.q}
+          onSearchChange={(q) => set({ q })}
+          searchPlaceholder="Search name, headline or button"
+          hasActiveFilters={active}
+          onReset={reset}
+          summary={active ? `${filtered.length} of ${initialBanners.length} match` : undefined}
+        >
+          <AdminFilterSelect label="Placement" value={f.placement} onChange={(placement) => set({ placement })} options={bannerPlacementOptions} />
+        </AdminToolbar>
+  }
         columns={columns}
         data={filtered}
         onRowClick={(banner) => router.push(`/admin/banners/${banner.id}`)}

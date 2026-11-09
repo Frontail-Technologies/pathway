@@ -153,23 +153,23 @@ export function AdminAdmissionsFeesView() {
           </Link>
         }
       />
-
-      <AdminToolbar
-        search={f.q}
-        onSearchChange={(q) => set({ q })}
-        searchPlaceholder="Search course, institution or exam"
-        hasActiveFilters={active}
-        onReset={reset}
-        summary={active ? `${filtered.length} of ${data.length} match` : undefined}
-      >
-        <AdminFilterSelect label="Institution" value={institutionValue} onChange={(institution) => set({ institution })} options={institutions} />
-        <AdminFilterSelect label="Course" value={programValue} onChange={(program) => set({ program })} options={programs} />
-        <AdminFilterSelect label="Level" value={f.level} onChange={(level) => set({ level })} options={levelOptions} />
-        <AdminFilterSelect label="Admission" value={f.mode} onChange={(mode) => set({ mode })} options={admissionModes} />
-        <AdminFilterSelect label="Quality" value={f.quality} onChange={(quality) => set({ quality })} options={qualityOptions} />
-      </AdminToolbar>
-
-      <AdminDataTable
+<AdminDataTable
+  tabs={{ value: f.quality, onChange: (value) => set({ quality: value }), options: qualityOptions }}
+  toolbar={
+    <AdminToolbar
+          search={f.q}
+          onSearchChange={(q) => set({ q })}
+          searchPlaceholder="Search course, institution or exam"
+          hasActiveFilters={active}
+          onReset={reset}
+          summary={active ? `${filtered.length} of ${data.length} match` : undefined}
+        >
+          <AdminFilterSelect label="Institution" value={institutionValue} onChange={(institution) => set({ institution })} options={institutions} />
+          <AdminFilterSelect label="Course" value={programValue} onChange={(program) => set({ program })} options={programs} />
+          <AdminFilterSelect label="Level" value={f.level} onChange={(level) => set({ level })} options={levelOptions} />
+          <AdminFilterSelect label="Admission" value={f.mode} onChange={(mode) => set({ mode })} options={admissionModes} />
+        </AdminToolbar>
+  }
         columns={columns}
         data={filtered}
         onRowClick={(item) => router.push(`/admin/admissions-fees/${item.id}`)}

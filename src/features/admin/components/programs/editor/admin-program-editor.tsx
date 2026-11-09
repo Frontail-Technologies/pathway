@@ -46,11 +46,6 @@ export function AdminProgramEditor({ program, mode = 'create' }: AdminProgramEdi
         title={editor.isEdit ? 'Edit course' : 'Add course'}
         description={editor.isEdit ? program?.name : 'Fields marked * are required.'}
         meta={editor.isDirty ? <StatusBadge tone="warning">Unsaved changes</StatusBadge> : undefined}
-        actions={
-          <div className="hidden items-center gap-2 sm:flex">
-            <EditorActions onCancel={handleCancel} onSave={editor.handleSubmit} saveLabel={saveLabel} />
-          </div>
-        }
       />
 
       <AdminEditorLayout

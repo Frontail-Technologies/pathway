@@ -12,6 +12,7 @@ import { useUrlFilters } from '@/features/admin/hooks/use-url-filters'
 import { AdminDataTable } from '../../admin-data-table'
 import { AdminFilterSelect, AdminPageHeader, AdminToolbar, SortHeader, stopRowClick, Tag } from '../../kit'
 import { SeoIndexingBadge, seoIndexingOptions, seoTargetTypeLabels, seoTargetTypeOptions } from '../shared/seo-meta'
+import { AdminEmptyState } from '../../admin-empty-state'
 
 const DEFAULT_FILTERS = { q: '', type: 'all', indexing: 'all' }
 const DESCRIPTION = 'Search titles, descriptions and indexing rules that replace the defaults on a page.'
@@ -122,12 +123,8 @@ export function AdminSeoView({ initialRecords }: { initialRecords: AdminSeoRecor
     return (
       <div className="space-y-5">
         <AdminPageHeader title="SEO" description={DESCRIPTION} />
-        <div className="flex flex-col items-center rounded-xl border border-border bg-card shadow-sm px-6 py-14 text-center">
-          <p className="text-[15px] font-semibold text-foreground">No SEO overrides yet</p>
-          <p className="mt-1 max-w-sm text-sm text-muted-foreground">Every page uses its default title and description. Add an override when a page needs different search text.</p>
-          <div className="mt-5">
-            <AddSeoLink />
-          </div>
+        <div className="rounded-xl border border-border bg-card shadow-sm">
+          <AdminEmptyState art="noSeo" title="No SEO overrides yet" description="Every page uses its default title and description. Add an override when a page needs different search text." action={<AddSeoLink />} className="py-12" />
         </div>
       </div>
     )
@@ -136,20 +133,20 @@ export function AdminSeoView({ initialRecords }: { initialRecords: AdminSeoRecor
   return (
     <div className="space-y-5">
       <AdminPageHeader title="SEO" count={`${data.length} total`} description={DESCRIPTION} actions={<AddSeoLink />} />
-
-      <AdminToolbar
-        search={f.q}
-        onSearchChange={(q) => set({ q })}
-        searchPlaceholder="Search page, title or keyword"
-        hasActiveFilters={active}
-        onReset={reset}
-        summary={active ? `${filtered.length} of ${data.length} match` : undefined}
-      >
-        <AdminFilterSelect label="Type" value={f.type} onChange={(type) => set({ type })} options={seoTargetTypeOptions} />
-        <AdminFilterSelect label="Indexing" value={f.indexing} onChange={(indexing) => set({ indexing })} options={seoIndexingOptions} />
-      </AdminToolbar>
-
-      <AdminDataTable
+<AdminDataTable
+  toolbar={
+    <AdminToolbar
+          search={f.q}
+          onSearchChange={(q) => set({ q })}
+          searchPlaceholder="Search page, title or keyword"
+          hasActiveFilters={active}
+          onReset={reset}
+          summary={active ? `${filtered.length} of ${data.length} match` : undefined}
+        >
+          <AdminFilterSelect label="Type" value={f.type} onChange={(type) => set({ type })} options={seoTargetTypeOptions} />
+          <AdminFilterSelect label="Indexing" value={f.indexing} onChange={(indexing) => set({ indexing })} options={seoIndexingOptions} />
+        </AdminToolbar>
+  }
         columns={columns}
         data={filtered}
         onRowClick={(record) => router.push(`/admin/seo/${record.id}`)}

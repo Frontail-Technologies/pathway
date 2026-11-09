@@ -11,6 +11,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { useUnsavedChanges } from '@/features/admin/hooks/use-unsaved-changes'
 import { AdminPageHeader, CompletenessMeter, FactList, Panel, StatusBadge } from '../../kit'
 import { StudentStatusBadge } from '../shared/student-status-badge'
+import { AdminFormFooter } from '../../admin-form-footer'
 
 function Field({ id, label, value, placeholder, type = 'text', hint }: { id: string; label: string; value?: string | number; placeholder?: string; type?: string; hint?: string }) {
   return (
@@ -104,19 +105,6 @@ export function AdminStudentEditor({ student }: { student: AdminStudent }) {
         </form>
 
         <aside className="space-y-6 lg:sticky lg:top-[4.5rem] lg:col-span-4">
-          <Panel>
-            <div className="space-y-3">
-              <div className="flex gap-2">
-                <Button type="submit" form="student-editor-form" className="h-9 flex-1">
-                  Save changes
-                </Button>
-                <Button type="button" variant="outline" className="h-9" onClick={handleCancel}>
-                  Cancel
-                </Button>
-              </div>
-              <p className="text-[13px] text-muted-foreground">{dirty ? 'You have unsaved changes.' : 'No changes yet.'}</p>
-            </div>
-          </Panel>
 
           <Panel title="Summary">
             <div className="space-y-4">
@@ -136,6 +124,7 @@ export function AdminStudentEditor({ student }: { student: AdminStudent }) {
             </div>
           </Panel>
         </aside>
+        <AdminFormFooter className="lg:col-span-12" formId="student-editor-form" submitLabel="Save changes" onCancel={handleCancel} status={dirty ? 'You have unsaved changes.' : 'No changes yet.'} />
       </div>
     </div>
   )

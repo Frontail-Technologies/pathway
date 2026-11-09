@@ -29,7 +29,7 @@ import {
 } from '@/features/admin/data/admin-tutor-accounts'
 import { SLOTS } from '@/features/tutor-space/data/tutor-space'
 import { Field } from '../../demo/demo-form'
-import { AdminPageHeader, FactList, Panel, StatusBadge, Tag } from '../../kit'
+import { AdminPageHeader, FactList, Panel, StatusBadge, Tag, Monogram, RecordHeader } from '../../kit'
 
 const DAY_LABELS = { mon: 'Mon', tue: 'Tue', wed: 'Wed', thu: 'Thu', fri: 'Fri', sat: 'Sat', sun: 'Sun' } as const
 const SLOT_LABELS: Record<string, string> = Object.fromEntries(SLOTS.map((slot) => [slot.id, slot.label]))
@@ -222,11 +222,12 @@ export function AdminTutorAccountDetailView({ userId }: { userId: string }) {
 
   return (
     <div className="space-y-5">
-      <AdminPageHeader
+      <RecordHeader
         title={profile.displayName || 'Unnamed tutor'}
+        media={<Monogram name={profile.displayName || 'Unnamed tutor'} size="lg" />}
         description={account.email}
         back={back}
-        meta={
+        chips={
           <>
             <StatusBadge tone={verificationTone[verification.status]}>{verificationLabels[verification.status]}</StatusBadge>
             {account.accountStatus !== 'active' ? <StatusBadge tone="danger">{account.accountStatus === 'suspended' ? 'Account suspended' : 'Account disabled'}</StatusBadge> : null}

@@ -4,7 +4,6 @@ import * as React from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import type { ColumnDef } from '@tanstack/react-table'
-import { UserCheck } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
 import { queryKeys } from '@/lib/query-client'
 import { Button } from '@/components/ui/button'
@@ -102,7 +101,7 @@ export function AdminTutorAccountsView() {
         </div>
       ) : load.rows.length === 0 ? (
         <div className="rounded-xl border border-border bg-card shadow-sm">
-          <AdminEmptyState icon={UserCheck} title={status === 'pending_review' ? 'Nothing waiting for review' : 'No tutor accounts'} description={status === 'pending_review' ? 'Profiles appear here when tutors submit them from Tutor Space.' : 'Try a different review status.'} className="py-14" />
+          <AdminEmptyState art="allClear" title={status === 'pending_review' ? 'Nothing waiting for review' : 'No tutor accounts'} description={status === 'pending_review' ? 'Profiles appear here when tutors submit them from Tutor Space.' : 'Try a different review status.'} className="py-14" />
         </div>
       ) : (
         <AdminDataTable

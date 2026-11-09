@@ -46,11 +46,6 @@ export function AdminCoachingEditor({ initialProvider }: { initialProvider?: Adm
         back={isEditing ? { href: backHref, label: initialProvider?.name ?? 'Provider' } : { href: backHref, label: 'Tutors & coaching' }}
         title={isEditing ? `Edit ${initialProvider?.name ?? 'provider'}` : 'Add coaching provider'}
         meta={dirty ? <span className="text-[13px] text-muted-foreground">Unsaved changes</span> : undefined}
-        actions={
-          <div className="hidden items-center gap-2 lg:flex">
-            <EditorActions {...actions} />
-          </div>
-        }
       />
 
       <SaveNotice status={saveStatus} message={saveMessage} />

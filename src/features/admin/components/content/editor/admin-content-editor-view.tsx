@@ -16,6 +16,7 @@ import { ContentMediaSection } from './content-media-section'
 import { ContentTaxonomySection } from './content-taxonomy-section'
 import { ContentRelatedEntitiesSection } from './content-related-entities-section'
 import { ContentPublishingSection } from './content-publishing-section'
+import { AdminFormFooter } from '../../admin-form-footer'
 
 export function AdminContentEditorView({ initialEntry }: { initialEntry?: ContentEntry | null }) {
   const router = useRouter()
@@ -35,23 +36,11 @@ export function AdminContentEditorView({ initialEntry }: { initialEntry?: Conten
     router.push(backHref)
   }
 
-  const actions = (
-    <>
-      <Button type="button" variant="outline" size="sm" onClick={handleCancel}>
-        Cancel
-      </Button>
-      <Button type="submit" size="sm">
-        {isEditing ? 'Save changes' : 'Create article'}
-      </Button>
-    </>
-  )
-
   return (
-    <form onSubmit={handleSubmit} noValidate className="space-y-6 pb-12">
+    <form id="content-editor-form" onSubmit={handleSubmit} noValidate className="space-y-6">
       <AdminPageHeader
         back={isEditing && initialEntry ? { href: backHref, label: initialEntry.title } : { href: '/admin/content', label: 'Articles' }}
         title={isEditing ? 'Edit article' : 'New article'}
-        actions={actions}
       />
 
       {apiNotice ? <FormNotice>{apiNotice}</FormNotice> : null}
@@ -73,9 +62,8 @@ export function AdminContentEditorView({ initialEntry }: { initialEntry?: Conten
         <ContentTaxonomySection formData={formData} onChange={handleChange} />
         <ContentRelatedEntitiesSection formData={formData} onAddRelatedEntity={editor.handleAddRelatedEntity} onRemoveRelatedEntity={editor.handleRemoveRelatedEntity} />
         <ContentPublishingSection formData={formData} onChange={handleChange} />
-
-        <div className="flex items-center justify-end gap-2 border-t border-border pt-4">{actions}</div>
       </AdminEditorLayout>
+      <AdminFormFooter formId="content-editor-form" submitLabel={isEditing ? 'Save changes' : 'Create article'} onCancel={handleCancel} />
     </form>
   )
 }

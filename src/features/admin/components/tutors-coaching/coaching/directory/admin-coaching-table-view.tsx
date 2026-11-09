@@ -39,23 +39,24 @@ export function AdminCoachingTableView({ providers }: { providers: AdminCoaching
 
   return (
     <div className="space-y-4">
-      <AdminToolbar
-        search={f.q}
-        onSearchChange={(q) => set({ q })}
-        searchPlaceholder="Search name, city, exam or subject"
-        hasActiveFilters={active}
-        onReset={reset}
-        summary={active ? `${filtered.length} of ${providers.length} match` : undefined}
-      >
-        <AdminFilterSelect label="Type" value={f.type} onChange={(type) => set({ type })} options={TYPE_OPTIONS} />
-        <AdminFilterSelect label="Exam" value={f.exam} onChange={(exam) => set({ exam })} options={toOptions(COACHING_EXAM_OPTIONS)} />
-        <AdminFilterSelect label="Mode" value={f.mode} onChange={(mode) => set({ mode })} options={toOptions(COACHING_MODE_OPTIONS)} />
-        <AdminFilterSelect label="Location" value={f.location} onChange={(location) => set({ location })} options={locationOptions} />
-        <AdminFilterSelect label="Status" value={f.quality} onChange={(quality) => set({ quality })} options={QUALITY_FILTER_OPTIONS} />
-        <AdminFilterSelect label="Public page" value={f.page} onChange={(page) => set({ page })} options={PUBLIC_PAGE_FILTER_OPTIONS} />
-      </AdminToolbar>
-
-      <AdminDataTable
+<AdminDataTable
+  tabs={{ value: f.quality, onChange: (value) => set({ quality: value }), options: QUALITY_FILTER_OPTIONS }}
+  toolbar={
+    <AdminToolbar
+          search={f.q}
+          onSearchChange={(q) => set({ q })}
+          searchPlaceholder="Search name, city, exam or subject"
+          hasActiveFilters={active}
+          onReset={reset}
+          summary={active ? `${filtered.length} of ${providers.length} match` : undefined}
+        >
+          <AdminFilterSelect label="Type" value={f.type} onChange={(type) => set({ type })} options={TYPE_OPTIONS} />
+          <AdminFilterSelect label="Exam" value={f.exam} onChange={(exam) => set({ exam })} options={toOptions(COACHING_EXAM_OPTIONS)} />
+          <AdminFilterSelect label="Mode" value={f.mode} onChange={(mode) => set({ mode })} options={toOptions(COACHING_MODE_OPTIONS)} />
+          <AdminFilterSelect label="Location" value={f.location} onChange={(location) => set({ location })} options={locationOptions} />
+          <AdminFilterSelect label="Public page" value={f.page} onChange={(page) => set({ page })} options={PUBLIC_PAGE_FILTER_OPTIONS} />
+        </AdminToolbar>
+  }
         columns={coachingColumns}
         data={filtered}
         onRowClick={(provider) => router.push(`/admin/tutors-coaching/coaching/${provider.id}`)}

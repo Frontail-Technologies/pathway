@@ -46,11 +46,6 @@ export function AdminTutorEditor({ initialTutor }: { initialTutor?: AdminTutor }
         back={isEditing ? { href: backHref, label: initialTutor?.name ?? 'Tutor' } : { href: backHref, label: 'Tutors & coaching' }}
         title={isEditing ? `Edit ${initialTutor?.name ?? 'tutor'}` : 'Add tutor'}
         meta={dirty ? <span className="text-[13px] text-muted-foreground">Unsaved changes</span> : undefined}
-        actions={
-          <div className="hidden items-center gap-2 lg:flex">
-            <EditorActions {...actions} />
-          </div>
-        }
       />
 
       <SaveNotice status={saveStatus} message={saveMessage} />

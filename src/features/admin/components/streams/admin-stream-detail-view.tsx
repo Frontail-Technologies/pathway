@@ -5,7 +5,7 @@ import { ExternalLink } from 'lucide-react'
 import { buttonVariants } from '@/components/ui/button'
 import { Switch } from '@/components/ui/switch'
 import type { AdminStream } from '@/features/admin/data/admin-streams'
-import { AdminPageHeader, FactList, Panel, StatusBadge, Tag } from '../kit'
+import { FactList, Panel, StatusBadge, Tag, Monogram, RecordHeader } from '../kit'
 import { DemoNote, ToggleRow } from '../demo/demo-form'
 import { useStreamPublish } from './use-stream-publish'
 
@@ -17,11 +17,12 @@ export function AdminStreamDetailView({ stream }: { stream: AdminStream }) {
 
   return (
     <div className="space-y-5">
-      <AdminPageHeader
+      <RecordHeader
         back={{ href: '/admin/streams', label: 'Streams' }}
         title={stream.name}
+        media={<Monogram name={stream.name} size="lg" />}
         description={stream.description}
-        meta={
+        chips={
           <>
             {published ? <StatusBadge tone="success">Published</StatusBadge> : <StatusBadge>Not published</StatusBadge>}
             <Tag>{stream.tagline}</Tag>

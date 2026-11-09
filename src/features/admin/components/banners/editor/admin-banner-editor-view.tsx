@@ -16,6 +16,7 @@ import { BannerCtaSection } from './banner-cta-section'
 import { BannerPlacementSection } from './banner-placement-section'
 import { BannerScheduleSection } from './banner-schedule-section'
 import { BannerPublishingSection } from './banner-publishing-section'
+import { AdminFormFooter } from '../../admin-form-footer'
 
 export function AdminBannerEditorView({ initialBanner }: { initialBanner?: Banner | null }) {
   const router = useRouter()
@@ -35,23 +36,11 @@ export function AdminBannerEditorView({ initialBanner }: { initialBanner?: Banne
     router.push(backHref)
   }
 
-  const actions = (
-    <>
-      <Button type="button" variant="outline" size="sm" onClick={handleCancel}>
-        Cancel
-      </Button>
-      <Button type="submit" size="sm">
-        {isEditing ? 'Save changes' : 'Create banner'}
-      </Button>
-    </>
-  )
-
   return (
-    <form onSubmit={handleSubmit} noValidate className="space-y-6 pb-12">
+    <form id="banner-editor-form" onSubmit={handleSubmit} noValidate className="space-y-6">
       <AdminPageHeader
         back={isEditing && initialBanner ? { href: backHref, label: initialBanner.name } : { href: '/admin/banners', label: 'Banners' }}
         title={isEditing ? 'Edit banner' : 'New banner'}
-        actions={actions}
       />
 
       {apiNotice ? <FormNotice>{apiNotice}</FormNotice> : null}
@@ -86,8 +75,6 @@ export function AdminBannerEditorView({ initialBanner }: { initialBanner?: Banne
           <BannerPlacementSection formData={formData} onChange={handleFieldChange} />
           <BannerScheduleSection formData={formData} errors={errors} onChange={handleFieldChange} />
           <BannerPublishingSection formData={formData} onChange={handleFieldChange} />
-
-          <div className="flex items-center justify-end gap-2 border-t border-border pt-4">{actions}</div>
         </div>
 
         <aside className="space-y-4 lg:sticky lg:top-[4.5rem] lg:col-span-4 lg:self-start">
@@ -102,6 +89,7 @@ export function AdminBannerEditorView({ initialBanner }: { initialBanner?: Banne
           </div>
         </aside>
       </div>
+      <AdminFormFooter formId="banner-editor-form" submitLabel={isEditing ? 'Save changes' : 'Create banner'} onCancel={handleCancel} />
     </form>
   )
 }

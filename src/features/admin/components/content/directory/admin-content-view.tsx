@@ -12,6 +12,7 @@ import { useUrlFilters } from '@/features/admin/hooks/use-url-filters'
 import { AdminDataTable } from '../../admin-data-table'
 import { AdminFilterSelect, AdminPageHeader, AdminToolbar, SortHeader, StatusBadge, stopRowClick, Tag } from '../../kit'
 import { contentCategoryLabels, contentCategoryOptions, contentStatusLabels, contentStatusOptions, contentStatusTones, contentTypeLabels, contentTypeOptions, formatContentDate } from '../shared/content-constants'
+import { AdminEmptyState } from '../../admin-empty-state'
 
 const DEFAULT_FILTERS = { q: '', type: 'all', category: 'all', status: 'all' }
 
@@ -103,12 +104,8 @@ export function AdminContentView({ initialContent }: { initialContent: AdminCont
     return (
       <div className="space-y-5">
         <AdminPageHeader title="Articles" description="Guides, news and explainers written by the Pathway team." />
-        <div className="flex flex-col items-center rounded-xl border border-border bg-card shadow-sm px-6 py-14 text-center">
-          <p className="text-[15px] font-semibold text-foreground">No articles yet</p>
-          <p className="mt-1 max-w-sm text-sm text-muted-foreground">Write the first guide or news post. It stays a draft until you publish it.</p>
-          <div className="mt-5">
-            <NewArticleLink />
-          </div>
+        <div className="rounded-xl border border-border bg-card shadow-sm">
+          <AdminEmptyState art="noArticles" title="No articles yet" description="Write the first guide or news post. It stays a draft until you publish it." action={<NewArticleLink />} className="py-12" />
         </div>
       </div>
     )
@@ -117,21 +114,21 @@ export function AdminContentView({ initialContent }: { initialContent: AdminCont
   return (
     <div className="space-y-5">
       <AdminPageHeader title="Articles" count={`${initialContent.length} total`} description="Guides, news and explainers written by the Pathway team." actions={<NewArticleLink />} />
-
-      <AdminToolbar
-        search={f.q}
-        onSearchChange={(q) => set({ q })}
-        searchPlaceholder="Search title, slug or author"
-        hasActiveFilters={active}
-        onReset={reset}
-        summary={active ? `${filtered.length} of ${initialContent.length} match` : undefined}
-      >
-        <AdminFilterSelect label="Type" value={f.type} onChange={(type) => set({ type })} options={contentTypeOptions} />
-        <AdminFilterSelect label="Category" value={f.category} onChange={(category) => set({ category })} options={contentCategoryOptions} />
-        <AdminFilterSelect label="Status" value={f.status} onChange={(status) => set({ status })} options={contentStatusOptions} />
-      </AdminToolbar>
-
-      <AdminDataTable
+<AdminDataTable
+  tabs={{ value: f.status, onChange: (value) => set({ status: value }), options: contentStatusOptions }}
+  toolbar={
+    <AdminToolbar
+          search={f.q}
+          onSearchChange={(q) => set({ q })}
+          searchPlaceholder="Search title, slug or author"
+          hasActiveFilters={active}
+          onReset={reset}
+          summary={active ? `${filtered.length} of ${initialContent.length} match` : undefined}
+        >
+          <AdminFilterSelect label="Type" value={f.type} onChange={(type) => set({ type })} options={contentTypeOptions} />
+          <AdminFilterSelect label="Category" value={f.category} onChange={(category) => set({ category })} options={contentCategoryOptions} />
+        </AdminToolbar>
+  }
         columns={columns}
         data={filtered}
         onRowClick={(entry) => router.push(`/admin/content/${entry.id}`)}

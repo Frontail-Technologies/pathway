@@ -6,7 +6,7 @@ import { Check, Copy, ExternalLink } from 'lucide-react'
 import { buttonVariants } from '@/components/ui/button'
 import type { AdminStudent } from '@/features/admin/data/admin-students'
 import { profileFields } from '@/features/student/data/student'
-import { AdminPageHeader, CompletenessMeter, FactList, Panel, StatusBadge, Tag } from '../../kit'
+import { CompletenessMeter, FactList, Panel, StatusBadge, Tag, Monogram, RecordHeader } from '../../kit'
 import { StudentStatusBadge } from '../shared/student-status-badge'
 
 function Muted({ children }: { children: React.ReactNode }) {
@@ -39,10 +39,11 @@ export function AdminStudentDetailView({ student }: { student: AdminStudent }) {
 
   return (
     <div className="space-y-6">
-      <AdminPageHeader
+      <RecordHeader
         back={{ href: '/admin/students', label: 'Students' }}
         title={student.name}
-        meta={
+        media={<Monogram name={student.name} size="lg" />}
+        chips={
           <>
             <StudentStatusBadge status={student.accountStatus} />
             <span className="text-[13px] text-muted-foreground">{[student.email, student.city].filter(Boolean).join(' · ')}</span>

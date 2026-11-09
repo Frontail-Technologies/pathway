@@ -4,7 +4,7 @@ import * as React from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import type { ColumnDef } from '@tanstack/react-table'
-import { ExternalLink, Eye, MessageSquare, MoreHorizontal } from 'lucide-react'
+import { ExternalLink, Eye, MoreHorizontal } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import type { AdminReview } from '@/features/admin/data/admin-reviews'
@@ -121,7 +121,7 @@ export function AdminReviewsView({ initialReviews }: { initialReviews: AdminRevi
       {total === 0 ? (
         <div className="rounded-xl border border-border bg-card shadow-sm">
           <AdminEmptyState
-            icon={MessageSquare}
+            art="noReviews"
             title="No reviews yet"
             description="Reviews from students and synced Google reviews will appear here for moderation once they are connected."
             className="py-14"
@@ -129,20 +129,21 @@ export function AdminReviewsView({ initialReviews }: { initialReviews: AdminRevi
         </div>
       ) : (
         <>
-          <AdminToolbar
-            search={f.q}
-            onSearchChange={(q) => set({ q })}
-            searchPlaceholder="Search reviewer, title or text"
-            hasActiveFilters={active}
-            onReset={reset}
-            summary={active ? `${filtered.length} of ${total} match` : undefined}
-          >
-            <AdminFilterSelect label="Status" value={f.status} onChange={(status) => set({ status })} options={moderationStatusOptions} />
-            <AdminFilterSelect label="Source" value={f.source} onChange={(source) => set({ source })} options={reviewSourceOptions} />
-            <AdminFilterSelect label="For" value={f.entity} onChange={(entity) => set({ entity })} options={reviewEntityTypeOptions} />
-          </AdminToolbar>
-
-          <AdminDataTable
+<AdminDataTable
+  tabs={{ value: f.status, onChange: (value) => set({ status: value }), options: moderationStatusOptions }}
+  toolbar={
+    <AdminToolbar
+              search={f.q}
+              onSearchChange={(q) => set({ q })}
+              searchPlaceholder="Search reviewer, title or text"
+              hasActiveFilters={active}
+              onReset={reset}
+              summary={active ? `${filtered.length} of ${total} match` : undefined}
+            >
+              <AdminFilterSelect label="Source" value={f.source} onChange={(source) => set({ source })} options={reviewSourceOptions} />
+              <AdminFilterSelect label="For" value={f.entity} onChange={(entity) => set({ entity })} options={reviewEntityTypeOptions} />
+            </AdminToolbar>
+  }
             columns={columns}
             data={filtered}
             onRowClick={(review) => router.push(`/admin/reviews/${review.id}`)}

@@ -8,7 +8,7 @@ import type { CourseDetailData } from '@/features/courses/data/course-detail'
 import { completenessStatusStyles, documentTypes, qualityBadgeStyles, qualityCheckStyles } from '@/features/admin/constants/programs'
 import type { AdminProgram, AdminProgramDetail } from '@/features/admin/types/programs'
 import { AdminDetailStickyRail } from '../../admin-detail-sticky-rail'
-import { AdminPageHeader, CompletenessMeter, FactList, Panel, StatusBadge, Tag, toneFromVariant } from '../../kit'
+import { CompletenessMeter, FactList, Panel, StatusBadge, Tag, toneFromVariant, Monogram, RecordHeader } from '../../kit'
 import { DocumentRow, EmptyNote, StatusChecklist } from '../shared/section-kit'
 
 const completenessItems: { key: keyof AdminProgram['breakdown']; label: string }[] = [
@@ -38,11 +38,12 @@ export function AdminProgramDetailView({ data }: { data: AdminProgramDetail }) {
 
   return (
     <div className="space-y-6">
-      <AdminPageHeader
+      <RecordHeader
         back={{ href: '/admin/programs', label: 'Courses' }}
         title={program.name}
+        media={<Monogram name={program.name} size="lg" />}
         description={[program.degree, program.stream, program.duration, program.studyMode].filter(Boolean).join(' · ')}
-        meta={
+        chips={
           <>
             <StatusBadge tone={toneFromVariant(quality.variant)}>{quality.label}</StatusBadge>
             {program.hasDetailPage ? <StatusBadge tone="success">Public page live</StatusBadge> : <StatusBadge>Not published</StatusBadge>}

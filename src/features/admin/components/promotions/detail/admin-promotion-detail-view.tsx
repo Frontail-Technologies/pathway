@@ -6,7 +6,7 @@ import { Check, Copy, ExternalLink } from 'lucide-react'
 import { Button, buttonVariants } from '@/components/ui/button'
 import type { AdminPromotion } from '@/features/admin/data/admin-promotions'
 import { AdminDetailStickyRail } from '../../admin-detail-sticky-rail'
-import { AdminPageHeader, FactList, Panel, StatusBadge, Tag } from '../../kit'
+import { FactList, Panel, StatusBadge, Tag, Monogram, RecordHeader } from '../../kit'
 import {
   formatPromotionDate,
   placementSlots,
@@ -32,10 +32,11 @@ export function AdminPromotionDetailView({ promotion }: { promotion: AdminPromot
 
   return (
     <div className="space-y-6">
-      <AdminPageHeader
+      <RecordHeader
         back={{ href: '/admin/promotions', label: 'Featured listings' }}
         title={promotionTitle(promotion)}
-        meta={
+        media={<Monogram name={promotionTitle(promotion)} size="lg" />}
+        chips={
           <>
             <StatusBadge tone={promotionStatusTones[promotion.effectiveStatus]}>{promotionStatusLabels[promotion.effectiveStatus]}</StatusBadge>
             <Tag>{promotionKindLabels[promotion.kind]}</Tag>

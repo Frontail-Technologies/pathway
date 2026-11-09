@@ -4,7 +4,7 @@ import * as React from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import type { ColumnDef } from '@tanstack/react-table'
-import { Edit, ExternalLink, Eye, MoreHorizontal, Users } from 'lucide-react'
+import { Edit, ExternalLink, Eye, MoreHorizontal } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import type { AdminStudent } from '@/features/admin/data/admin-students'
@@ -118,24 +118,25 @@ export function AdminStudentsView({ initialStudents }: { initialStudents: AdminS
 
       {total === 0 ? (
         <div className="rounded-xl border border-border bg-card shadow-sm">
-          <AdminEmptyState icon={Users} title="No students yet" description="Student accounts will appear here once sign-up is connected." className="py-14" />
+          <AdminEmptyState art="noStudents" title="No students yet" description="Student accounts will appear here once sign-up is connected." className="py-14" />
         </div>
       ) : (
         <>
-          <AdminToolbar
-            search={f.q}
-            onSearchChange={(q) => set({ q })}
-            searchPlaceholder="Search name or email"
-            hasActiveFilters={active}
-            onReset={reset}
-            summary={active ? `${filtered.length} of ${total} match` : undefined}
-          >
-            <AdminFilterSelect label="Study level" value={f.level} onChange={(level) => set({ level })} options={studyLevelFilterOptions} />
-            <AdminFilterSelect label="Stream" value={f.stream} onChange={(stream) => set({ stream })} options={streamFilterOptions} />
-            <AdminFilterSelect label="Account" value={f.account} onChange={(account) => set({ account })} options={accountStatusFilterOptions} />
-          </AdminToolbar>
-
-          <AdminDataTable
+<AdminDataTable
+  tabs={{ value: f.account, onChange: (value) => set({ account: value }), options: accountStatusFilterOptions }}
+  toolbar={
+    <AdminToolbar
+              search={f.q}
+              onSearchChange={(q) => set({ q })}
+              searchPlaceholder="Search name or email"
+              hasActiveFilters={active}
+              onReset={reset}
+              summary={active ? `${filtered.length} of ${total} match` : undefined}
+            >
+              <AdminFilterSelect label="Study level" value={f.level} onChange={(level) => set({ level })} options={studyLevelFilterOptions} />
+              <AdminFilterSelect label="Stream" value={f.stream} onChange={(stream) => set({ stream })} options={streamFilterOptions} />
+            </AdminToolbar>
+  }
             columns={columns}
             data={filtered}
             onRowClick={(student) => router.push(`/admin/students/${student.id}`)}

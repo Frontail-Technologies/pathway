@@ -3,7 +3,7 @@ import { Edit, ExternalLink } from 'lucide-react'
 import { buttonVariants } from '@/components/ui/button'
 import type { AdminSeoRecord } from '@/features/admin/data/admin-seo'
 import { AdminDetailStickyRail } from '../../admin-detail-sticky-rail'
-import { AdminPageHeader, FactList, Panel, StatusBadge, Tag } from '../../kit'
+import { FactList, Panel, StatusBadge, Tag, Monogram, RecordHeader } from '../../kit'
 import { SeoIndexingBadge, seoTargetTypeLabels } from '../shared/seo-meta'
 import { SeoSearchSnippet, SeoSocialCard } from '../shared/seo-previews'
 
@@ -43,11 +43,12 @@ export function AdminSeoDetailView({ record }: { record: AdminSeoRecord }) {
 
   return (
     <div className="space-y-6">
-      <AdminPageHeader
+      <RecordHeader
         back={{ href: '/admin/seo', label: 'SEO' }}
         title={record.targetLabel}
+        media={<Monogram name={record.targetLabel} size="lg" />}
         description={record.targetRoutePath}
-        meta={
+        chips={
           <>
             <Tag>{typeLabel}</Tag>
             <SeoIndexingBadge robotsIndex={record.robotsIndex} robotsFollow={record.robotsFollow} />

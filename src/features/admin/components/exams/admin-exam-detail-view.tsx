@@ -7,7 +7,7 @@ import { toast } from 'sonner'
 import { Button, buttonVariants } from '@/components/ui/button'
 import type { Exam } from '@/features/exams/data/exams'
 import { discardExamEdit, EXAM_DETAIL_SECTIONS, examCompleteness, examSectionCounts } from '@/features/admin/data/admin-exams'
-import { AdminPageHeader, CompletenessMeter, FactList, Panel, StatusBadge, Tag } from '../kit'
+import { CompletenessMeter, FactList, Panel, StatusBadge, Tag, Monogram, RecordHeader } from '../kit'
 import { DemoNote } from '../demo/demo-form'
 import { formatDateTime } from '../demo/relative-time'
 import { useExamsWithEdits } from './use-exam-edits'
@@ -23,11 +23,12 @@ export function AdminExamDetailView({ exam: fixture }: { exam: Exam }) {
 
   return (
     <div className="space-y-5">
-      <AdminPageHeader
+      <RecordHeader
         back={{ href: '/admin/exams', label: 'Exams' }}
         title={exam.shortName}
+        media={<Monogram name={exam.shortName} size="lg" />}
         description={exam.name}
-        meta={
+        chips={
           <>
             {exam.hasDetailPage ? <StatusBadge tone="success">Public page live</StatusBadge> : <StatusBadge>Listing only</StatusBadge>}
             <Tag>{exam.studyArea}</Tag>

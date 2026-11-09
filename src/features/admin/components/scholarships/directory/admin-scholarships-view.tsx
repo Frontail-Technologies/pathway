@@ -136,24 +136,24 @@ export function AdminScholarshipsView({ initialScholarships }: { initialScholars
           </Link>
         }
       />
-
-      <AdminToolbar
-        search={f.q}
-        onSearchChange={(q) => set({ q })}
-        searchPlaceholder="Search name, provider or stream"
-        hasActiveFilters={active}
-        onReset={reset}
-        summary={active ? `${filtered.length} of ${data.length} match` : undefined}
-      >
-        <AdminFilterSelect label="Provider" value={f.provider} onChange={(provider) => set({ provider })} options={providerTypes} />
-        <AdminFilterSelect label="Level" value={f.level} onChange={(level) => set({ level })} options={educationLevels} />
-        <AdminFilterSelect label="Type" value={f.type} onChange={(type) => set({ type })} options={scholarshipTypes} />
-        <AdminFilterSelect label="Window" value={f.window} onChange={(window) => set({ window })} options={applicationStatusOptions} />
-        <AdminFilterSelect label="Quality" value={f.quality} onChange={(quality) => set({ quality })} options={qualityOptions} />
-        <AdminFilterSelect label="Public page" value={f.page} onChange={(page) => set({ page })} options={[{ value: 'live', label: 'Live' }, { value: 'none', label: 'Listing only' }]} />
-      </AdminToolbar>
-
-      <AdminDataTable
+<AdminDataTable
+  tabs={{ value: f.window, onChange: (value) => set({ window: value }), options: applicationStatusOptions }}
+  toolbar={
+    <AdminToolbar
+          search={f.q}
+          onSearchChange={(q) => set({ q })}
+          searchPlaceholder="Search name, provider or stream"
+          hasActiveFilters={active}
+          onReset={reset}
+          summary={active ? `${filtered.length} of ${data.length} match` : undefined}
+        >
+          <AdminFilterSelect label="Provider" value={f.provider} onChange={(provider) => set({ provider })} options={providerTypes} />
+          <AdminFilterSelect label="Level" value={f.level} onChange={(level) => set({ level })} options={educationLevels} />
+          <AdminFilterSelect label="Type" value={f.type} onChange={(type) => set({ type })} options={scholarshipTypes} />
+          <AdminFilterSelect label="Quality" value={f.quality} onChange={(quality) => set({ quality })} options={qualityOptions} />
+          <AdminFilterSelect label="Public page" value={f.page} onChange={(page) => set({ page })} options={[{ value: 'live', label: 'Live' }, { value: 'none', label: 'Listing only' }]} />
+        </AdminToolbar>
+  }
         columns={columns}
         data={filtered}
         onRowClick={(item) => router.push(`/admin/scholarships/${item.id}`)}

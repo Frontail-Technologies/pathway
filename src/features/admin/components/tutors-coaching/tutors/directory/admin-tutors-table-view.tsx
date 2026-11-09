@@ -40,25 +40,26 @@ export function AdminTutorsTableView({ tutors }: { tutors: AdminTutor[] }) {
 
   return (
     <div className="space-y-4">
-      <AdminToolbar
-        search={f.q}
-        onSearchChange={(q) => set({ q })}
-        searchPlaceholder="Search name, subject or exam"
-        hasActiveFilters={active}
-        onReset={reset}
-        summary={active ? `${filtered.length} of ${tutors.length} match` : undefined}
-      >
-        <AdminFilterSelect label="Subject" value={f.subject} onChange={(subject) => set({ subject })} options={toOptions(TUTOR_SUBJECT_OPTIONS)} />
-        <AdminFilterSelect label="Exam" value={f.exam} onChange={(exam) => set({ exam })} options={toOptions(TUTOR_EXAM_OPTIONS)} />
-        <AdminFilterSelect label="Mode" value={f.mode} onChange={(mode) => set({ mode })} options={toOptions(TUTOR_MODE_OPTIONS)} />
-        <AdminFilterSelect label="Level" value={f.level} onChange={(level) => set({ level })} options={toOptions(TUTOR_LEVEL_OPTIONS)} />
-        <AdminFilterSelect label="Language" value={f.language} onChange={(language) => set({ language })} options={toOptions(TUTOR_LANGUAGE_OPTIONS)} />
-        <AdminFilterSelect label="Portrait" value={f.portrait} onChange={(portrait) => set({ portrait })} options={PORTRAIT_OPTIONS} />
-        <AdminFilterSelect label="Status" value={f.quality} onChange={(quality) => set({ quality })} options={QUALITY_FILTER_OPTIONS} />
-        <AdminFilterSelect label="Public page" value={f.page} onChange={(page) => set({ page })} options={PUBLIC_PAGE_FILTER_OPTIONS} />
-      </AdminToolbar>
-
-      <AdminDataTable
+<AdminDataTable
+  tabs={{ value: f.quality, onChange: (value) => set({ quality: value }), options: QUALITY_FILTER_OPTIONS }}
+  toolbar={
+    <AdminToolbar
+          search={f.q}
+          onSearchChange={(q) => set({ q })}
+          searchPlaceholder="Search name, subject or exam"
+          hasActiveFilters={active}
+          onReset={reset}
+          summary={active ? `${filtered.length} of ${tutors.length} match` : undefined}
+        >
+          <AdminFilterSelect label="Subject" value={f.subject} onChange={(subject) => set({ subject })} options={toOptions(TUTOR_SUBJECT_OPTIONS)} />
+          <AdminFilterSelect label="Exam" value={f.exam} onChange={(exam) => set({ exam })} options={toOptions(TUTOR_EXAM_OPTIONS)} />
+          <AdminFilterSelect label="Mode" value={f.mode} onChange={(mode) => set({ mode })} options={toOptions(TUTOR_MODE_OPTIONS)} />
+          <AdminFilterSelect label="Level" value={f.level} onChange={(level) => set({ level })} options={toOptions(TUTOR_LEVEL_OPTIONS)} />
+          <AdminFilterSelect label="Language" value={f.language} onChange={(language) => set({ language })} options={toOptions(TUTOR_LANGUAGE_OPTIONS)} />
+          <AdminFilterSelect label="Portrait" value={f.portrait} onChange={(portrait) => set({ portrait })} options={PORTRAIT_OPTIONS} />
+          <AdminFilterSelect label="Public page" value={f.page} onChange={(page) => set({ page })} options={PUBLIC_PAGE_FILTER_OPTIONS} />
+        </AdminToolbar>
+  }
         columns={tutorColumns}
         data={filtered}
         onRowClick={(tutor) => router.push(`/admin/tutors-coaching/tutors/${tutor.id}`)}

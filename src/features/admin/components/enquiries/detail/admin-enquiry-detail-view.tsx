@@ -14,7 +14,7 @@ import { useAdminEnquiry } from '@/features/admin/hooks/use-admin-enquiries'
 import { ApiRequestError } from '@/features/auth/lib/session-client'
 import { addStaffEnquiryNote, setStaffEnquiryStatus, type StaffEnquiry } from '@/features/enquiries/api/enquiries-api'
 import { queryKeys } from '@/lib/query-client'
-import { AdminPageHeader, FactList, Panel, Tag } from '../../kit'
+import { AdminPageHeader, FactList, Panel, Tag, Monogram, RecordHeader } from '../../kit'
 import { AdminPanelSkeleton } from '../../admin-skeletons'
 import { LeadStatusBadge } from '../shared/lead-status-badge'
 import { enquirySourceLabels, enquiryTitle, leadStatusDescriptions, leadStatusLabels, leadStatusOptions } from '../shared/enquiry-constants'
@@ -134,10 +134,11 @@ function EnquiryDetail({ enquiry }: { enquiry: AdminEnquiry }) {
 
   return (
     <div className="space-y-6">
-      <AdminPageHeader
+      <RecordHeader
         back={{ href: '/admin/enquiries', label: 'Enquiries' }}
         title={enquiryTitle(enquiry)}
-        meta={
+        media={<Monogram name={enquiry.contactName} size="lg" className="rounded-full" />}
+        chips={
           <>
             <LeadStatusBadge status={status} />
             <Tag>{enquirySourceLabels[enquiry.source] ?? enquiry.sourceLabel}</Tag>

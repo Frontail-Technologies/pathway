@@ -18,6 +18,7 @@ import { ScholarshipDatesSection } from './sections/scholarship-dates-section'
 import { ScholarshipProcessSection } from './sections/scholarship-process-section'
 import { ScholarshipDocsSection } from './sections/scholarship-docs-section'
 import { ScholarshipSourceSection } from './sections/scholarship-source-section'
+import { AdminFormFooter } from '../../admin-form-footer'
 
 export function AdminScholarshipEditor({
   scholarship,
@@ -47,20 +48,10 @@ export function AdminScholarshipEditor({
   }
 
   return (
-    <form onSubmit={onSubmit} className="space-y-6 pb-20 sm:pb-8">
+    <form id="scholarship-editor-form" onSubmit={onSubmit} className="space-y-6">
       <AdminPageHeader
         back={{ href: backHref, label: form.isEdit ? 'Scholarship' : 'Scholarships' }}
         title={form.isEdit ? `Edit ${scholarship?.name ?? 'scholarship'}` : 'New scholarship'}
-        actions={
-          <div className="hidden items-center gap-2 sm:flex">
-            <Button type="button" variant="outline" size="sm" onClick={handleCancel}>
-              Cancel
-            </Button>
-            <Button type="submit" size="sm">
-              {saveLabel}
-            </Button>
-          </div>
-        }
       />
 
       {form.submitNotice ? (
@@ -201,14 +192,7 @@ export function AdminScholarshipEditor({
           <ScholarshipSourceSection isEdit={form.isEdit} />
       </AdminEditorLayout>
 
-      <div className="fixed inset-x-0 bottom-0 z-40 flex items-center gap-3 border-t border-border bg-card p-3 sm:hidden">
-        <Button type="button" variant="outline" size="sm" className="flex-1" onClick={handleCancel}>
-          Cancel
-        </Button>
-        <Button type="submit" size="sm" className="flex-1">
-          {saveLabel}
-        </Button>
-      </div>
+      <AdminFormFooter formId="scholarship-editor-form" submitLabel={saveLabel} onCancel={handleCancel} />
     </form>
   )
 }

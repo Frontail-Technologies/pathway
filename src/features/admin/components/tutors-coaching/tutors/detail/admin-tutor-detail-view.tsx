@@ -5,7 +5,7 @@ import { TutorPortrait } from '@/features/tutors/components/tutor-avatar'
 import { teachingSteps } from '@/features/tutors/data/tutors'
 import { catalogStatusLabels, type CatalogAdminTutor as AdminTutor } from '@/features/admin/data/admin-tutors-api'
 import { AdminDetailStickyRail } from '../../../admin-detail-sticky-rail'
-import { AdminPageHeader, FactList, Panel, StatusBadge } from '../../../kit'
+import { FactList, Panel, StatusBadge, Monogram, RecordHeader } from '../../../kit'
 import { CompletenessPanel, HistoryPanel, PlainList, QualityPanel, RecordPanel, TextBlock } from '../../shared/detail-panels'
 import { TagList } from '../../shared/tags'
 import { portraitLabel, PublicPageBadge, QualityStatusBadge } from '../../shared/tutor-status-badge'
@@ -16,11 +16,12 @@ export function AdminTutorDetailView({ tutor }: { tutor: AdminTutor }) {
 
   return (
     <div className="space-y-6">
-      <AdminPageHeader
+      <RecordHeader
         back={{ href: '/admin/tutors-coaching', label: 'Tutors & coaching' }}
         title={tutor.name}
+        media={<Monogram name={tutor.name} size="lg" />}
         description={tutor.headline}
-        meta={
+        chips={
           <>
             <StatusBadge tone={tutor.catalogStatus === 'published' ? 'success' : tutor.catalogStatus === 'archived' ? 'neutral' : 'warning'}>{catalogStatusLabels[tutor.catalogStatus]}</StatusBadge>
             <QualityStatusBadge status={tutor.quality.status} />

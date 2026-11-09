@@ -102,7 +102,7 @@ export function EditorActions({ onCancel, onSave, saveLabel = 'Save changes' }: 
 
 export function MobileEditorBar(props: { onCancel: () => void; onSave: (event: React.FormEvent) => void; saveLabel?: string }) {
   return (
-    <div className="fixed inset-x-0 bottom-0 z-20 flex items-center justify-end gap-2 border-t border-border bg-card p-3 sm:hidden">
+    <div className="sticky bottom-0 z-10 -mx-4 -mb-5 mt-6 flex items-center justify-end gap-2 border-t border-border bg-card/95 px-4 py-3 backdrop-blur supports-[backdrop-filter]:bg-card/85 lg:-mx-6 lg:-mb-6 lg:px-6">
       <EditorActions {...props} />
     </div>
   )

@@ -6,7 +6,7 @@ import { buttonVariants } from '@/components/ui/button'
 import type { AdminNote } from '@/features/admin/data/admin-notes'
 import { formatDateTimeSafe, formatFileSize, formatStream, formatStudyLevel } from '@/features/notes/types/note'
 import { AdminDetailStickyRail } from '../../admin-detail-sticky-rail'
-import { AdminPageHeader, FactList, Panel, StatusBadge, Tag } from '../../kit'
+import { FactList, Panel, StatusBadge, Tag, Monogram, RecordHeader } from '../../kit'
 import { NoteStatusBadge, sentenceCase } from '../shared/note-meta'
 
 function Empty({ children }: { children: React.ReactNode }) {
@@ -20,11 +20,12 @@ export function AdminNoteDetailView({ note }: { note: AdminNote }) {
 
   return (
     <div className="space-y-6">
-      <AdminPageHeader
+      <RecordHeader
         back={{ href: '/admin/notes', label: 'Notes' }}
         title={note.title}
+        media={<Monogram name={note.title} size="lg" />}
         description={`/notes/${note.slug}`}
-        meta={
+        chips={
           <>
             <NoteStatusBadge status={note.status} label={note.statusMeta.label} />
             {asset ? <StatusBadge tone="success">File attached</StatusBadge> : <StatusBadge tone="warning">No file</StatusBadge>}

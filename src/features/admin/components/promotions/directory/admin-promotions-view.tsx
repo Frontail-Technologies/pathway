@@ -11,6 +11,7 @@ import type { AdminPromotion } from '@/features/admin/data/admin-promotions'
 import { useUrlFilters } from '@/features/admin/hooks/use-url-filters'
 import { AdminDataTable } from '../../admin-data-table'
 import { AdminFilterSelect, AdminPageHeader, AdminToolbar, SortHeader, StatusBadge, stopRowClick, Tag } from '../../kit'
+import { AdminEmptyState } from '../../admin-empty-state'
 import {
   formatPromotionWindow,
   promotionKindLabels,
@@ -124,12 +125,8 @@ export function AdminPromotionsView({ initialPromotions }: { initialPromotions: 
     return (
       <div className="space-y-5">
         <AdminPageHeader title="Featured listings" description={description} />
-        <div className="flex flex-col items-center rounded-xl border border-border bg-card shadow-sm px-6 py-14 text-center">
-          <p className="text-[15px] font-semibold text-foreground">No featured listings yet</p>
-          <p className="mt-1 max-w-sm text-sm text-muted-foreground">Feature a college, course or tutor in a homepage or list-page slot. Paid listings are labelled as sponsored.</p>
-          <div className="mt-5">
-            <NewListingLink />
-          </div>
+        <div className="rounded-xl border border-border bg-card shadow-sm">
+          <AdminEmptyState art="noPromotions" title="No featured listings yet" description="Feature a college, course or tutor in a homepage or list-page slot. Paid listings are labelled as sponsored." action={<NewListingLink />} className="py-12" />
         </div>
       </div>
     )
@@ -138,22 +135,22 @@ export function AdminPromotionsView({ initialPromotions }: { initialPromotions: 
   return (
     <div className="space-y-5">
       <AdminPageHeader title="Featured listings" count={`${initialPromotions.length} total`} description={description} actions={<NewListingLink />} />
-
-      <AdminToolbar
-        search={f.q}
-        onSearchChange={(q) => set({ q })}
-        searchPlaceholder="Search label, record or placement"
-        hasActiveFilters={active}
-        onReset={reset}
-        summary={active ? `${filtered.length} of ${initialPromotions.length} match` : undefined}
-      >
-        <AdminFilterSelect label="Type" value={f.kind} onChange={(kind) => set({ kind })} options={promotionKindOptions} />
-        <AdminFilterSelect label="Record" value={f.target} onChange={(target) => set({ target })} options={promotionTargetTypeOptions} />
-        <AdminFilterSelect label="Placement" value={f.placement} onChange={(placement) => set({ placement })} options={promotionPlacementOptions} />
-        <AdminFilterSelect label="Status" value={f.status} onChange={(status) => set({ status })} options={promotionStatusOptions} />
-      </AdminToolbar>
-
-      <AdminDataTable
+<AdminDataTable
+  tabs={{ value: f.status, onChange: (value) => set({ status: value }), options: promotionStatusOptions }}
+  toolbar={
+    <AdminToolbar
+          search={f.q}
+          onSearchChange={(q) => set({ q })}
+          searchPlaceholder="Search label, record or placement"
+          hasActiveFilters={active}
+          onReset={reset}
+          summary={active ? `${filtered.length} of ${initialPromotions.length} match` : undefined}
+        >
+          <AdminFilterSelect label="Type" value={f.kind} onChange={(kind) => set({ kind })} options={promotionKindOptions} />
+          <AdminFilterSelect label="Record" value={f.target} onChange={(target) => set({ target })} options={promotionTargetTypeOptions} />
+          <AdminFilterSelect label="Placement" value={f.placement} onChange={(placement) => set({ placement })} options={promotionPlacementOptions} />
+        </AdminToolbar>
+  }
         columns={columns}
         data={filtered}
         onRowClick={(promotion) => router.push(`/admin/promotions/${promotion.id}`)}

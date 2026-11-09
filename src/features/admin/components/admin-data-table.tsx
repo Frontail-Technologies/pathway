@@ -47,7 +47,8 @@ export type AdminDataTableProps<TData, TValue> = {
 }
 
 export function AdminStatusTabs({ value, onChange, options, allLabel = 'All', total }: NonNullable<AdminDataTableProps<unknown, unknown>['tabs']>) {
-  const tabs = [{ value: 'all', label: allLabel, count: total ?? options.reduce((sum, option) => sum + (option.count ?? 0), 0) }, ...options]
+  const counted = total !== undefined || options.some((option) => option.count !== undefined)
+  const tabs = [{ value: 'all', label: allLabel, count: counted ? (total ?? options.reduce((sum, option) => sum + (option.count ?? 0), 0)) : undefined }, ...options]
   return (
     <div role="tablist" aria-label="Filter by status" className="-mb-px flex gap-1 overflow-x-auto border-b border-border [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
       {tabs.map((tab) => {

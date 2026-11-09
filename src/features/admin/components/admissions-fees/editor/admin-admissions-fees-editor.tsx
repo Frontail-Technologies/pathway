@@ -51,11 +51,6 @@ export function AdminAdmissionsFeesEditor({
         title={editor.isEdit ? 'Edit offering' : 'Add offering'}
         description={editor.isEdit && offering ? `${offering.programName} at ${offering.institutionName}` : 'Fees and admission rules for one course at one institution. Fields marked * are required.'}
         meta={editor.isDirty ? <StatusBadge tone="warning">Unsaved changes</StatusBadge> : undefined}
-        actions={
-          <div className="hidden items-center gap-2 sm:flex">
-            <EditorActions onCancel={handleCancel} onSave={editor.handleSubmit} saveLabel={saveLabel} />
-          </div>
-        }
       />
 
       <AdminEditorLayout

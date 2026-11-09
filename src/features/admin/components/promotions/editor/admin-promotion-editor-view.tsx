@@ -25,6 +25,7 @@ import {
   type PromotionTargetType,
 } from '../shared/promotion-constants'
 import { Field, FormNotice, FormSection } from '../shared/promotion-form'
+import { AdminFormFooter } from '../../admin-form-footer'
 
 const statusItems = (['active', 'draft', 'paused'] as PromotionStatus[]).map((value) => ({ value, label: promotionStatusLabels[value] }))
 
@@ -116,23 +117,11 @@ export function AdminPromotionEditorView({ promotion, isCreate = false }: { prom
   }
 
   const slots = placementSlots(form.placement)
-  const actions = (
-    <>
-      <Button type="button" variant="outline" size="sm" onClick={handleCancel}>
-        Cancel
-      </Button>
-      <Button type="submit" size="sm">
-        {isCreate ? 'Create listing' : 'Save changes'}
-      </Button>
-    </>
-  )
-
   return (
-    <form onSubmit={handleSubmit} noValidate className="mx-auto max-w-4xl space-y-6 pb-12">
+    <form id="promotion-editor-form" onSubmit={handleSubmit} noValidate className="mx-auto max-w-4xl space-y-6 pb-12">
       <AdminPageHeader
         back={!isCreate && promotion ? { href: backHref, label: promotionTitle(promotion) } : { href: '/admin/promotions', label: 'Featured listings' }}
         title={isCreate ? 'New featured listing' : 'Edit featured listing'}
-        actions={actions}
       />
 
       {apiNotice ? <FormNotice>{apiNotice}</FormNotice> : null}
@@ -200,8 +189,7 @@ export function AdminPromotionEditorView({ promotion, isCreate = false }: { prom
           <Textarea id="promotion-notes" value={form.notes} onChange={(e) => update('notes', e.target.value)} rows={3} className="text-sm" />
         </Field>
       </FormSection>
-
-      <div className="flex items-center justify-end gap-2 border-t border-border pt-4">{actions}</div>
+      <AdminFormFooter formId="promotion-editor-form" submitLabel={isCreate ? 'Create listing' : 'Save changes'} onCancel={handleCancel} />
     </form>
   )
 }

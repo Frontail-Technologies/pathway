@@ -3,7 +3,7 @@ import { Edit, ExternalLink, FileText, Plus } from 'lucide-react'
 import { buttonVariants } from '@/components/ui/button'
 import { type AdminScholarship } from '@/features/admin/data/admin-scholarships'
 import { AdminDetailStickyRail } from '../../admin-detail-sticky-rail'
-import { AdminPageHeader, CompletenessMeter, FactList, Panel, StatusBadge, Tag, type StatusTone } from '../../kit'
+import { CompletenessMeter, FactList, Panel, StatusBadge, Tag, type StatusTone, Monogram, RecordHeader } from '../../kit'
 import { completenessStatusStyles, qualityCheckStyles, scholarshipDocumentTypes } from '../shared/scholarship-constants'
 import { ScholarshipApplicationStatusBadge, ScholarshipContentStatusBadge, ScholarshipQualityBadge } from '../shared/scholarship-status-badge'
 
@@ -66,11 +66,12 @@ export function AdminScholarshipDetailView({ scholarship: s }: { scholarship: Ad
 
   return (
     <div className="space-y-6">
-      <AdminPageHeader
+      <RecordHeader
         back={{ href: '/admin/scholarships', label: 'Scholarships' }}
         title={s.name}
+        media={<Monogram name={s.name} size="lg" />}
         description={`${s.provider} · ${s.providerType}`}
-        meta={
+        chips={
           <>
             <ScholarshipApplicationStatusBadge status={s.applicationStatus} />
             <ScholarshipQualityBadge status={s.qualityStatus} />

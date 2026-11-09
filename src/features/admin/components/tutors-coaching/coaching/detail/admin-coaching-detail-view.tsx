@@ -3,7 +3,7 @@ import { Edit, ExternalLink } from 'lucide-react'
 import { buttonVariants } from '@/components/ui/button'
 import type { AdminCoachingProvider } from '@/features/admin/data/admin-coaching'
 import { AdminDetailStickyRail } from '../../../admin-detail-sticky-rail'
-import { AdminPageHeader, FactList, Panel } from '../../../kit'
+import { FactList, Panel, Monogram, RecordHeader } from '../../../kit'
 import { CompletenessPanel, HistoryPanel, PlainList, QualityPanel, RecordPanel, TextBlock } from '../../shared/detail-panels'
 import { TagList } from '../../shared/tags'
 import { providerPlace, sentenceCase } from '../../shared/tutor-coaching-constants'
@@ -17,11 +17,12 @@ export function AdminCoachingDetailView({ provider }: { provider: AdminCoachingP
 
   return (
     <div className="space-y-6">
-      <AdminPageHeader
+      <RecordHeader
         back={{ href: '/admin/tutors-coaching?tab=coaching', label: 'Tutors & coaching' }}
         title={provider.name}
+        media={<Monogram name={provider.name} size="lg" />}
         description={`${sentenceCase(provider.providerType)} · ${providerPlace(provider)}`}
-        meta={
+        chips={
           <>
             <QualityStatusBadge status={provider.quality.status} />
             <PublicPageBadge live={!!provider.hasDetailPage} />

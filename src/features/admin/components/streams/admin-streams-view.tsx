@@ -71,12 +71,12 @@ export function AdminStreamsView({ streams }: { streams: AdminStream[] }) {
   return (
     <div className="space-y-5">
       <AdminPageHeader title="Streams" count={`${publishedCount} of ${data.length} published`} description="Top-level hubs such as /engineering that gather colleges, courses, exams and more for one subject area." meta={<DemoNote>Demo: publishing changes are saved on this device only and don&apos;t change the public site.</DemoNote>} />
-
-      <AdminToolbar search={f.q} onSearchChange={(q) => set({ q })} searchPlaceholder="Search streams" hasActiveFilters={active} onReset={reset} summary={active ? `${filtered.length} of ${data.length} match` : undefined}>
-        <AdminFilterSelect label="Status" value={f.status} onChange={(status) => set({ status })} options={[{ value: 'published', label: 'Published' }, { value: 'hidden', label: 'Not published' }]} />
-      </AdminToolbar>
-
-      <AdminDataTable
+<AdminDataTable
+  tabs={{ value: f.status, onChange: (value) => set({ status: value }), options: [{ value: 'published', label: 'Published' }, { value: 'hidden', label: 'Not published' }] }}
+  toolbar={
+    <AdminToolbar search={f.q} onSearchChange={(q) => set({ q })} searchPlaceholder="Search streams" hasActiveFilters={active} onReset={reset} summary={active ? `${filtered.length} of ${data.length} match` : undefined}>
+        </AdminToolbar>
+  }
         columns={columns}
         data={filtered}
         onRowClick={(row) => router.push(`/admin/streams/${row.slug}`)}

@@ -5,7 +5,7 @@ import { ExternalLink } from 'lucide-react'
 import { buttonVariants } from '@/components/ui/button'
 import type { AdminBanner } from '@/features/admin/data/admin-banners'
 import { AdminDetailStickyRail } from '../../admin-detail-sticky-rail'
-import { AdminPageHeader, FactList, Panel, StatusBadge, Tag } from '../../kit'
+import { FactList, Panel, StatusBadge, Tag, Monogram, RecordHeader } from '../../kit'
 import { bannerPlacementHints, bannerStatusHints, bannerStatusLabels, bannerStatusTones, formatBannerDate, placementDimensions, placementLabel } from '../shared/banner-constants'
 import { BannerPreview } from '../shared/banner-preview'
 
@@ -36,10 +36,11 @@ export function AdminBannerDetailView({ banner }: { banner: AdminBanner }) {
 
   return (
     <div className="space-y-6">
-      <AdminPageHeader
+      <RecordHeader
         back={{ href: '/admin/banners', label: 'Banners' }}
         title={banner.name}
-        meta={
+        media={<Monogram name={banner.name} size="lg" />}
+        chips={
           <>
             <StatusBadge tone={bannerStatusTones[status]}>{bannerStatusLabels[status]}</StatusBadge>
             <Tag>{placementLabel(banner.placement)}</Tag>

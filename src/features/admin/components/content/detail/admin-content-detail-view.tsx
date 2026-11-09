@@ -6,7 +6,7 @@ import { ExternalLink } from 'lucide-react'
 import { buttonVariants } from '@/components/ui/button'
 import type { AdminContentEntry } from '@/features/admin/data/admin-content'
 import { AdminDetailStickyRail } from '../../admin-detail-sticky-rail'
-import { AdminPageHeader, FactList, Panel, StatusBadge, Tag } from '../../kit'
+import { FactList, Panel, StatusBadge, Tag, Monogram, RecordHeader } from '../../kit'
 import { contentCategoryLabels, contentStatusHints, contentStatusLabels, contentStatusTones, contentTypeLabels, formatContentDate, relatedEntityTypeLabels } from '../shared/content-constants'
 
 export function AdminContentDetailView({ entry }: { entry: AdminContentEntry }) {
@@ -17,11 +17,12 @@ export function AdminContentDetailView({ entry }: { entry: AdminContentEntry }) 
 
   return (
     <div className="space-y-6">
-      <AdminPageHeader
+      <RecordHeader
         back={{ href: '/admin/content', label: 'Articles' }}
         title={entry.title}
+        media={<Monogram name={entry.title} size="lg" />}
         description={entry.excerpt}
-        meta={
+        chips={
           <>
             <StatusBadge tone={contentStatusTones[entry.status]}>{contentStatusLabels[entry.status]}</StatusBadge>
             <Tag>{contentTypeLabels[entry.type]}</Tag>
