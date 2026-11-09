@@ -43,4 +43,7 @@ export const queryKeys = {
   studentEnquiries: (userId: string) => ['me', userId, 'enquiries'] as const,
   adminEnquiries: ['admin', 'enquiries'] as const,
   adminEnquiry: (id: string) => ['admin', 'enquiries', id] as const,
+  adminTeam: ['admin', 'team'] as const,
+  adminTeamMember: (userId: string) => ['admin', 'team', 'member', userId] as const,
+  invitationPreview: (token: string) => ['auth', 'invitation', token] as const,
 }

@@ -112,6 +112,10 @@ export const registerStudentAccount = async (input: { email: string; password: s
 export const registerTutorAccount = async (input: { email: string; password: string; displayName: string }) =>
   adopt(await send<AuthPayload>('POST', '/auth/register/tutor', { email: input.email.trim(), password: input.password, displayName: input.displayName.trim() }, null))
 
+export const previewStaffInvitation = (token: string) => send<{ email: string; role: ServerRole; expiresAt: string }>('GET', `/auth/invitations/${encodeURIComponent(token)}`, undefined, null)
+
+export const acceptStaffInvitation = async (input: { token: string; password: string }) => adopt(await send<AuthPayload>('POST', '/auth/invitations/accept', input, null))
+
 export async function signOut() {
   accessToken = null
   emit(null)

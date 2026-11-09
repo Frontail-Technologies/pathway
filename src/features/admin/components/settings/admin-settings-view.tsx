@@ -10,7 +10,10 @@ import { Switch } from '@/components/ui/switch'
 import { ADMIN_STORAGE_KEYS, resetAdminDemoData } from '@/features/admin/data/admin-demo-storage'
 import { logAdminActivity } from '@/features/admin/data/admin-activity'
 import { DEFAULT_ADMIN_SETTINGS, type AdminSettings } from '@/features/admin/data/admin-settings'
-import { DEMO_OWNER, isValidEmail, type TeamMember } from '@/features/admin/data/admin-team'
+import { useQuery } from '@tanstack/react-query'
+import { queryKeys } from '@/lib/query-client'
+import { useAdminSession } from '@/features/admin/auth/admin-session'
+import { isValidEmail, listTeam, memberName } from '@/features/admin/data/admin-team-api'
 import { useDemoStorage } from '@/features/admin/hooks/use-demo-storage'
 import { useUnsavedChanges } from '@/features/admin/hooks/use-unsaved-changes'
 import { AdminPageHeader } from '../kit'
@@ -30,7 +33,8 @@ function validate(values: AdminSettings): Errors {
 
 export function AdminSettingsView() {
   const [stored, setStored, loaded] = useDemoStorage<AdminSettings>(ADMIN_STORAGE_KEYS.settings, DEFAULT_ADMIN_SETTINGS)
-  const [invites] = useDemoStorage<TeamMember[]>(ADMIN_STORAGE_KEYS.team, [])
+  const { hydrated, session } = useAdminSession()
+  const team = useQuery({ queryKey: queryKeys.adminTeam, queryFn: listTeam, enabled: hydrated && session?.role === 'admin' })
   const saved = React.useMemo(() => ({ ...DEFAULT_ADMIN_SETTINGS, ...stored }), [stored])
   const [values, setValues] = React.useState<AdminSettings>(DEFAULT_ADMIN_SETTINGS)
   const [errors, setErrors] = React.useState<Errors>({})
@@ -50,8 +54,12 @@ export function AdminSettingsView() {
   }
 
   const assigneeOptions = React.useMemo(
-    () => [{ value: 'unassigned', label: 'Unassigned' }, { value: DEMO_OWNER.id, label: DEMO_OWNER.name }, ...invites.map((member) => ({ value: member.id, label: `${member.email} (invite pending)` }))],
-    [invites],
+    () => [
+      { value: 'unassigned', label: 'Unassigned' },
+      ...(team.data?.members.filter((member) => member.status === 'active').map((member) => ({ value: member.userId, label: `${memberName(member.email)} (${member.email})` })) ??
+        (session ? [{ value: session.email, label: session.name }] : [])),
+    ],
+    [team.data, session],
   )
   const assigneeValue = assigneeOptions.some((option) => option.value === values.defaultAssignee) ? values.defaultAssignee : 'unassigned'
 

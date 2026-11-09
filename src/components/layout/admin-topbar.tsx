@@ -2,11 +2,13 @@
 
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { Bell, ChevronDown, ExternalLink, GraduationCap, LogOut, Moon, PanelLeft, Plus, Rows3, Sun } from 'lucide-react'
+import { useState } from 'react'
+import { Bell, ChevronDown, ExternalLink, GraduationCap, KeyRound, LogOut, Moon, PanelLeft, Plus, Rows3, Sun } from 'lucide-react'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { useAdminSession } from '@/features/admin/auth/admin-session'
+import { ChangePasswordDialog } from '@/features/admin/auth/change-password-dialog'
 import { useAdminBadges } from '@/features/admin/hooks/use-admin-badges'
 import { adminQuickAdd } from '@/features/admin/navigation/modules'
 import { useAdminShell } from '@/features/admin/state/admin-shell-store'
@@ -68,9 +70,12 @@ function ProfileMenu() {
   const router = useRouter()
   const { session, signOut } = useAdminSession()
   const { density, setDensity } = useAdminShell()
+  const [passwordOpen, setPasswordOpen] = useState(false)
   const name = session?.name ?? 'Administrator'
   const initials = name.split(' ').map((part) => part[0]).join('').slice(0, 2).toUpperCase()
   return (
+    <>
+    <ChangePasswordDialog open={passwordOpen} onOpenChange={setPasswordOpen} />
     <DropdownMenu>
       <DropdownMenuTrigger render={<button type="button" className="flex h-9 items-center gap-2.5 rounded-md px-1 outline-none focus-visible:ring-2 focus-visible:ring-ring" aria-label="Account menu" />}>
         <Avatar size="default">
@@ -101,6 +106,10 @@ function ProfileMenu() {
           Student space
         </DropdownMenuItem>
         <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={() => setPasswordOpen(true)}>
+          <KeyRound className="size-4" aria-hidden="true" />
+          Change password
+        </DropdownMenuItem>
         <DropdownMenuItem
           onClick={() => {
             signOut()
@@ -112,6 +121,7 @@ function ProfileMenu() {
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
+    </>
   )
 }
 

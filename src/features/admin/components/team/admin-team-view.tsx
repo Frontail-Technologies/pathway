@@ -1,194 +1,317 @@
 'use client'
 
 import * as React from 'react'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import type { ColumnDef } from '@tanstack/react-table'
-import { Check, Trash2, UserPlus, X } from 'lucide-react'
+import { Check, MoreHorizontal, ShieldCheck, UserPlus, X } from 'lucide-react'
 import { toast } from 'sonner'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { queryKeys } from '@/lib/query-client'
 import { Button } from '@/components/ui/button'
-import { ADMIN_STORAGE_KEYS } from '@/features/admin/data/admin-demo-storage'
-import { logAdminActivity } from '@/features/admin/data/admin-activity'
-import { DEMO_OWNER, TEAM_ROLE_INFO, TEAM_ROLES, type TeamMember, type TeamRole } from '@/features/admin/data/admin-team'
-import { useDemoStorage } from '@/features/admin/hooks/use-demo-storage'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import { ApiRequestError } from '@/features/auth/lib/session-client'
+import { useAdminSession } from '@/features/admin/auth/admin-session'
+import {
+  changeMemberRole,
+  formatDateTime,
+  listTeam,
+  memberName,
+  reactivateMember,
+  revokeInvitation,
+  roleInfo,
+  roleLabels,
+  signOutMemberEverywhere,
+  STAFF_ROLES,
+  statusLabels,
+  statusTone,
+  suspendMember,
+  type StaffInvitation,
+  type StaffRole,
+  type TeamMember,
+} from '@/features/admin/data/admin-team-api'
 import { useUrlFilters } from '@/features/admin/hooks/use-url-filters'
 import { AdminDataTable } from '../admin-data-table'
-import { AdminFilterSelect, AdminPageHeader, AdminToolbar, Panel, StatusBadge, stopRowClick, Tag } from '../kit'
-import { DemoNote, FormSelect } from '../demo/demo-form'
+import { AdminEmptyState } from '../admin-empty-state'
+import { AdminTableSkeleton } from '../admin-skeletons'
+import { AdminFilterSelect, AdminPageHeader, AdminToolbar, Monogram, Panel, StatusBadge, stopRowClick, Tag } from '../kit'
 import { formatRelative } from '../demo/relative-time'
 import { InviteMemberDialog } from './invite-member-dialog'
 
-const DEFAULT_FILTERS = { q: '', role: 'all', status: 'all' }
+const DEFAULT_FILTERS = { q: '', role: 'all', status: 'active' }
+
+type Row =
+  | { kind: 'member'; id: string; email: string; role: StaffRole; status: TeamMember['status']; when: string | null; member: TeamMember }
+  | { kind: 'invitation'; id: string; email: string; role: StaffRole; status: 'invited'; when: string; invitation: StaffInvitation }
+
+const messageOf = (error: unknown, fallback: string) => (error instanceof ApiRequestError ? error.message : fallback)
 
 export function AdminTeamView() {
-  const [invites, setInvites] = useDemoStorage<TeamMember[]>(ADMIN_STORAGE_KEYS.team, [])
+  const router = useRouter()
+  const queryClient = useQueryClient()
+  const { hydrated, session } = useAdminSession()
+  const isAdmin = session?.role === 'admin'
   const [inviteOpen, setInviteOpen] = React.useState(false)
   const { values: f, set, reset, active } = useUrlFilters(DEFAULT_FILTERS)
 
-  const members = React.useMemo(() => [DEMO_OWNER, ...invites], [invites])
+  const query = useQuery({ queryKey: queryKeys.adminTeam, queryFn: listTeam, enabled: hydrated && isAdmin })
+  const refresh = () => void queryClient.invalidateQueries({ queryKey: queryKeys.adminTeam })
+
+  const rows = React.useMemo<Row[]>(() => {
+    if (!query.data) return []
+    const members: Row[] = query.data.members.map((member) => ({ kind: 'member', id: member.userId, email: member.email, role: member.role, status: member.status, when: member.lastLoginAt, member }))
+    const invitations: Row[] = query.data.invitations.map((invitation) => ({ kind: 'invitation', id: invitation.id, email: invitation.email, role: invitation.role, status: 'invited', when: invitation.createdAt, invitation }))
+    return [...members, ...invitations]
+  }, [query.data])
+
+  const counts = React.useMemo(() => {
+    const result = { active: 0, invited: 0, suspended: 0 }
+    for (const row of rows) if (row.status in result) result[row.status as keyof typeof result] += 1
+    return result
+  }, [rows])
+
   const filtered = React.useMemo(() => {
-    const query = f.q.trim().toLowerCase()
-    return members.filter((member) => {
-      if (query && ![member.name, member.email].some((value) => value.toLowerCase().includes(query))) return false
-      if (f.role !== 'all' && member.role !== f.role) return false
-      if (f.status !== 'all' && member.status !== f.status) return false
+    const needle = f.q.trim().toLowerCase()
+    return rows.filter((row) => {
+      if (needle && !row.email.toLowerCase().includes(needle) && !memberName(row.email).toLowerCase().includes(needle)) return false
+      if (f.role !== 'all' && row.role !== f.role) return false
+      if (f.status !== 'all' && row.status !== f.status) return false
       return true
     })
-  }, [members, f])
+  }, [rows, f])
 
-  const invite = (email: string, role: TeamRole) => {
-    setInvites((previous) => [...previous, { id: `inv-${Date.now().toString(36)}`, name: email, email, role, status: 'pending', invitedAt: new Date().toISOString() }])
-    logAdminActivity({ area: 'Team', action: 'Invited', label: `${email} as ${role}`, href: '/admin/team' })
-    setInviteOpen(false)
-    toast.success('Invite added', { description: 'Demo: no email was sent.' })
-  }
-
-  const changeRole = React.useCallback(
-    (member: TeamMember, role: TeamRole) => {
-      if (role === member.role) return
-      setInvites((previous) => previous.map((item) => (item.id === member.id ? { ...item, role } : item)))
-      logAdminActivity({ area: 'Team', action: 'Role changed', label: `${member.email}: ${member.role} → ${role}`, href: '/admin/team' })
-      toast.success(`Role changed to ${role}`)
+  const act = useMutation({
+    mutationFn: async ({ run }: { run: () => Promise<unknown>; success: string }) => run(),
+    onSuccess: (_, variables) => {
+      refresh()
+      toast.success(variables.success)
     },
-    [setInvites],
-  )
+    onError: (error) => toast.error(messageOf(error, 'That action did not go through. Please try again.')),
+  })
 
-  const remove = React.useCallback(
-    (member: TeamMember) => {
-      setInvites((previous) => previous.filter((item) => item.id !== member.id))
-      logAdminActivity({ area: 'Team', action: 'Removed', label: `Invite for ${member.email}`, href: '/admin/team' })
-      toast.success('Invite removed')
-    },
-    [setInvites],
-  )
-
-  const columns = React.useMemo<ColumnDef<TeamMember>[]>(
+  const columns = React.useMemo<ColumnDef<Row>[]>(
     () => [
       {
-        accessorKey: 'name',
+        accessorKey: 'email',
         header: 'Member',
-        cell: ({ row }) => (
-          <div className="min-w-[200px]">
-            <p className="font-medium text-foreground">{row.original.name}</p>
-            {row.original.status === 'active' ? <p className="text-[13px] text-muted-foreground">{row.original.email}</p> : null}
-          </div>
-        ),
+        cell: ({ row }) => {
+          const item = row.original
+          const name = item.kind === 'member' ? memberName(item.email) : item.email
+          return (
+            <div className="flex min-w-[220px] items-center gap-3">
+              <Monogram name={name} size="sm" className={item.kind === 'invitation' ? 'opacity-60' : undefined} />
+              <div className="min-w-0">
+                {item.kind === 'member' ? (
+                  <Link href={`/admin/team/${item.id}`} onClick={stopRowClick} className="font-medium text-foreground hover:text-primary hover:underline">
+                    {name}
+                  </Link>
+                ) : (
+                  <p className="font-medium text-foreground">{item.email}</p>
+                )}
+                <p className="truncate text-[13px] text-muted-foreground">
+                  {item.kind === 'member' ? item.email : item.invitation.invitedBy ? `Invited by ${item.invitation.invitedBy.email}` : 'Invited'}
+                </p>
+              </div>
+            </div>
+          )
+        },
       },
       {
         accessorKey: 'role',
         header: 'Role',
-        cell: ({ row }) =>
-          row.original.id === DEMO_OWNER.id ? (
-            <Tag>Owner</Tag>
-          ) : (
-            <div className="w-32" onClick={stopRowClick} onKeyDown={stopRowClick}>
-              <FormSelect value={row.original.role} onChange={(role) => changeRole(row.original, role)} options={TEAM_ROLES.map((r) => ({ value: r, label: r }))} className="h-8" />
-            </div>
-          ),
+        cell: ({ row }) => <Tag>{roleLabels[row.original.role]}</Tag>,
       },
       {
         accessorKey: 'status',
         header: 'Status',
-        cell: ({ row }) =>
-          row.original.status === 'active' ? (
-            <StatusBadge tone="success">Active</StatusBadge>
-          ) : (
-            <div className="flex flex-col gap-0.5">
-              <StatusBadge tone="warning">Invite pending</StatusBadge>
-              {row.original.invitedAt ? <span className="text-xs text-muted-foreground">Added {formatRelative(row.original.invitedAt)}</span> : null}
-            </div>
-          ),
+        cell: ({ row }) => {
+          const item = row.original
+          if (item.kind === 'invitation') return <StatusBadge tone={item.invitation.expired ? 'danger' : 'warning'}>{item.invitation.expired ? 'Invite expired' : 'Invite pending'}</StatusBadge>
+          return <StatusBadge tone={statusTone[item.status]}>{statusLabels[item.status]}</StatusBadge>
+        },
+      },
+      {
+        accessorKey: 'when',
+        header: ({ table }) => (table.getRowModel().rows.every((r) => r.original.kind === 'invitation') ? 'Invited' : 'Last sign-in'),
+        cell: ({ row }) => {
+          const item = row.original
+          if (item.kind === 'invitation') return <span className="whitespace-nowrap text-muted-foreground">{formatRelative(item.when)} · expires {formatDateTime(item.invitation.expiresAt)}</span>
+          return <span className="whitespace-nowrap">{item.when ? formatRelative(item.when) : 'Never'}</span>
+        },
       },
       {
         id: 'actions',
         header: () => <span className="sr-only">Actions</span>,
-        cell: ({ row }) =>
-          row.original.status === 'pending' ? (
-            <div className="flex justify-end">
-              <Button type="button" variant="ghost" size="sm" className="gap-1.5 text-muted-foreground hover:text-destructive" onClick={() => remove(row.original)}>
-                <Trash2 className="size-4" aria-hidden="true" />
-                Remove
-              </Button>
+        cell: ({ row }) => {
+          const item = row.original
+          const self = item.kind === 'member' && item.email === session?.email
+          return (
+            <div className="flex justify-end" onClick={stopRowClick} onKeyDown={stopRowClick}>
+              <DropdownMenu>
+                <DropdownMenuTrigger render={<Button variant="ghost" size="icon-sm" aria-label={`Actions for ${item.email}`} />}>
+                  <MoreHorizontal className="size-4" aria-hidden="true" />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  {item.kind === 'invitation' ? (
+                    <DropdownMenuItem variant="destructive" onClick={() => act.mutate({ run: () => revokeInvitation(item.id), success: 'Invitation revoked' })}>
+                      <X className="size-4" aria-hidden="true" />
+                      Revoke invitation
+                    </DropdownMenuItem>
+                  ) : (
+                    <>
+                      <DropdownMenuItem render={<Link href={`/admin/team/${item.id}`} />}>View member</DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      {STAFF_ROLES.filter((role) => role !== item.role).map((role) => (
+                        <DropdownMenuItem key={role} disabled={self} onClick={() => act.mutate({ run: () => changeMemberRole(item.id, role), success: `${memberName(item.email)} is now ${roleLabels[role].toLowerCase()}` })}>
+                          <ShieldCheck className="size-4" aria-hidden="true" />
+                          Make {roleLabels[role].toLowerCase()}
+                        </DropdownMenuItem>
+                      ))}
+                      <DropdownMenuItem disabled={self} onClick={() => act.mutate({ run: () => signOutMemberEverywhere(item.id), success: 'All sessions ended' })}>
+                        Sign out everywhere
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      {item.status === 'active' ? (
+                        <DropdownMenuItem variant="destructive" disabled={self} onClick={() => act.mutate({ run: () => suspendMember(item.id), success: `${memberName(item.email)} suspended` })}>
+                          Suspend account
+                        </DropdownMenuItem>
+                      ) : (
+                        <DropdownMenuItem onClick={() => act.mutate({ run: () => reactivateMember(item.id), success: `${memberName(item.email)} reactivated` })}>
+                          <Check className="size-4" aria-hidden="true" />
+                          Reactivate account
+                        </DropdownMenuItem>
+                      )}
+                    </>
+                  )}
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
-          ) : null,
+          )
+        },
       },
     ],
-    [changeRole, remove],
+    [act, session?.email],
   )
 
-  const pending = invites.length
+  const existingEmails = rows.map((row) => row.email.toLowerCase())
+  const total = query.data ? `${query.data.members.length} member${query.data.members.length === 1 ? '' : 's'}${counts.invited ? ` · ${counts.invited} invited` : ''}` : undefined
+
+  if (hydrated && session && !isAdmin) {
+    return (
+      <div className="space-y-5">
+        <AdminPageHeader title="Team & access" description="Who can use the admin and what each role allows." />
+        <div className="rounded-xl border border-border bg-card shadow-sm">
+          <AdminEmptyState art="notFound" title="Administrators only" description="Ask an administrator if you need a role change or a new team member added." className="py-14" />
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-5">
       <AdminPageHeader
+        eyebrow="Workspace"
         title="Team & access"
-        count={`1 member${pending ? ` · ${pending} pending` : ''}`}
-        description="Who can use the admin and what each role allows."
-        meta={<DemoNote>Demo: there are no real accounts. Invites are saved on this device only and no email is sent.</DemoNote>}
+        count={total}
+        description="Who can use the admin and what each role allows. Invitations produce a one-time link; nobody can sign up on their own."
         actions={
-          <Button type="button" size="sm" className="gap-1.5" onClick={() => setInviteOpen(true)}>
+          <Button type="button" size="sm" className="gap-1.5" onClick={() => setInviteOpen(true)} disabled={!isAdmin}>
             <UserPlus className="size-4" aria-hidden="true" />
             Invite member
           </Button>
         }
       />
-<AdminDataTable
-  tabs={{ value: f.status, onChange: (value) => set({ status: value }), options: [{ value: 'active', label: 'Active' }, { value: 'pending', label: 'Invite pending' }] }}
-  toolbar={
-    <AdminToolbar search={f.q} onSearchChange={(q) => set({ q })} searchPlaceholder="Search name or email" hasActiveFilters={active} onReset={reset} summary={active ? `${filtered.length} of ${members.length} match` : undefined}>
-          <AdminFilterSelect label="Role" value={f.role} onChange={(role) => set({ role })} options={TEAM_ROLES.map((r) => ({ value: r, label: r }))} />
-        </AdminToolbar>
-  }
-        columns={columns}
-        data={filtered}
-        hasActiveFilters={active}
-        onResetFilters={reset}
-        emptyTitle="No members match"
-        emptyDescription="Try a different search or clear the filters."
-        mobileCardRender={(row) => {
-          const member = row.original
-          return (
-            <div className="space-y-3 rounded-xl border border-border bg-card shadow-sm p-4">
-              <div className="flex items-start justify-between gap-3">
-                <div className="min-w-0">
-                  <p className="truncate font-medium text-foreground">{member.name}</p>
-                  {member.status === 'active' ? <p className="text-[13px] text-muted-foreground">{member.email}</p> : null}
-                </div>
-                {member.status === 'active' ? <StatusBadge tone="success">Active</StatusBadge> : <StatusBadge tone="warning">Invite pending</StatusBadge>}
-              </div>
-              {member.status === 'pending' ? (
-                <div className="flex items-center gap-2">
-                  <FormSelect value={member.role} onChange={(role) => changeRole(member, role)} options={TEAM_ROLES.map((r) => ({ value: r, label: r }))} className="h-8 flex-1" />
-                  <Button type="button" variant="ghost" size="icon-sm" aria-label={`Remove invite for ${member.email}`} className="text-muted-foreground hover:text-destructive" onClick={() => remove(member)}>
-                    <Trash2 className="size-4" aria-hidden="true" />
-                  </Button>
-                </div>
-              ) : (
-                <Tag>{member.role}</Tag>
-              )}
-            </div>
-          )
-        }}
-      />
 
-      <Panel title="Roles" description="What each role can do in the admin.">
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
-          {TEAM_ROLES.map((role) => {
-            const info = TEAM_ROLE_INFO[role]
+      {query.isLoading ? (
+        <AdminTableSkeleton rows={4} columns={5} />
+      ) : query.isError ? (
+        <div className="rounded-xl border border-border bg-card shadow-sm">
+          <AdminEmptyState
+            art="loadError"
+            title="Could not load the team"
+            description={messageOf(query.error, 'Please try again.')}
+            action={
+              <Button variant="outline" onClick={() => void query.refetch()}>
+                Try again
+              </Button>
+            }
+            className="py-14"
+          />
+        </div>
+      ) : (
+        <AdminDataTable
+          tabs={{
+            value: f.status,
+            onChange: (value) => set({ status: value }),
+            total: rows.length,
+            options: [
+              { value: 'active', label: 'Active', count: counts.active },
+              { value: 'invited', label: 'Invited', count: counts.invited },
+              { value: 'suspended', label: 'Suspended', count: counts.suspended },
+            ],
+          }}
+          toolbar={
+            <AdminToolbar search={f.q} onSearchChange={(q) => set({ q })} searchPlaceholder="Search name or email" hasActiveFilters={active} onReset={reset} resultCount={filtered.length}>
+              <AdminFilterSelect label="Role" value={f.role} onChange={(role) => set({ role })} options={STAFF_ROLES.map((value) => ({ value, label: roleLabels[value] }))} />
+            </AdminToolbar>
+          }
+          columns={columns}
+          data={filtered}
+          getRowId={(row) => row.id}
+          onRowClick={(row) => (row.kind === 'member' ? router.push(`/admin/team/${row.id}`) : undefined)}
+          getRowAriaLabel={(row) => (row.kind === 'member' ? `Open ${row.email}` : `Invitation for ${row.email}`)}
+          hasActiveFilters={active}
+          onResetFilters={reset}
+          emptyTitle={f.status === 'invited' ? 'No open invitations' : f.status === 'suspended' ? 'No suspended accounts' : 'No one matches'}
+          emptyDescription={f.status === 'invited' ? 'Invite someone and share the one-time link with them.' : 'Try a different search or status.'}
+          mobileCardRender={(row) => {
+            const item = row.original
             return (
-              <div key={role} className="space-y-2">
-                <div>
-                  <p className="text-sm font-semibold text-foreground">{role}</p>
-                  <p className="text-[13px] text-muted-foreground">{info.summary}</p>
+              <div className="flex items-start justify-between gap-3 rounded-xl border border-border bg-card p-4 shadow-sm">
+                <div className="min-w-0">
+                  <p className="truncate font-medium text-foreground">{item.kind === 'member' ? memberName(item.email) : item.email}</p>
+                  <p className="truncate text-[13px] text-muted-foreground">{item.kind === 'member' ? item.email : `Invited ${formatRelative(item.when)}`}</p>
+                  <div className="mt-2 flex flex-wrap gap-1.5">
+                    <Tag>{roleLabels[item.role]}</Tag>
+                    {item.kind === 'invitation' ? <StatusBadge tone="warning">Invite pending</StatusBadge> : <StatusBadge tone={statusTone[item.status]}>{statusLabels[item.status]}</StatusBadge>}
+                  </div>
                 </div>
-                <ul className="space-y-1.5 text-sm">
+                {item.kind === 'member' ? (
+                  <Button variant="outline" size="sm" render={<Link href={`/admin/team/${item.id}`} />}>
+                    Open
+                  </Button>
+                ) : (
+                  <Button variant="outline" size="sm" onClick={() => act.mutate({ run: () => revokeInvitation(item.id), success: 'Invitation revoked' })}>
+                    Revoke
+                  </Button>
+                )}
+              </div>
+            )
+          }}
+        />
+      )}
+
+      <Panel title="What each role can do" description="Permissions are fixed per role and enforced by the API.">
+        <div className="grid gap-4 sm:grid-cols-2">
+          {STAFF_ROLES.map((role) => {
+            const info = roleInfo[role]
+            return (
+              <div key={role} className="rounded-lg border border-border p-4">
+                <div className="flex items-center gap-2">
+                  <ShieldCheck className={role === 'admin' ? 'size-4 text-primary' : 'size-4 text-muted-foreground'} aria-hidden="true" />
+                  <p className="text-sm font-semibold text-foreground">{roleLabels[role]}</p>
+                </div>
+                <p className="mt-1 text-[13px] text-muted-foreground">{info.summary}</p>
+                <ul className="mt-3 space-y-1.5 text-[13px]">
                   {info.can.map((item) => (
-                    <li key={item} className="flex items-start gap-2 text-foreground">
-                      <Check className="mt-0.5 size-4 shrink-0 text-success" aria-label="Can" />
+                    <li key={item} className="flex gap-2 text-foreground">
+                      <Check className="mt-0.5 size-3.5 shrink-0 text-success" aria-hidden="true" />
                       {item}
                     </li>
                   ))}
                   {info.cannot.map((item) => (
-                    <li key={item} className="flex items-start gap-2 text-muted-foreground">
-                      <X className="mt-0.5 size-4 shrink-0" aria-label="Cannot" />
+                    <li key={item} className="flex gap-2 text-muted-foreground">
+                      <X className="mt-0.5 size-3.5 shrink-0 text-destructive/70" aria-hidden="true" />
                       {item}
                     </li>
                   ))}
@@ -199,7 +322,7 @@ export function AdminTeamView() {
         </div>
       </Panel>
 
-      <InviteMemberDialog open={inviteOpen} onOpenChange={setInviteOpen} existingEmails={invites.map((member) => member.email)} onInvite={invite} />
+      <InviteMemberDialog open={inviteOpen} onOpenChange={setInviteOpen} existingEmails={existingEmails} />
     </div>
   )
 }
