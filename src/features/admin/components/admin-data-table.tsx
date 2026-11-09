@@ -108,7 +108,7 @@ function EmptyBlock({ title, description, onReset, hasActiveFilters }: { title: 
       <p className="text-[15px] font-semibold text-foreground">{title}</p>
       <p className="mt-1 max-w-sm text-sm text-muted-foreground">{description}</p>
       {hasActiveFilters && onReset ? (
-        <Button type="button" variant="outline" size="sm" className="mt-4" onClick={onReset}>
+        <Button type="button" variant="outline" className="mt-4 h-9 px-3.5" onClick={onReset}>
           <RotateCcw />
           Clear filters
         </Button>

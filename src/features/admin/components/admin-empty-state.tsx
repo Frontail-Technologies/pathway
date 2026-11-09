@@ -25,7 +25,7 @@ export function AdminEmptyState({ icon: Icon = Activity, art, title, description
       )}
       <p className="text-[15px] font-semibold text-foreground">{title}</p>
       {description ? <p className="mt-1 max-w-sm text-sm leading-relaxed text-muted-foreground">{description}</p> : null}
-      {action ? <div className="mt-4">{action}</div> : null}
+      {action ? <div className="mt-4 flex flex-wrap items-center justify-center gap-2 [&>a]:h-9 [&>a]:px-3.5 [&>a]:text-sm [&>button]:h-9 [&>button]:px-3.5 [&>button]:text-sm">{action}</div> : null}
     </div>
   )
 }
