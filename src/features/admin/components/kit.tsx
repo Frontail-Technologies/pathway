@@ -145,7 +145,7 @@ export function AdminFilterSelect({ label, value, onChange, options, allLabel = 
   const active = value !== 'all'
   return (
     <Select value={value} onValueChange={(next) => onChange((next as string | null) ?? 'all')} items={items}>
-      <SelectTrigger size="sm" aria-label={label} className={cn('h-9 min-w-0 gap-1.5 rounded-lg bg-card text-sm', block && 'w-full justify-between', active && 'border-primary/50 bg-primary/8 text-primary')}>
+      <SelectTrigger size="sm" aria-label={label} className={cn('min-w-0 gap-1.5 rounded-lg bg-card px-3 text-sm data-[size=sm]:h-9 data-[size=sm]:rounded-lg', block && 'w-full justify-between', active && 'border-primary/50 bg-primary/8 text-primary')}>
         <span className={active ? 'text-primary/80' : 'text-muted-foreground'}>{label}:</span>
         <SelectValue>{current.label}</SelectValue>
       </SelectTrigger>

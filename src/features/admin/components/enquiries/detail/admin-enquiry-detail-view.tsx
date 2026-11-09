@@ -36,7 +36,7 @@ const priorityLabels: Record<string, string> = {
 function StatusControl({ value, onChange }: { value: LeadStatus; onChange: (value: LeadStatus) => void }) {
   return (
     <Select value={value} onValueChange={(next) => next && onChange(next as LeadStatus)} items={leadStatusOptions}>
-      <SelectTrigger size="sm" aria-label="Lead status" className="h-9 min-w-44 gap-1.5 bg-card text-sm">
+      <SelectTrigger size="sm" aria-label="Lead status" className="min-w-44 gap-1.5 data-[size=sm]:h-9 data-[size=sm]:rounded-lg bg-card text-sm">
         <span className="text-muted-foreground">Status:</span>
         <SelectValue>{leadStatusLabels[value]}</SelectValue>
       </SelectTrigger>

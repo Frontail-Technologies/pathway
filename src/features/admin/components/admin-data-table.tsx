@@ -263,7 +263,7 @@ export function AdminDataTable<TData, TValue>({
               </span>
               {pageSizes.length > 1 ? (
                 <Select value={String(currentPageSize)} onValueChange={(value) => table.setPageSize(Number(value))} items={pageSizes.map((size) => ({ value: String(size), label: `${size} / page` }))}>
-                  <SelectTrigger size="sm" aria-label="Rows per page" className="h-8 gap-1 bg-card text-xs">
+                  <SelectTrigger size="sm" aria-label="Rows per page" className="gap-1 bg-card text-xs data-[size=sm]:h-8">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent alignItemWithTrigger={false} side="top" align="start" sideOffset={4}>
