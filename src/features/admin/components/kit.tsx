@@ -2,8 +2,11 @@
 
 import Link from 'next/link'
 import type { ReactNode } from 'react'
-import { ArrowLeft, ArrowRight, Search, TrendingDown, TrendingUp, X, type LucideIcon } from 'lucide-react'
+import { useState } from 'react'
+import { ArrowLeft, ArrowRight, Search, SlidersHorizontal, TrendingDown, TrendingUp, X, type LucideIcon } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle } from '@/components/ui/sheet'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { cn } from '@/lib/utils'
 
@@ -58,6 +61,11 @@ export function AdminToolbar({
   hasActiveFilters,
   onReset,
   summary,
+  advanced,
+  advancedCount = 0,
+  advancedTitle = 'Filters',
+  resultCount,
+  actions,
 }: {
   search?: string
   onSearchChange?: (value: string) => void
@@ -66,7 +74,13 @@ export function AdminToolbar({
   hasActiveFilters?: boolean
   onReset?: () => void
   summary?: ReactNode
+  advanced?: ReactNode
+  advancedCount?: number
+  advancedTitle?: string
+  resultCount?: number
+  actions?: ReactNode
 }) {
+  const [advancedOpen, setAdvancedOpen] = useState(false)
   return (
     <div className="flex flex-col gap-3">
       <div className="flex flex-col gap-2 lg:flex-row lg:items-center">
@@ -84,25 +98,54 @@ export function AdminToolbar({
           </div>
         ) : null}
         {children ? <div className="flex flex-wrap items-center gap-2">{children}</div> : null}
+        {advanced ? (
+          <Sheet open={advancedOpen} onOpenChange={setAdvancedOpen}>
+            <Button type="button" variant="outline" className={cn('h-9 gap-1.5 rounded-lg bg-card', advancedCount > 0 && 'border-primary/50 text-primary')} onClick={() => setAdvancedOpen(true)}>
+              <SlidersHorizontal className="size-4" aria-hidden="true" />
+              {advancedTitle}
+              {advancedCount > 0 ? <span className="rounded-full bg-primary px-1.5 text-[11px] font-semibold text-primary-foreground tabular-nums">{advancedCount}</span> : null}
+            </Button>
+            <SheetContent side="right" className="flex w-full flex-col gap-0 p-0 sm:max-w-sm">
+              <SheetHeader className="border-b border-border px-5 py-4">
+                <SheetTitle>{advancedTitle}</SheetTitle>
+                <SheetDescription>Narrow the list. Changes apply as you go.</SheetDescription>
+              </SheetHeader>
+              <div className="flex flex-1 flex-col gap-5 overflow-y-auto px-5 py-5">{advanced}</div>
+              <SheetFooter className="flex-row items-center justify-between border-t border-border px-5 py-3 sm:justify-between">
+                {onReset ? (
+                  <Button type="button" variant="ghost" onClick={onReset}>
+                    Clear all
+                  </Button>
+                ) : (
+                  <span />
+                )}
+                <Button type="button" onClick={() => setAdvancedOpen(false)}>
+                  {resultCount !== undefined ? `Show ${resultCount} results` : 'Done'}
+                </Button>
+              </SheetFooter>
+            </SheetContent>
+          </Sheet>
+        ) : null}
         {hasActiveFilters && onReset ? (
           <button type="button" onClick={onReset} className="flex h-9 items-center gap-1 rounded-md px-2 text-sm font-medium text-muted-foreground outline-none hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring/40">
             <X className="size-4" aria-hidden="true" />
             Clear
           </button>
         ) : null}
+        {actions ? <div className="flex items-center gap-2 lg:ml-auto">{actions}</div> : null}
       </div>
       {summary ? <p className="text-[13px] text-muted-foreground">{summary}</p> : null}
     </div>
   )
 }
 
-export function AdminFilterSelect({ label, value, onChange, options, allLabel = 'All' }: { label: string; value: string; onChange: (value: string) => void; options: FilterOption[]; allLabel?: string }) {
+export function AdminFilterSelect({ label, value, onChange, options, allLabel = 'All', block }: { label: string; value: string; onChange: (value: string) => void; options: FilterOption[]; allLabel?: string; block?: boolean }) {
   const items = [{ value: 'all', label: allLabel }, ...options.filter((option) => option.value !== 'all')]
   const current = items.find((item) => item.value === value) ?? items[0]!
   const active = value !== 'all'
   return (
     <Select value={value} onValueChange={(next) => onChange((next as string | null) ?? 'all')} items={items}>
-      <SelectTrigger size="sm" aria-label={label} className={cn('h-9 min-w-0 gap-1.5 rounded-lg bg-card text-sm', active && 'border-primary/50 bg-primary/8 text-primary')}>
+      <SelectTrigger size="sm" aria-label={label} className={cn('h-9 min-w-0 gap-1.5 rounded-lg bg-card text-sm', block && 'w-full justify-between', active && 'border-primary/50 bg-primary/8 text-primary')}>
         <span className={active ? 'text-primary/80' : 'text-muted-foreground'}>{label}:</span>
         <SelectValue>{current.label}</SelectValue>
       </SelectTrigger>

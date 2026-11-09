@@ -4,17 +4,18 @@ import * as React from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import type { ColumnDef } from '@tanstack/react-table'
-import { ExternalLink, Eye, Inbox, MoreHorizontal } from 'lucide-react'
+import { Download, ExternalLink, Eye, Inbox, MoreHorizontal } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import type { AdminEnquiry } from '@/features/admin/data/admin-enquiries'
 import { formatDateTime } from '@/features/admin/components/demo/relative-time'
 import { useAdminEnquiries } from '@/features/admin/hooks/use-admin-enquiries'
 import { ApiRequestError } from '@/features/auth/lib/session-client'
+import { downloadCsv } from '@/features/admin/utils/export-csv'
 import { useUrlFilters } from '@/features/admin/hooks/use-url-filters'
 import { AdminDataTable } from '../../admin-data-table'
 import { AdminEmptyState } from '../../admin-empty-state'
-import { AdminFilterSelect, AdminPageHeader, AdminToolbar, SortHeader, stopRowClick, Tag } from '../../kit'
+import { AdminFilterSelect, AdminPageHeader, AdminToolbar, Monogram, SortHeader, stopRowClick, Tag } from '../../kit'
 import { LeadStatusBadge } from '../shared/lead-status-badge'
 import { assignmentOptions, enquirySourceLabels, enquirySourceOptions, enquiryTitle, leadStatusOptions } from '../shared/enquiry-constants'
 
@@ -57,16 +58,34 @@ export function AdminEnquiriesView() {
   const initialEnquiries = React.useMemo(() => query.data ?? [], [query.data])
   const { values: f, set, reset, active } = useUrlFilters(DEFAULT_FILTERS)
 
-  const filtered = React.useMemo(() => {
+  const beforeTabs = React.useMemo(() => {
     const query = f.q.trim().toLowerCase()
     return initialEnquiries.filter((enquiry) => {
       if (query && ![enquiry.contactName, enquiry.contactEmail ?? '', enquiry.contactPhone ?? '', enquiry.subject ?? '', enquiry.targetName ?? ''].some((value) => value.toLowerCase().includes(query))) return false
-      if (f.status !== 'all' && enquiry.status !== f.status) return false
       if (f.source !== 'all' && enquiry.source !== f.source) return false
       if (f.assignee === 'unassigned' && enquiry.assignedTo) return false
       return true
     })
   }, [initialEnquiries, f])
+  const filtered = React.useMemo(() => (f.status === 'all' ? beforeTabs : beforeTabs.filter((enquiry) => enquiry.status === f.status)), [beforeTabs, f.status])
+  const statusTabs = React.useMemo(() => leadStatusOptions.map((option) => ({ ...option, count: beforeTabs.filter((enquiry) => enquiry.status === option.value).length })), [beforeTabs])
+  const chips = [
+    ...(f.source !== 'all' ? [{ id: 'source', label: `Source: ${enquirySourceLabels[f.source as keyof typeof enquirySourceLabels] ?? f.source}`, onRemove: () => set({ source: 'all' }) }] : []),
+    ...(f.assignee !== 'all' ? [{ id: 'assignee', label: 'Unassigned only', onRemove: () => set({ assignee: 'all' }) }] : []),
+  ]
+  const exportRows = () =>
+    downloadCsv('enquiries', filtered, [
+      { header: 'Received', value: (e) => e.createdAt },
+      { header: 'Name', value: (e) => e.contactName },
+      { header: 'Phone', value: (e) => e.contactPhone },
+      { header: 'Email', value: (e) => e.contactEmail },
+      { header: 'City', value: (e) => e.contactCity },
+      { header: 'Source', value: (e) => enquirySourceLabels[e.source] },
+      { header: 'About', value: (e) => e.targetName },
+      { header: 'Subject', value: (e) => e.subject },
+      { header: 'Status', value: (e) => e.statusLabel },
+      { header: 'Channel', value: (e) => (e.channel === 'app' ? 'Mobile app' : 'Website') },
+    ])
 
   const columns = React.useMemo<ColumnDef<AdminEnquiry>[]>(
     () => [
@@ -74,11 +93,14 @@ export function AdminEnquiriesView() {
         accessorKey: 'contactName',
         header: ({ column }) => <SortHeader label="Contact" sorted={column.getIsSorted()} onToggle={() => column.toggleSorting(column.getIsSorted() === 'asc')} />,
         cell: ({ row }) => (
-          <div className="min-w-[200px]">
-            <Link href={`/admin/enquiries/${row.original.id}`} onClick={stopRowClick} className="font-medium text-foreground hover:text-primary hover:underline">
-              {row.original.contactName}
-            </Link>
-            <p className="max-w-[260px] truncate text-[13px] text-muted-foreground">{enquiryTitle(row.original)}</p>
+          <div className="flex min-w-[240px] items-center gap-3">
+            <Monogram name={row.original.contactName} className="rounded-full" />
+            <div className="min-w-0">
+              <Link href={`/admin/enquiries/${row.original.id}`} onClick={stopRowClick} className="font-medium text-foreground hover:text-primary hover:underline">
+                {row.original.contactName}
+              </Link>
+              <p className="max-w-[260px] truncate text-[13px] text-muted-foreground">{enquiryTitle(row.original)}</p>
+            </div>
           </div>
         ),
       },
@@ -130,22 +152,31 @@ export function AdminEnquiriesView() {
         </div>
       ) : (
         <>
-          <AdminToolbar
-            search={f.q}
-            onSearchChange={(q) => set({ q })}
-            searchPlaceholder="Search name, phone, email or subject"
-            hasActiveFilters={active}
-            onReset={reset}
-            summary={active ? `${filtered.length} of ${total} match` : undefined}
-          >
-            <AdminFilterSelect label="Status" value={f.status} onChange={(status) => set({ status })} options={leadStatusOptions} />
-            <AdminFilterSelect label="Source" value={f.source} onChange={(source) => set({ source })} options={enquirySourceOptions} />
-            <AdminFilterSelect label="Assigned to" value={f.assignee} onChange={(assignee) => set({ assignee })} options={assignmentOptions} allLabel="Anyone" />
-          </AdminToolbar>
-
           <AdminDataTable
             columns={columns}
             data={filtered}
+            getRowId={(enquiry) => enquiry.id}
+            tabs={{ value: f.status, onChange: (status) => set({ status }), options: statusTabs, total: beforeTabs.length }}
+            toolbar={
+              <AdminToolbar
+                search={f.q}
+                onSearchChange={(q) => set({ q })}
+                searchPlaceholder="Search name, phone, email or subject"
+                resultCount={filtered.length}
+                onReset={active ? reset : undefined}
+                advancedCount={f.assignee !== 'all' ? 1 : 0}
+                advanced={<AdminFilterSelect block label="Assigned to" value={f.assignee} onChange={(assignee) => set({ assignee })} options={assignmentOptions} allLabel="Anyone" />}
+                actions={
+                  <Button type="button" variant="outline" className="h-9 gap-1.5 rounded-lg bg-card" onClick={exportRows} disabled={!filtered.length}>
+                    <Download className="size-4" aria-hidden="true" />
+                    Export
+                  </Button>
+                }
+              >
+                <AdminFilterSelect label="Source" value={f.source} onChange={(source) => set({ source })} options={enquirySourceOptions} />
+              </AdminToolbar>
+            }
+            chips={chips}
             onRowClick={(enquiry) => router.push(`/admin/enquiries/${enquiry.id}`)}
             getRowAriaLabel={(enquiry) => `Open enquiry from ${enquiry.contactName}`}
             hasActiveFilters={active}
@@ -155,7 +186,7 @@ export function AdminEnquiriesView() {
             mobileCardRender={(row) => {
               const enquiry = row.original
               return (
-                <Link href={`/admin/enquiries/${enquiry.id}`} className="block space-y-2 rounded-lg border border-border bg-card p-4">
+                <Link href={`/admin/enquiries/${enquiry.id}`} className="block space-y-2 rounded-xl border border-border bg-card p-4 shadow-sm">
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
                       <p className="font-medium text-foreground">{enquiry.contactName}</p>
