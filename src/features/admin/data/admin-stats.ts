@@ -68,11 +68,11 @@ export function getAdminKPIs(): AdminKPI[] {
     {
       id: 'enquiries',
       label: 'Enquiries & Leads',
-      value: '—',
-      subtext: 'Tracking not connected yet',
+      value: 'Live',
+      subtext: 'Counts are on the Enquiries page',
       iconName: 'MessageSquareQuote',
       iconColor: 'indigo',
-      connected: false,
+      connected: true,
     },
   ]
 }
@@ -230,14 +230,6 @@ export function getNeedsAttentionTasks(): OperationalAttentionTask[] {
       severity: 'info',
       badgeText: `${tutorsUsingAvatarFallback} pending`,
       actionLabel: 'Review in Tutors',
-    },
-    {
-      id: 'enquiry-crm-pipeline',
-      title: 'Enquiry tracking is not connected yet',
-      description: 'Student counselling and enquiry submissions are currently in UI prototype state without active persistence.',
-      severity: 'neutral',
-      badgeText: 'Not connected',
-      actionLabel: 'Configure in Enquiries',
     },
   ]
 }
