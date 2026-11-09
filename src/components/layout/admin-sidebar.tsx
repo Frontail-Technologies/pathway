@@ -14,7 +14,7 @@ const row = 'relative flex h-11 items-center gap-3 rounded-lg px-3 text-[14px] o
 
 function CountBadge({ count }: { count: number }) {
   return (
-    <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1.5 text-[11px] font-semibold text-primary-foreground tabular-nums" aria-label={`${count} new`}>
+    <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-white px-1.5 text-[11px] font-semibold text-primary tabular-nums" aria-label={`${count} new`}>
       {count > 99 ? '99+' : count}
     </span>
   )
@@ -136,7 +136,7 @@ export function AdminSidebar({ onNavigate, className }: { onNavigate?: () => voi
             signOut()
             router.replace('/admin/login')
           }}
-          className={cn(row, 'text-left text-[#fca5a5] hover:bg-admin-sidebar-hover hover:text-[#fecaca]')}
+          className={cn(row, 'text-left text-[#fecaca] hover:bg-admin-sidebar-hover hover:text-white')}
         >
           <LogOut className="size-5 shrink-0" strokeWidth={1.8} aria-hidden="true" />
           <span className="flex-1 truncate">Sign out</span>

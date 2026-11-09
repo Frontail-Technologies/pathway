@@ -45,7 +45,7 @@ export function AdminPageHeader({
           {description ? <p className="max-w-2xl text-[15px] text-muted-foreground">{description}</p> : null}
           {meta ? <div className="mt-1 flex flex-wrap items-center gap-2">{meta}</div> : null}
         </div>
-        {actions ? <div className="flex shrink-0 flex-wrap items-center gap-2">{actions}</div> : null}
+        {actions ? <div className="flex shrink-0 flex-wrap items-center gap-2 [&>a]:h-9 [&>a]:px-3.5 [&>a]:text-sm [&>button]:h-9 [&>button]:px-3.5 [&>button]:text-sm">{actions}</div> : null}
       </div>
     </header>
   )
@@ -438,7 +438,7 @@ export function RecordHeader({ title, media, chips, meta, description, actions, 
             {description ? <p className="max-w-2xl text-sm text-muted-foreground">{description}</p> : null}
           </div>
         </div>
-        {actions ? <div className="flex shrink-0 flex-wrap items-center gap-2">{actions}</div> : null}
+        {actions ? <div className="flex shrink-0 flex-wrap items-center gap-2 [&>a]:h-9 [&>a]:px-3.5 [&>a]:text-sm [&>button]:h-9 [&>button]:px-3.5 [&>button]:text-sm">{actions}</div> : null}
       </div>
     </header>
   )
