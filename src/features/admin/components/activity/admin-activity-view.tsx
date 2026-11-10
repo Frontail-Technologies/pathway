@@ -13,7 +13,6 @@ import { useUrlFilters } from '@/features/admin/hooks/use-url-filters'
 import { AdminDataTable } from '../admin-data-table'
 import { AdminEmptyState } from '../admin-empty-state'
 import { AdminFilterSelect, AdminPageHeader, AdminToolbar, StatusBadge, stopRowClick, Tag, type StatusTone } from '../kit'
-import { DemoNote } from '../demo/demo-form'
 import { formatDateTime, formatRelative } from '../demo/relative-time'
 
 const DEFAULT_FILTERS = { q: '', area: 'all', action: 'all' }
@@ -87,8 +86,6 @@ export function AdminActivityView() {
       <AdminPageHeader
         title="Activity log"
         count={loaded ? `${entries.length} ${entries.length === 1 ? 'change' : 'changes'}` : undefined}
-        description="Changes made in this admin, newest first."
-        meta={<DemoNote>Demo: there is no server audit trail, so only changes made in this browser are listed.</DemoNote>}
         actions={
           entries.length > 0 ? (
             <Button type="button" variant="outline" size="sm" onClick={clear}>

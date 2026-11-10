@@ -116,7 +116,7 @@ export function AdminReviewsView({ initialReviews }: { initialReviews: AdminRevi
 
   return (
     <div className="space-y-5">
-      <AdminPageHeader title="Reviews" count={total > 0 ? `${total} total` : undefined} description="Student reviews and imported Google reviews for institutions, coaching and tutors." />
+      <AdminPageHeader title="Reviews" count={total > 0 ? `${total} total` : undefined} />
 
       {total === 0 ? (
         <div className="rounded-xl border border-border bg-card shadow-sm">

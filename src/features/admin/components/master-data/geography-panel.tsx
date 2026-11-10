@@ -2,7 +2,7 @@
 
 import * as React from 'react'
 import type { ColumnDef } from '@tanstack/react-table'
-import { MapPin, Pencil, Plus } from 'lucide-react'
+import { Pencil, Plus } from 'lucide-react'
 import { toast } from 'sonner'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { queryKeys } from '@/lib/query-client'
@@ -266,26 +266,6 @@ export function GeographyPanel({ canManage, filters, setFilters }: { canManage: 
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-col gap-3 rounded-xl border border-border bg-card p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-start gap-3">
-          <MapPin className="mt-0.5 size-5 shrink-0 text-primary" aria-hidden="true" />
-          <div>
-            <p className="text-sm font-semibold text-foreground">{selectedState ? `${selectedState.name} · ${selectedState.cities} ${selectedState.cities === 1 ? 'city' : 'cities'}` : `${states.length} states and union territories`}</p>
-            <p className="text-[13px] text-muted-foreground">Institutions, coaching centres, scholarships and student preferences point at these rows, so they are never deleted; correct a name instead.</p>
-          </div>
-        </div>
-        <div className="flex gap-2 self-start sm:self-auto">
-          <Button size="sm" variant="outline" className="gap-1.5" disabled={!canManage} onClick={() => setDialog({ kind: 'state', state: null })}>
-            <Plus className="size-4" aria-hidden="true" />
-            State
-          </Button>
-          <Button size="sm" className="gap-1.5" disabled={!canManage || states.length === 0} onClick={() => setDialog({ kind: 'city', city: null, stateId: selectedState?.id })}>
-            <Plus className="size-4" aria-hidden="true" />
-            City
-          </Button>
-        </div>
-      </div>
-
       {query.isLoading ? (
         <AdminTableSkeleton rows={6} columns={5} />
       ) : query.isError ? (
@@ -305,7 +285,7 @@ export function GeographyPanel({ canManage, filters, setFilters }: { canManage: 
       ) : (
         <AdminDataTable
           toolbar={
-            <AdminToolbar search={filters.q} onSearchChange={(q) => setFilters({ q })} searchPlaceholder={showingCities ? 'Search cities' : 'Search states'} hasActiveFilters={Boolean(filters.q) || showingCities} onReset={() => setFilters({ q: '', state: 'all' })} resultCount={filtered.length}>
+            <AdminToolbar search={filters.q} onSearchChange={(q) => setFilters({ q })} searchPlaceholder={showingCities ? 'Search cities' : 'Search states'} hasActiveFilters={Boolean(filters.q) || showingCities} onReset={() => setFilters({ q: '', state: 'all' })} resultCount={filtered.length} actions={<><Button size="sm" variant="outline" className="h-9 gap-1.5" disabled={!canManage} onClick={() => setDialog({ kind: 'state', state: null })}><Plus className="size-4" aria-hidden="true" />State</Button><Button size="sm" className="h-9 gap-1.5" disabled={!canManage || states.length === 0} onClick={() => setDialog({ kind: 'city', city: null, stateId: selectedState?.id })}><Plus className="size-4" aria-hidden="true" />City</Button></>}>
               <AdminFilterSelect label="Show" value={filters.state} onChange={(state) => setFilters({ state })} allLabel="States" options={states.map((s) => ({ value: s.id, label: `Cities in ${s.name}` }))} />
             </AdminToolbar>
           }

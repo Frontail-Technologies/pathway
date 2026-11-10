@@ -83,7 +83,6 @@ export function AdminTutorAccountsView() {
       <AdminPageHeader
         title="Tutor reviews"
         count={load.state === 'ready' ? `${load.rows.length} ${status ? verificationLabels[status].toLowerCase() : 'total'}` : undefined}
-        description="Tutor profiles submitted from Tutor Space. Approving one updates its public listing; edits by the tutor send it back to draft while the approved listing stays live."
       />
 
       <AdminToolbar search={f.q} onSearchChange={(q) => set({ q })} searchPlaceholder="Search name or email" hasActiveFilters={active} onReset={reset} summary={f.q && load.state === 'ready' ? `${filtered.length} of ${load.rows.length} match` : undefined}>

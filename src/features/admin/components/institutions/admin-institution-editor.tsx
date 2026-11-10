@@ -15,7 +15,6 @@ export function AdminInstitutionEditor({ institution, mode }: { institution?: Ad
       <AdminPageHeader
         back={isEdit ? { href: destination, label: institution.name } : { href: destination, label: 'Institutions' }}
         title={isEdit ? 'Edit institution' : 'Add institution'}
-        description={isEdit ? undefined : 'Create a college or university listing. You can add courses, fees and admissions after saving.'}
       />
       <AdminInstitutionForm institution={institution} mode={mode} onCancel={() => router.push(destination)} />
     </div>

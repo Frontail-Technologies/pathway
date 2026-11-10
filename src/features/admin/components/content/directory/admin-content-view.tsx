@@ -103,7 +103,7 @@ export function AdminContentView({ initialContent }: { initialContent: AdminCont
   if (initialContent.length === 0) {
     return (
       <div className="space-y-5">
-        <AdminPageHeader title="Articles" description="Guides, news and explainers written by the Pathway team." />
+        <AdminPageHeader title="Articles" />
         <div className="rounded-xl border border-border bg-card shadow-sm">
           <AdminEmptyState art="noArticles" title="No articles yet" description="Write the first guide or news post. It stays a draft until you publish it." action={<NewArticleLink />} className="py-12" />
         </div>
@@ -113,7 +113,7 @@ export function AdminContentView({ initialContent }: { initialContent: AdminCont
 
   return (
     <div className="space-y-5">
-      <AdminPageHeader title="Articles" count={`${initialContent.length} total`} description="Guides, news and explainers written by the Pathway team." actions={<NewArticleLink />} />
+      <AdminPageHeader title="Articles" count={`${initialContent.length} total`} actions={<NewArticleLink />} />
 <AdminDataTable
   tabs={{ value: f.status, onChange: (value) => set({ status: value }), options: contentStatusOptions }}
   toolbar={

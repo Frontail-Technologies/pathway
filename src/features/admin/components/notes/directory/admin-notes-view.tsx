@@ -138,7 +138,7 @@ export function AdminNotesView({ initialNotes }: { initialNotes: AdminNote[] }) 
   if (data.length === 0) {
     return (
       <div className="space-y-5">
-        <AdminPageHeader title="Notes" description="Study notes, formula sheets and practice material students can download." />
+        <AdminPageHeader title="Notes" />
         <div className="rounded-xl border border-border bg-card shadow-sm">
           <AdminEmptyState art="noNotes" title="No notes yet" description="Add a note with its PDF, price and the courses or exams it covers." action={<AddNoteLink />} className="py-12" />
         </div>
@@ -148,7 +148,7 @@ export function AdminNotesView({ initialNotes }: { initialNotes: AdminNote[] }) 
 
   return (
     <div className="space-y-5">
-      <AdminPageHeader title="Notes" count={`${data.length} total`} description="Study notes, formula sheets and practice material students can download." actions={<AddNoteLink />} />
+      <AdminPageHeader title="Notes" count={`${data.length} total`} actions={<AddNoteLink />} />
 <AdminDataTable
   tabs={{ value: f.status, onChange: (value) => set({ status: value }), options: statusOptions }}
   toolbar={

@@ -131,7 +131,7 @@ export function AdminEnquiriesView() {
 
   return (
     <div className="space-y-5">
-      <AdminPageHeader title="Enquiries" count={total > 0 ? `${total} total` : undefined} description="Questions, brochure requests and call-backs from students." />
+      <AdminPageHeader title="Enquiries" count={total > 0 ? `${total} total` : undefined} />
 
       {query.isError ? (
         <div className="flex flex-col items-center gap-3 rounded-xl border border-border bg-card shadow-sm px-4 py-14 text-center">

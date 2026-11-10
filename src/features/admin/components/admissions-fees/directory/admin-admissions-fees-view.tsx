@@ -145,7 +145,6 @@ export function AdminAdmissionsFeesView() {
       <AdminPageHeader
         title="Admissions & fees"
         count={`${data.length} total`}
-        description="Fees and admission rules for each course at each institution."
         actions={
           <Link href="/admin/admissions-fees/new" className={buttonVariants({ size: 'sm', className: 'gap-1.5' })}>
             <Plus className="size-4" aria-hidden="true" />

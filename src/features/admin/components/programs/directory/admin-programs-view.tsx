@@ -128,7 +128,6 @@ export function AdminProgramsView() {
       <AdminPageHeader
         title="Courses"
         count={`${data.length} total`}
-        description="Courses in the catalogue and the institutions that offer them."
         actions={
           <Link href="/admin/programs/new" className={buttonVariants({ size: 'sm', className: 'gap-1.5' })}>
             <Plus className="size-4" aria-hidden="true" />

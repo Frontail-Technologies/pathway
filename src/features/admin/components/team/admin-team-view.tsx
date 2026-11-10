@@ -199,7 +199,7 @@ export function AdminTeamView() {
   if (hydrated && session && !isAdmin) {
     return (
       <div className="space-y-5">
-        <AdminPageHeader title="Team & access" description="Who can use the admin and what each role allows." />
+        <AdminPageHeader title="Team & access" />
         <div className="rounded-xl border border-border bg-card shadow-sm">
           <AdminEmptyState art="notFound" title="Administrators only" description="Ask an administrator if you need a role change or a new team member added." className="py-14" />
         </div>
@@ -213,7 +213,6 @@ export function AdminTeamView() {
         eyebrow="Workspace"
         title="Team & access"
         count={total}
-        description="Who can use the admin and what each role allows. Invitations produce a one-time link; nobody can sign up on their own."
         actions={
           <Button type="button" size="sm" className="gap-1.5" onClick={() => setInviteOpen(true)} disabled={!isAdmin}>
             <UserPlus className="size-4" aria-hidden="true" />

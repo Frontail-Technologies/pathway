@@ -62,7 +62,7 @@ export function AdminDashboardView() {
 
   return (
     <div className="space-y-6">
-      <AdminPageHeader title={firstName ? `Hello, ${firstName}` : 'Dashboard'} description="Catalogue health, new leads and what needs your attention." />
+      <AdminPageHeader title={firstName ? `Hello, ${firstName}` : 'Dashboard'} />
 
       <StatGrid>
         <StatTile icon={GraduationCap} label="Institutions" value={institutions.length} hint={`${incomplete(institutions)} incomplete`} href="/admin/institutions" />

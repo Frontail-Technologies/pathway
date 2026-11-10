@@ -43,7 +43,6 @@ export function AdminTutorsCoachingView({ coachingProviders }: { coachingProvide
       <AdminPageHeader
         title="Tutors & coaching"
         count={tab === 'tutors' ? `${tutors.length} tutors` : `${coachingProviders.length} coaching providers`}
-        description="Individual tutors and coaching providers listed on Pathway."
         actions={
           <Link href={tab === 'tutors' ? '/admin/tutors-coaching/tutors/new' : '/admin/tutors-coaching/coaching/new'} className={buttonVariants({ size: 'sm', className: 'gap-1.5' })}>
             <Plus className="size-4" aria-hidden="true" />

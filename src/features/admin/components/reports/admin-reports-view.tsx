@@ -63,7 +63,6 @@ export function AdminReportsView() {
     <div className="space-y-6">
       <AdminPageHeader
         title="Reports"
-        description="What's in the catalogue, how complete it is, and which data sources are connected."
         actions={
           <Button size="sm" variant="outline" className="h-9 gap-1.5" onClick={exportCsv}>
             <Download className="size-4" aria-hidden="true" />

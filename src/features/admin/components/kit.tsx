@@ -13,7 +13,6 @@ import { cn } from '@/lib/utils'
 export function AdminPageHeader({
   title,
   eyebrow,
-  description,
   count,
   actions,
   back,
@@ -21,7 +20,6 @@ export function AdminPageHeader({
 }: {
   title: string
   eyebrow?: string
-  description?: string
   count?: string
   actions?: ReactNode
   back?: { href: string; label: string }
@@ -42,7 +40,6 @@ export function AdminPageHeader({
             <h1 className="font-heading text-2xl leading-7 font-semibold tracking-tight text-foreground">{title}</h1>
             {count ? <span className="text-sm text-muted-foreground tabular-nums">{count}</span> : null}
           </div>
-          {description ? <p className="max-w-2xl text-[15px] text-muted-foreground">{description}</p> : null}
           {meta ? <div className="mt-1 flex flex-wrap items-center gap-2">{meta}</div> : null}
         </div>
         {actions ? <div className="flex shrink-0 flex-wrap items-center gap-2 [&>a]:h-9 [&>a]:px-3.5 [&>a]:text-sm [&>button]:h-9 [&>button]:px-3.5 [&>button]:text-sm">{actions}</div> : null}

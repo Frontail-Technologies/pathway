@@ -128,7 +128,6 @@ export function AdminScholarshipsView({ initialScholarships }: { initialScholars
       <AdminPageHeader
         title="Scholarships"
         count={`${data.length} total`}
-        description="Government, private and university scholarships listed on Pathway."
         actions={
           <Link href="/admin/scholarships/new" className={buttonVariants({ size: 'sm', className: 'gap-1.5' })}>
             <Plus className="size-4" aria-hidden="true" />

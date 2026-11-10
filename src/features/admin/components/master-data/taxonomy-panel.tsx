@@ -9,7 +9,7 @@ import { queryKeys } from '@/lib/query-client'
 import { Button } from '@/components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { ApiRequestError } from '@/features/auth/lib/session-client'
-import { getTerm, kindHelp, listTerms, reorderTerms, updateTerm, type AdminTerm, type AdminTermDetail, type KindOverview, type TaxonomyKind } from '@/features/admin/data/admin-master-data-api'
+import { getTerm, listTerms, reorderTerms, updateTerm, type AdminTerm, type AdminTermDetail, type KindOverview, type TaxonomyKind } from '@/features/admin/data/admin-master-data-api'
 import { AdminDataTable } from '../admin-data-table'
 import { AdminEmptyState } from '../admin-empty-state'
 import { AdminTableSkeleton } from '../admin-skeletons'
@@ -182,28 +182,6 @@ export function TaxonomyPanel({ kind, kinds, onKindChange, canManage, filters, s
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-col gap-3 rounded-xl border border-border bg-card p-4 shadow-sm sm:flex-row sm:items-end sm:justify-between">
-        <div className="sm:max-w-xs sm:flex-1">
-          <label htmlFor="kind-select" className="mb-1.5 block text-xs font-medium uppercase tracking-wide text-muted-foreground">
-            Taxonomy kind
-          </label>
-          <FormSelect id="kind-select" value={kind} onChange={onKindChange} options={kindOptions} />
-          <p className="mt-2 text-[13px] text-muted-foreground">{kindHelp[kind]}</p>
-        </div>
-        <Button
-          size="sm"
-          className="gap-1.5 self-start sm:self-auto"
-          disabled={!canManage}
-          onClick={() => {
-            setEditing(null)
-            setDialog('term')
-          }}
-        >
-          <Plus className="size-4" aria-hidden="true" />
-          Add term
-        </Button>
-      </div>
-
       {query.isLoading ? (
         <AdminTableSkeleton rows={6} columns={5} />
       ) : query.isError ? (
@@ -231,7 +209,32 @@ export function TaxonomyPanel({ kind, kinds, onKindChange, canManage, filters, s
               { value: 'retired', label: 'Retired', count: counts.retired },
             ],
           }}
-          toolbar={<AdminToolbar search={filters.q} onSearchChange={(q) => setFilters({ q })} searchPlaceholder="Search label, slug or alias" hasActiveFilters={Boolean(filters.q)} onReset={() => setFilters({ q: '' })} resultCount={filtered.length} />}
+          toolbar={
+            <AdminToolbar
+              search={filters.q}
+              onSearchChange={(q) => setFilters({ q })}
+              searchPlaceholder="Search label, slug or alias"
+              hasActiveFilters={Boolean(filters.q)}
+              onReset={() => setFilters({ q: '' })}
+              resultCount={filtered.length}
+              actions={
+                <Button
+                  size="sm"
+                  className="h-9 gap-1.5"
+                  disabled={!canManage}
+                  onClick={() => {
+                    setEditing(null)
+                    setDialog('term')
+                  }}
+                >
+                  <Plus className="size-4" aria-hidden="true" />
+                  Add term
+                </Button>
+              }
+            >
+              <FormSelect id="kind-select" value={kind} onChange={onKindChange} options={kindOptions} className="h-9 w-full sm:w-64" />
+            </AdminToolbar>
+          }
           columns={columns}
           data={filtered}
           getRowId={(row) => row.id}

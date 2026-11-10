@@ -44,7 +44,6 @@ export function AdminProgramEditor({ program, mode = 'create' }: AdminProgramEdi
       <AdminPageHeader
         back={back}
         title={editor.isEdit ? 'Edit course' : 'Add course'}
-        description={editor.isEdit ? program?.name : 'Fields marked * are required.'}
         meta={editor.isDirty ? <StatusBadge tone="warning">Unsaved changes</StatusBadge> : undefined}
       />
 

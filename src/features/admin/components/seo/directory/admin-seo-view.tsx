@@ -122,7 +122,7 @@ export function AdminSeoView({ initialRecords }: { initialRecords: AdminSeoRecor
   if (data.length === 0) {
     return (
       <div className="space-y-5">
-        <AdminPageHeader title="SEO" description={DESCRIPTION} />
+        <AdminPageHeader title="SEO" />
         <div className="rounded-xl border border-border bg-card shadow-sm">
           <AdminEmptyState art="noSeo" title="No SEO overrides yet" description="Every page uses its default title and description. Add an override when a page needs different search text." action={<AddSeoLink />} className="py-12" />
         </div>
@@ -132,7 +132,7 @@ export function AdminSeoView({ initialRecords }: { initialRecords: AdminSeoRecor
 
   return (
     <div className="space-y-5">
-      <AdminPageHeader title="SEO" count={`${data.length} total`} description={DESCRIPTION} actions={<AddSeoLink />} />
+      <AdminPageHeader title="SEO" count={`${data.length} total`} actions={<AddSeoLink />} />
 <AdminDataTable
   toolbar={
     <AdminToolbar

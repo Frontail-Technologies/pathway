@@ -114,7 +114,7 @@ export function AdminStudentsView({ initialStudents }: { initialStudents: AdminS
 
   return (
     <div className="space-y-5">
-      <AdminPageHeader title="Students" count={total > 0 ? `${total} total` : undefined} description="Student accounts and the study preferences they have shared." />
+      <AdminPageHeader title="Students" count={total > 0 ? `${total} total` : undefined} />
 
       {total === 0 ? (
         <div className="rounded-xl border border-border bg-card shadow-sm">

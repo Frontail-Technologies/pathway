@@ -24,13 +24,7 @@ export function AdminMasterDataView() {
 
   return (
     <div className="space-y-5">
-      <AdminPageHeader
-        eyebrow="Workspace"
-        title="Master data"
-        count={totals ? `${totals.active} terms · ${totals.aliases} aliases` : undefined}
-        description="The shared vocabularies every screen reads: study levels, streams, subjects, exams, states and cities. Changes reach the website, the app and the admin filters on their next load."
-        meta={!canManage && session ? <p className="text-[13px] text-muted-foreground">Staff can browse master data; only administrators change it.</p> : undefined}
-      />
+      <AdminPageHeader eyebrow="Workspace" title="Master data" count={totals ? `${totals.active} terms · ${totals.aliases} aliases` : undefined} />
 
       <Tabs value={f.tab} onValueChange={(value) => set({ tab: String(value), q: '' })}>
         <TabsList>

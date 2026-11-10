@@ -116,7 +116,7 @@ export function AdminBannersView({ initialBanners }: { initialBanners: AdminBann
   if (initialBanners.length === 0) {
     return (
       <div className="space-y-5">
-        <AdminPageHeader title="Banners" description="Promotional strips shown on the homepage and study abroad page." />
+        <AdminPageHeader title="Banners" />
         <div className="rounded-xl border border-border bg-card shadow-sm">
           <AdminEmptyState art="noBanners" title="No banners yet" description="Create a banner, pick where it shows, and schedule when it runs." action={<NewBannerLink />} className="py-12" />
         </div>
@@ -126,7 +126,7 @@ export function AdminBannersView({ initialBanners }: { initialBanners: AdminBann
 
   return (
     <div className="space-y-5">
-      <AdminPageHeader title="Banners" count={`${initialBanners.length} total`} description="Promotional strips shown on the homepage and study abroad page." actions={<NewBannerLink />} />
+      <AdminPageHeader title="Banners" count={`${initialBanners.length} total`} actions={<NewBannerLink />} />
 <AdminDataTable
   tabs={{ value: f.status, onChange: (value) => set({ status: value }), options: bannerStatusOptions }}
   toolbar={

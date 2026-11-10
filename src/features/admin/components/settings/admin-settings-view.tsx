@@ -17,7 +17,7 @@ import { isValidEmail, listTeam, memberName } from '@/features/admin/data/admin-
 import { useDemoStorage } from '@/features/admin/hooks/use-demo-storage'
 import { useUnsavedChanges } from '@/features/admin/hooks/use-unsaved-changes'
 import { AdminPageHeader } from '../kit'
-import { DemoNote, Field, FormSection, FormSelect, StickySaveBar, ToggleRow } from '../demo/demo-form'
+import { Field, FormSection, FormSelect, StickySaveBar, ToggleRow } from '../demo/demo-form'
 
 const FORM_ID = 'admin-settings-form'
 
@@ -87,7 +87,7 @@ export function AdminSettingsView() {
 
   return (
     <div className="space-y-5">
-      <AdminPageHeader title="Settings" description="Site details, lead routing and notifications for the admin." meta={<DemoNote />} />
+      <AdminPageHeader title="Settings" />
 
       <form id={FORM_ID} onSubmit={submit} noValidate className="max-w-3xl space-y-5">
         <FormSection title="General" description="Shown to students in the footer and on contact pages.">

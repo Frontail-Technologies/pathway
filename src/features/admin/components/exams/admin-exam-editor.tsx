@@ -15,7 +15,7 @@ import { useUnsavedChanges } from '@/features/admin/hooks/use-unsaved-changes'
 import { AdminEditorSectionNav } from '../admin-editor-section-nav'
 import { AdminEditorLayout } from '../shared/admin-editor-layout'
 import { AdminPageHeader } from '../kit'
-import { DemoNote, Field, FormSection, FormSelect, PairRowsEditor, ToggleRow } from '../demo/demo-form'
+import { Field, FormSection, FormSelect, PairRowsEditor, ToggleRow } from '../demo/demo-form'
 import { AdminFormFooter } from '../admin-form-footer'
 
 const SECTIONS = [
@@ -114,8 +114,6 @@ export function AdminExamEditor({ exam, mode }: { exam?: Exam; mode: 'add' | 'ed
       <AdminPageHeader
         back={exam ? { href: `/admin/exams/${exam.id}`, label: exam.shortName } : { href: '/admin/exams', label: 'Exams' }}
         title={mode === 'edit' ? `Edit ${exam?.shortName ?? 'exam'}` : 'Add exam'}
-        description={mode === 'edit' ? 'Update the listing and the content of the public exam page.' : 'Create a listing for an entrance exam.'}
-        meta={<DemoNote />}
       />
 
       <AdminEditorLayout navigation={<AdminEditorSectionNav sections={SECTIONS} activeSectionId={activeSection} onSectionChange={goTo} />}>

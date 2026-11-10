@@ -8,7 +8,6 @@ import type { AdminStream } from '@/features/admin/data/admin-streams'
 import { useUrlFilters } from '@/features/admin/hooks/use-url-filters'
 import { AdminDataTable } from '../admin-data-table'
 import { AdminFilterSelect, AdminPageHeader, AdminToolbar, SortHeader, StatusBadge, stopRowClick } from '../kit'
-import { DemoNote } from '../demo/demo-form'
 import { useStreamPublish } from './use-stream-publish'
 
 const DEFAULT_FILTERS = { q: '', status: 'all' }
@@ -70,7 +69,7 @@ export function AdminStreamsView({ streams }: { streams: AdminStream[] }) {
 
   return (
     <div className="space-y-5">
-      <AdminPageHeader title="Streams" count={`${publishedCount} of ${data.length} published`} description="Top-level hubs such as /engineering that gather colleges, courses, exams and more for one subject area." meta={<DemoNote>Demo: publishing changes are saved on this device only and don&apos;t change the public site.</DemoNote>} />
+      <AdminPageHeader title="Streams" count={`${publishedCount} of ${data.length} published`} />
 <AdminDataTable
   tabs={{ value: f.status, onChange: (value) => set({ status: value }), options: [{ value: 'published', label: 'Published' }, { value: 'hidden', label: 'Not published' }] }}
   toolbar={

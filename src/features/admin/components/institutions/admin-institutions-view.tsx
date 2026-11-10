@@ -146,7 +146,6 @@ export function AdminInstitutionsView() {
       <AdminPageHeader
         title="Institutions"
         count={`${data.length} total`}
-        description="Colleges and universities listed on Pathway."
         actions={
           <Link href="/admin/institutions/new" className={buttonVariants({ size: 'sm', className: 'gap-1.5' })}>
             <Plus className="size-4" aria-hidden="true" />

@@ -124,7 +124,7 @@ export function AdminPromotionsView({ initialPromotions }: { initialPromotions: 
   if (initialPromotions.length === 0) {
     return (
       <div className="space-y-5">
-        <AdminPageHeader title="Featured listings" description={description} />
+        <AdminPageHeader title="Featured listings" />
         <div className="rounded-xl border border-border bg-card shadow-sm">
           <AdminEmptyState art="noPromotions" title="No featured listings yet" description="Feature a college, course or tutor in a homepage or list-page slot. Paid listings are labelled as sponsored." action={<NewListingLink />} className="py-12" />
         </div>
@@ -134,7 +134,7 @@ export function AdminPromotionsView({ initialPromotions }: { initialPromotions: 
 
   return (
     <div className="space-y-5">
-      <AdminPageHeader title="Featured listings" count={`${initialPromotions.length} total`} description={description} actions={<NewListingLink />} />
+      <AdminPageHeader title="Featured listings" count={`${initialPromotions.length} total`} actions={<NewListingLink />} />
 <AdminDataTable
   tabs={{ value: f.status, onChange: (value) => set({ status: value }), options: promotionStatusOptions }}
   toolbar={

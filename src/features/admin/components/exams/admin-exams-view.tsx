@@ -105,7 +105,6 @@ export function AdminExamsView() {
       <AdminPageHeader
         title="Exams"
         count={`${data.length} total`}
-        description="Entrance exams listed on Pathway and the public pages built for them."
         actions={
           <Link href="/admin/exams/new" className={buttonVariants({ size: 'sm', className: 'gap-1.5' })}>
             <Plus className="size-4" aria-hidden="true" />
