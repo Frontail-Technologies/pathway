@@ -7,18 +7,19 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { contentTypeOptions } from '../shared/content-constants'
 import { Field, FormSection } from '../shared/content-form'
 import type { ContentFormData } from './use-content-editor'
+import { UrlPreview } from '../../kit'
 
 export function ContentBasicsSection({
   formData,
   errors,
   onTitleChange,
-  onSlugChange,
+  locked,
   onChange,
 }: {
   formData: ContentFormData
   errors: Record<string, string>
   onTitleChange: (title: string) => void
-  onSlugChange: (slug: string) => void
+  locked: boolean
   onChange: <K extends keyof ContentFormData>(field: K, value: ContentFormData[K]) => void
 }) {
   return (
@@ -28,9 +29,7 @@ export function ContentBasicsSection({
       </Field>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <Field id="content-slug" label="Slug" required error={errors.slug} hint="Filled in from the title. Letters, numbers and dashes only.">
-          <Input id="content-slug" value={formData.slug} onChange={(e) => onSlugChange(e.target.value)} placeholder="jee-main-2026-counselling-guide" aria-invalid={!!errors.slug} className="font-mono text-sm" />
-        </Field>
+        <UrlPreview prefix="/articles/" slug={formData.slug} locked={locked} source="title" error={errors.slug} />
 
         <Field id="content-type" label="Type" required>
           <Select value={formData.type} onValueChange={(value) => value && onChange('type', value as ContentType)} items={contentTypeOptions}>

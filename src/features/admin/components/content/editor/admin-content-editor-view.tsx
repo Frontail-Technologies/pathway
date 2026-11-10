@@ -46,7 +46,7 @@ export function AdminContentEditorView({ initialEntry }: { initialEntry?: Conten
       {apiNotice ? <FormNotice>{apiNotice}</FormNotice> : null}
 
       <AdminEditorLayout navigation={<ContentEditorNav activeSectionId={activeSectionId} onSectionChange={scrollToSection} />}>
-        <ContentBasicsSection formData={formData} errors={errors} onTitleChange={editor.handleTitleChange} onSlugChange={editor.handleSlugChange} onChange={handleChange} />
+        <ContentBasicsSection formData={formData} errors={errors} onTitleChange={editor.handleTitleChange} locked={editor.isEditing} onChange={handleChange} />
         <ContentBodySection formData={formData} errors={errors} onChange={handleChange} />
         <ContentMediaSection
           mode={editor.heroMediaMode}

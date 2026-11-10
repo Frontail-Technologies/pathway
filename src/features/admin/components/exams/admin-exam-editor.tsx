@@ -14,7 +14,8 @@ import { examLevelOptions, examScopeOptions, examStudyAreaOptions, examToFormVal
 import { useUnsavedChanges } from '@/features/admin/hooks/use-unsaved-changes'
 import { AdminEditorSectionNav } from '../admin-editor-section-nav'
 import { AdminEditorLayout } from '../shared/admin-editor-layout'
-import { AdminPageHeader } from '../kit'
+import { AdminPageHeader, UrlPreview } from '../kit'
+import { slugify } from '@/features/admin/utils/slug'
 import { Field, FormSection, FormSelect, PairRowsEditor, ToggleRow } from '../demo/demo-form'
 import { AdminFormFooter } from '../admin-form-footer'
 
@@ -26,13 +27,6 @@ const SECTIONS = [
   { id: 'seo', label: 'SEO', icon: Search },
 ]
 
-const slugify = (value: string) =>
-  value
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '')
-
 const toOptions = <T extends string>(values: readonly T[]) => values.map((value) => ({ value, label: value }))
 
 type Errors = Partial<Record<'name' | 'shortName' | 'slug' | 'description', string>>
@@ -41,8 +35,7 @@ function validate(values: ExamFormValues): Errors {
   const errors: Errors = {}
   if (!values.name.trim()) errors.name = 'Enter the full exam name.'
   if (!values.shortName.trim()) errors.shortName = 'Enter a short name, e.g. JEE Main.'
-  if (!values.slug.trim()) errors.slug = 'Enter a URL slug.'
-  else if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(values.slug)) errors.slug = 'Use lowercase letters, numbers and hyphens only.'
+  if (!values.slug.trim()) errors.slug = 'Add a short name to create the address.'
   if (!values.description.trim()) errors.description = 'Add a one-line listing description.'
   return errors
 }
@@ -53,7 +46,6 @@ export function AdminExamEditor({ exam, mode }: { exam?: Exam; mode: 'add' | 'ed
   const [baseline, setBaseline] = React.useState(() => JSON.stringify(examToFormValues(exam)))
   const [errors, setErrors] = React.useState<Errors>({})
   const [activeSection, setActiveSection] = React.useState('basics')
-  const [slugTouched, setSlugTouched] = React.useState(mode === 'edit')
 
   React.useEffect(() => {
     if (!exam) return
@@ -106,7 +98,7 @@ export function AdminExamEditor({ exam, mode }: { exam?: Exam; mode: 'add' | 'ed
     }
   }
 
-  const fieldIds: Record<keyof Errors, string> = { name: 'exam-name', shortName: 'exam-short', slug: 'exam-slug', description: 'exam-description' }
+  const fieldIds: Record<keyof Errors, string> = { name: 'exam-name', shortName: 'exam-short', slug: 'exam-short', description: 'exam-description' }
   const fieldError = (key: keyof Errors) => (errors[key] ? { 'aria-invalid': true as const, 'aria-describedby': `${fieldIds[key]}-error` } : {})
 
   return (
@@ -135,26 +127,14 @@ export function AdminExamEditor({ exam, mode }: { exam?: Exam; mode: 'add' | 'ed
                 value={values.shortName}
                 onChange={(event) => {
                   set('shortName', event.target.value)
-                  if (!slugTouched) set('slug', slugify(event.target.value))
+                  if (mode !== 'edit') set('slug', slugify(event.target.value))
                 }}
                 placeholder="JEE Main"
                 className="h-9"
                 {...fieldError('shortName')}
               />
             </Field>
-            <Field id="exam-slug" label="URL slug" required error={errors.slug} hint={values.slug ? `/exam/${values.slug}` : 'Used in the public page address.'}>
-              <Input
-                id="exam-slug"
-                value={values.slug}
-                onChange={(event) => {
-                  setSlugTouched(true)
-                  set('slug', event.target.value)
-                }}
-                placeholder="jee-main"
-                className="h-9 font-mono text-[13px]"
-                {...fieldError('slug')}
-              />
-            </Field>
+            <UrlPreview prefix="/exam/" slug={values.slug} locked={mode === 'edit'} source="short name" error={errors.slug} />
             <Field id="exam-area" label="Study area">
               <FormSelect id="exam-area" value={values.studyArea} onChange={(v) => set('studyArea', v)} options={toOptions(examStudyAreaOptions)} />
             </Field>

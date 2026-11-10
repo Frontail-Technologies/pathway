@@ -1,6 +1,7 @@
 'use client'
 
 import * as React from 'react'
+import { slugify } from '@/features/admin/utils/slug'
 import type { Note, NoteType, NoteStatus, PricingType } from '@/features/notes/types/note'
 
 export type NoteFormData = {
@@ -45,7 +46,6 @@ export function useNoteEditor(initialNote?: Note | null) {
     status: initialNote?.status || 'draft',
   })
 
-  const [slugManuallyEdited, setSlugManuallyEdited] = React.useState(!!initialNote?.slug)
   const [errors, setErrors] = React.useState<Record<string, string>>({})
   const [apiNotice, setApiNotice] = React.useState<string | null>(null)
 
@@ -162,38 +162,12 @@ export function useNoteEditor(initialNote?: Note | null) {
     setPreviewFileError(null)
   }
 
-  const slugify = (text: string) => {
-    return text
-      .toLowerCase()
-      .trim()
-      .replace(/[^\w\s-]/g, '')
-      .replace(/[\s_-]+/g, '-')
-      .replace(/^-+|-+$/g, '')
-  }
-
   const handleTitleChange = (title: string) => {
-    setFormData((prev) => {
-      const next = { ...prev, title }
-      if (!slugManuallyEdited && !isEditing) {
-        next.slug = slugify(title)
-      }
-      return next
-    })
-    if (errors.title) {
+    setFormData((prev) => (isEditing ? { ...prev, title } : { ...prev, title, slug: slugify(title) }))
+    if (errors.title || errors.slug) {
       setErrors((prev) => {
         const copy = { ...prev }
         delete copy.title
-        return copy
-      })
-    }
-  }
-
-  const handleSlugChange = (slug: string) => {
-    setSlugManuallyEdited(true)
-    setFormData((prev) => ({ ...prev, slug }))
-    if (errors.slug) {
-      setErrors((prev) => {
-        const copy = { ...prev }
         delete copy.slug
         return copy
       })
@@ -243,7 +217,7 @@ export function useNoteEditor(initialNote?: Note | null) {
     }
 
     if (!formData.slug.trim()) {
-      errs.slug = 'Add a URL slug.'
+      errs.slug = 'Add a title to create the address.'
     }
 
     if (formData.pricingType === 'paid') {
@@ -305,7 +279,6 @@ export function useNoteEditor(initialNote?: Note | null) {
     handleRemovePreviewFile,
     
     handleTitleChange,
-    handleSlugChange,
     handleFieldChange,
     toggleCourseId,
     toggleExamId,

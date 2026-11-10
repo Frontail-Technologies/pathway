@@ -54,7 +54,7 @@ export function AdminCoachingEditor({ initialProvider }: { initialProvider?: Adm
         navigation={<AdminEditorSectionNav sections={SECTIONS} activeSectionId={activeSectionId} onSectionChange={scrollToSection} />}
         mobileActions={<MobileSaveBar dirty={dirty} {...actions} />}
       >
-        <CoachingIdentitySection formData={formData} errors={errors} updateField={editor.updateField} />
+        <CoachingIdentitySection formData={formData} errors={errors} locked={isEditing} updateField={editor.updateField} />
         <CoachingOverviewSection formData={formData} errors={errors} updateField={editor.updateField} addHighlight={editor.addHighlight} removeHighlight={editor.removeHighlight} />
         <CoachingProgramsSection formData={formData} toggleArrayItem={editor.toggleArrayItem} addProgram={editor.addProgram} removeProgram={editor.removeProgram} />
         <CoachingLocationModesSection formData={formData} errors={errors} toggleArrayItem={editor.toggleArrayItem} />

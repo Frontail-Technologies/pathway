@@ -10,11 +10,12 @@ import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { ApiRequestError } from '@/features/auth/lib/session-client'
-import { createCity, createState, getGeography, slugify, updateCity, updateState, type AdminCity, type AdminState } from '@/features/admin/data/admin-master-data-api'
+import { createCity, createState, getGeography, updateCity, updateState, type AdminCity, type AdminState } from '@/features/admin/data/admin-master-data-api'
 import { AdminDataTable } from '../admin-data-table'
 import { AdminEmptyState } from '../admin-empty-state'
 import { AdminTableSkeleton } from '../admin-skeletons'
-import { AdminFilterSelect, AdminToolbar, StatusBadge, stopRowClick, Tag } from '../kit'
+import { AdminFilterSelect, AdminToolbar, StatusBadge, stopRowClick, Tag, UrlPreview } from '../kit'
+import { slugify } from '@/features/admin/utils/slug'
 import { Field, FormSelect } from '../demo/demo-form'
 
 const messageOf = (error: unknown, fallback: string) => (error instanceof ApiRequestError ? error.message : fallback)
@@ -89,9 +90,7 @@ function StateDialog({ state, open, onOpenChange }: { state: AdminState | null; 
             <Field id="state-code" label="ISO code" required>
               <Input id="state-code" value={code} disabled={Boolean(state)} onChange={(event) => setCode(event.target.value.toUpperCase())} placeholder="IN-MH" className="h-9 font-mono text-[13px]" />
             </Field>
-            <Field id="state-slug" label="Slug" required>
-              <Input id="state-slug" value={slug} disabled={Boolean(state)} onChange={(event) => setSlug(event.target.value.toLowerCase())} className="h-9 font-mono text-[13px]" />
-            </Field>
+            <UrlPreview label="Slug" prefix="" slug={slug} locked={Boolean(state)} />
           </div>
           <Field id="state-kind" label="Type">
             <FormSelect id="state-kind" value={kind} onChange={setKind} options={STATE_KINDS} />
@@ -170,9 +169,7 @@ function CityDialog({ states, city, defaultStateId, open, onOpenChange }: { stat
             />
           </Field>
           <div className="grid grid-cols-2 gap-3">
-            <Field id="city-slug" label="Slug" required>
-              <Input id="city-slug" value={slug} disabled={Boolean(city)} onChange={(event) => setSlug(event.target.value.toLowerCase())} className="h-9 font-mono text-[13px]" />
-            </Field>
+            <UrlPreview label="Slug" prefix="" slug={slug} locked={Boolean(city)} />
             <Field id="city-lgd" label="LGD code" hint="Optional">
               <Input id="city-lgd" value={lgd} onChange={(event) => setLgd(event.target.value)} inputMode="numeric" className="h-9 font-mono text-[13px]" />
             </Field>

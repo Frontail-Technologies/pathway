@@ -122,12 +122,3 @@ export const createState = (body: { code: string; slug: string; name: string; ki
 export const updateState = (id: string, body: { name?: string; kind?: AdminState['kind'] }) => apiRequest<AdminState>('PATCH', `${base}/geography/states/${enc(id)}`, body)
 export const createCity = (stateId: string, body: { slug: string; name: string; lgdCode?: string | null }) => apiRequest<AdminCity>('POST', `${base}/geography/states/${enc(stateId)}/cities`, body)
 export const updateCity = (id: string, body: { name?: string; lgdCode?: string | null }) => apiRequest<AdminCity>('PATCH', `${base}/geography/cities/${enc(id)}`, body)
-
-export const slugify = (value: string) =>
-  value
-    .toLowerCase()
-    .normalize('NFKD')
-    .replace(/[̀-ͯ]/g, '')
-    .replace(/&/g, ' and ')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '')

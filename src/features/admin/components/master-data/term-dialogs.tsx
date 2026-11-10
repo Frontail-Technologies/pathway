@@ -10,9 +10,10 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from '@/components/ui/input'
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet'
 import { ApiRequestError } from '@/features/auth/lib/session-client'
-import { addAlias, aliasContextHelp, createTerm, mergeTerm, removeAlias, slugify, tableLabel, updateTerm, type AdminTerm, type AdminTermDetail, type TaxonomyKind } from '@/features/admin/data/admin-master-data-api'
+import { addAlias, aliasContextHelp, createTerm, mergeTerm, removeAlias, tableLabel, updateTerm, type AdminTerm, type AdminTermDetail, type TaxonomyKind } from '@/features/admin/data/admin-master-data-api'
 import { Field, FormSelect } from '../demo/demo-form'
-import { StatusBadge, Tag } from '../kit'
+import { StatusBadge, Tag, UrlPreview } from '../kit'
+import { slugify } from '@/features/admin/utils/slug'
 
 const messageOf = (error: unknown, fallback: string) => (error instanceof ApiRequestError ? error.message : fallback)
 const NONE = '__none__'
@@ -30,7 +31,6 @@ export function TermDialog({ kind, terms, term, open, onOpenChange }: { kind: Ta
   const refresh = useInvalidateTaxonomy(kind)
   const [label, setLabel] = React.useState('')
   const [slug, setSlug] = React.useState('')
-  const [slugTouched, setSlugTouched] = React.useState(false)
   const [parent, setParent] = React.useState(NONE)
   const [error, setError] = React.useState<string>()
 
@@ -38,7 +38,6 @@ export function TermDialog({ kind, terms, term, open, onOpenChange }: { kind: Ta
     if (open) {
       setLabel(term?.label ?? '')
       setSlug(term?.slug ?? '')
-      setSlugTouched(Boolean(term))
       setParent(term?.parent?.slug ?? NONE)
       setError(undefined)
     }
@@ -60,7 +59,7 @@ export function TermDialog({ kind, terms, term, open, onOpenChange }: { kind: Ta
   const submit = (event: React.FormEvent) => {
     event.preventDefault()
     if (!label.trim()) return setError('Enter a label.')
-    if (!term && !SLUG.test(slug)) return setError('The slug must be lowercase letters, digits and dashes.')
+    if (!term && !SLUG.test(slug)) return setError('Use a label with at least one letter or digit.')
     setError(undefined)
     mutation.mutate()
   }
@@ -73,7 +72,7 @@ export function TermDialog({ kind, terms, term, open, onOpenChange }: { kind: Ta
         <form onSubmit={submit} className="grid gap-4" noValidate>
           <DialogHeader>
             <DialogTitle>{term ? 'Edit term' : 'Add term'}</DialogTitle>
-            <DialogDescription>{term ? 'The slug is part of public URLs and saved data, so it cannot change.' : 'The slug becomes the stable value used in URLs and the API.'}</DialogDescription>
+            <DialogDescription>{term ? 'Change the label shown to people. The slug stays the same so saved links and data keep working.' : 'Give the term a label; its slug is created from it.'}</DialogDescription>
           </DialogHeader>
           <Field id="term-label" label="Label" required error={error}>
             <Input
@@ -82,24 +81,13 @@ export function TermDialog({ kind, terms, term, open, onOpenChange }: { kind: Ta
               value={label}
               onChange={(event) => {
                 setLabel(event.target.value)
-                if (!slugTouched) setSlug(slugify(event.target.value))
+                if (!term) setSlug(slugify(event.target.value))
                 setError(undefined)
               }}
               className="h-9"
             />
           </Field>
-          <Field id="term-slug" label="Slug" required hint={term ? undefined : 'Lowercase, dashes between words.'}>
-            <Input
-              id="term-slug"
-              value={slug}
-              disabled={Boolean(term)}
-              onChange={(event) => {
-                setSlugTouched(true)
-                setSlug(event.target.value.toLowerCase())
-              }}
-              className="h-9 font-mono text-[13px]"
-            />
-          </Field>
+          <UrlPreview label="Slug" prefix="" slug={slug} locked={Boolean(term)} source="label" />
           <Field id="term-parent" label="Parent term" hint="Optional. Children sit under their parent where filters group terms.">
             <FormSelect id="term-parent" value={parent} onChange={setParent} options={parentOptions} />
           </Field>

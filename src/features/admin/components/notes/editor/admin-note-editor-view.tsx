@@ -55,7 +55,6 @@ export function AdminNoteEditorView({
     handleSelectPreviewFile,
     handleRemovePreviewFile,
     handleTitleChange,
-    handleSlugChange,
     handleFieldChange,
     toggleCourseId,
     toggleExamId,
@@ -106,7 +105,7 @@ export function AdminNoteEditorView({
             formData={formData}
             errors={errors}
             onTitleChange={handleTitleChange}
-            onSlugChange={handleSlugChange}
+            locked={isEditing}
             onFieldChange={handleFieldChange}
           />
 

@@ -1,6 +1,7 @@
 'use client'
 
 import * as React from 'react'
+import { slugify } from '@/features/admin/utils/slug'
 import type {
   ContentEntry,
   ContentType,
@@ -45,7 +46,6 @@ export function useContentEditor(initialEntry?: ContentEntry | null) {
 
   const [initialSnapshot] = React.useState(() => JSON.stringify(formData))
 
-  const [slugManuallyEdited, setSlugManuallyEdited] = React.useState(!!initialEntry?.slug)
   const [errors, setErrors] = React.useState<Record<string, string>>({})
   const [apiNotice, setApiNotice] = React.useState<string | null>(null)
 
@@ -100,38 +100,12 @@ export function useContentEditor(initialEntry?: ContentEntry | null) {
   }
 
   
-  const slugify = (text: string) => {
-    return text
-      .toLowerCase()
-      .trim()
-      .replace(/[^\w\s-]/g, '')
-      .replace(/[\s_-]+/g, '-')
-      .replace(/^-+|-+$/g, '')
-  }
-
   const handleTitleChange = (title: string) => {
-    setFormData((prev) => {
-      const next = { ...prev, title }
-      if (!slugManuallyEdited && !isEditing) {
-        next.slug = slugify(title)
-      }
-      return next
-    })
-    if (errors.title) {
+    setFormData((prev) => (isEditing ? { ...prev, title } : { ...prev, title, slug: slugify(title) }))
+    if (errors.title || errors.slug) {
       setErrors((prev) => {
         const copy = { ...prev }
         delete copy.title
-        return copy
-      })
-    }
-  }
-
-  const handleSlugChange = (slug: string) => {
-    setSlugManuallyEdited(true)
-    setFormData((prev) => ({ ...prev, slug: slugify(slug) }))
-    if (errors.slug) {
-      setErrors((prev) => {
-        const copy = { ...prev }
         delete copy.slug
         return copy
       })
@@ -176,7 +150,7 @@ export function useContentEditor(initialEntry?: ContentEntry | null) {
       nextErrors.title = 'Title is required.'
     }
     if (!formData.slug.trim()) {
-      nextErrors.slug = 'Slug is required.'
+      nextErrors.slug = 'Add a title to create the address.'
     }
     if (!formData.body.trim()) {
       nextErrors.body = 'Body is required.'
@@ -213,7 +187,6 @@ export function useContentEditor(initialEntry?: ContentEntry | null) {
     handleSelectHeroFile,
     handleRemoveHeroFile,
     handleTitleChange,
-    handleSlugChange,
     handleChange,
     handleAddRelatedEntity,
     handleRemoveRelatedEntity,

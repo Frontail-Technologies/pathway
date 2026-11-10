@@ -54,7 +54,7 @@ export function AdminTutorEditor({ initialTutor }: { initialTutor?: AdminTutor }
         navigation={<AdminEditorSectionNav sections={SECTIONS} activeSectionId={activeSectionId} onSectionChange={scrollToSection} />}
         mobileActions={<MobileSaveBar dirty={dirty} {...actions} />}
       >
-        <TutorIdentitySection formData={formData} errors={errors} updateField={editor.updateField} />
+        <TutorIdentitySection formData={formData} errors={errors} locked={isEditing} updateField={editor.updateField} />
         <TutorBioSection formData={formData} errors={errors} updateField={editor.updateField} addArrayString={editor.addArrayString} removeArrayString={editor.removeArrayString} />
         <TutorSubjectsExamsSection formData={formData} errors={errors} toggleArrayItem={editor.toggleArrayItem} />
         <TutorTeachingProfileSection formData={formData} addArrayString={editor.addArrayString} removeArrayString={editor.removeArrayString} />

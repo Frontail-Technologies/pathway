@@ -4,17 +4,20 @@ import type { CoachingProviderType } from '@/features/coaching/data/coaching'
 import { CheckboxField, EditorSection, Field } from '../../../shared/editor-kit'
 import { COACHING_PROVIDER_TYPES, sentenceCase } from '../../../shared/tutor-coaching-constants'
 import type { CoachingFormData } from '../use-coaching-editor'
+import { slugify } from '@/features/admin/utils/slug'
+import { UrlPreview } from '@/features/admin/components/kit'
 
-const slugify = (value: string) => value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
 const TYPE_ITEMS = COACHING_PROVIDER_TYPES.map((value) => ({ value, label: sentenceCase(value) }))
 
 export function CoachingIdentitySection({
   formData,
   errors,
+  locked,
   updateField,
 }: {
   formData: CoachingFormData
   errors: Record<string, string>
+  locked: boolean
   updateField: <K extends keyof CoachingFormData>(field: K, value: CoachingFormData[K]) => void
 }) {
   return (
@@ -26,7 +29,7 @@ export function CoachingIdentitySection({
             value={formData.name}
             onChange={(event) => {
               updateField('name', event.target.value)
-              if (!formData.slug) updateField('slug', slugify(event.target.value))
+              if (!locked) updateField('slug', slugify(event.target.value))
             }}
             placeholder="e.g. Apex JEE Academy"
             aria-invalid={!!errors.name}
@@ -34,9 +37,7 @@ export function CoachingIdentitySection({
           />
         </Field>
 
-        <Field label="URL" htmlFor="coaching-slug" hint={`Public address: /coaching/${formData.slug || 'name'}`}>
-          <Input id="coaching-slug" value={formData.slug} onChange={(event) => updateField('slug', event.target.value)} placeholder="e.g. apex-jee-academy-kota" className="h-9 font-mono text-sm" />
-        </Field>
+        <UrlPreview prefix="/coaching/" slug={formData.slug} locked={locked} error={errors.slug} />
 
         <Field label="Type" required>
           <Select value={formData.providerType} onValueChange={(value) => updateField('providerType', (value || 'Coaching Institute') as CoachingProviderType)} items={TYPE_ITEMS}>

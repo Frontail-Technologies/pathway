@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import type { ReactNode } from 'react'
 import { useState } from 'react'
-import { ArrowLeft, ArrowRight, Search, SlidersHorizontal, TrendingDown, TrendingUp, X, type LucideIcon } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Link2, Lock, Search, SlidersHorizontal, TrendingDown, TrendingUp, X, type LucideIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle } from '@/components/ui/sheet'
@@ -470,4 +470,23 @@ export function SortHeader({ label, sorted, onToggle }: { label: string; sorted:
 
 export function stopRowClick(event: { stopPropagation: () => void }) {
   event.stopPropagation()
+}
+
+export function UrlPreview({ prefix, slug, locked, source = 'name', error, label = 'Public address', className }: { prefix: string; slug: string; locked?: boolean; source?: string; error?: string; label?: string; className?: string }) {
+  const Icon = locked ? Lock : Link2
+  return (
+    <div className={cn('space-y-1.5', className)}>
+      <p className="text-sm font-medium text-foreground">{label}</p>
+      <div className="flex h-9 min-w-0 items-center gap-2 rounded-lg border border-dashed border-border bg-muted/40 px-3 font-mono text-[13px]" aria-live="polite">
+        <Icon className="size-3.5 shrink-0 text-muted-foreground" aria-hidden="true" />
+        <span className="shrink-0 text-muted-foreground">{prefix}</span>
+        {slug ? <span className="truncate text-foreground">{slug}</span> : <span className="truncate font-sans text-muted-foreground italic">fills in from the {source}</span>}
+      </div>
+      {error ? (
+        <p className="text-[13px] text-destructive">{error}</p>
+      ) : (
+        <p className="text-[13px] text-muted-foreground">{locked ? 'Fixed after creation so existing links keep working.' : `Created automatically from the ${source}.`}</p>
+      )}
+    </div>
+  )
 }

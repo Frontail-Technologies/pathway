@@ -13,18 +13,19 @@ import {
 import { noteTypeMap, NoteType } from '@/features/notes/types/note'
 import type { NoteFormData } from './use-note-editor'
 import { sentenceCase } from '../shared/note-meta'
+import { UrlPreview } from '../../kit'
 
 export function NoteBasicsSection({
   formData,
   errors,
   onTitleChange,
-  onSlugChange,
+  locked,
   onFieldChange,
 }: {
   formData: NoteFormData
   errors: Record<string, string>
   onTitleChange: (title: string) => void
-  onSlugChange: (slug: string) => void
+  locked: boolean
   onFieldChange: (key: keyof NoteFormData, value: NoteFormData[keyof NoteFormData]) => void
 }) {
   return (
@@ -58,25 +59,7 @@ export function NoteBasicsSection({
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="space-y-1.5">
-            <Label htmlFor="note-slug" className="text-sm font-medium text-foreground">
-              URL slug <span className="text-destructive">*</span>
-            </Label>
-            <Input
-              id="note-slug"
-              value={formData.slug}
-              onChange={(e) => onSlugChange(e.target.value)}
-              placeholder="organic-chemistry-reaction-mechanisms"
-              className="text-sm font-mono"
-            />
-            {errors.slug ? (
-              <p className="text-[13px] text-destructive">{errors.slug}</p>
-            ) : (
-              <p className="text-xs text-muted-foreground">
-                Public link: /notes/{formData.slug || '[slug]'}
-              </p>
-            )}
-          </div>
+          <UrlPreview prefix="/notes/" slug={formData.slug} locked={locked} source="title" error={errors.slug} />
 
           <div className="space-y-1.5">
             <Label htmlFor="note-type" className="text-sm font-medium text-foreground">
