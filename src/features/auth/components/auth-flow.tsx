@@ -9,7 +9,8 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { cn } from '@/lib/utils'
-import { ApiRequestError, registerStudentAccount, registerTutorAccount, signInWithPassword, signOut, type SessionUser } from '../lib/session-client'
+import { ApiRequestError, registerStudentAccount, registerTutorAccount, signInWithGoogle, signInWithPassword, signOut, type SessionUser } from '../lib/session-client'
+import { GoogleSignInButton, googleSignInEnabled } from './google-sign-in-button'
 import { useAuthSession } from '../state/auth-session-provider'
 import { isEmail, MIN_PASSWORD, safeNextPath } from '../lib/auth-helpers'
 
@@ -132,12 +133,29 @@ export function AuthFlow({ mode, next, accountType: initialType }: { mode: Mode;
     }
   }
 
+  const continueWithGoogle = async (idToken: string) => {
+    setFormError(undefined)
+    setErrors({})
+    setBusy(true)
+    try {
+      await finish(await signInWithGoogle(idToken))
+    } catch (error) {
+      setFormError(error instanceof ApiRequestError ? error.message : 'Google sign-in failed. Please try again.')
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  const showGoogle = googleSignInEnabled && accountType === 'student'
+
   const heading = isRegister ? (accountType === 'tutor' ? 'Join Pathway as a tutor' : 'Create your account') : 'Sign in to Pathway'
   const subheading = isRegister
     ? accountType === 'tutor'
       ? 'Create your tutor account. Your profile is reviewed before students can see it.'
       : 'Save colleges, track enquiries and get picks for your goals.'
-    : 'Welcome back. Sign in with your email and password.'
+    : showGoogle
+      ? 'Welcome back.'
+      : 'Welcome back. Sign in with your email and password.'
 
   const textField = (field: Field, label: string, value: string, setValue: (value: string) => void, props: React.ComponentProps<typeof Input> = {}) => (
     <div className="flex flex-col gap-1.5">
@@ -180,6 +198,17 @@ export function AuthFlow({ mode, next, accountType: initialType }: { mode: Mode;
         <p role="alert" className="rounded-lg border border-destructive/30 bg-destructive/5 px-3 py-2.5 text-sm text-destructive">
           {formError}
         </p>
+      ) : null}
+
+      {showGoogle ? (
+        <div className="flex flex-col gap-4">
+          <GoogleSignInButton mode={mode} disabled={busy} onCredential={continueWithGoogle} onError={setFormError} />
+          <div className="flex items-center gap-3 text-xs font-medium tracking-wide text-muted-foreground uppercase" aria-hidden="true">
+            <span className="h-px flex-1 bg-border" />
+            or
+            <span className="h-px flex-1 bg-border" />
+          </div>
+        </div>
       ) : null}
 
       <form onSubmit={submit} noValidate className="flex flex-col gap-4">
