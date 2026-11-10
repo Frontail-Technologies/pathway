@@ -6,6 +6,7 @@ import {
   BookOpen,
   ClipboardList,
   Compass,
+  Database,
   FileText,
   GraduationCap,
   History,
@@ -82,6 +83,7 @@ export const adminModules: AdminModule[] = [
   { id: 'seo', label: 'SEO', href: '/admin/seo', icon: SearchCode, group: 'content', description: 'Metadata overrides for public pages.' },
   { id: 'reports', label: 'Reports', href: '/admin/reports', icon: BarChart3, group: 'insights', description: 'Catalogue and operations reports.' },
   { id: 'activity', label: 'Activity log', href: '/admin/activity', icon: History, group: 'insights', description: 'Every change, by whom and when.' },
+  { id: 'master-data', label: 'Master data', href: '/admin/master-data', icon: Database, group: 'workspace', description: 'Taxonomy terms, aliases, states and cities.' },
   { id: 'team', label: 'Team & access', href: '/admin/team', icon: ShieldCheck, group: 'workspace', description: 'Staff accounts, invitations and roles.' },
   { id: 'settings', label: 'Settings', href: '/admin/settings', icon: Settings, group: 'workspace', description: 'Workspace settings.', status: 'soon' },
 ]

@@ -46,4 +46,7 @@ export const queryKeys = {
   adminTeam: ['admin', 'team'] as const,
   adminTeamMember: (userId: string) => ['admin', 'team', 'member', userId] as const,
   invitationPreview: (token: string) => ['auth', 'invitation', token] as const,
+  adminTaxonomyKinds: ['admin', 'master-data', 'kinds'] as const,
+  adminTaxonomyTerms: (kind: string) => ['admin', 'master-data', 'terms', kind] as const,
+  adminGeography: ['admin', 'master-data', 'geography'] as const,
 }
