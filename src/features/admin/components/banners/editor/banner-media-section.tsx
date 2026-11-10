@@ -9,7 +9,6 @@ import type { BannerFormData } from './use-banner-editor'
 
 type ImageInputProps = {
   label: string
-  hint: string
   mode: 'upload' | 'url'
   onModeChange: (mode: 'upload' | 'url') => void
   selectedFile: File | null
@@ -22,13 +21,10 @@ type ImageInputProps = {
   inputId: string
 }
 
-function ImageInput({ label, hint, inputId, ...props }: ImageInputProps) {
+function ImageInput({ label, inputId, ...props }: ImageInputProps) {
   return (
     <div className="space-y-2">
-      <div>
-        <p className="text-sm font-medium text-foreground">{label}</p>
-        <p className="text-[13px] text-muted-foreground">{hint}</p>
-      </div>
+      <p className="text-sm font-medium text-foreground">{label}</p>
       <ImageAssetInput {...props} label={label} inputId={inputId} urlInputId={`${inputId}-url`} />
     </div>
   )
@@ -83,7 +79,6 @@ export function BannerMediaSection({
     <FormSection id="media" title="Images" description={`Recommended size ${placementDimensions(placement)}`}>
       <ImageInput
         label="Desktop image"
-        hint="Shown on tablets and larger screens."
         mode={desktopMode}
         onModeChange={setDesktopMode}
         selectedFile={selectedDesktopFile}
@@ -99,7 +94,6 @@ export function BannerMediaSection({
       <div className="border-t border-border pt-4">
         <ImageInput
           label="Mobile image"
-          hint="Optional. Without one, phones show the desktop image."
           mode={mobileMode}
           onModeChange={setMobileMode}
           selectedFile={selectedMobileFile}
@@ -113,7 +107,7 @@ export function BannerMediaSection({
         />
       </div>
 
-      <Field id="banner-alt" label="Alt text" hint="Describes the image for screen readers.">
+      <Field id="banner-alt" label="Alt text">
         <Input id="banner-alt" value={formData.imageAlt} onChange={(e) => onChange('imageAlt', e.target.value)} className="text-sm" />
       </Field>
     </FormSection>

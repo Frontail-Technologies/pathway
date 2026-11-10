@@ -147,10 +147,10 @@ export function AdminPromotionEditorView({ promotion, isCreate = false }: { prom
         </div>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <Field id="promotion-placement" label="Slot" hint={slots ? `Up to ${slots} listings show here.` : undefined}>
+          <Field id="promotion-placement" label="Slot">
             <SelectField id="promotion-placement" value={form.placement} onChange={(value) => update('placement', value)} items={promotionPlacementOptions} />
           </Field>
-          <Field id="promotion-label" label="Label" hint="Optional. Shown to admins in the list.">
+          <Field id="promotion-label" label="Label">
             <Input id="promotion-label" value={form.label} onChange={(e) => update('label', e.target.value)} placeholder="e.g. Autumn engineering spotlight" className="text-sm" />
           </Field>
         </div>
@@ -169,13 +169,13 @@ export function AdminPromotionEditorView({ promotion, isCreate = false }: { prom
 
       <FormSection id="schedule" title="Schedule and order">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-          <Field id="promotion-starts" label="Starts" hint="Blank starts right away.">
+          <Field id="promotion-starts" label="Starts">
             <Input id="promotion-starts" type="date" value={form.startsAt} onChange={(e) => update('startsAt', e.target.value)} className="text-sm" />
           </Field>
-          <Field id="promotion-ends" label="Ends" error={errors.endsAt} hint="Blank runs with no end date.">
+          <Field id="promotion-ends" label="Ends" error={errors.endsAt}>
             <Input id="promotion-ends" type="date" value={form.endsAt} onChange={(e) => update('endsAt', e.target.value)} aria-invalid={!!errors.endsAt} className="text-sm" />
           </Field>
-          <Field id="promotion-priority" label="Priority" error={errors.priority} hint="1–100. Higher shows first.">
+          <Field id="promotion-priority" label="Priority" error={errors.priority}>
             <Input id="promotion-priority" type="number" min={1} max={100} value={form.priority} onChange={(e) => update('priority', e.target.value)} aria-invalid={!!errors.priority} className="text-sm tabular-nums" />
           </Field>
         </div>
@@ -185,7 +185,7 @@ export function AdminPromotionEditorView({ promotion, isCreate = false }: { prom
         <Field id="promotion-status" label="Status" className="max-w-xs">
           <SelectField id="promotion-status" value={form.status} onChange={(value) => update('status', value)} items={statusItems} />
         </Field>
-        <Field id="promotion-notes" label="Notes" hint="Only admins see these.">
+        <Field id="promotion-notes" label="Notes">
           <Textarea id="promotion-notes" value={form.notes} onChange={(e) => update('notes', e.target.value)} rows={3} className="text-sm" />
         </Field>
       </FormSection>

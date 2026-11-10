@@ -120,7 +120,7 @@ export function InviteMemberDialog({ open, onOpenChange, existingEmails }: { ope
                 className="h-9"
               />
             </Field>
-            <Field id="invite-role" label="Role" hint={info.summary}>
+            <Field id="invite-role" label="Role">
               <FormSelect id="invite-role" value={role} onChange={setRole} options={STAFF_ROLES.map((value) => ({ value, label: roleLabels[value] }))} />
             </Field>
             <ul className="space-y-1 rounded-lg bg-muted/50 px-3.5 py-3 text-[13px] text-muted-foreground">

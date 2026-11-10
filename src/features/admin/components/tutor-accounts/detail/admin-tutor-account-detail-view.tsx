@@ -80,7 +80,7 @@ function RequestChangesDialog({ open, onOpenChange, onSubmit }: { open: boolean;
             <DialogTitle>Request changes</DialogTitle>
             <DialogDescription>The tutor sees this note in Tutor Space and can resubmit after updating their profile.</DialogDescription>
           </DialogHeader>
-          <Field id="review-reason" label="What needs to change" required error={error} hint={`${reason.trim().length}/${REASON_MAX}`}>
+          <Field id="review-reason" label="What needs to change" required error={error}>
             <Textarea
               id="review-reason"
               autoFocus

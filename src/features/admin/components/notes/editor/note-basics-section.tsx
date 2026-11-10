@@ -51,11 +51,7 @@ export function NoteBasicsSection({
           />
           {errors.title ? (
             <p className="text-[13px] text-destructive">{errors.title}</p>
-          ) : (
-            <p className="text-xs text-muted-foreground">
-              Shown on the note card and in search.
-            </p>
-          )}
+          ) : null}
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

@@ -12,7 +12,7 @@ const statusItems = MANUAL_STATUSES.map((value) => ({ value, label: bannerStatus
 export function BannerPublishingSection({ formData, onChange }: { formData: BannerFormData; onChange: (key: keyof BannerFormData, value: string) => void }) {
   return (
     <FormSection id="publishing" title="Publishing">
-      <Field id="banner-status" label="Status" hint={bannerStatusHints[formData.status]} className="max-w-xs">
+      <Field id="banner-status" label="Status" className="max-w-xs">
         <Select value={formData.status} onValueChange={(value) => onChange('status', (value as string | null) ?? 'draft')} items={statusItems}>
           <SelectTrigger id="banner-status" className="w-full text-sm">
             <SelectValue />

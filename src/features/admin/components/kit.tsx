@@ -482,11 +482,7 @@ export function UrlPreview({ prefix, slug, locked, source = 'name', error, label
         <span className="shrink-0 text-muted-foreground">{prefix}</span>
         {slug ? <span className="truncate text-foreground">{slug}</span> : <span className="truncate font-sans text-muted-foreground italic">fills in from the {source}</span>}
       </div>
-      {error ? (
-        <p className="text-[13px] text-destructive">{error}</p>
-      ) : (
-        <p className="text-[13px] text-muted-foreground">{locked ? 'Fixed after creation so existing links keep working.' : `Created automatically from the ${source}.`}</p>
-      )}
+      {error ? <p className="text-[13px] text-destructive">{error}</p> : null}
     </div>
   )
 }

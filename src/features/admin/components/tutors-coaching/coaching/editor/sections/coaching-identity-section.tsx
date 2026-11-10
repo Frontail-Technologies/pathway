@@ -54,18 +54,18 @@ export function CoachingIdentitySection({
           </Select>
         </Field>
 
-        <Field label="City" htmlFor="coaching-location" required error={errors.location} hint="Use “Online” for online-only providers.">
+        <Field label="City" htmlFor="coaching-location" required error={errors.location}>
           <Input id="coaching-location" value={formData.location} onChange={(event) => updateField('location', event.target.value)} placeholder="e.g. Kota" aria-invalid={!!errors.location} className="h-9 text-sm" />
         </Field>
 
-        <Field label="State" htmlFor="coaching-state" hint="Leave empty for online-only providers.">
+        <Field label="State" htmlFor="coaching-state">
           <Input id="coaching-state" value={formData.state} onChange={(event) => updateField('state', event.target.value)} placeholder="e.g. Rajasthan" className="h-9 text-sm" />
         </Field>
       </div>
 
       <div className="flex flex-col gap-3 border-t border-border pt-5 sm:flex-row sm:gap-8">
-        <CheckboxField label="Has a public profile page" hint="Otherwise the provider appears in listings only." checked={formData.hasDetailPage} onChange={(value) => updateField('hasDetailPage', value)} />
-        <CheckboxField label="Featured" hint="Shown first in coaching listings." checked={formData.featured} onChange={(value) => updateField('featured', value)} />
+        <CheckboxField label="Has a public profile page" checked={formData.hasDetailPage} onChange={(value) => updateField('hasDetailPage', value)} />
+        <CheckboxField label="Featured" checked={formData.featured} onChange={(value) => updateField('featured', value)} />
       </div>
     </EditorSection>
   )

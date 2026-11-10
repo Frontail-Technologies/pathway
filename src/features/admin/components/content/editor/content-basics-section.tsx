@@ -47,7 +47,7 @@ export function ContentBasicsSection({
         </Field>
       </div>
 
-      <Field id="content-excerpt" label="Excerpt" hint="One or two sentences shown on cards and in search results.">
+      <Field id="content-excerpt" label="Excerpt">
         <Textarea id="content-excerpt" value={formData.excerpt} onChange={(e) => onChange('excerpt', e.target.value)} rows={2} className="resize-none text-sm" />
       </Field>
     </FormSection>

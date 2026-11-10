@@ -217,7 +217,6 @@ export function AdminInstitutionForm({ institution, mode = 'add', onCancel }: Ad
                 Short description
               </Label>
               <Textarea id="inst-desc" value={values.description} onChange={(event) => update('description', event.target.value)} placeholder="What the institution is known for" rows={3} className="resize-none text-sm" />
-              <p className="text-[13px] text-muted-foreground">One or two sentences shown in search results and listings.</p>
             </div>
           </div>
         </Panel>
@@ -253,10 +252,7 @@ export function AdminInstitutionForm({ institution, mode = 'add', onCancel }: Ad
             </div>
 
             <div className="space-y-2">
-              <div>
-                <p className="text-sm font-medium text-foreground">Cover image</p>
-                <p className="text-[13px] text-muted-foreground">Shown at the top of the public page. Landscape, 16:9 works best.</p>
-              </div>
+              <p className="text-sm font-medium text-foreground">Cover image</p>
             <ImageAssetInput
               mode={imageMode}
               onModeChange={setImageMode}
@@ -296,7 +292,6 @@ export function AdminInstitutionForm({ institution, mode = 'add', onCancel }: Ad
                 <CompletenessMeter value={institution.completeness} />
               </div>
             ) : null}
-            <p className="text-[13px] text-muted-foreground">Courses, fees and admissions are managed in their own sections once the institution exists.</p>
           </div>
         </Panel>
       </aside>

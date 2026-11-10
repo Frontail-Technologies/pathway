@@ -13,14 +13,13 @@ import { AdminPageHeader, CompletenessMeter, FactList, Panel, StatusBadge } from
 import { StudentStatusBadge } from '../shared/student-status-badge'
 import { AdminFormFooter } from '../../admin-form-footer'
 
-function Field({ id, label, value, placeholder, type = 'text', hint }: { id: string; label: string; value?: string | number; placeholder?: string; type?: string; hint?: string }) {
+function Field({ id, label, value, placeholder, type = 'text' }: { id: string; label: string; value?: string | number; placeholder?: string; type?: string }) {
   return (
     <div className="space-y-1.5">
       <Label htmlFor={id} className="text-sm font-medium">
         {label}
       </Label>
       <Input id={id} name={id} type={type} defaultValue={value ?? ''} placeholder={placeholder} className="h-9" />
-      {hint ? <p className="text-[13px] text-muted-foreground">{hint}</p> : null}
     </div>
   )
 }

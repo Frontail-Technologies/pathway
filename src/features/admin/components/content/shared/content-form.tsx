@@ -12,7 +12,7 @@ export function FormSection({ id, title, description, action, children }: { id: 
   )
 }
 
-export function Field({ id, label, required, hint, error, children, className }: { id?: string; label: string; required?: boolean; hint?: ReactNode; error?: string; children: ReactNode; className?: string }) {
+export function Field({ id, label, required, error, children, className }: { id?: string; label: string; required?: boolean; error?: string; children: ReactNode; className?: string }) {
   return (
     <div className={className ? `space-y-1.5 ${className}` : 'space-y-1.5'}>
       <Label htmlFor={id} className="text-sm font-medium text-foreground">
@@ -20,7 +20,7 @@ export function Field({ id, label, required, hint, error, children, className }:
         {required ? <span className="text-destructive"> *</span> : null}
       </Label>
       {children}
-      {error ? <p className="text-[13px] text-destructive">{error}</p> : hint ? <p className="text-[13px] text-muted-foreground">{hint}</p> : null}
+      {error ? <p className="text-[13px] text-destructive">{error}</p> : null}
     </div>
   )
 }

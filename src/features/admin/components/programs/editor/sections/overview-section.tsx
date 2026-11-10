@@ -10,7 +10,7 @@ export type OverviewSectionProps = {
 export function OverviewSection({ description, onDescriptionChange }: OverviewSectionProps) {
   return (
     <EditorSection id="overview" title="Overview">
-      <Field label="Description" htmlFor="prog-desc" hint="What the course covers and what students learn.">
+      <Field label="Description" htmlFor="prog-desc">
         <Textarea id="prog-desc" value={description} onChange={(e) => onDescriptionChange(e.target.value)} rows={4} className="resize-none text-sm" />
       </Field>
     </EditorSection>

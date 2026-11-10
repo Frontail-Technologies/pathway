@@ -17,7 +17,7 @@ export function ContentBodySection({
 
   return (
     <FormSection id="body" title="Body" action={<span className="text-[13px] text-muted-foreground tabular-nums">{wordCount} words</span>}>
-      <Field id="content-body" label="Text" required error={errors.body} hint="Markdown: # heading, **bold**, [link](url), - list, > quote.">
+      <Field id="content-body" label="Text" required error={errors.body}>
         <Textarea
           id="content-body"
           value={formData.body}

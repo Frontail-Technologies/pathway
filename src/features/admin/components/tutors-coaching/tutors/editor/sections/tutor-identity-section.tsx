@@ -40,8 +40,8 @@ export function TutorIdentitySection({
       </div>
 
       <div className="flex flex-col gap-3 border-t border-border pt-5 sm:flex-row sm:gap-8">
-        <CheckboxField label="Has a public profile page" hint="Otherwise the tutor appears in listings only." checked={formData.hasDetailPage} onChange={(value) => updateField('hasDetailPage', value)} />
-        <CheckboxField label="Featured" hint="Shown first in tutor listings." checked={formData.featured} onChange={(value) => updateField('featured', value)} />
+        <CheckboxField label="Has a public profile page" checked={formData.hasDetailPage} onChange={(value) => updateField('hasDetailPage', value)} />
+        <CheckboxField label="Featured" checked={formData.featured} onChange={(value) => updateField('featured', value)} />
       </div>
     </EditorSection>
   )

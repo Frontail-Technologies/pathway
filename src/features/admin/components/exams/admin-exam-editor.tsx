@@ -150,7 +150,7 @@ export function AdminExamEditor({ exam, mode }: { exam?: Exam; mode: 'add' | 'ed
             <Field id="exam-description" label="Listing description" required error={errors.description} className="sm:col-span-2">
               <Textarea id="exam-description" rows={2} value={values.description} onChange={(event) => set('description', event.target.value)} {...fieldError('description')} />
             </Field>
-            <Field id="exam-long" label="Page introduction" hint="Shown at the top of the public exam page." className="sm:col-span-2">
+            <Field id="exam-long" label="Page introduction" className="sm:col-span-2">
               <Textarea id="exam-long" rows={3} value={values.longDescription} onChange={(event) => set('longDescription', event.target.value)} />
             </Field>
           </div>
@@ -162,10 +162,10 @@ export function AdminExamEditor({ exam, mode }: { exam?: Exam; mode: 'add' | 'ed
 
         <FormSection id="dates" title="Dates & process" description="Pathway doesn't track live dates; point students to the official notification.">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <Field id="exam-official" label="Official website" hint="Where dates and notifications are published.">
+            <Field id="exam-official" label="Official website">
               <Input id="exam-official" type="url" value={values.officialUrl} onChange={(event) => set('officialUrl', event.target.value)} placeholder="https://" className="h-9" />
             </Field>
-            <Field id="exam-dates" label="Dates note" hint="e.g. Session 1 usually in January.">
+            <Field id="exam-dates" label="Dates note">
               <Input id="exam-dates" value={values.datesNote} onChange={(event) => set('datesNote', event.target.value)} className="h-9" />
             </Field>
           </div>
@@ -181,16 +181,16 @@ export function AdminExamEditor({ exam, mode }: { exam?: Exam; mode: 'add' | 'ed
 
         <FormSection id="pattern" title="Pattern" description="Exam format and the subjects it covers.">
           <PairRowsEditor idPrefix="exam-pattern" rows={values.pattern} onChange={(rows) => set('pattern', rows)} aLabel="Attribute" bLabel="Value" aPlaceholder="Mode" bPlaceholder="Computer-based test" addLabel="Add row" emptyText="No pattern details yet." />
-          <Field id="exam-syllabus" label="Syllabus subjects" hint="Separate subjects with commas.">
+          <Field id="exam-syllabus" label="Syllabus subjects">
             <Input id="exam-syllabus" value={values.syllabus} onChange={(event) => set('syllabus', event.target.value)} placeholder="Physics, Chemistry, Mathematics" className="h-9" />
           </Field>
         </FormSection>
 
         <FormSection id="seo" title="SEO" description="Title and description search engines show for the public page.">
-          <Field id="exam-seo-title" label="Meta title" hint={`${values.seoTitle.length} of 60 characters`}>
+          <Field id="exam-seo-title" label="Meta title">
             <Input id="exam-seo-title" value={values.seoTitle} onChange={(event) => set('seoTitle', event.target.value)} className="h-9" />
           </Field>
-          <Field id="exam-seo-description" label="Meta description" hint={`${values.seoDescription.length} of 160 characters`}>
+          <Field id="exam-seo-description" label="Meta description">
             <Textarea id="exam-seo-description" rows={3} value={values.seoDescription} onChange={(event) => set('seoDescription', event.target.value)} />
           </Field>
           <div className="rounded-lg border border-border p-4">

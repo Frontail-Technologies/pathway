@@ -35,7 +35,7 @@ export function BannerCtaSection({ formData, errors, onChange }: { formData: Ban
       </div>
 
       <div className="grid grid-cols-1 gap-4 border-t border-border pt-4 sm:grid-cols-2">
-        <Field id="banner-sec-label" label="Second button text" hint="Optional.">
+        <Field id="banner-sec-label" label="Second button text">
           <Input id="banner-sec-label" value={formData.secondaryCtaLabel} onChange={(e) => onChange('secondaryCtaLabel', e.target.value)} placeholder="e.g. Learn more" className="text-sm" />
         </Field>
         <Field id="banner-sec-href" label="Second button link" error={errors.secondaryCtaHref}>

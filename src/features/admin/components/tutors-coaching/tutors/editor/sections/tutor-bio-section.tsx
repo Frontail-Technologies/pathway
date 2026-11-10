@@ -17,7 +17,7 @@ export function TutorBioSection({
 }) {
   return (
     <EditorSection id="bio" title="Bio" description={formData.hasDetailPage ? undefined : 'Full bio and audience appear only when the tutor has a public profile page.'}>
-      <Field label="Summary" htmlFor="tutor-intro" required error={errors.intro} hint="One or two sentences shown on listing cards.">
+      <Field label="Summary" htmlFor="tutor-intro" required error={errors.intro}>
         <Textarea
           id="tutor-intro"
           value={formData.intro}
@@ -31,7 +31,7 @@ export function TutorBioSection({
 
       {formData.hasDetailPage ? (
         <>
-          <Field label="Full bio" htmlFor="tutor-long-bio" hint="How sessions run, how doubts are handled, how revision works.">
+          <Field label="Full bio" htmlFor="tutor-long-bio">
             <Textarea id="tutor-long-bio" value={formData.longBio} onChange={(event) => updateField('longBio', event.target.value)} rows={5} className="text-sm" />
           </Field>
 

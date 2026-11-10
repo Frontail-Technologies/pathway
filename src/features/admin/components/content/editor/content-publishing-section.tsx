@@ -15,7 +15,7 @@ export function ContentPublishingSection({
 }) {
   return (
     <FormSection id="publishing" title="Publishing">
-      <Field id="content-status" label="Status" required hint={contentStatusHints[formData.status]} className="max-w-sm">
+      <Field id="content-status" label="Status" required className="max-w-sm">
         <Select value={formData.status} onValueChange={(value) => value && onChange('status', value as ContentStatus)} items={contentStatusOptions}>
           <SelectTrigger id="content-status" className="w-full text-sm">
             <SelectValue />

@@ -170,7 +170,7 @@ function CityDialog({ states, city, defaultStateId, open, onOpenChange }: { stat
           </Field>
           <div className="grid grid-cols-2 gap-3">
             <UrlPreview label="Slug" prefix="" slug={slug} locked={Boolean(city)} />
-            <Field id="city-lgd" label="LGD code" hint="Optional">
+            <Field id="city-lgd" label="LGD code">
               <Input id="city-lgd" value={lgd} onChange={(event) => setLgd(event.target.value)} inputMode="numeric" className="h-9 font-mono text-[13px]" />
             </Field>
           </div>

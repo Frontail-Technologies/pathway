@@ -35,7 +35,7 @@ export function ExamsEditorSection({ selectedExams, examSelectValue, customExamI
         <Field label="Add an exam" htmlFor="exam-select">
           <FormSelect id="exam-select" value={examSelectValue} onChange={onAddExam} options={examSelectOptions} placeholder="Choose an exam" />
         </Field>
-        <Field label="Other exam" htmlFor="custom-exam" hint="For exams not in the list.">
+        <Field label="Other exam" htmlFor="custom-exam">
           <div className="flex items-center gap-2">
             <Input
               id="custom-exam"

@@ -18,12 +18,12 @@ export function CoachingOverviewSection({
 }) {
   return (
     <EditorSection id="overview" title="Overview">
-      <Field label="Tagline" htmlFor="coaching-program-label" required error={errors.programLabel} hint="Shown under the name on listing cards.">
+      <Field label="Tagline" htmlFor="coaching-program-label" required error={errors.programLabel}>
         <Input id="coaching-program-label" value={formData.programLabel} onChange={(event) => updateField('programLabel', event.target.value)} placeholder="e.g. JEE Main and Advanced preparation" aria-invalid={!!errors.programLabel} className="h-9 text-sm" />
       </Field>
 
       {formData.hasDetailPage ? (
-        <Field label="About" htmlFor="coaching-about-copy" hint="Batches, doubt support and how the course is taught.">
+        <Field label="About" htmlFor="coaching-about-copy">
           <Textarea id="coaching-about-copy" value={formData.aboutCopy} onChange={(event) => updateField('aboutCopy', event.target.value)} rows={5} className="text-sm" />
         </Field>
       ) : null}

@@ -54,7 +54,7 @@ export function ChangePasswordDialog({ open, onOpenChange }: { open: boolean; on
           <Field id="pw-current" label="Current password" required error={error}>
             <Input id="pw-current" type="password" autoComplete="current-password" autoFocus value={current} onChange={(event) => setCurrent(event.target.value)} className="h-9" aria-invalid={error ? true : undefined} />
           </Field>
-          <Field id="pw-next" label="New password" required hint={`At least ${MIN_PASSWORD} characters.`}>
+          <Field id="pw-next" label="New password" required>
             <Input id="pw-next" type="password" autoComplete="new-password" value={next} onChange={(event) => setNext(event.target.value)} className="h-9" />
           </Field>
           <Field id="pw-confirm" label="Confirm new password" required>

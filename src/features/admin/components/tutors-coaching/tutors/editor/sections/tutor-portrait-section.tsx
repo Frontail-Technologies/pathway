@@ -28,7 +28,7 @@ export function TutorPortraitSection({
       <div className="flex flex-col gap-5 sm:flex-row sm:items-start">
         <TutorPortrait tutor={{ name: formData.name || 'Tutor preview', portrait: formData.portrait, avatar: formData.avatar }} className="size-20 shrink-0 rounded-lg" />
         <div className="min-w-0 flex-1 space-y-5">
-          <Field label="Photo file" htmlFor="tutor-portrait-path" hint="Path to an uploaded image. Leave empty to use the avatar.">
+          <Field label="Photo file" htmlFor="tutor-portrait-path">
             <Input id="tutor-portrait-path" value={formData.portrait} onChange={(event) => updateField('portrait', event.target.value)} placeholder="e.g. /tutors/arjun-sharma.jpg" className="h-9 font-mono text-sm" />
           </Field>
 

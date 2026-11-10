@@ -41,7 +41,7 @@ export function EditorSection({ id, title, description, children }: { id: string
   )
 }
 
-export function Field({ label, htmlFor, required, hint, error, className, children }: { label: string; htmlFor?: string; required?: boolean; hint?: string; error?: string; className?: string; children: ReactNode }) {
+export function Field({ label, htmlFor, required, error, className, children }: { label: string; htmlFor?: string; required?: boolean; error?: string; className?: string; children: ReactNode }) {
   return (
     <div className={cn('space-y-1.5', className)}>
       <Label htmlFor={htmlFor} className="text-sm font-medium text-foreground">
@@ -49,12 +49,12 @@ export function Field({ label, htmlFor, required, hint, error, className, childr
         {required ? <span className="text-muted-foreground font-normal"> (required)</span> : null}
       </Label>
       {children}
-      {error ? <p className="text-[13px] text-destructive">{error}</p> : hint ? <p className="text-[13px] text-muted-foreground">{hint}</p> : null}
+      {error ? <p className="text-[13px] text-destructive">{error}</p> : null}
     </div>
   )
 }
 
-export function ChipToggleGroup({ label, required, hint, error, options, selected, onToggle, format }: { label: string; required?: boolean; hint?: string; error?: string; options: readonly string[]; selected: readonly string[]; onToggle: (value: string) => void; format?: (value: string) => string }) {
+export function ChipToggleGroup({ label, required, error, options, selected, onToggle, format }: { label: string; required?: boolean; error?: string; options: readonly string[]; selected: readonly string[]; onToggle: (value: string) => void; format?: (value: string) => string }) {
   return (
     <div className="space-y-2" role="group" aria-label={label}>
       <p className="text-sm font-medium text-foreground">
@@ -81,24 +81,23 @@ export function ChipToggleGroup({ label, required, hint, error, options, selecte
           )
         })}
       </div>
-      {error ? <p className="text-[13px] text-destructive">{error}</p> : hint ? <p className="text-[13px] text-muted-foreground">{hint}</p> : null}
+      {error ? <p className="text-[13px] text-destructive">{error}</p> : null}
     </div>
   )
 }
 
-export function CheckboxField({ label, checked, onChange, hint }: { label: string; checked: boolean; onChange: (checked: boolean) => void; hint?: string }) {
+export function CheckboxField({ label, checked, onChange }: { label: string; checked: boolean; onChange: (checked: boolean) => void }) {
   return (
     <label className="flex cursor-pointer items-start gap-2.5 select-none">
       <Checkbox checked={checked} onCheckedChange={(value) => onChange(Boolean(value))} className="mt-0.5" />
       <span>
         <span className="block text-sm text-foreground">{label}</span>
-        {hint ? <span className="block text-[13px] text-muted-foreground">{hint}</span> : null}
       </span>
     </label>
   )
 }
 
-export function StringListInput({ id, label, hint, placeholder, items, onAdd, onRemove }: { id: string; label: string; hint?: string; placeholder?: string; items: readonly string[]; onAdd: (value: string) => void; onRemove: (index: number) => void }) {
+export function StringListInput({ id, label, placeholder, items, onAdd, onRemove }: { id: string; label: string; placeholder?: string; items: readonly string[]; onAdd: (value: string) => void; onRemove: (index: number) => void }) {
   const [value, setValue] = useState('')
   const add = () => {
     if (!value.trim()) return
@@ -106,7 +105,7 @@ export function StringListInput({ id, label, hint, placeholder, items, onAdd, on
     setValue('')
   }
   return (
-    <Field label={label} htmlFor={id} hint={hint}>
+    <Field label={label} htmlFor={id}>
       <div className="flex gap-2">
         <Input
           id={id}

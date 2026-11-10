@@ -36,7 +36,7 @@ export function CoachingProgramsSection({
 
   return (
     <EditorSection id="programs" title="Programs" description={formData.hasDetailPage ? undefined : 'Individual programs appear only when the provider has a public profile page.'}>
-      <ChipToggleGroup label="Course formats" hint="Shown on the listing card." options={COACHING_COURSE_TYPE_OPTIONS} selected={formData.courseTypes} onToggle={(value) => toggleArrayItem('courseTypes', value)} format={sentenceCase} />
+      <ChipToggleGroup label="Course formats" options={COACHING_COURSE_TYPE_OPTIONS} selected={formData.courseTypes} onToggle={(value) => toggleArrayItem('courseTypes', value)} format={sentenceCase} />
 
       {formData.hasDetailPage ? (
         <div className="space-y-4 border-t border-border pt-5">

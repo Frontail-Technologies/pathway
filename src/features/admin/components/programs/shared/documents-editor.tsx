@@ -76,7 +76,7 @@ export function DocumentsEditor<TType extends string>({
             <Input id="new-doc-url" value={newDocUrl} onChange={(e) => onNewDocUrlChange(e.target.value)} placeholder="https://" className="text-sm" />
           </Field>
         </div>
-        <Field label="File" htmlFor="new-doc-file" hint={selectedFileMeta ? `${selectedFileMeta.name} (${selectedFileMeta.size})` : 'PDF or Word. Files are previewed only; uploads are not stored yet.'}>
+        <Field label="File" htmlFor="new-doc-file">
           <Input id="new-doc-file" type="file" accept=".pdf,.doc,.docx" onChange={onFileChange} className="cursor-pointer text-sm" />
         </Field>
         <div className="flex justify-end">

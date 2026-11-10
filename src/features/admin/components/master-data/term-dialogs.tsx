@@ -88,7 +88,7 @@ export function TermDialog({ kind, terms, term, open, onOpenChange }: { kind: Ta
             />
           </Field>
           <UrlPreview label="Slug" prefix="" slug={slug} locked={Boolean(term)} source="label" />
-          <Field id="term-parent" label="Parent term" hint="Optional. Children sit under their parent where filters group terms.">
+          <Field id="term-parent" label="Parent term">
             <FormSelect id="term-parent" value={parent} onChange={setParent} options={parentOptions} />
           </Field>
           <DialogFooter>
@@ -219,7 +219,6 @@ export function TermSheet({ kind, term, open, onOpenChange }: { kind: TaxonomyKi
 
           <section>
             <h3 className="text-sm font-semibold text-foreground">Aliases</h3>
-            <p className="mt-1 text-[13px] text-muted-foreground">Labels and URL values from the website and app that resolve to this term. Add one when a client still sends an older spelling.</p>
             {grouped.size === 0 ? (
               <p className="mt-3 text-[13px] text-muted-foreground">No aliases.</p>
             ) : (

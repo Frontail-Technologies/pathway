@@ -15,7 +15,6 @@ export function TutorTeachingProfileSection({
       <StringListInput
         id="tutor-traits"
         label="Traits"
-        hint="Short phrases about how the tutor teaches. Don't promise ranks or results."
         placeholder="e.g. Step-by-step problem solving"
         items={formData.traits}
         onAdd={(value) => addArrayString('traits', value)}

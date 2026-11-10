@@ -105,7 +105,7 @@ export function AdminSettingsView() {
         </FormSection>
 
         <FormSection title="Lead routing" description="What happens when a student sends an enquiry.">
-          <Field id="settings-assignee" label="Default assignee" hint="New enquiries are assigned to this person." className="sm:max-w-sm">
+          <Field id="settings-assignee" label="Default assignee" className="sm:max-w-sm">
             <FormSelect id="settings-assignee" value={assigneeValue} onChange={(v) => set('defaultAssignee', v)} options={assigneeOptions} />
           </Field>
           <ToggleRow title="Auto-acknowledge" description="Send students a confirmation that their enquiry was received." control={<Switch checked={values.autoAcknowledge} onCheckedChange={(v) => set('autoAcknowledge', v)} aria-label="Auto-acknowledge" />} />

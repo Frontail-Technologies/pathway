@@ -25,7 +25,7 @@ export function EditorSection({ id, title, description, action, children }: { id
   )
 }
 
-export function Field({ label, htmlFor, required, error, hint, children, className }: { label: string; htmlFor?: string; required?: boolean; error?: string; hint?: string; children: ReactNode; className?: string }) {
+export function Field({ label, htmlFor, required, error, children, className }: { label: string; htmlFor?: string; required?: boolean; error?: string; children: ReactNode; className?: string }) {
   return (
     <div className={cn('space-y-1.5', className)}>
       <Label htmlFor={htmlFor} className="text-[13px] font-medium text-foreground">
@@ -41,8 +41,6 @@ export function Field({ label, htmlFor, required, error, hint, children, classNa
         <p className="text-[13px] text-destructive" role="alert">
           {error}
         </p>
-      ) : hint ? (
-        <p className="text-[13px] text-muted-foreground">{hint}</p>
       ) : null}
     </div>
   )

@@ -38,12 +38,12 @@ export function ContentTaxonomySection({
           </Select>
         </Field>
 
-        <Field id="content-author" label="Author" hint="Optional. Shown as the byline.">
+        <Field id="content-author" label="Author">
           <Input id="content-author" value={formData.authorName} onChange={(e) => onChange('authorName', e.target.value)} placeholder="e.g. Ananya Sen" className="text-sm" />
         </Field>
       </div>
 
-      <Field id="content-tags" label="Tags" hint="Separate with commas. Used for internal search.">
+      <Field id="content-tags" label="Tags">
         <Input id="content-tags" value={formData.tagsString} onChange={(e) => onChange('tagsString', e.target.value)} placeholder="jee main, counselling, cutoffs" className="text-sm" />
       </Field>
       {tags.length > 0 ? (

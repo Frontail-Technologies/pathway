@@ -9,10 +9,10 @@ export function BannerBasicsSection({ formData, errors, onChange }: { formData: 
   return (
     <FormSection id="basics" title="Copy">
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <Field id="banner-name" label="Name" required error={errors.name} hint="Only admins see this.">
+        <Field id="banner-name" label="Name" required error={errors.name}>
           <Input id="banner-name" value={formData.name} onChange={(e) => onChange('name', e.target.value)} placeholder="e.g. Admissions 2026 callout" aria-invalid={!!errors.name} className="text-sm" />
         </Field>
-        <Field id="banner-eyebrow" label="Label above headline" hint="Optional, e.g. Admissions open.">
+        <Field id="banner-eyebrow" label="Label above headline">
           <Input id="banner-eyebrow" value={formData.eyebrow} onChange={(e) => onChange('eyebrow', e.target.value)} className="text-sm" />
         </Field>
       </div>
