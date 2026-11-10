@@ -38,7 +38,7 @@ export type AdminDataTableProps<TData, TValue> = {
   className?: string
   onRowClick?: (row: TData) => void
   getRowAriaLabel?: (row: TData) => string
-  tabs?: { value: string; onChange: (value: string) => void; options: StatusTabOption[]; allLabel?: string; total?: number }
+  tabs?: { value: string; onChange: (value: string) => void; options: StatusTabOption[]; allLabel?: string; total?: number; hideAll?: boolean }
   toolbar?: React.ReactNode
   chips?: { id: string; label: string; onRemove: () => void }[]
   selectable?: boolean
@@ -46,9 +46,9 @@ export type AdminDataTableProps<TData, TValue> = {
   bulkActions?: (rows: TData[], clear: () => void) => React.ReactNode
 }
 
-export function AdminStatusTabs({ value, onChange, options, allLabel = 'All', total }: NonNullable<AdminDataTableProps<unknown, unknown>['tabs']>) {
+export function AdminStatusTabs({ value, onChange, options, allLabel = 'All', total, hideAll }: NonNullable<AdminDataTableProps<unknown, unknown>['tabs']>) {
   const counted = total !== undefined || options.some((option) => option.count !== undefined)
-  const tabs = [{ value: 'all', label: allLabel, count: counted ? (total ?? options.reduce((sum, option) => sum + (option.count ?? 0), 0)) : undefined }, ...options]
+  const tabs = hideAll ? options : [{ value: 'all', label: allLabel, count: counted ? (total ?? options.reduce((sum, option) => sum + (option.count ?? 0), 0)) : undefined }, ...options]
   return (
     <div role="tablist" aria-label="Filter by status" className="-mb-px flex gap-1 overflow-x-auto border-b border-border [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
       {tabs.map((tab) => {

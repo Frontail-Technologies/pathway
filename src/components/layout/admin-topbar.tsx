@@ -43,7 +43,7 @@ function QuickAdd() {
 
 function NotificationBell() {
   const badges = useAdminBadges()
-  const total = badges.enquiries + badges.tutorReviews
+  const total = badges.enquiries + badges.tutorReviews + badges.ingestion
   return (
     <DropdownMenu>
       <DropdownMenuTrigger render={<Button variant="ghost" size="icon" className="relative size-9" aria-label={total ? `${total} items need attention` : 'Notifications'} />}>
@@ -60,6 +60,10 @@ function NotificationBell() {
         <DropdownMenuItem render={<Link href="/admin/tutor-accounts" />}>
           <span className="flex-1">Tutor profiles to review</span>
           <span className="text-xs font-semibold text-muted-foreground tabular-nums">{badges.tutorReviews}</span>
+        </DropdownMenuItem>
+        <DropdownMenuItem render={<Link href="/admin/scraper/imports" />}>
+          <span className="flex-1">Imported records to review</span>
+          <span className="text-xs font-semibold text-muted-foreground tabular-nums">{badges.ingestion}</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

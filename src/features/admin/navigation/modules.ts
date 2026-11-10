@@ -7,6 +7,7 @@ import {
   ClipboardList,
   Compass,
   Database,
+  DatabaseZap,
   FileText,
   GraduationCap,
   History,
@@ -34,7 +35,7 @@ export type AdminModule = {
   icon: LucideIcon
   group: AdminModuleGroup
   description: string
-  badge?: 'enquiries' | 'tutorReviews'
+  badge?: 'enquiries' | 'tutorReviews' | 'ingestion'
   status?: 'soon'
   children?: AdminModuleChild[]
   create?: { label: string; href: string }
@@ -48,6 +49,8 @@ export const adminModuleGroups: { id: AdminModuleGroup; label: string }[] = [
   { id: 'insights', label: 'Insights' },
   { id: 'workspace', label: 'Workspace' },
 ]
+
+const scraper = (path: string) => (pathname: string) => (path === '' ? pathname === '/admin/scraper' : pathname === `/admin/scraper${path}` || pathname.startsWith(`/admin/scraper${path}/`))
 
 const tab = (value: string) => (pathname: string, search: string) => pathname === '/admin/tutors-coaching' && (new URLSearchParams(search).get('tab') ?? 'tutors') === value
 
@@ -83,6 +86,23 @@ export const adminModules: AdminModule[] = [
   { id: 'seo', label: 'SEO', href: '/admin/seo', icon: SearchCode, group: 'content', description: 'Metadata overrides for public pages.' },
   { id: 'reports', label: 'Reports', href: '/admin/reports', icon: BarChart3, group: 'insights', description: 'Catalogue and operations reports.' },
   { id: 'activity', label: 'Activity log', href: '/admin/activity', icon: History, group: 'insights', description: 'Every change, by whom and when.' },
+  {
+    id: 'scraper',
+    label: 'Data imports',
+    href: '/admin/scraper',
+    icon: DatabaseZap,
+    group: 'workspace',
+    description: 'Official sources, runs and the review queue.',
+    badge: 'ingestion',
+    children: [
+      { label: 'Overview', href: '/admin/scraper', match: scraper('') },
+      { label: 'Sources', href: '/admin/scraper/sources', match: scraper('/sources') },
+      { label: 'Review', href: '/admin/scraper/imports', match: (pathname) => scraper('/imports')(pathname) || scraper('/records')(pathname) },
+      { label: 'Runs', href: '/admin/scraper/jobs', match: scraper('/jobs') },
+      { label: 'Conflicts', href: '/admin/scraper/conflicts', match: scraper('/conflicts') },
+      { label: 'Upload', href: '/admin/scraper/bulk-import', match: scraper('/bulk-import') },
+    ],
+  },
   { id: 'master-data', label: 'Master data', href: '/admin/master-data', icon: Database, group: 'workspace', description: 'Taxonomy terms, aliases, states and cities.' },
   { id: 'team', label: 'Team & access', href: '/admin/team', icon: ShieldCheck, group: 'workspace', description: 'Staff accounts, invitations and roles.' },
   { id: 'settings', label: 'Settings', href: '/admin/settings', icon: Settings, group: 'workspace', description: 'Workspace settings.', status: 'soon' },
