@@ -8,7 +8,7 @@ export type SourceReviewSectionProps = {
 
 export function SourceReviewSection({ isEdit }: SourceReviewSectionProps) {
   return (
-    <EditorSection id="review" title="Source and review" description="Data quality is recalculated from sources and completeness when you save.">
+    <EditorSection id="review" title="Source and review">
       <FactList
         columns={3}
         items={[

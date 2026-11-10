@@ -10,7 +10,7 @@ export type InstitutionRelationshipsSectionProps = {
 export function InstitutionRelationshipsSection({ offerings }: InstitutionRelationshipsSectionProps) {
   const list = offerings ?? []
   return (
-    <EditorSection id="relationships" title="Institutions" description="Fees and admissions for each institution are edited under Admissions & fees.">
+    <EditorSection id="relationships" title="Institutions">
       {list.length > 0 ? (
         <ul className="divide-y divide-border">
           {list.map((off) => (

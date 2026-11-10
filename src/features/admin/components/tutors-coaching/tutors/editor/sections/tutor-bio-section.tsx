@@ -16,7 +16,7 @@ export function TutorBioSection({
   removeArrayString: (field: 'whoHelps' | 'traits', index: number) => void
 }) {
   return (
-    <EditorSection id="bio" title="Bio" description={formData.hasDetailPage ? undefined : 'Full bio and audience appear only when the tutor has a public profile page.'}>
+    <EditorSection id="bio" title="Bio">
       <Field label="Summary" htmlFor="tutor-intro" required error={errors.intro}>
         <Textarea
           id="tutor-intro"

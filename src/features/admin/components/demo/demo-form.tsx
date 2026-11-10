@@ -17,12 +17,11 @@ export function DemoNote({ children = 'Demo: changes are saved on this device on
   )
 }
 
-export function FormSection({ id, title, description, children, className }: { id?: string; title: string; description?: string; children: ReactNode; className?: string }) {
+export function FormSection({ id, title, children, className }: { id?: string; title: string; children: ReactNode; className?: string }) {
   return (
     <section id={id} className={cn('scroll-mt-24 rounded-xl border border-border bg-card shadow-sm', className)}>
       <div className="border-b border-border px-5 py-3.5">
         <h2 className="text-[15px] font-semibold text-foreground">{title}</h2>
-        {description ? <p className="mt-0.5 text-[13px] text-muted-foreground">{description}</p> : null}
       </div>
       <div className="space-y-4 p-5">{children}</div>
     </section>
@@ -63,12 +62,11 @@ export function FormSelect<T extends string>({ id, value, onChange, options, pla
   )
 }
 
-export function ToggleRow({ title, description, control }: { title: string; description?: string; control: ReactNode }) {
+export function ToggleRow({ title, control }: { title: string; control: ReactNode }) {
   return (
     <div className="flex items-start justify-between gap-4">
       <div className="min-w-0">
         <p className="text-sm font-medium text-foreground">{title}</p>
-        {description ? <p className="mt-0.5 text-[13px] text-muted-foreground">{description}</p> : null}
       </div>
       <div className="shrink-0 pt-0.5">{control}</div>
     </div>

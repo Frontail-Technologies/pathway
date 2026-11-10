@@ -95,7 +95,7 @@ export function AdminExamDetailView({ exam: fixture }: { exam: Exam }) {
             </div>
           </Panel>
 
-          <Panel title="Public page sections" description={exam.detail ? 'What the exam page shows today.' : 'No detail content yet, so the exam appears in listings only.'} bodyClassName="p-0">
+          <Panel title="Public page sections" bodyClassName="p-0">
             <ul className="divide-y divide-border">
               {EXAM_DETAIL_SECTIONS.map((section) => {
                 const count = counts[section.id]

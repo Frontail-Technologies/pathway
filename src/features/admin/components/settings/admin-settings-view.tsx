@@ -90,7 +90,7 @@ export function AdminSettingsView() {
       <AdminPageHeader title="Settings" />
 
       <form id={FORM_ID} onSubmit={submit} noValidate className="max-w-3xl space-y-5">
-        <FormSection title="General" description="Shown to students in the footer and on contact pages.">
+        <FormSection title="General">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <Field id="settings-siteName" label="Site name" required error={errors.siteName} className="sm:col-span-2">
               <Input id="settings-siteName" value={values.siteName} onChange={(event) => set('siteName', event.target.value)} className="h-9" {...invalid('siteName')} />
@@ -104,15 +104,15 @@ export function AdminSettingsView() {
           </div>
         </FormSection>
 
-        <FormSection title="Lead routing" description="What happens when a student sends an enquiry.">
+        <FormSection title="Lead routing">
           <Field id="settings-assignee" label="Default assignee" className="sm:max-w-sm">
             <FormSelect id="settings-assignee" value={assigneeValue} onChange={(v) => set('defaultAssignee', v)} options={assigneeOptions} />
           </Field>
-          <ToggleRow title="Auto-acknowledge" description="Send students a confirmation that their enquiry was received." control={<Switch checked={values.autoAcknowledge} onCheckedChange={(v) => set('autoAcknowledge', v)} aria-label="Auto-acknowledge" />} />
+          <ToggleRow title="Auto-acknowledge" control={<Switch checked={values.autoAcknowledge} onCheckedChange={(v) => set('autoAcknowledge', v)} aria-label="Auto-acknowledge" />} />
         </FormSection>
 
         <FormSection title="Notifications">
-          <ToggleRow title="Email on new enquiry" description="Email the assignee when a new enquiry arrives. Demo: no email is sent." control={<Switch checked={values.emailOnNewEnquiry} onCheckedChange={(v) => set('emailOnNewEnquiry', v)} aria-label="Email on new enquiry" />} />
+          <ToggleRow title="Email on new enquiry" control={<Switch checked={values.emailOnNewEnquiry} onCheckedChange={(v) => set('emailOnNewEnquiry', v)} aria-label="Email on new enquiry" />} />
         </FormSection>
       </form>
 
@@ -123,7 +123,6 @@ export function AdminSettingsView() {
         <div className="flex flex-col gap-3 p-5 sm:flex-row sm:items-center sm:justify-between">
           <div className="min-w-0">
             <p className="text-sm font-medium text-foreground">Reset demo data</p>
-            <p className="mt-0.5 text-[13px] text-muted-foreground">Clears exam edits, stream publishing changes, team invites, settings and the activity log saved on this device.</p>
           </div>
           <Button type="button" variant="destructive" size="sm" className="shrink-0 gap-1.5" onClick={() => setResetOpen(true)}>
             <RotateCcw className="size-4" aria-hidden="true" />

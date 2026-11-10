@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { cn } from '@/lib/utils'
 import { StatusBadge, type StatusTone } from '../../kit'
 
-export function EditorSection({ id, title, description, action, children }: { id: string; title: string; description?: string; action?: ReactNode; children: ReactNode }) {
+export function EditorSection({ id, title, action, children }: { id: string; title: string; action?: ReactNode; children: ReactNode }) {
   return (
     <section id={id} aria-labelledby={`${id}-title`} className="scroll-mt-20 rounded-xl border border-border bg-card shadow-sm">
       <div className="flex items-start justify-between gap-3 border-b border-border px-5 py-3.5">
@@ -16,7 +16,6 @@ export function EditorSection({ id, title, description, action, children }: { id
           <h2 id={`${id}-title`} className="text-[15px] font-semibold text-foreground">
             {title}
           </h2>
-          {description ? <p className="mt-0.5 text-[13px] text-muted-foreground">{description}</p> : null}
         </div>
         {action ? <div className="shrink-0 text-[13px] text-muted-foreground">{action}</div> : null}
       </div>

@@ -313,7 +313,7 @@ export function AdminTutorAccountDetailView({ userId }: { userId: string }) {
             </ul>
           </Panel>
 
-          <Panel title="Catalog listing" description="Created or updated when the profile is approved.">
+          <Panel title="Catalog listing">
             {!account.listing ? (
               <p className="text-sm text-muted-foreground">No listing yet. Approving this profile creates it as a draft.</p>
             ) : listing === 'error' ? (

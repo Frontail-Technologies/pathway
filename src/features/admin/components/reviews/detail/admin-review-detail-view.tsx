@@ -8,11 +8,10 @@ import type { AdminReview } from '@/features/admin/data/admin-reviews'
 import { FactList, Panel, Tag, Monogram, RecordHeader } from '../../kit'
 import { ModerationStatusBadge } from '../shared/moderation-status-badge'
 import { Rating } from '../shared/review-rating'
-import { formatReviewDate, moderationStatusDescriptions, reviewEntityTypeLabels, reviewSourceLabels } from '../shared/review-constants'
+import { formatReviewDate, reviewEntityTypeLabels, reviewSourceLabels } from '../shared/review-constants'
 
 export function AdminReviewDetailView({ review }: { review: AdminReview }) {
   const [copied, setCopied] = React.useState(false)
-  const status = review.moderationStatus ?? 'published'
   const submitted = formatReviewDate(review.submittedAt)
   const entityLabel = reviewEntityTypeLabels[review.entityType]
 
@@ -89,7 +88,7 @@ export function AdminReviewDetailView({ review }: { review: AdminReview }) {
         </div>
 
         <div className="space-y-6 lg:sticky lg:top-[4.5rem] lg:col-span-4">
-          <Panel title="Moderation" description={moderationStatusDescriptions[status]}>
+          <Panel title="Moderation">
             <div className="space-y-3">
               {review.isPathwayNative ? (
                 <div className="flex flex-wrap gap-2">

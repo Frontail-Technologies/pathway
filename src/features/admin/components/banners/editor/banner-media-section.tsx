@@ -3,7 +3,6 @@
 import { Input } from '@/components/ui/input'
 import type { BannerPlacement } from '@/features/banners/types/banner'
 import { ImageAssetInput } from '@/features/admin/components/shared/image-asset-input'
-import { placementDimensions } from '../shared/banner-constants'
 import { Field, FormSection } from '../shared/banner-form'
 import type { BannerFormData } from './use-banner-editor'
 
@@ -76,7 +75,7 @@ export function BannerMediaSection({
   onChange: (key: keyof BannerFormData, value: string) => void
 }) {
   return (
-    <FormSection id="media" title="Images" description={`Recommended size ${placementDimensions(placement)}`}>
+    <FormSection id="media" title="Images">
       <ImageInput
         label="Desktop image"
         mode={desktopMode}

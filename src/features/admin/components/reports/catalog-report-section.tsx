@@ -58,7 +58,7 @@ export function CatalogReportSection({ data }: { data: PlatformReportsData['cata
         <ShareList items={data.institutionsByType} total={data.totalInstitutions} noun="institutions" />
       </Panel>
 
-      <Panel title="How tutoring is delivered" description="A provider can offer more than one mode.">
+      <Panel title="How tutoring is delivered">
         <div className="space-y-6">
           <div>
             <h3 className="mb-3 text-[13px] font-medium text-muted-foreground">Tutors ({data.totalTutors})</h3>

@@ -86,7 +86,7 @@ export function AdminNoteDetailView({ note }: { note: AdminNote }) {
             />
           </Panel>
 
-          <Panel title="Download file" description="Students get a short-lived private link after access is checked.">
+          <Panel title="Download file">
             {asset ? (
               <FactList
                 columns={3}

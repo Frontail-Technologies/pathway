@@ -12,7 +12,6 @@ import { useUnsavedChanges } from '@/features/admin/hooks/use-unsaved-changes'
 import { cn } from '@/lib/utils'
 import { AdminPageHeader } from '../../kit'
 import {
-  placementSlots,
   promotionKindHints,
   promotionKindOptions,
   promotionPlacementOptions,
@@ -116,7 +115,6 @@ export function AdminPromotionEditorView({ promotion, isCreate = false }: { prom
     setApiNotice('Saving needs the Admin API, which is not connected yet, so nothing was saved.')
   }
 
-  const slots = placementSlots(form.placement)
   return (
     <form id="promotion-editor-form" onSubmit={handleSubmit} noValidate className="mx-auto max-w-4xl space-y-6 pb-12">
       <AdminPageHeader

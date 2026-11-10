@@ -221,7 +221,7 @@ export function AdminAdmissionsFeesDetailView({ data }: { data: AdminProgramOffe
             </div>
           </Panel>
 
-          <Panel title="Data quality" description="Fees change often. Amounts need an official source to count as verified.">
+          <Panel title="Data quality">
             <div className="space-y-4">
               <StatusChecklist
                 items={qualityItems.map(({ key, label }) => {

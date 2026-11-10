@@ -40,7 +40,7 @@ export function AdminStreamDetailView({ stream }: { stream: AdminStream }) {
 
       <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
         <div className="space-y-5 lg:col-span-2">
-          <Panel title="Hub sections" description={`Sections only appear on the hub when they have content. ${stream.sections.length} of 7 have content.`} bodyClassName="p-0">
+          <Panel title="Hub sections" description={`${stream.sections.length} of 7 with content`} bodyClassName="p-0">
             {stream.sections.length === 0 ? (
               <p className="px-5 py-4 text-sm text-muted-foreground">No section has content for this stream yet.</p>
             ) : (
@@ -72,7 +72,6 @@ export function AdminStreamDetailView({ stream }: { stream: AdminStream }) {
           <Panel title="Publishing">
             <ToggleRow
               title="Published"
-              description={published ? `Visible at /${stream.slug}.` : 'Hidden from the stream menu and hub address.'}
               control={<Switch checked={published} onCheckedChange={(next) => setPublished(stream, next)} aria-label={`Publish ${stream.name} hub`} />}
             />
             <div className="mt-4 space-y-2 border-t border-border pt-4">

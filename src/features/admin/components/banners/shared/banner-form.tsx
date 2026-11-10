@@ -2,10 +2,10 @@ import type { ReactNode } from 'react'
 import { Label } from '@/components/ui/label'
 import { Panel } from '../../kit'
 
-export function FormSection({ id, title, description, action, children }: { id: string; title: string; description?: string; action?: ReactNode; children: ReactNode }) {
+export function FormSection({ id, title, action, children }: { id: string; title: string; action?: ReactNode; children: ReactNode }) {
   return (
     <div id={id} className="scroll-mt-24">
-      <Panel title={title} description={description} action={action} bodyClassName="space-y-4">
+      <Panel title={title} action={action} bodyClassName="space-y-4">
         {children}
       </Panel>
     </div>

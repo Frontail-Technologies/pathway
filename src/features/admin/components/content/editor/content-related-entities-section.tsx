@@ -31,7 +31,7 @@ export function ContentRelatedEntitiesSection({
   }, [options])
 
   return (
-    <FormSection id="related" title="Linked records" description="Colleges, courses and other records this article mentions.">
+    <FormSection id="related" title="Linked records">
       <div className="grid grid-cols-1 items-end gap-3 sm:grid-cols-12">
         <Field id="entity-type-picker" label="Type" className="sm:col-span-4">
           <Select value={selectedType} onValueChange={(value) => value && setSelectedType(value as RelatedEntityType)} items={relatedEntityTypeOptions}>

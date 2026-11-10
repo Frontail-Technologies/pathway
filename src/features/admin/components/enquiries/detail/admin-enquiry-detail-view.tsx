@@ -229,7 +229,7 @@ function EnquiryDetail({ enquiry }: { enquiry: AdminEnquiry }) {
             )}
           </Panel>
 
-          <Panel title="Internal notes" description="Only visible to the admin team.">
+          <Panel title="Internal notes">
             <div className="space-y-4">
               {notes.length > 0 ? (
                 <ul className="space-y-3">

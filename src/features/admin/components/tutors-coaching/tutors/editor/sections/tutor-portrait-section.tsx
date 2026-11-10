@@ -24,7 +24,7 @@ export function TutorPortraitSection({
   updateAvatarField: <K extends keyof TutorFormData['avatar']>(field: K, value: TutorFormData['avatar'][K]) => void
 }) {
   return (
-    <EditorSection id="portrait" title="Portrait" description="Use a real photo where possible. Without one, the illustrated avatar is shown.">
+    <EditorSection id="portrait" title="Portrait">
       <div className="flex flex-col gap-5 sm:flex-row sm:items-start">
         <TutorPortrait tutor={{ name: formData.name || 'Tutor preview', portrait: formData.portrait, avatar: formData.avatar }} className="size-20 shrink-0 rounded-lg" />
         <div className="min-w-0 flex-1 space-y-5">

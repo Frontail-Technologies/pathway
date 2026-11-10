@@ -32,9 +32,6 @@ export function NoteBasicsSection({
     <div id="basics" className="rounded-xl border border-border bg-card shadow-sm p-5 sm:p-6 space-y-5">
       <div>
         <h2 className="text-[15px] font-semibold text-foreground">Basics</h2>
-        <p className="mt-0.5 text-[13px] text-muted-foreground">
-          Title, link and description.
-        </p>
       </div>
 
       <div className="space-y-4">

@@ -142,7 +142,7 @@ export function AdminTeamMemberDetailView({ userId }: { userId: string }) {
 
       <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_22rem]">
         <div className="flex min-w-0 flex-col gap-5">
-          <Panel title="Account activity" description="The last 20 account events: sign-ins, role changes, suspensions and password changes.">
+          <Panel title="Account activity">
             {member.activity.length === 0 ? (
               <AdminEmptyState art="noActivity" title="No account activity yet" className="py-8" />
             ) : (
@@ -178,7 +178,7 @@ export function AdminTeamMemberDetailView({ userId }: { userId: string }) {
               ]}
             />
           </Panel>
-          <Panel title={`${roleLabels[member.role]} permissions`} description={roleInfo[member.role].summary}>
+          <Panel title={`${roleLabels[member.role]} permissions`}>
             <ul className="space-y-1.5 text-[13px] text-foreground">
               {roleInfo[member.role].can.map((item) => (
                 <li key={item}>• {item}</li>

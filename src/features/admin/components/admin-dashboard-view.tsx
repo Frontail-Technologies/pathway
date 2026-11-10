@@ -160,7 +160,7 @@ export function AdminDashboardView() {
         <QuickActionTiles items={quickActions} />
       </section>
 
-      <Panel title="Catalogue completeness" description="Share of records with every section filled in" bodyClassName="p-(--admin-pad)">
+      <Panel title="Catalogue completeness" bodyClassName="p-(--admin-pad)">
         <ProgressList
           max={100}
           items={completeness.items.map((item) => ({ label: item.label, value: item.percentage, display: `${item.percentage}%`, tone: item.percentage >= 100 ? 'success' : item.percentage >= 40 ? 'info' : 'warning' }))}

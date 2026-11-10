@@ -109,7 +109,7 @@ export function AdminExamEditor({ exam, mode }: { exam?: Exam; mode: 'add' | 'ed
       />
 
       <AdminEditorLayout navigation={<AdminEditorSectionNav sections={SECTIONS} activeSectionId={activeSection} onSectionChange={goTo} />}>
-        <FormSection id="basics" title="Basics" description="How the exam appears in listings and search.">
+        <FormSection id="basics" title="Basics">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <Field id="exam-name" label="Full name" required error={errors.name} className="sm:col-span-2">
               <Input
@@ -155,12 +155,12 @@ export function AdminExamEditor({ exam, mode }: { exam?: Exam; mode: 'add' | 'ed
             </Field>
           </div>
           <div className="space-y-4 border-t border-border pt-4">
-            <ToggleRow title="Public page" description="Publish a detail page at /exam/<slug>. Off keeps the exam in listings only." control={<Switch checked={values.hasDetailPage} onCheckedChange={(v) => set('hasDetailPage', v)} aria-label="Public page" />} />
-            <ToggleRow title="Popular" description="Show the exam in popular exam lists." control={<Switch checked={values.popular} onCheckedChange={(v) => set('popular', v)} aria-label="Popular" />} />
+            <ToggleRow title="Public page" control={<Switch checked={values.hasDetailPage} onCheckedChange={(v) => set('hasDetailPage', v)} aria-label="Public page" />} />
+            <ToggleRow title="Popular" control={<Switch checked={values.popular} onCheckedChange={(v) => set('popular', v)} aria-label="Popular" />} />
           </div>
         </FormSection>
 
-        <FormSection id="dates" title="Dates & process" description="Pathway doesn't track live dates; point students to the official notification.">
+        <FormSection id="dates" title="Dates & process">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <Field id="exam-official" label="Official website">
               <Input id="exam-official" type="url" value={values.officialUrl} onChange={(event) => set('officialUrl', event.target.value)} placeholder="https://" className="h-9" />
@@ -175,18 +175,18 @@ export function AdminExamEditor({ exam, mode }: { exam?: Exam; mode: 'add' | 'ed
           </div>
         </FormSection>
 
-        <FormSection id="eligibility" title="Eligibility" description="Rules students check before registering.">
+        <FormSection id="eligibility" title="Eligibility">
           <PairRowsEditor idPrefix="exam-elig" rows={values.eligibility} onChange={(rows) => set('eligibility', rows)} aLabel="Criterion" bLabel="Requirement" aPlaceholder="Qualification" bPlaceholder="Class 12 with PCM" addLabel="Add criterion" emptyText="No eligibility rules yet." />
         </FormSection>
 
-        <FormSection id="pattern" title="Pattern" description="Exam format and the subjects it covers.">
+        <FormSection id="pattern" title="Pattern">
           <PairRowsEditor idPrefix="exam-pattern" rows={values.pattern} onChange={(rows) => set('pattern', rows)} aLabel="Attribute" bLabel="Value" aPlaceholder="Mode" bPlaceholder="Computer-based test" addLabel="Add row" emptyText="No pattern details yet." />
           <Field id="exam-syllabus" label="Syllabus subjects">
             <Input id="exam-syllabus" value={values.syllabus} onChange={(event) => set('syllabus', event.target.value)} placeholder="Physics, Chemistry, Mathematics" className="h-9" />
           </Field>
         </FormSection>
 
-        <FormSection id="seo" title="SEO" description="Title and description search engines show for the public page.">
+        <FormSection id="seo" title="SEO">
           <Field id="exam-seo-title" label="Meta title">
             <Input id="exam-seo-title" value={values.seoTitle} onChange={(event) => set('seoTitle', event.target.value)} className="h-9" />
           </Field>

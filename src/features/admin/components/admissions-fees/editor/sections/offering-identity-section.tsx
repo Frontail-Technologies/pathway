@@ -57,7 +57,7 @@ export function OfferingIdentitySection({
   errors: Record<string, string>
 }) {
   return (
-    <EditorSection id="identity" title="Basics" description={isEdit ? 'The institution and course can’t be changed on an existing offering.' : undefined}>
+    <EditorSection id="identity" title="Basics">
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <Field label="Institution" htmlFor="off-inst" required error={errors.institutionId}>
           <FormSelect id="off-inst" value={institutionId} onChange={onInstitutionIdChange} options={collegeOptions} placeholder="Choose institution" disabled={isEdit} />

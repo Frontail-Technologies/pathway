@@ -70,7 +70,7 @@ export function AdminSeoDetailView({ record }: { record: AdminSeoRecord }) {
 
       <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-12">
         <div className="space-y-6 lg:col-span-8">
-          <Panel title="Search result" description="Approximate. Search engines may rewrite the snippet.">
+          <Panel title="Search result">
             <SeoSearchSnippet metadata={meta} />
           </Panel>
 
@@ -114,7 +114,7 @@ export function AdminSeoDetailView({ record }: { record: AdminSeoRecord }) {
             </div>
           </Panel>
 
-          <Panel title="Keywords" description="For editorial planning only; not shown on the page.">
+          <Panel title="Keywords">
             <FactList
               items={[
                 { label: 'Primary keyword', value: record.primaryKeyword || '—' },

@@ -281,7 +281,7 @@ export function AdminInstitutionDetailView({ data }: { data: AdminInstitutionDet
             </ul>
           </Panel>
 
-          <Panel title="Data quality" description="Based on where each section's facts come from.">
+          <Panel title="Data quality">
             <ul className="space-y-2">
               {qualityItems.map(({ key, label }) => {
                 const style = qualityCheckStyles[institution.qualityBreakdown[key]]

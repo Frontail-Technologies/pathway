@@ -58,7 +58,7 @@ export function AdminStudentEditor({ student }: { student: AdminStudent }) {
 
       <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-12">
         <form id="student-editor-form" className="space-y-6 lg:col-span-8" onSubmit={handleSubmit} onChange={() => setDirty(true)}>
-          <Panel title="Profile" description="Shown in admin search and on the student's own profile.">
+          <Panel title="Profile">
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <Field id="name" label="Full name" value={student.name} />
               <Field id="email" label="Email" value={student.email} type="email" />
@@ -78,7 +78,7 @@ export function AdminStudentEditor({ student }: { student: AdminStudent }) {
             </div>
           </Panel>
 
-          <Panel title="Preferences" description="Separate values with commas. Used for recommendations and matching.">
+          <Panel title="Preferences">
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <ListField id="preferredStreams" label="Preferred streams" values={student.preferredStreams ?? []} placeholder="Engineering, Management" />
               <ListField id="preferredCourses" label="Preferred courses" values={student.preferredCourses} placeholder="B.Tech, MBA" />
@@ -87,7 +87,7 @@ export function AdminStudentEditor({ student }: { student: AdminStudent }) {
             </div>
           </Panel>
 
-          <Panel title="Experience" description="One entry per line: role | organisation | type | start - end.">
+          <Panel title="Experience">
             <Label htmlFor="workExperience" className="sr-only">
               Experience
             </Label>

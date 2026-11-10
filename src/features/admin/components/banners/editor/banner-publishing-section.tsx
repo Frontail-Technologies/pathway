@@ -2,7 +2,7 @@
 
 import type { BannerStatus } from '@/features/banners/types/banner'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { bannerStatusHints, bannerStatusLabels } from '../shared/banner-constants'
+import { bannerStatusLabels } from '../shared/banner-constants'
 import { Field, FormSection } from '../shared/banner-form'
 import type { BannerFormData } from './use-banner-editor'
 

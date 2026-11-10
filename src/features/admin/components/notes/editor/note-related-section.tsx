@@ -32,9 +32,6 @@ export function NoteRelatedSection({
     <div id="related" className="rounded-xl border border-border bg-card shadow-sm p-5 sm:p-6 space-y-5">
       <div>
         <h2 className="text-[15px] font-semibold text-foreground">Courses and exams</h2>
-        <p className="mt-0.5 text-[13px] text-muted-foreground">
-          Link the note to the courses and exams it helps with.
-        </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

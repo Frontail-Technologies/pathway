@@ -5,7 +5,6 @@ export function ScholarshipSourceSection({ isEdit }: { isEdit: boolean }) {
     <section id="review" className="scroll-mt-20 space-y-4 rounded-xl border border-border bg-card shadow-sm p-5 sm:p-6">
       <div>
         <h2 className="text-[15px] font-semibold text-foreground">Source and review</h2>
-        <p className="mt-0.5 text-[13px] text-muted-foreground">Benefits, deadlines and eligibility are never overwritten by imports; imported changes wait for review.</p>
       </div>
       <FactList
         columns={3}

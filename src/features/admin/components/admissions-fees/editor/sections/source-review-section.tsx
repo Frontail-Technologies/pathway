@@ -4,7 +4,7 @@ import { EditorSection } from '../../../programs/shared/section-kit'
 
 export function SourceReviewSection({ isEdit }: { isEdit: boolean }) {
   return (
-    <EditorSection id="review" title="Source and review" description="Imports never overwrite fees automatically. Changes are reviewed before they go live.">
+    <EditorSection id="review" title="Source and review">
       <FactList
         columns={3}
         items={[

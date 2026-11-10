@@ -290,7 +290,7 @@ export function AdminTeamView() {
         />
       )}
 
-      <Panel title="What each role can do" description="Permissions are fixed per role and enforced by the API.">
+      <Panel title="What each role can do">
         <div className="grid gap-4 sm:grid-cols-2">
           {STAFF_ROLES.map((role) => {
             const info = roleInfo[role]

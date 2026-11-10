@@ -25,7 +25,7 @@ export function ContentMediaSection({
   onUrlChange: (url: string) => void
 }) {
   return (
-    <FormSection id="media" title="Hero image" description="Landscape, 16:9 works best.">
+    <FormSection id="media" title="Hero image">
       <ImageAssetInput
         mode={mode}
         onModeChange={onModeChange}

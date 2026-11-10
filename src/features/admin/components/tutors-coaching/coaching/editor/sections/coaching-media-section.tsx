@@ -22,7 +22,7 @@ export function CoachingMediaSection({
   }
 
   return (
-    <EditorSection id="media" title="Photos" description="Photos of the centre or classes for the public profile.">
+    <EditorSection id="media" title="Photos">
       <Field label="Add photo" htmlFor="coaching-photo">
         <div className="flex gap-2">
           <Input

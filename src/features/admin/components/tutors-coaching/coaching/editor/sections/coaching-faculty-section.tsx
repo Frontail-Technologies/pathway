@@ -26,7 +26,7 @@ export function CoachingFacultySection({
   }
 
   return (
-    <EditorSection id="faculty" title="Teaching approach" description="How teaching and doubt support work. Leave out faculty names and rank claims unless the provider has confirmed them.">
+    <EditorSection id="faculty" title="Teaching approach">
       {formData.facultyNotes.length > 0 ? (
         <ul className="divide-y divide-border rounded-md border border-border">
           {formData.facultyNotes.map((note, index) => (

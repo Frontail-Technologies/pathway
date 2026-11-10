@@ -61,7 +61,7 @@ export function AdminContentDetailView({ entry }: { entry: AdminContentEntry }) 
             )}
           </Panel>
 
-          <Panel title="Linked records" description="Colleges, courses and other records this article mentions.">
+          <Panel title="Linked records">
             {entities.length > 0 ? (
               <ul className="divide-y divide-border">
                 {entities.map((item, index) => (

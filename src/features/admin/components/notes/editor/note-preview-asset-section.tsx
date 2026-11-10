@@ -45,9 +45,6 @@ export function NotePreviewAssetSection({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
         <div>
           <h2 className="text-[15px] font-semibold text-foreground">Sample preview (optional)</h2>
-          <p className="mt-0.5 text-[13px] text-muted-foreground">
-            A few pages students can see before they buy.
-          </p>
         </div>
 
         <div className="flex items-center gap-1 p-1 bg-muted/60 rounded-lg w-fit border border-border/50 shrink-0">

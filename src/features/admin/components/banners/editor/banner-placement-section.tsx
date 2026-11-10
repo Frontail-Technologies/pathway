@@ -8,7 +8,7 @@ import type { BannerFormData } from './use-banner-editor'
 
 export function BannerPlacementSection({ formData, onChange }: { formData: BannerFormData; onChange: (key: keyof BannerFormData, value: string) => void }) {
   return (
-    <FormSection id="placement" title="Placement" description="Where the banner appears on the site.">
+    <FormSection id="placement" title="Placement">
       <div role="radiogroup" aria-label="Placement" className="grid grid-cols-1 gap-3 md:grid-cols-2">
         {bannerPlacementOptions.map(({ value, label }) => {
           const selected = formData.placement === value

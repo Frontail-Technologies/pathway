@@ -11,12 +11,6 @@ const statusOptions: { value: NoteStatus; label: string }[] = [
   { value: 'archived', label: 'Archived' },
 ]
 
-const statusHelp: Record<NoteStatus, string> = {
-  draft: 'Only visible in the admin.',
-  published: 'Visible to students on the notes page.',
-  archived: 'Hidden from students; kept for reference.',
-}
-
 export function NotePublishingSection({
   formData,
   onChange,
@@ -48,7 +42,6 @@ export function NotePublishingSection({
             ))}
           </SelectContent>
         </Select>
-        <p className="text-[13px] text-muted-foreground">{statusHelp[formData.status]}</p>
       </div>
     </div>
   )

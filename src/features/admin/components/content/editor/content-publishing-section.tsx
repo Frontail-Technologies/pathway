@@ -2,7 +2,7 @@
 
 import type { ContentStatus } from '@/features/content/types/content'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { contentStatusHints, contentStatusOptions } from '../shared/content-constants'
+import { contentStatusOptions } from '../shared/content-constants'
 import { Field, FormSection } from '../shared/content-form'
 import type { ContentFormData } from './use-content-editor'
 

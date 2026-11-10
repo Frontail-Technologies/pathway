@@ -188,7 +188,7 @@ export function AdminScholarshipDetailView({ scholarship: s }: { scholarship: Ad
             </div>
           </Panel>
 
-          <Panel title="Required documents" description="What applicants need to submit.">
+          <Panel title="Required documents">
             {s.requiredDocuments.length > 0 ? <BulletList items={s.requiredDocuments} /> : <Empty>No checklist added yet.</Empty>}
           </Panel>
 
