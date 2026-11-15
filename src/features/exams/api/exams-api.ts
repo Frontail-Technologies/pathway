@@ -14,6 +14,9 @@ export type ExamListDto = {
   description: string
   popular: boolean
   hasDetailPage: boolean
+  noticeCount?: number
+  collegeCount?: number
+  nextDate?: { label: string; startsOn: string | null; endsOn: string | null } | null
 }
 
 type LabelValue = { label: string; value: string }
@@ -28,6 +31,8 @@ type ExamDetailDto = ExamListDto & {
   institutions: { slug: string; name: string; location: Place; ownership: TermRef; rating: number | null; verified: boolean; hasDetailPage: boolean }[]
   programs: { slug: string; name: string; degree: TermRef; hasDetailPage: boolean }[]
   faqs: { question: string; answer: string }[]
+  dates?: { label: string; academicSession: string | null; startsOn: string | null; endsOn: string | null; dateText: string | null; sourceUrl: string | null }[]
+  documents?: { title: string; docType: string; academicSession: string | null; url: string }[]
 }
 
 const scopeLabels: Record<ExamListDto['scope'], ExamScope> = { national: 'National', state: 'State', institute: 'University / Institute' }
@@ -44,7 +49,10 @@ export function toExam(dto: ExamListDto): Exam {
     conductingBody: dto.conductingBody ?? undefined,
     description: dto.description,
     popular: dto.popular,
-    hasDetailPage: dto.hasDetailPage,
+    hasDetailPage: true,
+    noticeCount: dto.noticeCount ?? 0,
+    collegeCount: dto.collegeCount ?? 0,
+    nextDate: dto.nextDate ?? null,
   }
 }
 
@@ -64,6 +72,18 @@ export type DetailedExam = Exam & { detail: ExamDetail; colleges: ExamCollege[];
 
 const rows = (items: LabelValue[]) => items.map((item) => ({ label: item.label, text: item.value }))
 
+function examFactFaqs(dto: ExamDetailDto) {
+  const exam = toExam(dto)
+  const courses = dto.programs.map((program) => program.name)
+  const faqs: ({ question: string; answer: string } | null)[] = [
+    { question: `What is the full form of ${exam.shortName}?`, answer: `${exam.shortName} stands for ${exam.name}.` },
+    exam.conductingBody ? { question: `Who conducts ${exam.shortName}?`, answer: `${exam.shortName} is conducted by ${exam.conductingBody}.` } : null,
+    { question: `Is ${exam.shortName} a national-level exam?`, answer: `${exam.shortName} is a ${exam.scope.toLowerCase()}-level ${exam.level.toLowerCase()} entrance exam for ${exam.studyArea.toLowerCase()}.` },
+    courses.length ? { question: `Which courses accept ${exam.shortName} scores?`, answer: `On Pathway, ${courses.slice(0, 6).join(', ')}${courses.length > 6 ? ` and ${courses.length - 6} more` : ''} accept ${exam.shortName}.` } : null,
+  ]
+  return faqs.filter((faq): faq is { question: string; answer: string } => Boolean(faq))
+}
+
 export const getDetailedExam = cache(async (slug: string): Promise<DetailedExam | undefined> => {
   let dto: ExamDetailDto
   try {
@@ -72,7 +92,6 @@ export const getDetailedExam = cache(async (slug: string): Promise<DetailedExam 
     if (isNotFound(error)) return undefined
     throw error
   }
-  if (!dto.hasDetailPage) return undefined
   const related = await catalogGet<ExamListDto[]>(`/exams/${seg(slug)}/related`, { limit: '4' })
   return {
     ...toExam(dto),
@@ -83,11 +102,13 @@ export const getDetailedExam = cache(async (slug: string): Promise<DetailedExam 
       pattern: dto.pattern.length ? dto.pattern : undefined,
       syllabusGroups: dto.syllabusGroups.length ? dto.syllabusGroups : undefined,
       processSteps: dto.processSteps,
-      faqs: dto.faqs,
+      faqs: dto.faqs.length ? dto.faqs : examFactFaqs(dto),
       collegeSlugs: dto.institutions.map((institution) => institution.slug),
+      dates: (dto.dates ?? []).map((row) => ({ label: row.label, session: row.academicSession, startsOn: row.startsOn, endsOn: row.endsOn, dateText: row.dateText, sourceUrl: row.sourceUrl })),
+      documents: (dto.documents ?? []).map((doc) => ({ title: doc.title, type: doc.docType, session: doc.academicSession, url: doc.url })),
     },
-    colleges: dto.institutions.map((institution) => ({ slug: institution.slug, name: institution.name, city: cityName(institution.location), type: institution.ownership.label, hasDetailPage: institution.hasDetailPage })),
-    courses: dto.programs.map((program) => ({ slug: program.slug, name: program.name, degree: program.degree.label, hasDetailPage: program.hasDetailPage })),
+    colleges: dto.institutions.map((institution) => ({ slug: institution.slug, name: institution.name, city: cityName(institution.location), type: institution.ownership.label, hasDetailPage: true })),
+    courses: dto.programs.map((program) => ({ slug: program.slug, name: program.name, degree: program.degree.label, hasDetailPage: true })),
     related: related.map(toExam),
   }
 })

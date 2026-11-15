@@ -3,7 +3,8 @@ import { Award, BookOpen, ChevronRight, FileText, Landmark, Search } from 'lucid
 import { SearchResultRow } from './search-result-row'
 import { Button } from '@/components/ui/button'
 import { Container } from '@/components/shared/container'
-import { popularSearches, searchKinds, searchLocalEntries, type SearchKind } from '../data/search-index'
+import { searchKinds, searchLocalEntries, type SearchKind } from '../data/search-index'
+import { getPopularSearches } from '@/features/home/api/home-data'
 import { searchCatalog } from '../api/catalog-search'
 
 const GROUP_PREVIEW = 4
@@ -14,12 +15,13 @@ function searchHref(q: string, type?: SearchKind) {
   return `/search?${params.toString()}`
 }
 
-function SuggestionChips({ title }: { title: string }) {
+function SuggestionChips({ title, terms }: { title: string; terms: string[] }) {
+  if (!terms.length) return null
   return (
     <div>
       <p className="text-sm font-semibold text-foreground">{title}</p>
       <div className="mt-3 flex flex-wrap gap-2">
-        {popularSearches.map((term) => (
+        {terms.map((term) => (
           <Link key={term} href={searchHref(term)} className="rounded-full border bg-card px-3.5 py-2 text-sm font-medium text-foreground outline-none transition-colors hover:border-primary hover:text-primary focus-visible:ring-2 focus-visible:ring-primary/40">
             {term}
           </Link>
@@ -30,6 +32,7 @@ function SuggestionChips({ title }: { title: string }) {
 }
 
 export async function SearchResultsPage({ query, type }: { query: string; type?: SearchKind }) {
+  const popular = await getPopularSearches(8)
   const local = query ? searchLocalEntries(query) : []
   const catalog = query ? await searchCatalog(query, { type, perKind: GROUP_PREVIEW }) : { entries: [], counts: new Map<SearchKind, number>(), failed: [] }
   const results = [...catalog.entries, ...local]
@@ -42,9 +45,14 @@ export async function SearchResultsPage({ query, type }: { query: string; type?:
   return (
     <Container className="px-4 py-5 lg:py-8">
       <div className="mx-auto max-w-3xl">
-        <h1 className="font-heading text-xl font-bold text-foreground sm:text-2xl">{query ? <>Results for &ldquo;{query}&rdquo;</> : 'Search Pathway'}</h1>
+        <h1 className="font-heading text-[26px] leading-8 font-extrabold text-foreground sm:text-[32px] sm:leading-10">{query ? <>Results for &ldquo;{query}&rdquo;</> : 'Search Pathway'}</h1>
+        {query && totalCount > 0 ? (
+          <p className="mt-1.5 text-sm text-muted-foreground">
+            Found <span className="font-semibold text-foreground tabular-nums">{totalCount.toLocaleString('en-IN')}</span> {totalCount === 1 ? 'result' : 'results'} across {visibleKinds.length} {visibleKinds.length === 1 ? 'category' : 'categories'}
+          </p>
+        ) : null}
 
-        <form action="/search" role="search" className="mt-4 flex h-12 items-center gap-2 rounded-[12px] border bg-card pr-1 pl-3.5 transition-colors focus-within:border-primary">
+        <form action="/search" role="search" className="mt-4 flex h-12 items-center gap-2 rounded-xl border bg-card pr-1 pl-3.5 transition-colors focus-within:border-primary">
           <Search className="size-4.5 shrink-0 text-muted-foreground" aria-hidden="true" />
           <input name="q" type="search" defaultValue={query} autoFocus={!query} enterKeyHint="search" aria-label="Search colleges, courses, exams and more" placeholder="Colleges, courses, exams…" className="h-full min-w-0 flex-1 bg-transparent text-[15px] outline-none placeholder:text-muted-foreground" />
           <Button type="submit" variant="cta" className="h-10 px-5 text-sm font-semibold">
@@ -54,7 +62,7 @@ export async function SearchResultsPage({ query, type }: { query: string; type?:
 
         {!query && (
           <div className="mt-8 flex flex-col gap-8">
-            <SuggestionChips title="Popular searches" />
+            <SuggestionChips title="Popular searches" terms={popular} />
             <div>
               <p className="text-sm font-semibold text-foreground">Browse by category</p>
               <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
@@ -89,7 +97,7 @@ export async function SearchResultsPage({ query, type }: { query: string; type?:
                 Get Free Counselling
               </Button>
             </div>
-            <SuggestionChips title="Try a popular search" />
+            <SuggestionChips title="Try a popular search" terms={popular} />
           </div>
         )}
 
@@ -97,11 +105,11 @@ export async function SearchResultsPage({ query, type }: { query: string; type?:
           <>
             <nav aria-label="Filter results by type" className="-mx-4 mt-4 overflow-x-auto px-4">
               <div className="flex w-max gap-2">
-                <Link href={searchHref(query)} aria-current={!activeType ? 'page' : undefined} className={`rounded-full border px-3.5 py-1.5 text-sm font-medium whitespace-nowrap outline-none focus-visible:ring-2 focus-visible:ring-primary/40 ${!activeType ? 'border-primary bg-primary text-primary-foreground' : 'bg-card text-foreground hover:border-primary'}`}>
+                <Link href={searchHref(query)} aria-current={!activeType ? 'page' : undefined} className={`inline-flex h-9 items-center rounded-full border px-3.5 text-sm font-medium whitespace-nowrap outline-none focus-visible:ring-2 focus-visible:ring-primary/40 ${!activeType ? 'border-primary bg-secondary text-secondary-foreground' : 'bg-card text-foreground hover:bg-muted'}`}>
                   All · {totalCount}
                 </Link>
                 {visibleKinds.map(({ kind, plural }) => (
-                  <Link key={kind} href={searchHref(query, kind)} aria-current={activeType === kind ? 'page' : undefined} className={`rounded-full border px-3.5 py-1.5 text-sm font-medium whitespace-nowrap outline-none focus-visible:ring-2 focus-visible:ring-primary/40 ${activeType === kind ? 'border-primary bg-primary text-primary-foreground' : 'bg-card text-foreground hover:border-primary'}`}>
+                  <Link key={kind} href={searchHref(query, kind)} aria-current={activeType === kind ? 'page' : undefined} className={`inline-flex h-9 items-center rounded-full border px-3.5 text-sm font-medium whitespace-nowrap outline-none focus-visible:ring-2 focus-visible:ring-primary/40 ${activeType === kind ? 'border-primary bg-secondary text-secondary-foreground' : 'bg-card text-foreground hover:bg-muted'}`}>
                     {plural} · {counts.get(kind)}
                   </Link>
                 ))}
@@ -114,7 +122,7 @@ export async function SearchResultsPage({ query, type }: { query: string; type?:
                 const shown = activeType ? group : group.slice(0, GROUP_PREVIEW)
                 const groupTotal = counts.get(kind) ?? group.length
                 return (
-                  <section key={kind} aria-labelledby={`results-${kind}`} className="overflow-hidden rounded-[12px] border bg-card">
+                  <section key={kind} aria-labelledby={`results-${kind}`} className="overflow-hidden rounded-xl border bg-card">
                     <h2 id={`results-${kind}`} className="border-b px-4 py-3 text-sm font-bold text-foreground">
                       {plural}
                     </h2>

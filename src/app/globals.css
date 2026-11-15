@@ -92,6 +92,27 @@
   --chart-3: #10b981;
   --chart-4: #8b5cf6;
   --chart-5: #06b6d4;
+  --field-h: 2.75rem;
+  --field-px: 0.875rem;
+  --control-h: 2.5rem;
+  --control-h-sm: 2.25rem;
+  --control-h-lg: 2.75rem;
+  --control-px: 1rem;
+}
+
+@media (min-width: 640px) {
+  :root {
+    --field-h: 2.5rem;
+  }
+}
+
+:root:has([data-theme='admin']) {
+  --field-h: 2rem;
+  --field-px: 0.625rem;
+  --control-h: 2rem;
+  --control-h-sm: 1.75rem;
+  --control-h-lg: 2.25rem;
+  --control-px: 0.625rem;
 }
 
 [data-theme='admin'] {
@@ -196,17 +217,17 @@ h1, h2, h3, h4, h5, h6 { font-family: var(--font-manrope), sans-serif; letter-sp
  * Layout tokens. Everything that sticks below the public header reads these
  * instead of hard-coding pixel offsets, so app-shell mode (no web header) and
  * future header changes only need to touch this block.
- *   mobile header: 56px bar + 61px search row   desktop: 72px bar + 48px nav
+ *   mobile header: 56px bar   desktop: 60px sticky bar (the 44px section row scrolls away)
  */
 :root {
-  --pw-header-h: calc(117px + env(safe-area-inset-top));
-  --pw-section-nav-h: 55px;
+  --pw-header-h: calc(56px + env(safe-area-inset-top));
+  --pw-section-nav-h: 50px;
   --pw-bottom-nav-h: calc(60px + env(safe-area-inset-bottom));
 }
 @media (min-width: 1024px) {
   :root {
-    --pw-header-h: calc(120px + env(safe-area-inset-top));
-    --pw-section-nav-h: 56px;
+    --pw-header-h: calc(60px + env(safe-area-inset-top));
+    --pw-section-nav-h: 50px;
   }
 }
 @media (min-width: 768px) {
@@ -216,7 +237,7 @@ h1, h2, h3, h4, h5, h6 { font-family: var(--font-manrope), sans-serif; letter-sp
 @utility top-header-gap { top: calc(var(--pw-header-h) + 1rem); }
 @utility top-section { top: calc(var(--pw-header-h) + var(--pw-section-nav-h)); }
 @utility scroll-mt-header { scroll-margin-top: calc(var(--pw-header-h) + 1rem); }
-@utility scroll-mt-section { scroll-margin-top: calc(var(--pw-header-h) + var(--pw-section-nav-h)); }
+@utility scroll-mt-section { scroll-margin-top: calc(var(--pw-header-h) + var(--pw-section-nav-h) + 12px); }
 .pw-bottom-nav-space { padding-bottom: var(--pw-bottom-nav-h); }
 /* Student space has its own 56px header (no search row). */
 .pw-student-shell, .pw-dashboard-shell { --pw-header-h: 56px; }
@@ -230,19 +251,23 @@ h1, h2, h3, h4, h5, h6 { font-family: var(--font-manrope), sans-serif; letter-sp
 :root[data-app-shell] .app-only { display: revert !important; }
 :root[data-app-shell] .web-chrome { display: none !important; }
 :root[data-app-shell] {
-  --pw-header-h: env(safe-area-inset-top);
+  --pw-header-h: 0px;
   --pw-bottom-nav-h: env(safe-area-inset-bottom);
   -webkit-tap-highlight-color: transparent;
   -webkit-text-size-adjust: 100%;
   overscroll-behavior-y: none;
 }
 :root[data-app-shell] .pw-student-shell,
-:root[data-app-shell] .pw-dashboard-shell { --pw-header-h: env(safe-area-inset-top); }
-:root[data-app-shell] body { padding-top: env(safe-area-inset-top); }
+:root[data-app-shell] .pw-dashboard-shell { --pw-header-h: 0px; }
+:root[data-app-shell] body { padding-top: 0; }
+:root[data-app-shell] nav[aria-label="breadcrumb"] { display: none !important; }
+:root[data-app-shell] :has(> nav[aria-label="breadcrumb"]:only-child) { display: none !important; }
 :root[data-app-shell] a,
 :root[data-app-shell] button { touch-action: manipulation; -webkit-touch-callout: none; }
 
-.container-shell { width: 100%; max-width: 1536px; margin-inline: auto; padding-inline: 1rem; }
+.pw-brand-surface { background-color: var(--brand-blue); }
+.pw-brand-surface-lower { background-color: var(--brand-blue); }
+.container-shell { width: 100%; max-width: 1344px; margin-inline: auto; padding-inline: 1rem; }
 @media (min-width: 640px) { .container-shell { padding-inline: 1.5rem; } }
 @media (min-width: 1024px) { .container-shell { padding-inline: 2rem; } }
 .font-heading { font-family: var(--font-manrope), sans-serif; }

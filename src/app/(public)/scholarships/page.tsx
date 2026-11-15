@@ -1,9 +1,15 @@
+import type { Metadata } from 'next'
 import { Suspense } from 'react'
 import { ScholarshipListingPage } from '@/features/scholarships/components/scholarship-listing-page'
 import { listScholarships } from '@/features/scholarships/api/scholarships-api'
 import { parseScholarshipFilters, parseScholarshipSearch, parseScholarshipSort, serializeScholarshipFilters } from '@/features/scholarships/data/filters'
 import { PageLoadingSkeleton } from '@/components/feedback'
 import { apiQueryFrom, toUrlSearchParams } from '@/lib/search-params'
+
+export const metadata: Metadata = {
+  title: 'Scholarships in India',
+  description: 'Find government and private scholarships with eligibility, award amounts, deadlines and official application links.',
+}
 
 type Props = { searchParams: Promise<Record<string, string | string[] | undefined>> }
 

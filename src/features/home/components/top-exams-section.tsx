@@ -1,35 +1,20 @@
-import Link from 'next/link'
-import { ArrowRight } from 'lucide-react'
+import { HomeSectionHeading } from './home-section-heading'
 import { HorizontalContentRail } from '@/components/shared/horizontal-content-rail'
 import { listExams } from '@/features/exams/api/exams-api'
-
-const monogram = (shortName: string) => shortName.split(' ')[0].slice(0, 4).toUpperCase()
+import { PopularExamTile } from '@/features/exams/components/exam-cards'
 
 export async function TopExamsSection() {
-  const featuredExams = await listExams({ sort: 'popular', limit: '24' })
-    .then((list) => list.items.filter((exam) => exam.popular).slice(0, 6))
+  const exams = await listExams({ sort: 'popular', limit: '24' })
+    .then((list) => list.items.filter((exam) => exam.popular).slice(0, 8))
     .catch(() => [])
-  if (featuredExams.length === 0) return null
+  if (exams.length < 3) return null
   return (
-    <section className="bg-muted pt-6 pb-7 sm:pt-8 sm:pb-9 lg:pb-12">
+    <section className="bg-background py-10 sm:py-12 lg:py-16">
       <div className="container-shell">
-        <div className="flex flex-wrap items-end justify-between gap-2">
-          <h2 className="font-heading text-xl font-bold text-foreground sm:text-2xl">Popular Exams</h2>
-          <Link href="/exams" className="flex shrink-0 items-center gap-1 text-sm font-semibold text-primary hover:underline">
-            View All Exams <ArrowRight className="size-4" aria-hidden="true" />
-          </Link>
-        </div>
-        <HorizontalContentRail ariaLabel="Popular exams" edgeBleed className="mt-4 sm:mx-0" trackClassName="sm:grid sm:grid-cols-3 sm:gap-3 sm:overflow-visible sm:px-0 sm:scroll-px-0 lg:grid-cols-6">
-          {featuredExams.map((exam) => (
-            <Link
-              key={exam.id}
-              href={`/exams?exam=${exam.slug}`}
-              className="group flex w-36 shrink-0 snap-start flex-col items-center rounded-[12px] border bg-card px-3 py-3.5 text-center shadow-[0_2px_10px_rgba(15,23,42,0.04)] outline-none transition-colors hover:border-primary focus-visible:ring-2 focus-visible:ring-primary/40 sm:w-auto"
-            >
-              <span className="flex size-11 items-center justify-center rounded-xl bg-primary text-xs font-bold text-primary-foreground">{monogram(exam.shortName)}</span>
-              <p className="mt-2 text-sm font-bold text-foreground">{exam.shortName}</p>
-              <p className="mt-0.5 text-xs text-muted-foreground">{exam.studyArea}</p>
-            </Link>
+        <HomeSectionHeading eyebrow="Entrance exams" title="Popular exams" subtitle="Official notices, dates and the colleges that accept them" href="/exams" linkLabel="See all exams" />
+        <HorizontalContentRail ariaLabel="Popular exams" edgeBleed showControls className="mt-5 sm:mx-0" trackClassName="sm:px-0 sm:scroll-px-0">
+          {exams.map((exam) => (
+            <PopularExamTile key={exam.id} exam={exam} className="w-44 shrink-0 snap-start lg:w-[calc((100%-3.75rem)/6)]" />
           ))}
         </HorizontalContentRail>
       </div>

@@ -1,89 +1,107 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, type MouseEvent } from 'react'
+import { cn } from '@/lib/utils'
 
 export type DetailSectionNavItem = { id: string; label: string }
 
-type DetailSectionNavProps = {
-  items: DetailSectionNavItem[]
-}
+const SETTLE_MS = 1000
 
-export function DetailSectionNav({ items }: DetailSectionNavProps) {
+export function DetailSectionNav({ items, label = 'Page sections', className }: { items: DetailSectionNavItem[]; label?: string; className?: string }) {
   const [active, setActive] = useState(items[0]?.id)
-  const navRef = useRef<HTMLDivElement>(null)
   const scrollerRef = useRef<HTMLDivElement>(null)
+  const lockUntil = useRef(0)
 
   useEffect(() => {
-    let ticking = false
+    let frame = 0
 
-    const computeActive = () => {
-      ticking = false
-      if (items.length === 0) return
-
-      let current = items[0].id
-      for (const item of items) {
-        const node = document.getElementById(item.id)
-        if (!node) continue
-        const threshold = parseFloat(getComputedStyle(node).scrollMarginTop) + 2
-        if (node.getBoundingClientRect().top <= threshold) {
-          current = item.id
-        } else {
-          break
-        }
+    const compute = () => {
+      frame = 0
+      if (!items.length || Date.now() < lockUntil.current) return
+      const nodes = items.map((item) => document.getElementById(item.id)).filter((node): node is HTMLElement => Boolean(node))
+      if (!nodes.length) return
+      const atBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4
+      if (atBottom) {
+        setActive(nodes[nodes.length - 1].id)
+        return
+      }
+      let current = nodes[0].id
+      for (const node of nodes) {
+        const offset = parseFloat(getComputedStyle(node).scrollMarginTop) || 0
+        if (node.getBoundingClientRect().top <= offset + 24) current = node.id
+        else break
       }
       setActive(current)
     }
 
-    const onScrollOrResize = () => {
-      if (ticking) return
-      ticking = true
-      requestAnimationFrame(computeActive)
+    const schedule = () => {
+      if (!frame) frame = requestAnimationFrame(compute)
     }
 
-    computeActive()
-    window.addEventListener('scroll', onScrollOrResize, { passive: true })
-    window.addEventListener('resize', onScrollOrResize)
+    const release = () => {
+      lockUntil.current = 0
+      schedule()
+    }
+
+    compute()
+    window.addEventListener('scroll', schedule, { passive: true })
+    window.addEventListener('resize', schedule)
+    window.addEventListener('scrollend', release)
     return () => {
-      window.removeEventListener('scroll', onScrollOrResize)
-      window.removeEventListener('resize', onScrollOrResize)
+      if (frame) cancelAnimationFrame(frame)
+      window.removeEventListener('scroll', schedule)
+      window.removeEventListener('resize', schedule)
+      window.removeEventListener('scrollend', release)
     }
   }, [items])
 
   useEffect(() => {
     const container = scrollerRef.current
-    const activeLink = container?.querySelector<HTMLAnchorElement>(`a[href="#${active}"]`)
-    if (!container || !activeLink) return
-
-    const containerRect = container.getBoundingClientRect()
-    const linkRect = activeLink.getBoundingClientRect()
-    const isFullyVisible = linkRect.left >= containerRect.left && linkRect.right <= containerRect.right
-    if (isFullyVisible) return
-
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    const targetScrollLeft = container.scrollLeft + (linkRect.left - containerRect.left) - (containerRect.width - linkRect.width) / 2
-    container.scrollTo({ left: targetScrollLeft, behavior: prefersReducedMotion ? 'auto' : 'smooth' })
+    const link = container?.querySelector<HTMLAnchorElement>(`a[data-section="${active}"]`)
+    if (!container || !link) return
+    const box = container.getBoundingClientRect()
+    const rect = link.getBoundingClientRect()
+    if (rect.left >= box.left && rect.right <= box.right) return
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    container.scrollTo({ left: container.scrollLeft + (rect.left - box.left) - (box.width - rect.width) / 2, behavior: reduce ? 'auto' : 'smooth' })
   }, [active])
 
-  if (items.length === 0) return null
+  const go = (event: MouseEvent<HTMLAnchorElement>, id: string) => {
+    const target = document.getElementById(id)
+    if (!target) return
+    event.preventDefault()
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    lockUntil.current = Date.now() + SETTLE_MS
+    setActive(id)
+    target.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' })
+  }
+
+  if (!items.length) return null
 
   return (
-
-    <div ref={navRef} className="sticky top-header z-20 border-y bg-card">
+    <nav aria-label={label} className={cn('sticky top-header z-20 border-y bg-card', className)}>
       <div className="container-shell px-4">
-        <div ref={scrollerRef} className="flex gap-1 overflow-x-auto max-sm:[scrollbar-width:none] max-sm:[&::-webkit-scrollbar]:hidden">
-          {items.map((item) => (
-            <a
-              key={item.id}
-              href={`#${item.id}`}
-              className={`shrink-0 cursor-pointer border-b-2 px-3 py-2.5 text-[13px] whitespace-nowrap outline-none transition-colors focus-visible:text-primary sm:text-sm ${
-                active === item.id ? 'border-primary font-semibold text-primary' : 'border-transparent font-medium text-muted-foreground hover:text-primary'
-              }`}
-            >
-              {item.label}
-            </a>
-          ))}
+        <div ref={scrollerRef} className="flex gap-1 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          {items.map((item) => {
+            const current = active === item.id
+            return (
+              <a
+                key={item.id}
+                href={`#${item.id}`}
+                data-section={item.id}
+                onClick={(event) => go(event, item.id)}
+                aria-current={current ? 'location' : undefined}
+                className={cn(
+                  'flex h-12 shrink-0 items-center border-b-2 px-3 text-[13px] whitespace-nowrap outline-none transition-colors focus-visible:text-primary sm:text-sm',
+                  current ? 'border-primary font-semibold text-primary' : 'border-transparent font-medium text-muted-foreground hover:text-primary',
+                )}
+              >
+                {item.label}
+              </a>
+            )
+          })}
         </div>
       </div>
-    </div>
+    </nav>
   )
 }

@@ -2,16 +2,16 @@
 
 import Link from 'next/link'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
-import { seoDiscoveryLinkGroups } from '../data/seo-discovery-links'
+import type { SeoLinkGroup } from '../data/seo-discovery-links'
 
-export function SeoDiscoveryLinks() {
+export function SeoDiscoveryLinks({ groups }: { groups: SeoLinkGroup[] }) {
   return (
     <section className="border-b bg-muted py-8 sm:py-9 lg:py-10">
       <div className="container-shell mx-auto px-4">
         <div className="hidden gap-6 md:grid md:grid-cols-4">
-          {seoDiscoveryLinkGroups.map((group) => (
+          {groups.map((group) => (
             <div key={group.title} className="flex flex-col gap-3">
-              <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{group.title}</p>
+              <p className="text-sm font-semibold text-foreground">{group.title}</p>
               <ul className="flex flex-col gap-2">
                 {group.links.map((link) => (
                   <li key={link.label}>
@@ -25,9 +25,9 @@ export function SeoDiscoveryLinks() {
           ))}
         </div>
         <Accordion className="md:hidden">
-          {seoDiscoveryLinkGroups.map((group) => (
+          {groups.map((group) => (
             <AccordionItem key={group.title} value={group.title}>
-              <AccordionTrigger className="min-h-11 text-xs font-semibold uppercase tracking-wider text-foreground">{group.title}</AccordionTrigger>
+              <AccordionTrigger className="min-h-11 text-sm font-semibold text-foreground">{group.title}</AccordionTrigger>
               <AccordionContent>
                 <ul className="flex flex-wrap gap-x-4 gap-y-2">
                   {group.links.map((link) => (

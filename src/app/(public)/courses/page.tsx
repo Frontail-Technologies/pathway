@@ -1,9 +1,15 @@
+import type { Metadata } from 'next'
 import { Suspense } from 'react'
 import { CourseListingPage } from '@/features/courses/components/course-listing-page'
 import { listCourses } from '@/features/courses/api/courses-api'
 import { parseCourseFilters, parseCourseSearch, parseCourseSort, serializeCourseFilters } from '@/features/courses/data/filters'
 import { PageLoadingSkeleton } from '@/components/feedback'
 import { apiQueryFrom, toUrlSearchParams } from '@/lib/search-params'
+
+export const metadata: Metadata = {
+  title: 'Courses in India',
+  description: 'Explore undergraduate, postgraduate and diploma courses with fees, duration, eligibility and entrance exams.',
+}
 
 type Props = { searchParams: Promise<Record<string, string | string[] | undefined>> }
 

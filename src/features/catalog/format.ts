@@ -11,6 +11,18 @@ export const formatLakh = (paise: number | null | undefined) => (paise == null ?
 
 export const formatLakhShort = (paise: number | null | undefined) => (paise == null ? '' : `₹${trim(paise / LAKH_PAISE, 2)}L`)
 
+export type PlacementFigure = { label: string; amountPaise: number | null; percent: number | null; count?: number | null; countIsMinimum?: boolean }
+
+export const placementLabel = (label: string) => label.replace(/\s*\(as reported\)\s*$/i, '').trim()
+
+export function placementValue(figure: PlacementFigure | null | undefined) {
+  if (!figure) return ''
+  if (figure.amountPaise != null) return formatLpa(figure.amountPaise)
+  const count = figure.count != null ? `${figure.count.toLocaleString('en-IN')}${figure.countIsMinimum ? '+' : ''}` : ''
+  if (figure.percent != null) return `${trim(figure.percent, 1)}%${count ? ` (${count})` : ''}`
+  return count
+}
+
 export function formatLakhRange(min: number | null | undefined, max: number | null | undefined) {
   if (min == null && max == null) return ''
   if (min == null || max == null || min === max) return formatLakh(min ?? max)

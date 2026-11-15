@@ -1,8 +1,6 @@
 'use client'
 
-import Link from 'next/link'
 import { Bookmark, BookOpen, CalendarClock, GraduationCap, School } from 'lucide-react'
-import { Button } from '@/components/ui/button'
 import { DetailQuickFacts, type DetailQuickFact } from '@/components/shared/detail-quick-facts'
 import { useSavedItem } from '@/features/saved/saved-items-provider'
 import type { CourseDetailData } from '../data/course-detail'
@@ -24,7 +22,7 @@ export function CourseIdentityHeader({ course }: { course: CourseDetailData }) {
   ]
 
   return (
-    <div className="border-b pb-5 sm:pb-6">
+    <div>
       <div className="flex items-start gap-3 sm:gap-4">
         <span className="flex size-14 shrink-0 items-center justify-center rounded-xl bg-secondary text-primary sm:size-16" aria-hidden="true">
           <GraduationCap className="size-6 sm:size-7" />
@@ -50,15 +48,6 @@ export function CourseIdentityHeader({ course }: { course: CourseDetailData }) {
         >
           <Bookmark className={saved ? 'size-4 fill-primary text-primary' : 'size-4 text-muted-foreground'} aria-hidden="true" />
         </button>
-      </div>
-
-      <div className="mt-4 flex flex-col gap-2 sm:mt-5 sm:flex-row sm:items-center">
-        <Button className="h-11 px-6 text-sm font-semibold sm:h-10" nativeButton={false} render={<Link href="/colleges" />}>
-          View Colleges
-        </Button>
-        <Button variant="outline" className="h-11 px-6 text-sm font-semibold sm:h-10" disabled title="Course comparison is coming soon">
-          Compare Courses
-        </Button>
       </div>
 
       <div className="mt-5">

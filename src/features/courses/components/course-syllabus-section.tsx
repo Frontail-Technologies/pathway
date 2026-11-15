@@ -2,9 +2,10 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import type { CourseDetailData } from '../data/course-detail'
 
 export function CourseSyllabusSection({ course }: { course: CourseDetailData }) {
+  if (!course.syllabus.length) return null
   return (
-    <section id="syllabus" className="scroll-mt-section border-b py-7 lg:py-9">
-      <h2 className="font-heading text-xl font-bold text-foreground sm:text-[22px]">{course.name} Syllabus</h2>
+    <section id="syllabus" className="scroll-mt-section rounded-xl border bg-card p-4 sm:p-6">
+      <h2 className="font-heading text-lg font-bold text-foreground sm:text-xl">{course.name} Syllabus</h2>
       <p className="mt-1 text-sm text-muted-foreground">Representative subjects by year — actual syllabus varies by institute.</p>
 
       <div className="mt-4 rounded-[10px] border bg-card px-4">

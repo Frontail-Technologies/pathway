@@ -1,64 +1,90 @@
-import Image from 'next/image'
 import Link from 'next/link'
-import { ArrowRight } from 'lucide-react'
+import { ChevronRight, ShieldCheck } from 'lucide-react'
 import { Container } from '@/components/shared/container'
 import { GlobalSearch } from '@/components/shared/global-search'
-import { Button } from '@/components/ui/button'
+import { collegeInitials } from '@/features/colleges/utils'
+import { getCatalogTotals, getPopularSearches, getTopRanked } from '../api/home-data'
 import { PopularSearchChips } from './popular-searches'
 
+const stat = (value: number) => (value >= 1000 ? `${(value / 1000).toFixed(1).replace(/\.0$/, '')}k+` : value.toLocaleString('en-IN'))
 
+export async function HeroSection() {
+  const [totals, topRanked, popular] = await Promise.all([getCatalogTotals(), getTopRanked(5), getPopularSearches(8)])
+  const stats = [
+    { label: 'Colleges', value: totals.colleges, href: '/colleges' },
+    { label: 'Courses', value: totals.courses, href: '/courses' },
+    { label: 'Entrance exams', value: totals.exams, href: '/exams' },
+    { label: 'Scholarships', value: totals.scholarships, href: '/scholarships' },
+  ].filter((item) => item.value > 0)
+  const year = topRanked[0]?.ranking?.year
 
-
- 
-export function HeroSection() {
   return (
-    <section className="relative overflow-hidden bg-brand-blue-light">
-      <div className="absolute inset-0" aria-hidden="true">
-        <Image
-          src="https://images.unsplash.com/photo-1498243691581-b145c3f54a5a?auto=format&fit=crop&w=1800&q=70"
-          alt=""
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover object-center"
-        />
-        <div className="absolute inset-0 bg-[linear-gradient(100deg,rgba(239,246,255,0.96)_0%,rgba(239,246,255,0.9)_45%,rgba(219,230,251,0.72)_100%)]" />
-        <div className="absolute inset-x-0 bottom-0 h-16 bg-[linear-gradient(180deg,transparent,var(--background))]" />
-      </div>
-      <Container className="relative flex items-center gap-10 py-8 sm:py-10 lg:min-h-105 lg:py-12">
-        <div className="min-w-0 flex-1 lg:max-w-[58%]">
-          <p className="text-xs font-bold tracking-[0.16em] text-primary uppercase sm:text-sm">India&apos;s Education Discovery Marketplace</p>
-          <h1 className="mt-2 font-heading text-[30px] leading-[1.1] font-extrabold text-foreground sm:text-[44px]">
-            Find Colleges, Courses <span className="text-primary">&amp; Exams</span>
-          </h1>
-          <p className="mt-2.5 max-w-xl text-sm leading-6 text-muted-foreground sm:text-base">
-            Explore colleges, courses, exams and scholarships in one place — built for students planning their next step.
+    <section className="relative overflow-hidden bg-primary text-white">
+      <Container className="relative grid gap-8 pt-9 pb-28 sm:pt-12 lg:grid-cols-[minmax(0,1fr)_24rem] lg:items-start lg:gap-14 lg:pt-16 lg:pb-36">
+        <div className="min-w-0">
+          <p className="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-[13px] font-medium text-white/90">
+            <ShieldCheck className="size-4" aria-hidden="true" />
+            Data from NIRF, JoSAA, NTA and NSP
           </p>
-          <div className="mt-4 max-w-160">
-            <GlobalSearch />
+          <h1 className="mt-4 font-heading text-[32px] leading-[1.1] font-extrabold tracking-tight sm:text-[48px]">
+            Find the right college,
+            <br className="hidden sm:block" /> course and exam
+          </h1>
+          <p className="mt-3 max-w-xl text-[15px] leading-7 text-white/80 sm:text-[17px]">Rankings, fees, cutoffs and placements from official sources, compared in one place. Free.</p>
+          <div className="mt-6 max-w-160">
+            <GlobalSearch quiet />
           </div>
-          <div className="mt-3">
-            <PopularSearchChips />
+          <div className="mt-4">
+            <PopularSearchChips terms={popular} tone="dark" />
           </div>
-          <Button variant="cta" className="mt-4 h-11 gap-2 px-6 font-semibold" nativeButton={false} render={<Link href="/colleges" />}>
-            Explore Colleges
-            <ArrowRight className="size-4" aria-hidden="true" />
-          </Button>
+
+          {stats.length ? (
+            <dl className="mt-8 grid max-w-160 grid-cols-2 gap-y-5 sm:grid-cols-4">
+              {stats.map((item, index) => (
+                <div key={item.label} className={index ? 'sm:border-l sm:border-white/15 sm:pl-5' : ''}>
+                  <dd className="font-heading text-[30px] leading-9 font-semibold tabular-nums">
+                    <Link href={item.href} className="hover:underline underline-offset-4">
+                      {stat(item.value)}
+                    </Link>
+                  </dd>
+                  <dt className="text-[13px] text-white/70">{item.label}</dt>
+                </div>
+              ))}
+            </dl>
+          ) : null}
         </div>
 
-        <div className="relative hidden h-80 flex-1 lg:block">
-          <span className="absolute -right-3 -bottom-3 size-3/4 rounded-[32px] bg-primary/15" aria-hidden="true" />
-          <div className="relative size-full overflow-hidden rounded-[28px] rounded-tl-[90px] shadow-[0_16px_40px_rgba(30,58,138,0.2)]">
-            <Image
-              src="https://images.unsplash.com/photo-1571260899304-425eee4c7efc?auto=format&fit=crop&w=1200&q=78"
-              alt="Students talking together on a university campus"
-              fill
-              priority
-              sizes="42vw"
-              className="object-cover object-[50%_25%]"
-            />
-          </div>
-        </div>
+        {topRanked.length >= 3 ? (
+          <aside aria-labelledby="hero-top-ranked" className="hidden rounded-2xl bg-card p-5 text-foreground shadow-[0_8px_24px_rgba(15,23,42,0.18)] lg:block">
+            <div className="flex items-baseline justify-between gap-3">
+              <h2 id="hero-top-ranked" className="font-heading text-base font-bold">
+                Top ranked in India
+              </h2>
+              <span className="text-xs font-medium text-muted-foreground">NIRF {year}</span>
+            </div>
+            <ol className="mt-3 divide-y">
+              {topRanked.map((college) => (
+                <li key={college.slug}>
+                  <Link href={`/college/${college.slug}`} className="group flex items-center gap-3 py-2.5 outline-none focus-visible:ring-2 focus-visible:ring-ring/50">
+                    <span className="w-8 shrink-0 font-heading text-xl font-bold text-primary tabular-nums">{college.ranking?.rank}</span>
+                    <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-secondary text-[11px] font-extrabold text-primary" aria-hidden="true">
+                      {collegeInitials(college.name)}
+                    </span>
+                    <span className="min-w-0 flex-1">
+                      <span className="block truncate text-sm font-semibold group-hover:text-primary">{college.name}</span>
+                      <span className="block truncate text-xs text-muted-foreground">{[college.city, college.packageValue ? `${college.packageValue} median` : ''].filter(Boolean).join(' · ')}</span>
+                    </span>
+                    <ChevronRight className="size-4 shrink-0 text-muted-foreground" aria-hidden="true" />
+                  </Link>
+                </li>
+              ))}
+            </ol>
+            <Link href="/colleges?sort=ranking" className="mt-3 flex h-10 items-center justify-center gap-1 rounded-lg bg-secondary text-sm font-semibold text-secondary-foreground hover:bg-secondary/70">
+              See full NIRF ranking
+              <ChevronRight className="size-4" aria-hidden="true" />
+            </Link>
+          </aside>
+        ) : null}
       </Container>
     </section>
   )

@@ -1,82 +1,60 @@
+import Link from 'next/link'
+import { ChevronRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { EnquiryDialog } from '@/features/enquiries/components/enquiry-dialog'
 import type { CollegeDetailData } from '../data/college-detail'
 
 export function CollegeCoursesSection({ college }: { college: CollegeDetailData }) {
+  const levels = [...new Set(college.courses.map((course) => course.level))]
   return (
-    <section id="courses" className="scroll-mt-section border-b py-7 lg:py-9">
-      <h2 className="font-heading text-xl font-bold text-foreground sm:text-[22px]">Courses at {college.name}</h2>
-      <p className="mt-1 text-sm text-muted-foreground">{college.courses.length} programmes across UG and PG levels</p>
+    <section id="courses" className="scroll-mt-section rounded-xl border bg-card p-4 sm:p-6">
+      <h2 className="font-heading text-lg font-bold text-foreground sm:text-xl">{college.name} courses</h2>
+      <p className="mt-1 text-sm text-muted-foreground">
+        {college.courses.length} {college.courses.length === 1 ? 'programme' : 'programmes'} · {levels.join(' and ')}
+      </p>
 
-      <div className="mt-4 rounded-[10px] border bg-card">
-        <div className="divide-y">
-          {college.courses.map((course) => (
-            <div key={course.name} className="p-5">
-              <div className="sm:hidden">
-                <p className="text-sm font-semibold text-foreground">{course.name}</p>
-                <p className="mt-0.5 text-xs text-muted-foreground">
-                  {course.level} · {course.duration}
-                </p>
-                <p className="mt-2 text-xs text-muted-foreground">
-                  <span className="font-semibold text-foreground">{course.fees}</span> · {course.exam}
-                </p>
-                <p className="mt-1 text-xs text-muted-foreground">{course.eligibility}</p>
-                <div className="mt-3 flex items-center justify-between gap-2">
-                  <Button variant="link" className="h-auto p-0 text-sm font-semibold">
-                    View Course
-                  </Button>
-                  <EnquiryDialog
-                    entityName={college.name}
-                    entity={{ kind: 'college', slug: college.slug }}
-                    interestOptions={college.courses.map((c) => c.name)}
-                    interestLabel="Course"
-                    defaultInterest={course.name}
-                    trigger={<Button variant="cta" className="h-9 px-4 text-xs font-semibold">Enquire</Button>}
-                  />
-                </div>
-              </div>
-
-              <div className="hidden sm:flex sm:items-center sm:gap-6">
-                <div className="sm:w-56 sm:shrink-0">
+      <ul className="mt-4 divide-y overflow-hidden rounded-lg border">
+        {college.courses.map((course) => {
+          const details = [
+            { label: 'Fees', value: course.fees ? `${course.fees} / year` : '' },
+            { label: 'Exams', value: course.exam },
+            { label: 'Eligibility', value: course.eligibility },
+          ].filter((item) => item.value)
+          return (
+            <li key={course.name} className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:gap-6">
+              <div className="min-w-0 flex-1">
+                {course.href ? (
+                  <Link href={course.href} className="group inline-flex items-center gap-1 text-[15px] font-semibold text-foreground outline-none hover:text-primary focus-visible:text-primary">
+                    {course.name}
+                    <ChevronRight className="size-4 text-muted-foreground group-hover:text-primary" aria-hidden="true" />
+                  </Link>
+                ) : (
                   <p className="text-[15px] font-semibold text-foreground">{course.name}</p>
-                  <p className="mt-0.5 text-xs text-muted-foreground">
-                    {course.level} · {course.mode} · {course.duration}
-                  </p>
-                </div>
-
-                <div className="flex flex-1 gap-6">
-                  <div>
-                    <p className="text-xs tracking-wide text-muted-foreground uppercase">Fees</p>
-                    <p className="mt-0.5 text-sm font-semibold text-foreground">{course.fees}</p>
-                  </div>
-                  <div>
-                    <p className="text-xs tracking-wide text-muted-foreground uppercase">Accepted Exam</p>
-                    <p className="mt-0.5 text-sm font-semibold text-foreground">{course.exam}</p>
-                  </div>
-                  <div>
-                    <p className="text-xs tracking-wide text-muted-foreground uppercase">Eligibility</p>
-                    <p className="mt-0.5 text-sm font-semibold text-foreground">{course.eligibility}</p>
-                  </div>
-                </div>
-
-                <div className="flex shrink-0 gap-2">
-                  <Button variant="outline" className="h-10 px-4 text-sm">
-                    View Course
-                  </Button>
-                  <EnquiryDialog
-                    entityName={college.name}
-                    entity={{ kind: 'college', slug: college.slug }}
-                    interestOptions={college.courses.map((c) => c.name)}
-                    interestLabel="Course"
-                    defaultInterest={course.name}
-                    trigger={<Button variant="cta" className="h-10 px-4 text-sm">Enquire</Button>}
-                  />
-                </div>
+                )}
+                <p className="mt-0.5 text-[13px] text-muted-foreground">{[course.level, course.mode, course.duration].filter(Boolean).join(' · ')}</p>
+                {details.length ? (
+                  <dl className="mt-2 flex flex-wrap gap-x-5 gap-y-1 text-[13px]">
+                    {details.map((item) => (
+                      <div key={item.label} className="flex gap-1.5">
+                        <dt className="text-muted-foreground">{item.label}</dt>
+                        <dd className="font-medium text-foreground">{item.value}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                ) : null}
               </div>
-            </div>
-          ))}
-        </div>
-      </div>
+              <EnquiryDialog
+                entityName={college.name}
+                entity={{ kind: 'college', slug: college.slug }}
+                interestOptions={college.courses.map((c) => c.name)}
+                interestLabel="Course"
+                defaultInterest={course.name}
+                trigger={<Button variant="cta" className="h-10 shrink-0 self-start px-4 text-sm font-semibold sm:self-center">Enquire</Button>}
+              />
+            </li>
+          )
+        })}
+      </ul>
     </section>
   )
 }

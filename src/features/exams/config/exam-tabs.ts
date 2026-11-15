@@ -10,11 +10,19 @@ export const examCourses = (exam: DetailedExam) => exam.courses
 export const examTabs: DetailTab<DetailedExam>[] = [
   { segment: '', label: 'Overview', heading: (e) => `${e.shortName}: ${e.name}`, description: (e) => e.description },
   {
+    segment: 'dates',
+    label: 'Dates',
+    heading: (e) => `${e.shortName} Important Dates`,
+    description: (e) => `${e.shortName} application, exam and result dates from official notices.`,
+    available: (e) => Boolean(e.detail.dates?.length),
+  },
+  {
     segment: 'eligibility',
     label: 'Eligibility',
     heading: (e) => `${e.shortName} Eligibility`,
     description: (e) => `${e.shortName} eligibility criteria: education, age and attempts.`,
     teaser: () => 'Who can apply: education, age and attempts',
+    available: (e) => Boolean(e.detail.eligibility?.length),
   },
   {
     segment: 'pattern',
@@ -22,6 +30,7 @@ export const examTabs: DetailTab<DetailedExam>[] = [
     heading: (e) => `${e.shortName} Exam Pattern & Syllabus`,
     description: (e) => `${e.shortName} exam pattern and syllabus areas.`,
     teaser: (e) => (e.detail.syllabusGroups?.length ? `Pattern plus ${e.detail.syllabusGroups.length} syllabus areas` : 'Mode, sections and marking'),
+    available: (e) => Boolean(e.detail.pattern?.length || e.detail.syllabusGroups?.length),
   },
   {
     segment: 'process',
@@ -29,6 +38,15 @@ export const examTabs: DetailTab<DetailedExam>[] = [
     heading: (e) => `${e.shortName} Exam & Admission Process`,
     description: (e) => `Step-by-step ${e.shortName} exam and admission process.`,
     teaser: (e) => `${e.detail.processSteps.length} steps from registration to admission`,
+    available: (e) => e.detail.processSteps.length > 0,
+  },
+  {
+    segment: 'notices',
+    label: 'Notices',
+    heading: (e) => `${e.shortName} Official Notices`,
+    description: (e) => `Official ${e.shortName} notifications, information bulletins and syllabus files${e.conductingBody ? ` from ${e.conductingBody}` : ''}.`,
+    teaser: (e) => `${e.detail.documents?.length ?? 0} official notices and bulletins`,
+    available: (e) => Boolean(e.detail.documents?.length),
   },
   {
     segment: 'colleges',
@@ -52,6 +70,7 @@ export const examTabs: DetailTab<DetailedExam>[] = [
     heading: (e) => `${e.shortName} FAQs`,
     description: (e) => `Frequently asked questions about ${e.shortName}.`,
     teaser: (e) => `${e.detail.faqs.length} common questions answered`,
+    available: (e) => e.detail.faqs.length > 0,
   },
 ]
 
@@ -60,15 +79,4 @@ export const examTabHref = (slug: string, segment: string) => tabHref(examBase(s
 
 export function examTabMetadata(exam: DetailedExam | undefined, segment: string): Metadata {
   return tabMetadata(examTabs, exam, segment, (e) => examBase(e.slug), 'Exam Not Found')
-}
-
-export const legacyExamAnchors: Record<string, string> = {
-  overview: '',
-  eligibility: 'eligibility',
-  pattern: 'pattern',
-  syllabus: 'pattern',
-  process: 'process',
-  colleges: 'colleges',
-  courses: 'courses',
-  faqs: 'faqs',
 }

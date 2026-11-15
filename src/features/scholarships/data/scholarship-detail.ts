@@ -60,6 +60,7 @@ export type ScholarshipDetailData = {
   officialApplyUrl?: string
   relatedScholarships: RelatedScholarshipPreview[]
   faqs: Faq[]
+  officialDocuments?: { title: string; type: string; session: string | null; url: string }[]
 }
 
 const scholarshipDetails: Record<string, ScholarshipDetailData> = {

@@ -1,33 +1,27 @@
 import type { ReactNode } from 'react'
 import Link from 'next/link'
-import { ArrowRight, Building2, Check, Flag, GraduationCap, Info, Layers } from 'lucide-react'
+import { Building2, Check, Flag, GraduationCap, Info, Layers } from 'lucide-react'
 import { Container } from '@/components/shared/container'
 import { DetailQuickFacts, type DetailQuickFact } from '@/components/shared/detail-quick-facts'
-import { DetailTabNav } from '@/components/shared/detail-tab-nav'
+import { DetailBody, DetailSection } from '@/components/shared/detail-section'
+import { DetailSectionNav } from '@/components/shared/detail-section-nav'
 import { DetailTabBreadcrumbs } from '@/components/shared/detail-tab-breadcrumbs'
-import { DetailTabLinks } from '@/components/shared/detail-tab-links'
-import { LegacyAnchorRedirect } from '@/components/shared/legacy-anchor-redirect'
-import { tabLinks } from '@/lib/detail-tabs'
-import { DetailStickySidebar } from '@/components/shared/detail-sticky-sidebar'
+import { KeyValueTable } from '@/components/shared/key-value-table'
+import { hasTab, sectionNavItems, tabLinks } from '@/lib/detail-tabs'
 import { ExamActionBar } from './exam-action-bar'
+import { ExamStreamCoursesSection, ExamTopCollegesSection, examStreamData } from './exam-stream-sections'
+import { ExamDatesTable, ExamKeyDateCard, ExamNoticesSection } from './exam-notices'
 import { HorizontalContentRail } from '@/components/shared/horizontal-content-rail'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
 import { Button } from '@/components/ui/button'
 import { examFromSlug } from '@/features/college-predictor/data/predictor'
 import { rankExamFromSlug } from '@/features/rank-predictor/data/rank'
 import type { Exam } from '../data/exams'
-import { examBase, examColleges, examCourses, examTabHref, examTabs, legacyExamAnchors, type DetailedExam } from '../config/exam-tabs'
+import { examBase, examColleges, examCourses, examTabs, type DetailedExam } from '../config/exam-tabs'
 
 const monogram = (exam: Exam) => exam.shortName.split(' ')[0].slice(0, 4).toUpperCase()
 
-function Section({ id, title, children }: { id: string; title: string; children: ReactNode }) {
-  return (
-    <section id={id} className="scroll-mt-section border-b py-7 lg:py-9">
-      <h2 className="font-heading text-xl font-bold text-foreground sm:text-[22px]">{title}</h2>
-      <div className="mt-4">{children}</div>
-    </section>
-  )
-}
+const Section = DetailSection
 
 function PendingNote({ children }: { children: ReactNode }) {
   return (
@@ -47,7 +41,6 @@ function predictorLinks(exam: Exam) {
 }
 
 function ExamHeader({ exam }: { exam: DetailedExam }) {
-  const links = predictorLinks(exam)
   const facts: DetailQuickFact[] = [
     { icon: Layers, label: 'Study Area', value: exam.studyArea },
     { icon: Flag, label: 'Exam Scope', value: exam.scope },
@@ -56,7 +49,7 @@ function ExamHeader({ exam }: { exam: DetailedExam }) {
   ]
 
   return (
-    <div className="border-b pb-5 sm:pb-6">
+    <div>
       <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between lg:gap-8">
         <div className="flex min-w-0 flex-1 items-start gap-3 sm:gap-4">
           <span className="flex size-14 shrink-0 items-center justify-center rounded-xl bg-secondary text-sm font-bold text-primary sm:size-16">{monogram(exam)}</span>
@@ -64,29 +57,16 @@ function ExamHeader({ exam }: { exam: DetailedExam }) {
             <h1 className="font-heading text-xl font-bold text-foreground sm:text-3xl">{exam.shortName}</h1>
             <p className="mt-1 text-sm text-muted-foreground sm:text-[15px]">{exam.name}</p>
             <p className="mt-2.5 max-w-2xl text-sm leading-6 text-foreground">{exam.description}</p>
-            <div className="mt-2.5 flex flex-wrap gap-1.5">
-              <span className="rounded-md bg-secondary px-2 py-0.5 text-xs font-semibold text-primary">{exam.studyArea}</span>
-              <span className="rounded-md bg-muted px-2 py-0.5 text-xs font-medium text-foreground">{exam.scope}</span>
-              <span className="rounded-md bg-muted px-2 py-0.5 text-xs font-medium text-foreground">{exam.level}</span>
-            </div>
           </div>
         </div>
 
-        <div className="flex flex-col gap-2 sm:flex-row lg:w-64 lg:shrink-0 lg:flex-col">
-          {links.college && (
-            <Button variant="cta" className="h-11 gap-2 px-5 text-sm font-semibold sm:h-10" nativeButton={false} render={<Link href={links.college} />}>
-              Use College Predictor
-              <ArrowRight className="size-4" aria-hidden="true" />
-            </Button>
-          )}
-          <Button variant="outline" className="h-11 px-5 text-sm font-semibold sm:h-10" nativeButton={false} render={<Link href="/colleges" />}>
-            Explore Colleges
-          </Button>
-        </div>
       </div>
 
       <div className="mt-5">
         <DetailQuickFacts facts={facts} />
+      </div>
+      <div className="mt-4 empty:hidden">
+        <ExamKeyDateCard exam={exam} />
       </div>
     </div>
   )
@@ -95,15 +75,18 @@ function ExamHeader({ exam }: { exam: DetailedExam }) {
 export function OverviewSection({ exam }: { exam: DetailedExam }) {
   return (
     <Section id="overview" title={`About ${exam.shortName}`}>
-      <p className="text-sm leading-6 text-foreground">{exam.detail.longDescription}</p>
-      <div className="mt-4 grid gap-3 sm:grid-cols-2">
-        {exam.detail.overview.map((point) => (
-          <div key={point.label} className="rounded-[10px] border bg-card p-3.5">
-            <p className="text-[11px] tracking-wide text-muted-foreground uppercase">{point.label}</p>
-            <p className="mt-1 text-sm font-medium text-foreground">{point.text}</p>
-          </div>
-        ))}
-      </div>
+      <p className="text-[15px] leading-7 text-muted-foreground">{exam.detail.longDescription}</p>
+      <h3 className="mt-6 text-base font-semibold text-foreground">{exam.shortName} highlights</h3>
+      <KeyValueTable
+        className="mt-3"
+        head={['Particulars', 'Details']}
+        rows={[
+          { label: 'Full name', value: exam.name },
+          { label: 'Conducting body', value: exam.conductingBody },
+          { label: 'Accepted by', value: exam.courses.length ? `${exam.courses.length} ${exam.courses.length === 1 ? 'course' : 'courses'} on Pathway` : null },
+          ...exam.detail.overview.map((point) => ({ label: point.label, value: point.text })),
+        ]}
+      />
     </Section>
   )
 }
@@ -265,45 +248,26 @@ export function CoursesSection({ exam }: { exam: DetailedExam }) {
 
 export function FaqSection({ exam }: { exam: DetailedExam }) {
   return (
-    <section id="faqs" className="scroll-mt-section py-7 lg:py-9">
-      <h2 className="font-heading text-xl font-bold text-foreground sm:text-[22px]">Frequently Asked Questions</h2>
-      <div className="mt-4 rounded-[10px] border bg-card px-4">
-        <Accordion multiple={false}>
-          {exam.detail.faqs.map((faq, index) => (
-            <AccordionItem key={faq.question} value={`faq-${index}`}>
-              <AccordionTrigger className="text-sm font-semibold text-foreground sm:text-[15px]">{faq.question}</AccordionTrigger>
-              <AccordionContent className="text-sm leading-6 text-muted-foreground">{faq.answer}</AccordionContent>
-            </AccordionItem>
-          ))}
-        </Accordion>
-      </div>
-    </section>
+    <Section id="faqs" title={`${exam.shortName} FAQs`}>
+      <Accordion multiple={false}>
+        {exam.detail.faqs.map((faq, index) => (
+          <AccordionItem key={faq.question} value={`faq-${index}`}>
+            <AccordionTrigger className="text-sm font-semibold text-foreground sm:text-[15px]">{faq.question}</AccordionTrigger>
+            <AccordionContent className="text-sm leading-6 text-muted-foreground">{faq.answer}</AccordionContent>
+          </AccordionItem>
+        ))}
+      </Accordion>
+    </Section>
   )
 }
 
-function ExamSidebar({ exam }: { exam: DetailedExam }) {
+function ExamSidebar({ exam, collegesHref }: { exam: DetailedExam; collegesHref?: string }) {
   const links = predictorLinks(exam)
   return (
     <div className="flex flex-col gap-4">
       <div className="rounded-[10px] border bg-card p-4">
-        <p className="text-[15px] font-semibold text-foreground">{exam.shortName} at a glance</p>
-        <dl className="mt-3 flex flex-col gap-2 text-sm">
-          {[
-            ['Study area', exam.studyArea],
-            ['Scope', exam.scope],
-            ['Level', exam.level],
-            ...(exam.conductingBody ? [['Conducted by', exam.conductingBody]] : []),
-          ].map(([label, value]) => (
-            <div key={label} className="flex justify-between gap-3">
-              <dt className="text-muted-foreground">{label}</dt>
-              <dd className="text-right font-medium text-foreground">{value}</dd>
-            </div>
-          ))}
-        </dl>
-      </div>
-      <div className="rounded-[10px] border bg-card p-4">
-        <p className="text-[15px] font-semibold text-foreground">After the exam</p>
-        <p className="mt-1 text-xs leading-5 text-muted-foreground">Add your own performance details to preview colleges or a rank range. Previews are placeholders, not live predictions.</p>
+        <p className="text-[15px] font-semibold text-foreground">Plan your next step</p>
+        <p className="mt-1 text-[13px] leading-5 text-muted-foreground">Shortlist colleges and courses for {exam.studyArea.toLowerCase()}.</p>
         {links.college && (
           <Button variant="cta" className="mt-3 h-10 w-full text-sm font-semibold" nativeButton={false} render={<Link href={links.college} />}>
             Use College Predictor
@@ -314,6 +278,9 @@ function ExamSidebar({ exam }: { exam: DetailedExam }) {
             Use Rank Predictor
           </Button>
         )}
+        <Button variant={links.college ? 'outline' : 'cta'} className="mt-2 h-10 w-full text-sm font-semibold" nativeButton={false} render={<Link href={collegesHref ?? '/colleges'} />}>
+          Explore colleges
+        </Button>
       </div>
     </div>
   )
@@ -323,10 +290,9 @@ function RelatedExamsSection({ exam }: { exam: DetailedExam }) {
   const related = exam.related
   if (related.length === 0) return null
   return (
-    <Container className="px-4">
-      <section id="related-exams" className="border-t py-7 lg:py-9" aria-labelledby="related-exams-title">
-        <h2 id="related-exams-title" className="font-heading text-xl font-bold text-foreground sm:text-[22px]">
-          Related Exams
+    <section id="related-exams" className="rounded-xl border bg-card p-4 sm:p-6" aria-labelledby="related-exams-title">
+        <h2 id="related-exams-title" className="font-heading text-lg font-bold text-foreground sm:text-xl">
+          {related.some((other) => other.studyArea === exam.studyArea) ? 'Related exams' : 'Other popular exams'}
         </h2>
         <HorizontalContentRail ariaLabel="Related exams" className="mt-4" showControls>
           {related.map((other) => (
@@ -341,86 +307,60 @@ function RelatedExamsSection({ exam }: { exam: DetailedExam }) {
                 </div>
               </div>
               <div className="mt-3">
-                {other.hasDetailPage ? (
-                  <Button variant="outline" className="h-9 px-4 text-sm" nativeButton={false} render={<Link href={`/exam/${other.slug}`} />}>
-                    View Details
-                  </Button>
-                ) : (
-                  <span className="text-xs font-medium text-muted-foreground/80">Details soon</span>
-                )}
+                <Button variant="outline" size="sm" className="px-4" nativeButton={false} render={<Link href={`/exam/${other.slug}`} />}>
+                  View exam
+                </Button>
               </div>
             </div>
           ))}
         </HorizontalContentRail>
-      </section>
-    </Container>
+    </section>
   )
 }
 
-function FinalCta({ exam }: { exam: DetailedExam }) {
-  const links = predictorLinks(exam)
-  return (
-    <Container className="px-4 pb-10">
-      <div className="flex flex-col gap-4 rounded-[12px] border bg-primary/5 p-5 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <p className="font-heading text-lg font-bold text-foreground">Planning your next step after {exam.shortName}?</p>
-          <p className="mt-0.5 text-sm text-muted-foreground">Preview colleges that may suit your profile, or browse institutions on Pathway.</p>
-        </div>
-        <div className="flex flex-col gap-2 sm:flex-row">
-          {links.college && (
-            <Button variant="cta" className="h-11 gap-2 px-5 text-sm font-semibold" nativeButton={false} render={<Link href={links.college} />}>
-              Try College Predictor
-              <ArrowRight className="size-4" aria-hidden="true" />
-            </Button>
-          )}
-          <Button variant="outline" className="h-11 px-5 text-sm font-semibold" nativeButton={false} render={<Link href="/colleges" />}>
-            Explore Colleges
-          </Button>
-        </div>
-      </div>
-    </Container>
-  )
-}
-
-export function ExamOverviewTab({ exam }: { exam: DetailedExam }) {
-  const tiles = examTabs
-    .filter((tab) => tab.segment && (!tab.available || tab.available(exam)))
-    .map((tab) => ({ href: examTabHref(exam.slug, tab.segment), label: tab.label, teaser: tab.teaser?.(exam) }))
-  return (
-    <>
-      <LegacyAnchorRedirect base={examBase(exam.slug)} anchors={legacyExamAnchors} />
-      <OverviewSection exam={exam} />
-      <DetailTabLinks title={`Explore ${exam.shortName}`} items={tiles} />
-    </>
-  )
-}
-
-export function ExamDetailShell({ exam, children }: { exam: DetailedExam; children: ReactNode }) {
+export async function ExamDetailShell({ exam, children }: { exam: DetailedExam; children: ReactNode }) {
   const base = examBase(exam.slug)
-  const tabs = tabLinks(examTabs, exam, base)
+  const has = (segment: string) => hasTab(examTabs, exam, segment)
+  const stream = await examStreamData(exam)
+  const tabs = sectionNavItems(examTabs, exam)
+  const extra = [
+    ...(stream?.colleges.length ? [{ id: 'top-colleges', label: 'Top colleges' }] : []),
+    ...(stream?.courses.length ? [{ id: 'stream-courses', label: 'Courses' }] : []),
+  ]
+  const nav = [...tabs.filter((item) => item.id !== 'faqs'), ...extra, ...tabs.filter((item) => item.id === 'faqs')]
 
   return (
     <div className="bg-background">
-      <Container className="px-4 pt-5 lg:pt-6">
-        <DetailTabBreadcrumbs trail={['Home', { label: 'Exams', href: '/exams' }]} entityLabel={exam.shortName} base={base} tabs={tabs} />
+      <Container className="px-4 pt-5 pb-5 lg:pt-6">
+        <DetailTabBreadcrumbs trail={['Home', { label: 'Exams', href: '/exams' }]} entityLabel={exam.shortName} base={base} tabs={tabLinks(examTabs, exam, base)} />
         <div className="mt-4">
           <ExamHeader exam={exam} />
         </div>
       </Container>
 
-      <DetailTabNav items={tabs.map(({ href, label }) => ({ href, label }))} label={`${exam.shortName} sections`} />
+      <DetailSectionNav items={nav} label={`${exam.shortName} sections`} />
 
-      <Container className="px-4">
-        <div className="flex flex-col gap-8 lg:flex-row lg:items-start lg:gap-6">
-          <div className="min-w-0 flex-1">{children}</div>
-          <DetailStickySidebar>
-            <ExamSidebar exam={exam} />
-          </DetailStickySidebar>
-        </div>
-      </Container>
+      <DetailBody aside={<ExamSidebar exam={exam} collegesHref={stream?.colleges.length ? stream.collegesHref : undefined} />}>
+        <OverviewSection exam={exam} />
+        <ExamDatesTable exam={exam} />
+        {has('eligibility') ? <EligibilitySection exam={exam} /> : null}
+        {has('pattern') ? (
+          <>
+            <PatternSection exam={exam} />
+            <SyllabusSection exam={exam} />
+          </>
+        ) : null}
+        {has('process') ? <ProcessSection exam={exam} /> : null}
+        {has('notices') ? <ExamNoticesSection exam={exam} /> : null}
+        {has('colleges') ? <CollegesSection exam={exam} /> : null}
+        {has('courses') ? <CoursesSection exam={exam} /> : null}
+        {stream ? <ExamTopCollegesSection data={stream} /> : null}
+        {stream ? <ExamStreamCoursesSection data={stream} /> : null}
+        {has('faqs') ? <FaqSection exam={exam} /> : null}
+        <RelatedExamsSection exam={exam} />
+      </DetailBody>
 
-      <RelatedExamsSection exam={exam} />
-      <FinalCta exam={exam} />
+      {children}
       <ExamActionBar examName={exam.shortName} examSlug={exam.slug} collegePredictorHref={predictorLinks(exam).college} rankPredictorHref={predictorLinks(exam).rank} />
     </div>
   )

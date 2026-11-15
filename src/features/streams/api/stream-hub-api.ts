@@ -9,7 +9,8 @@ import { rankExamFromSlug } from '@/features/rank-predictor/data/rank'
 import { listCatalogEntries, type CatalogKind } from '@/features/search/api/catalog-search'
 import type { SearchEntry } from '@/features/search/data/search-index'
 import { apiQueryFrom } from '@/lib/search-params'
-import { getStream, type StreamDefinition } from '../data/stream-taxonomy'
+import type { StreamDefinition } from '../data/stream-taxonomy'
+import { getStreamDefinition } from './streams-api'
 import type { StreamHub, StreamSection } from '../data/stream-hub'
 
 const SECTION_SIZE = 8
@@ -36,7 +37,7 @@ function plansFor(stream: StreamDefinition): Plan[] {
 const MIN_SECTIONS = 2
 
 export const getStreamHub = cache(async (slug: string): Promise<StreamHub | undefined> => {
-  const stream = getStream(slug)
+  const stream = await getStreamDefinition(slug)
   if (!stream) return undefined
   const plans = plansFor(stream).filter((plan) => plan.query)
   const lists = await Promise.all(plans.map((plan) => listCatalogEntries(plan.kind, { ...apiQueryFrom(plan.query), limit: String(SECTION_SIZE) })))

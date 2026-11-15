@@ -21,7 +21,7 @@ export function TutorsCoachingTabs({ featuredTutors, featuredCoaching }: { featu
   const [category, setCategory] = useState<Category>('tutors')
 
   return (
-    <section className="bg-muted py-7 sm:py-9 lg:py-12">
+    <section className="bg-background py-10 sm:py-12 lg:py-16">
       <div className="container-shell">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <h2 className="font-heading text-xl font-bold text-foreground sm:text-2xl">Find Tutors &amp; Coaching</h2>

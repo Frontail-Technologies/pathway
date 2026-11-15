@@ -24,6 +24,7 @@ export const courseTabs: DetailTab<CourseDetailData>[] = [
     heading: (c) => `${c.name} Syllabus & Specializations`,
     description: (c) => `${c.name} year-wise syllabus and specializations.`,
     teaser: (c) => `${c.syllabus.length}-year syllabus · ${c.specializations.length} specializations`,
+    available: (c) => c.syllabus.length > 0 || c.specializations.length > 0,
   },
   {
     segment: 'careers',
@@ -31,6 +32,7 @@ export const courseTabs: DetailTab<CourseDetailData>[] = [
     heading: (c) => `${c.name} Careers & Jobs`,
     description: (c) => `Career options and roles after ${c.name}.`,
     teaser: (c) => `${c.careers.length} career paths after ${c.degree}`,
+    available: (c) => c.careers.length > 0,
   },
   {
     segment: 'colleges',
@@ -38,6 +40,7 @@ export const courseTabs: DetailTab<CourseDetailData>[] = [
     heading: (c) => `${c.name} Colleges`,
     description: (c) => `Colleges offering ${c.name}.`,
     teaser: (c) => `${c.collegesCount} colleges offer this course`,
+    available: (c) => c.colleges.length > 0,
   },
   {
     segment: 'faqs',
@@ -45,6 +48,7 @@ export const courseTabs: DetailTab<CourseDetailData>[] = [
     heading: (c) => `${c.name} FAQs`,
     description: (c) => `Frequently asked questions about ${c.name}.`,
     teaser: () => 'Common questions answered',
+    available: (c) => c.faqs.length > 0,
   },
 ]
 
@@ -53,17 +57,4 @@ export const courseTabHref = (slug: string, segment: string) => tabHref(courseBa
 
 export function courseTabMetadata(course: CourseDetailData | undefined, segment: string): Metadata {
   return tabMetadata(courseTabs, course, segment, (c) => courseBase(c.slug), 'Course Not Found')
-}
-
-export const legacyCourseAnchors: Record<string, string> = {
-  overview: '',
-  related: '',
-  eligibility: 'eligibility',
-  exams: 'eligibility',
-  fees: 'fees',
-  specializations: 'syllabus',
-  syllabus: 'syllabus',
-  careers: 'careers',
-  colleges: 'colleges',
-  faqs: 'faqs',
 }

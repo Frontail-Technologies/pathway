@@ -3,7 +3,7 @@ export type CourseFact = { label: string; value: string }
 export type FeeRow = { institutionType: string; feeRange: string }
 export type FeeComponent = { label: string; value: string }
 
-export type ExamItem = { name: string; level: string; purpose: string }
+export type ExamItem = { name: string; level: string; purpose: string; slug?: string }
 
 export type SpecializationItem = { name: string; description?: string }
 
@@ -47,6 +47,7 @@ export type RelatedCourse = {
 export type Faq = { question: string; answer: string }
 
 export type CourseDetailData = {
+  collegesHref?: string
   slug: string
   name: string
   fullName: string

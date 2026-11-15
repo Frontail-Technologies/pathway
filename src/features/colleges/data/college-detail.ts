@@ -2,6 +2,7 @@ export type CollegeFact = { label: string; value: string }
 
 export type CollegeCourse = {
   name: string
+  href?: string
   level: 'UG' | 'PG'
   mode: string
   duration: string
@@ -42,6 +43,16 @@ export type CollegeGalleryImage = {
   category: CollegeGalleryCategory
 }
 
+export type CollegeKeyFacts = { students: number | null; phdStudents: number | null; faculty: number | null; intake: number | null; year: string | null }
+
+export type CollegeRankingRow = { source: string; category: string; year: number; rank: number | null; band: string | null; score: number | null }
+
+export type CollegeCutoffRow = { program: string; quota: string; opening: number | null; closing: number | null }
+
+export type CollegeCutoffSet = { exam: string; examLabel: string; year: number; round: number | null; rows: CollegeCutoffRow[] }
+
+export type CollegeHighlights = { rank: CollegeRankingRow | null; packageValue: string; packageLabel: string; tuition: string; students: number | null }
+
 export type CollegeDetailData = {
   slug: string
   name: string
@@ -70,6 +81,12 @@ export type CollegeDetailData = {
   reviewCategories: ReviewCategory[]
   reviewPreviews: ReviewPreview[]
   faqs: Faq[]
+  naacGrade?: string
+  keyFacts?: CollegeKeyFacts | null
+  rankings?: CollegeRankingRow[]
+  cutoffs?: CollegeCutoffSet[]
+  placementYear?: string
+  highlights?: CollegeHighlights
 }
 
 const collegeDetails: Record<string, CollegeDetailData> = {

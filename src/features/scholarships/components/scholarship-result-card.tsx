@@ -1,120 +1,88 @@
 'use client'
 
 import Link from 'next/link'
-import { useSavedItem } from '@/features/saved/saved-items-provider'
-import { Bookmark, Building2, CalendarDays, GraduationCap, IndianRupee, MapPin } from 'lucide-react'
+import { Bookmark, GraduationCap, MapPin, Trophy } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { SponsoredBadge } from '@/components/shared'
-import { applicationStatusStyles as scholarshipStatusStyles } from '../data/status'
+import { useSavedItem } from '@/features/saved/saved-items-provider'
 import type { ScholarshipListItem } from '../api/scholarships-api'
+import { DeadlineBlock, ProviderMark } from './scholarship-rail-card'
 
 export function ScholarshipResultCard({ scholarship }: { scholarship: ScholarshipListItem }) {
   const { saved, toggleSaved } = useSavedItem('scholarship', scholarship.slug, 'Scholarship')
-  const status = scholarshipStatusStyles[scholarship.status]
-  
-  
-  
-  const detail = scholarship.hasDetailPage
-  const daysRemaining = scholarship.status === 'closing-soon' ? scholarship.daysRemaining : null
-
-
-  const summary = [scholarship.educationLevels[0], scholarship.streams[0] ?? 'All Streams', scholarship.states[0] ?? 'All India'].filter(Boolean).join(' · ')
+  const eligibility = [...scholarship.shortEligibility, scholarship.scholarshipType].filter(Boolean).join(' · ')
+  const where = scholarship.states[0] ?? 'All India'
 
   return (
-    <article className="rounded-[10px] border bg-card p-4 transition-colors hover:border-primary/30 sm:p-5">
+    <article className="relative flex h-full flex-col rounded-xl border bg-card p-4 transition-shadow hover:shadow-[0_12px_28px_rgba(15,23,42,0.08)] sm:p-5">
+      {scholarship.featured ? (
+        <span className="absolute -top-2.5 left-4">
+          <SponsoredBadge />
+        </span>
+      ) : null}
       <div className="flex items-start justify-between gap-3">
         <div className="flex min-w-0 items-start gap-3">
-          <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-secondary text-xs font-bold text-primary">
-            {scholarship.providerInitials}
-          </div>
+          <ProviderMark scholarship={scholarship} />
           <div className="min-w-0">
-            <h3 className="text-base font-bold text-foreground">{scholarship.name}</h3>
-            <p className="mt-0.5 flex flex-wrap items-center gap-1.5 text-xs text-muted-foreground sm:text-sm">
-              <span className="flex items-center gap-1">
-                <Building2 className="size-3.5 shrink-0" aria-hidden="true" />
-                {scholarship.provider} · <span className="font-medium text-foreground">{scholarship.providerType}</span>
-              </span>
-              {scholarship.featured && <SponsoredBadge />}
-            </p>
+            <p className="truncate text-sm font-semibold text-foreground">{scholarship.provider}</p>
+            <p className="text-xs text-muted-foreground">{scholarship.providerType}</p>
           </div>
         </div>
+        <DeadlineBlock scholarship={scholarship} />
+      </div>
+
+      <h3 className="mt-3 font-heading text-[17px] leading-snug font-bold text-foreground">
+        <Link href={`/scholarship/${scholarship.slug}`} className="outline-none hover:text-primary focus-visible:underline">
+          {scholarship.name}
+        </Link>
+      </h3>
+
+      <div className="mt-3 flex flex-1 flex-col gap-3 rounded-lg bg-muted/50 p-3">
+        <div className="flex items-start gap-2.5">
+          <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-card text-muted-foreground">
+            <Trophy className="size-4" aria-hidden="true" />
+          </span>
+          <div className="min-w-0">
+            <p className="text-xs text-muted-foreground">Award</p>
+            <p className="text-[15px] font-bold text-success">{scholarship.benefitLabel}</p>
+          </div>
+        </div>
+        {eligibility ? (
+          <div className="flex items-start gap-2.5">
+            <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-card text-muted-foreground">
+              <GraduationCap className="size-4" aria-hidden="true" />
+            </span>
+            <div className="min-w-0">
+              <p className="text-xs text-muted-foreground">Eligibility</p>
+              <p className="line-clamp-2 text-sm text-foreground">{eligibility}</p>
+            </div>
+          </div>
+        ) : null}
+        <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
+          <MapPin className="size-3.5" aria-hidden="true" />
+          {where}
+        </p>
+      </div>
+
+      <div className="mt-4 flex items-center gap-2">
         <button
           type="button"
           aria-label={saved ? 'Remove from saved scholarships' : 'Save scholarship'}
           aria-pressed={saved}
           onClick={toggleSaved}
-          className="flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-md outline-none transition-colors hover:bg-muted focus-visible:ring-2 focus-visible:ring-primary/40"
+          className="flex size-10 shrink-0 cursor-pointer items-center justify-center rounded-lg border outline-none transition-colors hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring/50"
         >
           <Bookmark className={saved ? 'size-4 fill-primary text-primary' : 'size-4 text-muted-foreground'} aria-hidden="true" />
         </button>
-      </div>
-
-      <div className="mt-2 flex flex-wrap items-center gap-1.5 sm:mt-2.5">
-        <span className={`rounded-md px-2 py-0.5 text-xs font-medium ${status.className}`}>{status.label}</span>
-        <span className="rounded-md bg-secondary px-2 py-0.5 text-xs font-medium text-primary">{summary}</span>
-      </div>
-
-      <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-3 border-t pt-3 sm:mt-4 sm:grid-cols-4 sm:pt-4">
-        <DetailBlock icon={IndianRupee} label="Benefit" value={scholarship.benefitLabel} />
-        <DetailBlock icon={CalendarDays} label="Application Deadline" value={scholarship.deadlineDisplay} helper={daysRemaining !== null ? `Closing in ${daysRemaining} days` : undefined} />
-        <DetailBlock icon={GraduationCap} label="Key Eligibility" value={scholarship.shortEligibility.join(' · ')} />
-        <DetailBlock icon={MapPin} label="Applicable" value={scholarship.states[0] ?? 'All India'} />
-      </div>
-
-      <div className="mt-3 flex flex-col gap-3 border-t pt-3 sm:mt-4 sm:flex-row sm:items-center sm:justify-between sm:pt-4">
-        <div />
-        <div className="grid grid-cols-2 gap-2 sm:flex">
-          {detail ? (
-            
-            
-            <Button className="h-11 px-4 text-sm sm:h-10 sm:flex-none" nativeButton={false} render={<Link href={`/scholarship/${scholarship.slug}`} />}>
-              View Details
-            </Button>
-          ) : (
-            
-            
-            
-            
-            
-            <Button variant="outline" className="h-11 px-4 text-sm text-muted-foreground sm:h-10 sm:flex-none" disabled title="Scholarship detail page coming soon">
-              View Details
-            </Button>
-          )}
-          {scholarship.officialApplyUrl && (
-            <Button
-              variant="cta"
-              className="h-11 px-4 text-sm sm:h-10 sm:flex-none"
-              nativeButton={false}
-              render={<a href={scholarship.officialApplyUrl} target="_blank" rel="noopener noreferrer" />}
-            >
-              Official Apply
-            </Button>
-          )}
-        </div>
+        <Button variant="outline" className="flex-1" nativeButton={false} render={<Link href={`/scholarship/${scholarship.slug}`} />}>
+          View details
+        </Button>
+        {scholarship.officialApplyUrl && scholarship.status !== 'closed' ? (
+          <Button variant="cta" className="flex-1" nativeButton={false} render={<a href={scholarship.officialApplyUrl} target="_blank" rel="noopener noreferrer" />}>
+            Apply
+          </Button>
+        ) : null}
       </div>
     </article>
-  )
-}
-
-function DetailBlock({
-  icon: Icon,
-  label,
-  value,
-  helper,
-}: {
-  icon: typeof IndianRupee
-  label: string
-  value: string
-  helper?: string
-}) {
-  return (
-    <div className="min-w-0">
-      <p className="flex items-center gap-1 text-xs tracking-wide text-muted-foreground uppercase">
-        <Icon className="size-3.5 shrink-0" aria-hidden="true" />
-        {label}
-      </p>
-      <p className="mt-0.5 text-sm font-semibold text-balance text-foreground">{value}</p>
-      {helper && <p className="mt-0.5 text-xs font-medium text-warning">{helper}</p>}
-    </div>
   )
 }

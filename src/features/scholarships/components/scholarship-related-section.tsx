@@ -7,14 +7,8 @@ export function ScholarshipRelatedSection({ scholarship }: { scholarship: Schola
   if (scholarship.relatedScholarships.length === 0) return null
 
   return (
-    
-    
-    
-    
-    
-    
-    <section className="border-b py-7 lg:py-9">
-      <h2 className="font-heading text-xl font-bold text-foreground sm:text-[22px]">Related Scholarships</h2>
+    <section className="rounded-xl border bg-card p-4 sm:p-6">
+      <h2 className="font-heading text-lg font-bold text-foreground sm:text-xl">Similar scholarships</h2>
 
       <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
         {scholarship.relatedScholarships.map((related) => {

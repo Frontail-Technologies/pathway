@@ -1,10 +1,12 @@
+import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import type { CourseDetailData } from '../data/course-detail'
 
 export function CourseExamsSection({ course }: { course: CourseDetailData }) {
+  if (!course.exams.length) return null
   return (
-    <section id="exams" className="scroll-mt-section border-b py-7 lg:py-9">
-      <h2 className="font-heading text-xl font-bold text-foreground sm:text-[22px]">Entrance Exams for {course.name}</h2>
+    <section id="exams" className="scroll-mt-section rounded-xl border bg-card p-4 sm:p-6">
+      <h2 className="font-heading text-lg font-bold text-foreground sm:text-xl">Entrance Exams for {course.name}</h2>
 
       <div className="mt-4 rounded-[10px] border bg-card">
         <div className="divide-y">
@@ -16,9 +18,11 @@ export function CourseExamsSection({ course }: { course: CourseDetailData }) {
                   {exam.level} · {exam.purpose}
                 </p>
               </div>
-              <Button variant="outline" className="h-9 w-fit px-4 text-sm" disabled title="Exam details are coming soon">
-                View Exam
-              </Button>
+              {exam.slug ? (
+                <Button variant="outline" size="sm" className="w-fit px-4" nativeButton={false} render={<Link href={`/exam/${exam.slug}`} />}>
+                  View exam
+                </Button>
+              ) : null}
             </div>
           ))}
         </div>

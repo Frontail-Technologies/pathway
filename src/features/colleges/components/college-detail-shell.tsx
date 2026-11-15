@@ -1,60 +1,63 @@
 import type { ReactNode } from 'react'
-import Link from 'next/link'
-import { ArrowRight } from 'lucide-react'
 import { Container } from '@/components/shared/container'
-import { DetailTabNav } from '@/components/shared/detail-tab-nav'
-import { DetailStickySidebar } from '@/components/shared/detail-sticky-sidebar'
-import { Button } from '@/components/ui/button'
-import type { CollegeDetailData } from '../data/college-detail'
+import { DetailBody } from '@/components/shared/detail-section'
+import { DetailSectionNav } from '@/components/shared/detail-section-nav'
 import { DetailTabBreadcrumbs } from '@/components/shared/detail-tab-breadcrumbs'
-import { tabLinks } from '@/lib/detail-tabs'
+import { hasTab, sectionNavItems, tabLinks } from '@/lib/detail-tabs'
+import type { CollegeDetailData } from '../data/college-detail'
 import { collegeBase, collegeTabs } from '../config/college-tabs'
 import { CollegeIdentityHeader } from './college-identity-header'
 import { CollegeEnquirySidebar } from './college-enquiry-sidebar'
 import { CollegeActionBar } from './college-action-bar'
+import { CollegeOverviewSection } from './college-overview-section'
+import { CollegeCoursesSection } from './college-courses-section'
+import { CollegeFeesSection } from './college-fees-section'
+import { CollegeCutoffsSection } from './college-cutoffs-section'
+import { CollegeAdmissionsSection } from './college-admissions-section'
+import { CollegePlacementsSection } from './college-placements-section'
+import { CollegeRankingsSection } from './college-rankings-section'
+import { CollegeReviewsSection } from './college-reviews-section'
+import { CollegeFacilitiesSection } from './college-facilities-section'
+import { CollegeScholarshipsSection } from './college-scholarships-section'
+import { CollegeFaqSection } from './college-faq-section'
+import { SimilarCollegesSection } from './similar-colleges-section'
 
 export function CollegeDetailShell({ college, children }: { college: CollegeDetailData; children: ReactNode }) {
   const base = collegeBase(college.slug)
-  const tabs = tabLinks(collegeTabs, college, base)
+  const has = (segment: string) => hasTab(collegeTabs, college, segment)
 
   return (
     <div className="bg-background">
-      <Container className="px-4 pt-5 lg:pt-6">
-        <DetailTabBreadcrumbs trail={['Home', { label: 'Colleges', href: '/colleges' }]} entityLabel={college.name} base={base} tabs={tabs} />
+      <Container className="px-4 pt-5 pb-5 lg:pt-6">
+        <DetailTabBreadcrumbs trail={['Home', { label: 'Colleges', href: '/colleges' }]} entityLabel={college.name} base={base} tabs={tabLinks(collegeTabs, college, base)} />
         <div className="mt-4">
           <CollegeIdentityHeader college={college} />
         </div>
       </Container>
 
-      <DetailTabNav items={tabs.map(({ href, label }) => ({ href, label }))} label={`${college.name} sections`} />
+      <DetailSectionNav items={sectionNavItems(collegeTabs, college)} label={`${college.name} sections`} />
 
-      <Container className="px-4">
-        <div className="flex flex-col gap-8 lg:flex-row lg:items-start lg:gap-6">
-          <div className="min-w-0 flex-1">{children}</div>
-          <DetailStickySidebar>
-            <CollegeEnquirySidebar college={college} />
-          </DetailStickySidebar>
-        </div>
-      </Container>
+      <DetailBody aside={<CollegeEnquirySidebar college={college} />}>
+        <CollegeOverviewSection college={college} />
+        {has('courses') ? (
+          <>
+            <CollegeCoursesSection college={college} />
+            <CollegeFeesSection college={college} />
+          </>
+        ) : null}
+        {has('cutoffs') ? <CollegeCutoffsSection college={college} /> : null}
+        {has('admission') ? <CollegeAdmissionsSection college={college} /> : null}
+        {has('placement') ? <CollegePlacementsSection college={college} /> : null}
+        {has('rankings') ? <CollegeRankingsSection college={college} /> : null}
+        {has('reviews') ? <CollegeReviewsSection college={college} /> : null}
+        {has('facilities') ? <CollegeFacilitiesSection college={college} /> : null}
+        {has('scholarships') ? <CollegeScholarshipsSection college={college} /> : null}
+        {has('faqs') ? <CollegeFaqSection college={college} /> : null}
+        <SimilarCollegesSection college={college} />
 
-      <Container className="px-4 pt-8 pb-10">
-        <div className="flex flex-col gap-4 rounded-[12px] border bg-primary/5 p-5 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <p className="font-heading text-lg font-bold text-foreground">Planning your application to {college.name}?</p>
-            <p className="mt-0.5 text-sm text-muted-foreground">Preview colleges that may suit your profile, or explore more institutions on Pathway.</p>
-          </div>
-          <div className="flex flex-col gap-2 sm:flex-row">
-            <Button variant="cta" className="h-11 gap-2 px-5 text-sm font-semibold" nativeButton={false} render={<Link href="/college-predictor" />}>
-              Try College Predictor
-              <ArrowRight className="size-4" aria-hidden="true" />
-            </Button>
-            <Button variant="outline" className="h-11 px-5 text-sm font-semibold" nativeButton={false} render={<Link href="/colleges" />}>
-              Explore More Colleges
-            </Button>
-          </div>
-        </div>
-      </Container>
+      </DetailBody>
 
+      {children}
       <CollegeActionBar college={college} />
     </div>
   )

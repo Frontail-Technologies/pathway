@@ -1,14 +1,13 @@
 'use client'
 
 import { toast } from 'sonner'
-import { Bookmark, Building2, GraduationCap, MapPin, Share2 } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { Bookmark, Briefcase, Building2, GraduationCap, IndianRupee, MapPin, Share2, Trophy, Users } from 'lucide-react'
 import { VerifiedBadge } from '@/components/shared/verified-badge'
 import { SponsoredBadge } from '@/components/shared/sponsored-badge'
+import { RankChip } from '@/components/shared/rank-chip'
 import { DetailIdentityHero } from '@/components/shared/detail-identity-hero'
 import { DetailQuickFacts, type DetailQuickFact } from '@/components/shared/detail-quick-facts'
 import { useSavedItem } from '@/features/saved/saved-items-provider'
-import { EnquiryDialog } from '@/features/enquiries/components/enquiry-dialog'
 import type { CollegeDetailData } from '../data/college-detail'
 import { CollegeGallery } from './college-gallery'
 
@@ -31,49 +30,46 @@ export function CollegeIdentityHeader({ college }: { college: CollegeDetailData 
     }
   }
 
-  const facts: DetailQuickFact[] = [
-    { icon: MapPin, label: 'Location', value: `${college.city}, ${college.state}` },
-    { icon: Building2, label: 'College Type', value: college.type },
-    { icon: GraduationCap, label: 'Programmes', value: `${college.courses.length} programmes` },
-    { icon: Building2, label: 'Approved By', value: college.approval },
-  ]
+  const highlights = college.highlights
+  const rank = highlights?.rank
+  const primary: DetailQuickFact[] = [
+    { icon: Trophy, label: rank ? `${rank.source} ${rank.year}${rank.category === 'Overall' ? '' : ` · ${rank.category}`}` : 'NIRF rank', value: rank?.rank != null ? `#${rank.rank}` : '' },
+    { icon: Briefcase, label: highlights?.packageLabel || 'Median package', value: highlights?.packageValue ?? '' },
+    { icon: IndianRupee, label: 'Tuition per year', value: highlights?.tuition ?? '' },
+    { icon: Users, label: 'Students', value: highlights?.students ? highlights.students.toLocaleString('en-IN') : '' },
+  ].filter((fact) => fact.value)
+  const fallback: DetailQuickFact[] = [
+    { icon: MapPin, label: 'Location', value: [college.city, college.state].filter(Boolean).join(', ') },
+    { icon: Building2, label: 'Ownership', value: college.type },
+    { icon: GraduationCap, label: 'Programmes', value: college.courses.length ? `${college.courses.length}` : '' },
+    { icon: Building2, label: 'Approved by', value: college.approval },
+  ].filter((fact) => fact.value)
+  const facts = [...primary, ...fallback].slice(0, 4)
+  const meta = [[college.city, college.state].filter(Boolean).join(', '), college.instituteStatus, college.established ? `Estd ${college.established}` : ''].filter(Boolean).join(' · ')
 
   return (
     <DetailIdentityHero
-      media={<CollegeGallery images={college.gallery} collegeName={college.name} className="" />}
+      media={college.gallery.length >= 3 ? <CollegeGallery images={college.gallery} collegeName={college.name} className="" /> : undefined}
       title={college.name}
-      subtitle={college.fullName}
+      subtitle={college.fullName !== college.name ? college.fullName : undefined}
       meta={
         <span className="flex items-center gap-1">
           <MapPin className="size-3.5 shrink-0" aria-hidden="true" />
-          {college.city}, {college.state} · {college.instituteStatus}
+          {meta}
         </span>
       }
       tags={
         <>
+          {rank?.rank != null ? <RankChip rank={rank.rank} source={rank.source} year={rank.year} category={rank.category === 'Overall' ? '' : rank.category} /> : null}
+          {college.naacGrade ? <span className="inline-flex h-6 items-center rounded-md border px-2 text-xs font-semibold text-foreground">NAAC {college.naacGrade.replace(/^NAAC\s*/i, '')}</span> : null}
+          <span className="inline-flex h-6 items-center rounded-md bg-secondary px-2 text-xs font-semibold text-secondary-foreground">{college.type}</span>
           {college.verified && <VerifiedBadge />}
           {college.sponsored && <SponsoredBadge />}
-          <span className="rounded-md bg-secondary px-2 py-0.5 text-xs font-semibold text-primary">{college.type}</span>
         </>
       }
       actions={
         <>
-          <EnquiryDialog
-            entityName={college.name}
-            entity={{ kind: 'college', slug: college.slug }}
-            interestOptions={college.courses.map((course) => course.name)}
-            interestLabel="Course"
-            trigger={<Button variant="cta" className="h-11 px-6 text-sm font-semibold sm:h-10">Enquire Now</Button>}
-          />
-          <EnquiryDialog
-            intent="brochure"
-            entityName={college.name}
-            entity={{ kind: 'college', slug: college.slug }}
-            interestOptions={college.courses.map((course) => course.name)}
-            interestLabel="Course"
-            trigger={<Button variant="outline" className="h-11 px-6 text-sm font-semibold sm:h-10">Download Brochure</Button>}
-          />
-          <div className="flex items-center gap-1 sm:ml-1">
+          <div className="flex items-center gap-1">
             <button
               type="button"
               aria-label={saved ? 'Remove from saved colleges' : 'Save college'}

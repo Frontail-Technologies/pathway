@@ -3,9 +3,10 @@ import { Button } from '@/components/ui/button'
 import type { CourseDetailData } from '../data/course-detail'
 
 export function RelatedCoursesSection({ course }: { course: CourseDetailData }) {
+  if (!course.relatedCourses.length) return null
   return (
-    <section id="related" className="scroll-mt-section border-b py-7 lg:py-9">
-      <h2 className="font-heading text-xl font-bold text-foreground sm:text-[22px]">Related Courses</h2>
+    <section id="related" className="scroll-mt-section rounded-xl border bg-card p-4 sm:p-6">
+      <h2 className="font-heading text-lg font-bold text-foreground sm:text-xl">Related Courses</h2>
 
       <div className="mt-4 rounded-[10px] border bg-card">
         <div className="divide-y">

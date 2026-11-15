@@ -1,60 +1,63 @@
 import type { ReactNode } from 'react'
-import Link from 'next/link'
-import { ArrowRight } from 'lucide-react'
 import { Container } from '@/components/shared/container'
-import { DetailTabNav } from '@/components/shared/detail-tab-nav'
+import { DetailBody } from '@/components/shared/detail-section'
+import { DetailSectionNav } from '@/components/shared/detail-section-nav'
 import { DetailTabBreadcrumbs } from '@/components/shared/detail-tab-breadcrumbs'
-import { DetailStickySidebar } from '@/components/shared/detail-sticky-sidebar'
-import { Button } from '@/components/ui/button'
-import { tabLinks } from '@/lib/detail-tabs'
+import { hasTab, sectionNavItems, tabLinks } from '@/lib/detail-tabs'
 import type { CourseDetailData } from '../data/course-detail'
 import { courseBase, courseTabs } from '../config/course-tabs'
 import { CourseIdentityHeader } from './course-identity-header'
 import { CourseDiscoverySidebar } from './course-discovery-sidebar'
 import { CourseActionBar } from './course-action-bar'
+import { CourseOverviewSection } from './course-overview-section'
+import { CourseEligibilitySection } from './course-eligibility-section'
+import { CourseExamsSection } from './course-exams-section'
+import { CourseFeesSection } from './course-fees-section'
+import { CourseSyllabusSection } from './course-syllabus-section'
+import { CourseSpecializationsSection } from './course-specializations-section'
+import { CourseCareersSection } from './course-careers-section'
+import { CourseCollegesSection } from './course-colleges-section'
+import { CourseFaqSection } from './course-faq-section'
+import { RelatedCoursesSection } from './related-courses-section'
 
 export function CourseDetailShell({ course, children }: { course: CourseDetailData; children: ReactNode }) {
   const base = courseBase(course.slug)
-  const tabs = tabLinks(courseTabs, course, base)
+  const has = (segment: string) => hasTab(courseTabs, course, segment)
 
   return (
     <div className="bg-background">
-      <Container className="px-4 pt-5 lg:pt-6">
-        <DetailTabBreadcrumbs trail={['Home', { label: 'Courses', href: '/courses' }]} entityLabel={course.name} base={base} tabs={tabs} />
+      <Container className="px-4 pt-5 pb-5 lg:pt-6">
+        <DetailTabBreadcrumbs trail={['Home', { label: 'Courses', href: '/courses' }]} entityLabel={course.name} base={base} tabs={tabLinks(courseTabs, course, base)} />
         <div className="mt-4">
           <CourseIdentityHeader course={course} />
         </div>
       </Container>
 
-      <DetailTabNav items={tabs.map(({ href, label }) => ({ href, label }))} label={`${course.name} sections`} />
+      <DetailSectionNav items={sectionNavItems(courseTabs, course)} label={`${course.name} sections`} />
 
-      <Container className="px-4">
-        <div className="flex flex-col gap-8 lg:flex-row lg:items-start lg:gap-6">
-          <div className="min-w-0 flex-1">{children}</div>
-          <DetailStickySidebar>
-            <CourseDiscoverySidebar course={course} />
-          </DetailStickySidebar>
-        </div>
-      </Container>
+      <DetailBody aside={<CourseDiscoverySidebar course={course} />}>
+        <CourseOverviewSection course={course} />
+        {has('eligibility') ? (
+          <>
+            <CourseEligibilitySection course={course} />
+            <CourseExamsSection course={course} />
+          </>
+        ) : null}
+        {has('fees') ? <CourseFeesSection course={course} /> : null}
+        {has('syllabus') ? (
+          <>
+            <CourseSyllabusSection course={course} />
+            <CourseSpecializationsSection course={course} />
+          </>
+        ) : null}
+        {has('careers') ? <CourseCareersSection course={course} /> : null}
+        {has('colleges') ? <CourseCollegesSection course={course} /> : null}
+        {has('faqs') ? <CourseFaqSection course={course} /> : null}
+        <RelatedCoursesSection course={course} />
 
-      <Container className="px-4 pt-8 pb-10">
-        <div className="flex flex-col gap-4 rounded-[12px] border bg-primary/5 p-5 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <p className="font-heading text-lg font-bold text-foreground">Ready to shortlist colleges for {course.name}?</p>
-            <p className="mt-0.5 text-sm text-muted-foreground">Browse colleges offering this course, or explore more courses on Pathway.</p>
-          </div>
-          <div className="flex flex-col gap-2 sm:flex-row">
-            <Button variant="cta" className="h-11 gap-2 px-5 text-sm font-semibold" nativeButton={false} render={<Link href="/colleges" />}>
-              View Colleges
-              <ArrowRight className="size-4" aria-hidden="true" />
-            </Button>
-            <Button variant="outline" className="h-11 px-5 text-sm font-semibold" nativeButton={false} render={<Link href="/courses" />}>
-              Explore More Courses
-            </Button>
-          </div>
-        </div>
-      </Container>
+      </DetailBody>
 
+      {children}
       <CourseActionBar course={course} />
     </div>
   )

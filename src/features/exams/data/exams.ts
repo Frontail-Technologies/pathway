@@ -24,7 +24,13 @@ export type ExamDetail = {
   faqs: { question: string; answer: string }[]
    
   collegeSlugs?: string[]
+  dates?: ExamDateRow[]
+  documents?: ExamDocument[]
 }
+
+export type ExamDateRow = { label: string; session: string | null; startsOn: string | null; endsOn: string | null; dateText: string | null; sourceUrl: string | null }
+
+export type ExamDocument = { title: string; type: string; session: string | null; url: string }
 
 export type Exam = {
   id: string
@@ -41,6 +47,9 @@ export type Exam = {
    
   hasDetailPage: boolean
   detail?: ExamDetail
+  noticeCount?: number
+  collegeCount?: number
+  nextDate?: { label: string; startsOn: string | null; endsOn: string | null } | null
 }
 
 const genericProcess: ExamDetail['processSteps'] = [

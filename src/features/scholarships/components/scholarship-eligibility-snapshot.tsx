@@ -1,11 +1,11 @@
 import { CircleCheck } from 'lucide-react'
 import type { ScholarshipDetailData } from '../api/scholarships-api'
 
- 
 export function ScholarshipEligibilitySnapshot({ scholarship }: { scholarship: ScholarshipDetailData }) {
+  if (!scholarship.eligibilitySnapshot.length) return null
   return (
     <div className="mt-4">
-      <p className="text-sm font-semibold text-foreground">Eligibility at a Glance</p>
+      <p className="text-sm font-semibold text-foreground">Eligibility at a glance</p>
       <div className="mt-2 flex flex-col gap-1.5">
         {scholarship.eligibilitySnapshot.map((item) => (
           <p key={item} className="flex items-center gap-2 text-sm text-foreground">

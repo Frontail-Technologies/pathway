@@ -1,5 +1,5 @@
 import { catalogGet, catalogList } from '@/services/api/catalog'
-import { cityName, formatLakh, formatRupees, labels, stateName, type Place, type TermRef } from '@/features/catalog/format'
+import { cityName, formatLakh, formatRupees, labels, placementValue, stateName, type Place, type TermRef } from '@/features/catalog/format'
 import type { CollegeComparisonItem } from '../data/college-compare'
 import type { Degree, ProgramSnapshot } from '../data/programs'
 
@@ -56,7 +56,7 @@ function toCollege(dto: CompareInstitutionDto): CollegeComparisonItem {
   const location = [cityName(dto.location), stateName(dto.location)].filter(Boolean).join(', ')
   return {
     slug: dto.slug,
-    href: dto.hasDetailPage ? `/college/${dto.slug}` : `/colleges?q=${encodeURIComponent(dto.name)}`,
+    href: `/college/${dto.slug}`,
     logo: dto.logoUrl ?? '',
     name: dto.name,
     shortName: dto.shortName ?? dto.name,
@@ -72,9 +72,9 @@ function toCollege(dto: CompareInstitutionDto): CollegeComparisonItem {
     totalPrograms: dto.totalProgramsLabel ?? notAvailable,
     fees: { hostel: perYear(dto.fees.hostelPaisePerYear), other: perYear(dto.fees.otherPaisePerYear) },
     placements: {
-      averagePackage: dto.placements.averagePackage?.label ?? notAvailable,
-      highestPackage: dto.placements.highestPackage?.label ?? notAvailable,
-      placementRate: dto.placements.placementRate?.label ?? notAvailable,
+      averagePackage: placementValue(dto.placements.averagePackage) || notAvailable,
+      highestPackage: placementValue(dto.placements.highestPackage) || notAvailable,
+      placementRate: placementValue(dto.placements.placementRate) || notAvailable,
       topRecruiters: dto.placements.topRecruiters,
     },
     ratings: {

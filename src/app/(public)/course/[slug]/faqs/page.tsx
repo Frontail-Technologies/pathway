@@ -1,23 +1,23 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
+import { ScrollToSection } from '@/components/shared/scroll-to-section'
+import { findTab, tabSection } from '@/lib/detail-tabs'
 import { getCourseDetail } from '@/features/courses/api/courses-api'
-import { courseTabMetadata } from '@/features/courses/config/course-tabs'
-import { CourseFaqSection } from '@/features/courses/components/course-faq-section'
+import { courseTabMetadata, courseTabs } from '@/features/courses/config/course-tabs'
 
 type Props = { params: Promise<{ slug: string }> }
 
+const SEGMENT = 'faqs'
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
-  return courseTabMetadata(await getCourseDetail(slug), 'faqs')
+  return courseTabMetadata(await getCourseDetail(slug), SEGMENT)
 }
 
 export default async function CourseFaqsRoute({ params }: Props) {
   const { slug } = await params
   const course = await getCourseDetail(slug)
-  if (!course) notFound()
-  return (
-    <>
-      <CourseFaqSection course={course} />
-    </>
-  )
+  const tab = course ? findTab(courseTabs, course, SEGMENT) : undefined
+  if (!tab) notFound()
+  return <ScrollToSection id={tabSection(tab)} />
 }

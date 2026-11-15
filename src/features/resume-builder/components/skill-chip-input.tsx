@@ -66,7 +66,6 @@ function SkillGroupInput({ group, skills, onChange }: { group: SkillGroupId; ski
           }
         }}
         placeholder={`Add a ${group.toLowerCase()} skill and press Enter`}
-        className="h-9"
       />
     </div>
   )

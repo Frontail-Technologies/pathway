@@ -12,6 +12,7 @@ export const examOptions = ['JEE Main', 'JEE Advanced', 'NEET UG', 'CAT', 'CUET 
 
 export const sortOptions = [
   { value: 'popularity', label: 'Popularity' },
+  { value: 'ranking', label: 'NIRF rank' },
   { value: 'rating', label: 'Rating' },
   { value: 'fees-asc', label: 'Fees: Low to High' },
   { value: 'fees-desc', label: 'Fees: High to Low' },

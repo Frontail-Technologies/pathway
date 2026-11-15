@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import {
   Award,
+  Bookmark,
   BookOpen,
   Briefcase,
   Building2,
@@ -25,7 +26,8 @@ import {
 import { Sheet, SheetClose, SheetContent, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
 import { Button } from '@/components/ui/button'
 import { Logo } from '@/components/shared/logo'
-import { streams } from '@/features/streams/data/stream-taxonomy'
+import { listStreams } from '@/features/streams/api/streams-api'
+import type { StreamDefinition } from '@/features/streams/data/stream-taxonomy'
 
 const navGroups = [
   {
@@ -58,10 +60,22 @@ const navGroups = [
 export function MobileNavigation() {
   const pathname = usePathname()
   const [open, setOpen] = useState(false)
+  const [streams, setStreams] = useState<StreamDefinition[]>([])
 
   useEffect(() => {
     setOpen(false)
   }, [pathname])
+
+  useEffect(() => {
+    if (!open || streams.length) return
+    let active = true
+    listStreams().then((list) => {
+      if (active) setStreams(list)
+    })
+    return () => {
+      active = false
+    }
+  }, [open, streams.length])
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
@@ -95,6 +109,7 @@ export function MobileNavigation() {
             Search colleges, courses...
           </Link>
 
+          {streams.length ? (
           <div className="mb-5">
             <p className="mb-1.5 px-3 text-xs font-semibold tracking-wider text-muted-foreground uppercase">Streams</p>
             <nav aria-label="Streams" className="grid grid-cols-2 gap-1.5 px-1">
@@ -114,6 +129,7 @@ export function MobileNavigation() {
               })}
             </nav>
           </div>
+          ) : null}
 
           {navGroups.map((group) => (
             <div key={group.title} className="mb-5 last:mb-0">
@@ -161,27 +177,28 @@ export function MobileNavigation() {
 export function MobileBottomNavigation() {
   const pathname = usePathname()
   const items = [
-    { label: 'Home', href: '/', icon: House },
-    { label: 'Colleges', href: '/colleges', icon: Building2 },
-    { label: 'Courses', href: '/courses', icon: BookOpen },
-    { label: 'Search', href: '/search', icon: Search },
-    { label: 'Account', href: '/account', icon: UserRound },
+    { label: 'Home', href: '/', icon: House, match: /^\/$/ },
+    { label: 'Colleges', href: '/colleges', icon: Building2, match: /^\/(colleges|college|compare)(\/|$)/ },
+    { label: 'Exams', href: '/exams', icon: FileText, match: /^\/(exams|exam)(\/|$)/ },
+    { label: 'Saved', href: '/student/saved', icon: Bookmark, match: /^\/student\/saved/ },
+    { label: 'Account', href: '/account', icon: UserRound, match: /^\/(account|student|login|register)(\/|$)/ },
   ]
   return (
-    <nav aria-label="Mobile navigation" className="web-chrome fixed inset-x-0 bottom-0 z-20 border-t bg-card pt-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] md:hidden">
+    <nav aria-label="Mobile navigation" className="web-chrome fixed inset-x-0 bottom-0 z-20 border-t bg-card pt-1.5 pb-[max(0.375rem,env(safe-area-inset-bottom))] md:hidden">
       <div className="mx-auto grid max-w-md grid-cols-5">
-        {items.map(({ label, href, icon: Icon }) => {
-          const isActive = pathname === href
+        {items.map(({ label, href, icon: Icon, match }) => {
+          const isActive = match.test(pathname) && !(href === '/account' && pathname.startsWith('/student/saved'))
           return (
             <Link
               key={href}
               href={href}
               aria-current={isActive ? 'page' : undefined}
-              className="relative flex min-h-11 flex-col items-center justify-center gap-0.5 text-[11px] outline-none transition-colors duration-150 motion-reduce:transition-none active:bg-cta/10 focus-visible:ring-2 focus-visible:ring-primary/40"
+              className="group flex min-h-12 flex-col items-center justify-center gap-1 text-[11px] outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
             >
-              {isActive && <span aria-hidden="true" className="absolute top-0 h-0.75 w-6 rounded-full bg-cta" />}
-              <Icon className={isActive ? 'size-5 text-cta' : 'size-5 text-muted-foreground'} aria-hidden="true" />
-              <span className={isActive ? 'font-semibold text-cta' : 'text-muted-foreground'}>{label}</span>
+              <span className={`flex h-7 w-12 items-center justify-center rounded-full transition-colors duration-150 motion-reduce:transition-none ${isActive ? 'bg-secondary' : 'group-active:bg-muted'}`}>
+                <Icon className={isActive ? 'size-5 text-primary' : 'size-5 text-muted-foreground'} aria-hidden="true" />
+              </span>
+              <span className={isActive ? 'font-semibold text-primary' : 'text-muted-foreground'}>{label}</span>
             </Link>
           )
         })}

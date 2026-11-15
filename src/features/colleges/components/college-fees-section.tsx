@@ -1,9 +1,10 @@
 import type { CollegeDetailData } from '../data/college-detail'
 
 export function CollegeFeesSection({ college }: { college: CollegeDetailData }) {
+  if (!college.fees.length) return null
   return (
-    <section id="fees" className="scroll-mt-section border-b py-7 lg:py-9">
-      <h2 className="font-heading text-xl font-bold text-foreground sm:text-[22px]">{college.name} Fees</h2>
+    <section id="fees" className="scroll-mt-section rounded-xl border bg-card p-4 sm:p-6">
+      <h2 className="font-heading text-lg font-bold text-foreground sm:text-xl">{college.name} Fees</h2>
       <p className="mt-1 text-sm text-muted-foreground">Approximate tuition and total fee by programme.</p>
 
       <div className="mt-4 rounded-[10px] border bg-card">
@@ -16,11 +17,11 @@ export function CollegeFeesSection({ college }: { college: CollegeDetailData }) 
               </div>
               <div className="flex gap-6 sm:shrink-0 sm:text-right">
                 <div>
-                  <p className="text-[11px] tracking-wide text-muted-foreground uppercase">Tuition Fee</p>
+                  <p className="text-xs text-muted-foreground">Tuition Fee</p>
                   <p className="mt-0.5 text-sm font-medium text-foreground">{row.tuitionFee}</p>
                 </div>
                 <div>
-                  <p className="text-[11px] tracking-wide text-muted-foreground uppercase">Total Fee</p>
+                  <p className="text-xs text-muted-foreground">Total Fee</p>
                   <p className="mt-0.5 text-sm font-semibold text-foreground">{row.totalFee}</p>
                 </div>
               </div>

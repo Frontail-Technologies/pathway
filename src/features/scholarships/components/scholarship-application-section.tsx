@@ -4,8 +4,8 @@ import type { ScholarshipDetailData } from '../api/scholarships-api'
  
 export function ScholarshipApplicationSection({ scholarship }: { scholarship: ScholarshipDetailData }) {
   return (
-    <section id="apply" className="scroll-mt-section border-b py-7 lg:py-9">
-      <h2 className="font-heading text-xl font-bold text-foreground sm:text-[22px]">How to Apply</h2>
+    <section id="apply" className="scroll-mt-section rounded-xl border bg-card p-4 sm:p-6">
+      <h2 className="font-heading text-lg font-bold text-foreground sm:text-xl">How to Apply</h2>
 
       <div className="mt-4 flex flex-col">
         {scholarship.applicationSteps.map((step, index) => {

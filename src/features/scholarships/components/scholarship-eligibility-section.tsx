@@ -10,15 +10,15 @@ import type { ScholarshipDetailData } from '../api/scholarships-api'
  
 export function ScholarshipEligibilitySection({ scholarship }: { scholarship: ScholarshipDetailData }) {
   return (
-    <section id="eligibility" className="scroll-mt-section border-b py-7 lg:py-9">
-      <h2 className="font-heading text-xl font-bold text-foreground sm:text-[22px]">Eligibility Criteria</h2>
+    <section id="eligibility" className="scroll-mt-section rounded-xl border bg-card p-4 sm:p-6">
+      <h2 className="font-heading text-lg font-bold text-foreground sm:text-xl">Eligibility Criteria</h2>
 
       <div className="mt-4 flex flex-col gap-3">
         {scholarship.eligibility.rows.map((row) => (
           <div key={row.label} className="flex items-start gap-2.5 text-sm">
             <CircleCheck className="mt-0.5 size-4 shrink-0 text-success" aria-hidden="true" />
             <div className="min-w-0">
-              <p className="text-xs tracking-wide text-muted-foreground uppercase">{row.label}</p>
+              <p className="text-xs text-muted-foreground">{row.label}</p>
               <p className="mt-0.5 font-medium text-foreground">{row.value}</p>
             </div>
           </div>

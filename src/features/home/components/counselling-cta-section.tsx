@@ -6,13 +6,13 @@ import { Button } from '@/components/ui/button'
 const benefits = ['Free guidance', 'College & course shortlisting', 'Admission support']
 
  
-export function CounsellingCtaSection() {
+export function CounsellingCtaSection({ tone = 'plain' }: { tone?: 'plain' | 'muted' }) {
   return (
-    <section className="bg-background py-7 sm:py-9 lg:py-12">
+    <section className={`${tone === 'muted' ? 'bg-muted/60' : 'bg-background'} py-7 sm:py-9 lg:py-12`}>
       <div className="container-shell">
-        <div className="flex flex-col overflow-hidden rounded-[16px] bg-[linear-gradient(135deg,var(--brand-blue),var(--brand-blue-dark))] shadow-[0_8px_24px_rgba(30,58,138,0.22)] sm:min-h-56 sm:flex-row">
+        <div className="flex flex-col overflow-hidden rounded-2xl bg-primary sm:min-h-56 sm:flex-row">
           <div className="flex flex-col justify-center gap-2.5 p-5 sm:w-[55%] sm:p-8">
-            <p className="text-xs font-bold tracking-[0.14em] text-white/75 uppercase">Free Counselling</p>
+            <p className="text-sm font-medium text-white/80">Free counselling</p>
             <h2 className="font-heading text-xl font-bold text-white sm:text-2xl">Need help choosing the right college?</h2>
             <p className="max-w-md text-sm leading-6 text-white/85">Get personalised guidance based on your goals, exam scores and preferred courses.</p>
             <ul className="flex flex-col gap-1 sm:flex-row sm:flex-wrap sm:gap-x-5">
@@ -36,7 +36,6 @@ export function CounsellingCtaSection() {
               loading="lazy"
               className="object-cover"
             />
-            <div className="absolute inset-0 hidden bg-[linear-gradient(90deg,var(--brand-blue-dark)_0%,transparent_30%)] sm:block" />
           </div>
         </div>
       </div>

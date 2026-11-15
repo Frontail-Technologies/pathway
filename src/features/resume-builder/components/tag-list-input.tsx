@@ -46,7 +46,6 @@ export function TagListInput({ label, placeholder, values, onChange }: { label: 
           }
         }}
         placeholder={placeholder}
-        className="h-9"
       />
     </div>
   )

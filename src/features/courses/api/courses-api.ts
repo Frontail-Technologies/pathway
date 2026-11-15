@@ -63,14 +63,14 @@ export function toCourseListItem(dto: ProgramListDto): CourseListItem {
     feesValue: dto.fees.typicalPaise ? lakhNumber(dto.fees.typicalPaise) : 0,
     careerAreas: dto.careerAreas,
     collegesOffering: dto.collegesOffering,
-    hasDetailPage: dto.hasDetailPage,
+    hasDetailPage: true,
   }
 }
 
 export const listCourses = (query: CatalogQuery) => catalogList('/programs', query, toCourseListItem)
 
-export const courseHref = (course: { slug: string; name: string; hasDetailPage: boolean }) => (course.hasDetailPage ? `/course/${course.slug}` : `/courses?q=${encodeURIComponent(course.name)}`)
-export const collegeHref = (college: { slug: string; name: string; hasDetailPage: boolean }) => (college.hasDetailPage ? `/college/${college.slug}` : `/colleges?q=${encodeURIComponent(college.name)}`)
+export const courseHref = (course: { slug: string }) => `/course/${course.slug}`
+export const collegeHref = (college: { slug: string }) => `/college/${college.slug}`
 
 function toCourseDetail(dto: ProgramDetailDto): CourseDetailData {
   const course = toCourseListItem(dto)
@@ -78,6 +78,7 @@ function toCourseDetail(dto: ProgramDetailDto): CourseDetailData {
   const mode = dto.studyMode?.label ?? ''
   const colleges = dto.collegesOffering ? String(dto.collegesOffering) : ''
   return {
+    collegesHref: `/colleges?courses=${dto.degree.slug}&sort=ranking`,
     slug: dto.slug,
     name: dto.name,
     fullName: dto.fullName ?? dto.name,
@@ -110,7 +111,7 @@ function toCourseDetail(dto: ProgramDetailDto): CourseDetailData {
     },
     fees: dto.feeRanges.map((row) => ({ institutionType: row.ownership.label, feeRange: formatLakhRange(row.minPaise, row.maxPaise) })),
     feeComponents: dto.feeComponents.map((row) => ({ label: row.label, value: formatLakhRange(row.minPaise, row.maxPaise) })),
-    exams: dto.exams.map((row) => ({ name: row.exam.label, level: row.scopeLabel ?? '', purpose: row.purpose ?? '' })),
+    exams: dto.exams.map((row) => ({ name: row.exam.label, level: row.scopeLabel ?? '', purpose: row.purpose ?? '', slug: row.exam.slug })),
     specializations: dto.specializations.map((row) => ({ name: row.name, description: row.description ?? undefined })),
     syllabus: dto.curriculum.map((row) => ({ year: row.yearLabel, subjects: row.subjects })),
     careers: dto.careers.map((row) => ({ role: row.role, description: row.description ?? '' })),
@@ -134,7 +135,7 @@ function toCourseDetail(dto: ProgramDetailDto): CourseDetailData {
 export const getCourseDetail = cache(async (slug: string): Promise<CourseDetailData | undefined> => {
   try {
     const dto = await catalogGet<ProgramDetailDto>(`/programs/${seg(slug)}`)
-    return dto.hasDetailPage ? toCourseDetail(dto) : undefined
+    return toCourseDetail(dto)
   } catch (error) {
     if (isNotFound(error)) return undefined
     throw error

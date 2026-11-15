@@ -82,4 +82,3 @@ export function searchEntries(query: string): SearchEntry[] {
 
 export const searchLocalEntries = searchEntries
 
-export const popularSearches = ['IIT Delhi', 'B.Tech Computer Science', 'JEE Main', 'NEET', 'MBA', 'Scholarship', 'CAT', 'College Predictor']

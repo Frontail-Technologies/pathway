@@ -30,6 +30,7 @@ export type ScholarshipListDto = {
 
 type ScholarshipDetailDto = ScholarshipListDto & {
   overview: string | null
+  officialDocuments?: { title: string; docType: string; academicSession: string | null; url: string }[]
   eligibilitySnapshot: string[]
   benefits: { amount: string | null; coverage: string | null; duration: string | null; disbursement: string | null; note: string | null }
   eligibility: { rows: LabelValue[]; note: string | null }
@@ -98,13 +99,22 @@ export function toScholarshipListItem(dto: ScholarshipListDto): ScholarshipListI
     shortEligibility: dto.shortEligibility,
     officialApplyUrl: dto.officialApplyUrl ?? undefined,
     featured: dto.featured,
-    hasDetailPage: dto.hasDetailPage,
+    hasDetailPage: true,
   }
 }
 
 export const listScholarships = (query: CatalogQuery) => catalogList('/scholarships', query, toScholarshipListItem)
 
-export const scholarshipHref = (item: { slug: string; name: string; hasDetailPage: boolean }) => (item.hasDetailPage ? `/scholarship/${item.slug}` : `/scholarships?q=${encodeURIComponent(item.name)}`)
+export const scholarshipHref = (item: { slug: string }) => `/scholarship/${item.slug}`
+
+function generatedOverview(card: ScholarshipListItem) {
+  const levels = card.educationLevels.length ? card.educationLevels.join(' and ').toLowerCase() : ''
+  const type = card.scholarshipType ? `${card.scholarshipType.toLowerCase()} ` : ''
+  const parts = [`${card.name} is a ${type}scholarship offered by ${card.provider}${levels ? ` for ${levels} students` : ''}.`]
+  if (card.benefitLabel) parts.push(`The award is ${card.benefitLabel}.`)
+  if (card.deadlineDisplay && card.deadlineDisplay !== 'Not announced') parts.push(`Applications close on ${card.deadlineDisplay}.`)
+  return parts.join(' ')
+}
 
 function toScholarshipDetail(dto: ScholarshipDetailDto): ScholarshipDetailData {
   const card = toScholarshipListItem(dto)
@@ -121,7 +131,8 @@ function toScholarshipDetail(dto: ScholarshipDetailDto): ScholarshipDetailData {
     benefitLabel: card.benefitLabel,
     deadline: card.deadline,
     deadlineDisplay: card.deadlineDisplay,
-    overviewCopy: dto.overview ?? '',
+    overviewCopy: dto.overview ?? generatedOverview(card),
+    officialDocuments: (dto.officialDocuments ?? []).map((doc) => ({ title: doc.title, type: doc.docType, session: doc.academicSession, url: doc.url })),
     eligibilitySnapshot: dto.eligibilitySnapshot,
     benefits: {
       amount: dto.benefits.amount ?? card.benefitLabel,
@@ -152,10 +163,32 @@ function toScholarshipDetail(dto: ScholarshipDetailDto): ScholarshipDetailData {
   }
 }
 
+async function similarScholarships(slug: string): Promise<ScholarshipRelatedItem[]> {
+  const list = await listScholarships({ sort: 'closing-soon', limit: '5' }).catch(() => null)
+  return (list?.items ?? [])
+    .filter((item) => item.slug !== slug)
+    .slice(0, 4)
+    .map((item) => ({ slug: item.slug, name: item.name, provider: item.provider, benefitLabel: item.benefitLabel, deadlineDisplay: item.deadlineDisplay, status: item.status, href: scholarshipHref(item) }))
+}
+
+function scholarshipFactFaqs(detail: ScholarshipDetailData) {
+  const levels = detail.educationLevels.join(' and ').toLowerCase()
+  const faqs: ({ question: string; answer: string } | null)[] = [
+    { question: `Who offers the ${detail.name}?`, answer: `The ${detail.name} is offered by ${detail.provider}.` },
+    detail.benefitLabel ? { question: `How much is the ${detail.name}?`, answer: `The benefit is ${detail.benefitLabel}${detail.benefits.duration ? `, for ${detail.benefits.duration.toLowerCase()}` : ''}.` } : null,
+    levels ? { question: `Who can apply for the ${detail.name}?`, answer: `It is open to ${levels} students${detail.streams.length ? ` in ${detail.streams.join(', ')}` : ' in all streams'}.` } : null,
+    { question: `What is the last date to apply?`, answer: detail.deadlineDisplay && detail.deadlineDisplay !== 'Not announced' ? `The recorded deadline is ${detail.deadlineDisplay}. Confirm it on the provider's official website.` : `The provider has not announced a deadline yet.` },
+    detail.officialApplyUrl ? { question: `How do I apply?`, answer: `Applications are made on ${detail.provider}'s official website. Pathway links to it but does not process applications.` } : null,
+  ]
+  return faqs.filter((faq): faq is { question: string; answer: string } => Boolean(faq))
+}
+
 export const getScholarshipDetail = cache(async (slug: string): Promise<ScholarshipDetailData | undefined> => {
   try {
     const dto = await catalogGet<ScholarshipDetailDto>(`/scholarships/${seg(slug)}`)
-    return dto.hasDetailPage ? toScholarshipDetail(dto) : undefined
+    const detail = toScholarshipDetail(dto)
+    const related = detail.relatedScholarships.length ? detail.relatedScholarships : await similarScholarships(detail.slug)
+    return { ...detail, relatedScholarships: related, faqs: detail.faqs.length ? detail.faqs : scholarshipFactFaqs(detail) }
   } catch (error) {
     if (isNotFound(error)) return undefined
     throw error

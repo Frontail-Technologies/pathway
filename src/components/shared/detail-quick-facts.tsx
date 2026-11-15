@@ -21,7 +21,7 @@ export function DetailQuickFacts({ facts }: { facts: DetailQuickFact[] }) {
         <div key={fact.label} className="flex items-start gap-2 rounded-[10px] border bg-card px-3 py-2.5">
           <fact.icon className="mt-0.5 size-4 shrink-0 text-primary" aria-hidden="true" />
           <div className="min-w-0">
-            <p className="text-[11px] tracking-wide text-muted-foreground uppercase">{fact.label}</p>
+            <p className="text-xs text-muted-foreground">{fact.label}</p>
             <p className="mt-0.5 truncate text-sm font-semibold text-foreground">{fact.value}</p>
           </div>
         </div>

@@ -3,8 +3,8 @@ import type { CourseDetailData } from '../data/course-detail'
 
 export function CourseFaqSection({ course }: { course: CourseDetailData }) {
   return (
-    <section id="faqs" className="scroll-mt-section py-7 lg:py-9">
-      <h2 className="font-heading text-xl font-bold text-foreground sm:text-[22px]">Frequently Asked Questions</h2>
+    <section id="faqs" className="scroll-mt-section rounded-xl border bg-card p-4 sm:p-6">
+      <h2 className="font-heading text-lg font-bold text-foreground sm:text-xl">Frequently Asked Questions</h2>
 
       <div className="mt-4 rounded-[10px] border bg-card px-4">
         <Accordion multiple={false}>
