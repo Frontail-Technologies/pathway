@@ -1,31 +1,19 @@
-import { getComparableColleges } from '../api/compare-api'
-import { PopularComparisonCard, type ProgramOverride } from './popular-comparison-card'
+import { getComparableColleges, rankedPairs } from '../api/compare-api'
+import { PopularComparisonCard } from './popular-comparison-card'
 
-export type ComparisonPairSpec = {
-  slugA: string
-  slugB: string
-  programA?: ProgramOverride
-  programB?: ProgramOverride
-}
-
-export async function PopularComparisonCategorySection({ title, pairs }: { title: string; pairs: ComparisonPairSpec[] }) {
-  const colleges = await getComparableColleges(pairs.flatMap((pair) => [pair.slugA, pair.slugB])).catch(() => new Map())
-  const shown = pairs.filter((pair) => colleges.has(pair.slugA) && colleges.has(pair.slugB))
+export async function PopularComparisonCategorySection({ title, courses, count = 3, exclude = [] }: { title: string; courses: string; count?: number; exclude?: string[] }) {
+  const pairs = await rankedPairs(courses, count, exclude)
+  const colleges = await getComparableColleges(pairs.flat()).catch(() => new Map())
+  const shown = pairs.filter(([a, b]) => colleges.has(a) && colleges.has(b))
   if (shown.length === 0) return null
   return (
-    <div>
-      <p className="text-sm font-semibold text-foreground sm:text-[15px]">{title}</p>
-      <div className="mt-3 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {shown.map((pair) => (
-          <PopularComparisonCard
-            key={`${pair.slugA}-${pair.slugB}-${pair.programA?.course ?? ''}`}
-            collegeA={colleges.get(pair.slugA)!}
-            collegeB={colleges.get(pair.slugB)!}
-            programA={pair.programA}
-            programB={pair.programB}
-          />
+    <section>
+      <h2 className="font-heading text-lg font-bold text-foreground sm:text-xl">{title}</h2>
+      <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {shown.map(([a, b]) => (
+          <PopularComparisonCard key={`${a}-${b}`} collegeA={colleges.get(a)!} collegeB={colleges.get(b)!} />
         ))}
       </div>
-    </div>
+    </section>
   )
 }

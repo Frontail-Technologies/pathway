@@ -53,16 +53,16 @@ export function TutorProfilePage() {
             <Field label="Display name" required htmlFor="tutor-name" error={errors.name}>
               <Input id="tutor-name" value={draft.name} onChange={(e) => set({ name: e.target.value })} aria-invalid={!!errors.name} autoComplete="name" />
             </Field>
-            <Field label="City" htmlFor="tutor-city" hint="Shown for in-person sessions.">
+            <Field label="City" htmlFor="tutor-city">
               <Input id="tutor-city" value={draft.city} onChange={(e) => set({ city: e.target.value })} autoComplete="address-level2" />
             </Field>
             <div className="sm:col-span-2">
-              <Field label="Headline" required htmlFor="tutor-headline" hint="One line, e.g. “Physics tutor for JEE & NEET”." error={errors.headline}>
+              <Field label="Headline" required htmlFor="tutor-headline" error={errors.headline}>
                 <Input id="tutor-headline" value={draft.headline} maxLength={80} onChange={(e) => set({ headline: e.target.value })} aria-invalid={!!errors.headline} />
               </Field>
             </div>
             <div className="sm:col-span-2">
-              <Field label="Introduction" htmlFor="tutor-intro" hint={`${draft.intro.length}/400 · How you teach and who you help.`}>
+              <Field label="Introduction" htmlFor="tutor-intro" hint={`${draft.intro.length}/400`}>
                 <Textarea id="tutor-intro" value={draft.intro} maxLength={400} onChange={(e) => set({ intro: e.target.value })} className="min-h-24" />
               </Field>
             </div>

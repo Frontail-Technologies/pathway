@@ -7,7 +7,7 @@ export function MobileActionBar({ label, children }: { label: string; children: 
   return (
     <>
       <div aria-hidden="true" className="h-17 lg:hidden print:hidden" />
-      <div role="region" aria-label={label} className="fixed inset-x-0 bottom-(--pw-bottom-nav-h) z-20 border-t bg-card/95 px-4 py-2.5 shadow-[0_-4px_16px_rgba(15,23,42,0.08)] backdrop-blur supports-[backdrop-filter]:bg-card/85 lg:hidden print:hidden">
+      <div role="region" aria-label={label} data-mobile-action-bar className="fixed inset-x-0 bottom-(--pw-bottom-nav-h) z-20 border-t bg-card/95 px-4 py-2.5 shadow-[0_-4px_16px_rgba(15,23,42,0.08)] backdrop-blur supports-[backdrop-filter]:bg-card/85 lg:hidden print:hidden">
         <div className="mx-auto flex max-w-xl items-center gap-2 [&>*]:h-11">{children}</div>
       </div>
     </>

@@ -1,97 +1,74 @@
 'use client'
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { Plus, X } from 'lucide-react'
+import Link from 'next/link'
+import { ArrowRight, Plus, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { getCollegeInitials, maxComparisonSlots } from '../data/college-compare'
-import { CollegeCoursePickerDialog, type Selection } from './college-course-picker-dialog'
+import { getCollegeInitials } from '../data/college-compare'
+import { COMPARE_LIMIT, useCompareTray } from '../compare-tray-provider'
+import { CollegeCoursePickerDialog } from './college-course-picker-dialog'
 
 export function CompareStarterSection() {
-  const router = useRouter()
-  const [selections, setSelections] = useState<(Selection | undefined)[]>(() => Array.from({ length: maxComparisonSlots }, () => undefined))
-
-  const filled = selections.filter((selection): selection is Selection => Boolean(selection))
-  const excludeSlugs = filled.map((selection) => selection.collegeSlug)
-
-  const setSlot = (index: number, selection: Selection) => {
-    setSelections((prev) => {
-      const next = [...prev]
-      next[index] = selection
-      return next
-    })
-  }
-
-  const removeSlot = (index: number) => {
-    setSelections((prev) => {
-      const next = [...prev]
-      next[index] = undefined
-      return next
-    })
-  }
-
-  const startComparing = () => {
-    if (filled.length === 0) return
-    const query = new URLSearchParams({
-      colleges: filled.map((selection) => selection.collegeSlug).join(','),
-      programs: filled.map((selection) => selection.program).join(','),
-    }).toString()
-    router.push(`/compare/colleges?${query}`)
-  }
+  const { items, add, remove, href } = useCompareTray()
+  const slots = Array.from({ length: COMPARE_LIMIT }, (_, index) => items[index])
+  const ready = items.length >= 2
 
   return (
-    <div className="rounded-[10px] border bg-card p-4 sm:p-5">
-      <p className="text-sm font-semibold text-foreground sm:text-[15px]">Start a Comparison</p>
-      <p className="mt-1 text-xs text-muted-foreground sm:text-sm">Add up to 3 colleges to compare side by side.</p>
+    <div className="rounded-xl border bg-card p-4 sm:p-6">
+      <h2 className="font-heading text-lg font-bold text-foreground sm:text-xl">Pick colleges to compare</h2>
+      <p className="mt-1 text-sm text-muted-foreground">Add two or three colleges. You can also tap Compare on any college card while browsing.</p>
 
-      <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
-        {selections.map((selection, index) =>
-          selection ? (
-            <FilledStarterSlot key={index} selection={selection} onRemove={() => removeSlot(index)} />
+      <div className="mt-4 grid grid-cols-1 items-center gap-3 sm:grid-cols-[1fr_auto_1fr_auto_1fr]">
+        {slots.map((item, index) => [
+          index > 0 ? (
+            <span key={`vs-${index}`} aria-hidden="true" className="mx-auto flex size-8 items-center justify-center rounded-full border bg-card text-[11px] font-bold text-muted-foreground">
+              VS
+            </span>
+          ) : null,
+          item ? (
+            <div key={item.slug} className="flex h-24 items-center gap-3 rounded-lg border border-primary/40 bg-card px-3">
+              <span className="flex size-11 shrink-0 items-center justify-center rounded-lg bg-secondary text-xs font-bold text-primary">{getCollegeInitials(item.shortName)}</span>
+              <span className="min-w-0 flex-1">
+                <span className="block truncate text-sm font-semibold text-foreground">{item.shortName}</span>
+                <span className="block truncate text-xs text-muted-foreground">{item.location}</span>
+              </span>
+              <button
+                type="button"
+                aria-label={`Remove ${item.shortName}`}
+                onClick={() => remove(item.slug)}
+                className="flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-md text-muted-foreground outline-none transition-colors hover:bg-muted focus-visible:ring-2 focus-visible:ring-primary/40"
+              >
+                <X className="size-4" aria-hidden="true" />
+              </button>
+            </div>
           ) : (
             <CollegeCoursePickerDialog
-              key={index}
-              excludeSlugs={excludeSlugs}
-              onApply={(next) => setSlot(index, next)}
+              key={`slot-${index}`}
+              excludeSlugs={items.map((entry) => entry.slug)}
+              onApply={(selection) => add({ slug: selection.collegeSlug, name: selection.college.name, shortName: selection.college.shortName, location: selection.college.location, program: selection.program })}
               trigger={
                 <button
                   type="button"
                   className="flex h-24 w-full cursor-pointer flex-col items-center justify-center gap-1.5 rounded-lg border border-dashed text-sm font-medium text-primary outline-none transition-colors hover:bg-secondary focus-visible:ring-2 focus-visible:ring-primary/40"
                 >
                   <Plus className="size-5" aria-hidden="true" />
-                  Add College
+                  Add college
                 </button>
               }
             />
-          )
-        )}
+          ),
+        ])}
       </div>
 
-      <Button className="mt-4 h-11 w-full text-sm font-semibold sm:w-fit sm:px-8" disabled={filled.length === 0} onClick={startComparing}>
-        Start Comparing
-      </Button>
-    </div>
-  )
-}
-
-function FilledStarterSlot({ selection, onRemove }: { selection: Selection; onRemove: () => void }) {
-  const { college } = selection
-
-  return (
-    <div className="flex h-24 items-center gap-3 rounded-lg border bg-background px-3">
-      <div className="flex size-11 shrink-0 items-center justify-center rounded-lg bg-secondary text-xs font-bold text-primary">{getCollegeInitials(college.shortName)}</div>
-      <div className="min-w-0 flex-1">
-        <p className="truncate text-sm font-semibold text-foreground">{college.shortName}</p>
-        <p className="truncate text-xs text-muted-foreground">{college.location}</p>
-      </div>
-      <button
-        type="button"
-        aria-label={`Remove ${college.shortName}`}
-        onClick={onRemove}
-        className="flex size-7 shrink-0 cursor-pointer items-center justify-center rounded-md text-muted-foreground outline-none transition-colors hover:bg-muted focus-visible:ring-2 focus-visible:ring-primary/40"
-      >
-        <X className="size-4" aria-hidden="true" />
-      </button>
+      {ready ? (
+        <Button variant="cta" size="lg" className="mt-5 w-full gap-2 font-semibold sm:w-fit sm:px-8" nativeButton={false} render={<Link href={href} />}>
+          Compare colleges
+          <ArrowRight className="size-4" aria-hidden="true" />
+        </Button>
+      ) : (
+        <Button variant="cta" size="lg" className="mt-5 w-full font-semibold sm:w-fit sm:px-8" disabled>
+          Compare colleges
+        </Button>
+      )}
     </div>
   )
 }

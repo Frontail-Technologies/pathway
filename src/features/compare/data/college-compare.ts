@@ -6,6 +6,7 @@ export type CollegeComparisonFees = {
 export type CollegeComparisonPlacements = {
   averagePackage: string
   highestPackage: string
+  medianPackage?: string
   placementRate: string
   topRecruiters: string[]
 }
@@ -46,6 +47,10 @@ export type CollegeComparisonItem = {
   approvedBy: string
   instituteStatus: string
   totalPrograms: string
+  nirfRank?: string
+  students?: string
+  faculty?: string
+  studentFacultyRatio?: string
   fees: CollegeComparisonFees
   placements: CollegeComparisonPlacements
   ratings: CollegeComparisonRatings

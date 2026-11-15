@@ -4,7 +4,7 @@ import type { ReactNode } from 'react'
 import Link from 'next/link'
 import { BadgeCheck, Bookmark, Briefcase, FileText, IndianRupee, Landmark, MapPin, Trophy } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Checkbox } from '@/components/ui/checkbox'
+import { CompareToggle } from '@/features/compare/components/compare-toggle'
 import { SponsoredBadge } from '@/components/shared/sponsored-badge'
 import { toneForOwnership } from '@/features/catalog/tones'
 import { useSavedItem } from '@/features/saved/saved-items-provider'
@@ -81,14 +81,10 @@ function quickLinks(college: CollegeListItem) {
 export function CollegeCard({
   college,
   variant = 'listing',
-  compared,
-  onToggleCompare,
   className,
 }: {
   college: CollegeListItem
   variant?: 'listing' | 'rail'
-  compared?: boolean
-  onToggleCompare?: (id: string) => void
   className?: string
 }) {
   const href = `/college/${college.slug}`
@@ -183,12 +179,7 @@ export function CollegeCard({
           ))}
         </nav>
         <div className="flex items-center gap-3">
-          {onToggleCompare ? (
-            <label className="flex cursor-pointer items-center gap-2 text-sm text-muted-foreground">
-              <Checkbox checked={Boolean(compared)} onCheckedChange={() => onToggleCompare(college.id)} aria-label={`Compare ${college.name}`} />
-              Compare
-            </label>
-          ) : null}
+          <CompareToggle college={{ slug: college.slug, name: college.name, shortName: college.name, location: place }} />
           <Button variant="cta" size="sm" className="ml-auto px-5 sm:ml-0" nativeButton={false} render={<Link href={href} />}>
             View college
           </Button>

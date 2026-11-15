@@ -239,6 +239,13 @@ h1, h2, h3, h4, h5, h6 { font-family: var(--font-manrope), sans-serif; letter-sp
 @utility scroll-mt-header { scroll-margin-top: calc(var(--pw-header-h) + 1rem); }
 @utility scroll-mt-section { scroll-margin-top: calc(var(--pw-header-h) + var(--pw-section-nav-h) + 12px); }
 .pw-bottom-nav-space { padding-bottom: var(--pw-bottom-nav-h); }
+.pw-compare-tray { bottom: calc(var(--pw-bottom-nav-h) + 10px); }
+@media (max-width: 1023px) {
+  :root:has([data-mobile-action-bar]) .pw-compare-tray { bottom: calc(var(--pw-bottom-nav-h) + 76px); }
+}
+@media (min-width: 1024px) {
+  .pw-compare-tray { bottom: 16px; }
+}
 /* Student space has its own 56px header (no search row). */
 .pw-student-shell, .pw-dashboard-shell { --pw-header-h: 56px; }
 

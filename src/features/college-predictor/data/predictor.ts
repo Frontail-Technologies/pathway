@@ -1,138 +1,67 @@
+export type PredictorExamSlug = 'jee-main' | 'jee-advanced'
+export type PredictorCategory = 'OPEN' | 'EWS' | 'OBC-NCL' | 'SC' | 'ST'
+export type PredictorGender = 'neutral' | 'female'
+export type Chance = 'safe' | 'likely' | 'reach'
 
-
-
-
-
-
-export type PredictorExam = 'JEE Main' | 'JEE Advanced' | 'BITSAT' | 'WBJEE' | 'NEET UG' | 'CUET UG'
-export type CourseId = 'engineering' | 'medical' | 'undergraduate'
-export type ScoreType = 'Rank' | 'Percentile' | 'Score'
-export type CollegeTypePreference = 'Government' | 'Private' | 'Either'
-export type PriorityChoice = 'Better college' | 'Preferred branch' | 'Preferred location' | 'Balanced options'
-
-export type ExamPerformance = { inputType: ScoreType; value: string }
-
-export type CollegePredictorDraft = {
-  course: CourseId | ''
-  exams: PredictorExam[]
-   
-  performance: Partial<Record<PredictorExam, ExamPerformance>>
-  category: string
-  homeState: string
-  gender: string
-  counselling: string
-  preferredStates: string[]
-  preferredBranches: string[]
-  collegeType: CollegeTypePreference
-  priority: PriorityChoice | ''
-}
-
-export const emptyDraft: CollegePredictorDraft = {
-  course: '',
-  exams: [],
-  performance: {},
-  category: '',
-  homeState: '',
-  gender: '',
-  counselling: '',
-  preferredStates: [],
-  preferredBranches: [],
-  collegeType: 'Either',
-  priority: '',
-}
-
-export type CourseOption = { id: CourseId; label: string; description: string; exams: PredictorExam[]; branches: string[] }
-
-export const courseOptions: CourseOption[] = [
-  { id: 'engineering', label: 'Engineering', description: 'B.Tech / B.E.', exams: ['JEE Main', 'JEE Advanced', 'BITSAT', 'WBJEE'], branches: ['Computer Science', 'Electronics', 'Mechanical', 'Civil', 'Electrical'] },
-  { id: 'medical', label: 'Medical', description: 'MBBS', exams: ['NEET UG'], branches: ['MBBS'] },
-  { id: 'undergraduate', label: 'Undergraduate Programs', description: 'Central university UG', exams: ['CUET UG'], branches: ['B.Com', 'B.Sc'] },
+export const predictorExams: { slug: PredictorExamSlug; label: string; counselling: string }[] = [
+  { slug: 'jee-main', label: 'JEE Main', counselling: 'NITs, IIITs and GFTIs' },
+  { slug: 'jee-advanced', label: 'JEE Advanced', counselling: 'IITs' },
 ]
 
-export function getCourse(id: CourseId | ''): CourseOption | undefined {
-  return courseOptions.find((course) => course.id === id)
-}
+export const examFromSlug: Record<string, string> = Object.fromEntries(predictorExams.map((exam) => [exam.slug, exam.label]))
 
-export function courseForExam(exam: PredictorExam): CourseOption {
-  return courseOptions.find((course) => course.exams.includes(exam)) ?? courseOptions[0]
-}
-
- 
-export const examFromSlug: Record<string, PredictorExam> = {
-  'jee-main': 'JEE Main',
-  'jee-advanced': 'JEE Advanced',
-  bitsat: 'BITSAT',
-  wbjee: 'WBJEE',
-  neet: 'NEET UG',
-  'neet-ug': 'NEET UG',
-  cuet: 'CUET UG',
-  'cuet-ug': 'CUET UG',
-}
-
-export const scoreTypes: ScoreType[] = ['Rank', 'Percentile', 'Score']
-export const categories = ['General', 'OBC-NCL', 'SC', 'ST', 'EWS']
-export const genders = ['Male', 'Female', 'Other']
-export const counsellingOptions = ['JoSAA Counselling', 'MCC Counselling', 'State Counselling', 'University-level Admission']
-
-export const homeStates = [
-  'Andhra Pradesh', 'Assam', 'Bihar', 'Chhattisgarh', 'Delhi', 'Goa', 'Gujarat', 'Haryana', 'Himachal Pradesh', 'Jharkhand',
-  'Karnataka', 'Kerala', 'Madhya Pradesh', 'Maharashtra', 'Odisha', 'Punjab', 'Rajasthan', 'Tamil Nadu', 'Telangana',
-  'Uttar Pradesh', 'Uttarakhand', 'West Bengal',
+export const predictorCategories: { value: PredictorCategory; label: string }[] = [
+  { value: 'OPEN', label: 'General (OPEN)' },
+  { value: 'EWS', label: 'EWS' },
+  { value: 'OBC-NCL', label: 'OBC-NCL' },
+  { value: 'SC', label: 'SC' },
+  { value: 'ST', label: 'ST' },
 ]
 
-export const preferredStateOptions = ['Delhi', 'Maharashtra', 'Karnataka', 'Tamil Nadu', 'Telangana', 'Uttar Pradesh', 'Rajasthan', 'Gujarat', 'West Bengal', 'Punjab']
+export const chanceLabel: Record<Chance, string> = { safe: 'High chance', likely: 'Good chance', reach: 'Low chance' }
 
-export function getBranchOptions(course: CourseId | ''): string[] {
-  return getCourse(course)?.branches ?? []
-}
+export const quotaLabel: Record<string, string> = { AI: 'All India', HS: 'Home state', OS: 'Other state', JK: 'J&K', LA: 'Ladakh', GO: 'Goa' }
 
-export const priorityOptions: PriorityChoice[] = ['Better college', 'Preferred branch', 'Preferred location', 'Balanced options']
+export type PredictorInput = { exam: PredictorExamSlug; rank: number | null; category: PredictorCategory; gender: PredictorGender; pwd: boolean; state: string }
 
-export const defaultPerformance: ExamPerformance = { inputType: 'Rank', value: '' }
+const isExam = (value: string | undefined): value is PredictorExamSlug => predictorExams.some((exam) => exam.slug === value)
+const isCategory = (value: string | undefined): value is PredictorCategory => predictorCategories.some((option) => option.value === value)
 
-export type PredictorErrors = { course?: string; exams?: string; performance?: Partial<Record<PredictorExam, string>> }
-
-export function validateCourseStep(draft: CollegePredictorDraft): PredictorErrors {
-  const errors: PredictorErrors = {}
-  if (!draft.course) errors.course = 'Choose what you plan to study.'
-  else if (draft.exams.length === 0) errors.exams = 'Select at least one exam.'
-  return errors
-}
-
-
-export function validatePerformanceValue(inputType: ScoreType, raw: string): string | undefined {
-  const value = raw.trim()
-  const label = inputType.toLowerCase()
-  if (!value) return `Enter your ${label}.`
-  const number = Number(value)
-  if (!Number.isFinite(number)) return `Enter a valid number for your ${label}.`
-  if (inputType === 'Rank' && (!Number.isInteger(number) || number < 1)) return 'Rank must be a whole number of 1 or more.'
-  if (inputType === 'Percentile' && (number < 0 || number > 100)) return 'Percentile must be between 0 and 100.'
-  if (inputType === 'Score' && number < 0) return 'Score cannot be negative.'
-  return undefined
-}
-
-export function validatePerformanceStep(draft: CollegePredictorDraft): PredictorErrors {
-  const performance: Partial<Record<PredictorExam, string>> = {}
-  for (const exam of draft.exams) {
-    const entry = draft.performance[exam] ?? defaultPerformance
-    const error = validatePerformanceValue(entry.inputType, entry.value)
-    if (error) performance[exam] = error
+export function parsePredictorInput(params: Record<string, string | string[] | undefined>): PredictorInput {
+  const one = (key: string) => {
+    const value = params[key]
+    return Array.isArray(value) ? value[0] : value
   }
-  return Object.keys(performance).length > 0 ? { performance } : {}
+  const rank = Number(one('rank'))
+  const exam = one('exam')
+  const category = one('category')
+  const state = one('state') ?? ''
+  return {
+    exam: isExam(exam) ? exam : 'jee-main',
+    rank: Number.isInteger(rank) && rank > 0 && rank <= 2_000_000 ? rank : null,
+    category: isCategory(category) ? category : 'OPEN',
+    gender: one('gender') === 'female' ? 'female' : 'neutral',
+    pwd: one('pwd') === 'true',
+    state: /^[a-z0-9-]{1,80}$/.test(state) ? state : '',
+  }
 }
 
+export function predictorQuery(input: PredictorInput) {
+  const query: Record<string, string> = { exam: input.exam }
+  if (input.rank) query.rank = String(input.rank)
+  if (input.category !== 'OPEN') query.category = input.category
+  if (input.gender === 'female') query.gender = 'female'
+  if (input.pwd) query.pwd = 'true'
+  if (input.state && input.exam === 'jee-main') query.state = input.state
+  return query
+}
 
-
-
-
-
-export type PreviewBucket = { id: 'reach' | 'match' | 'safer'; title: string; description: string; slugs: string[] }
-
-export const previewBuckets: PreviewBucket[] = [
-  { id: 'reach', title: 'Higher Reach', description: 'Colleges that may be more competitive for your profile.', slugs: ['iit-delhi', 'iit-bombay'] },
-  { id: 'match', title: 'Balanced Match', description: 'Colleges that may be a closer fit to your profile.', slugs: ['bits-pilani', 'vit-vellore'] },
-  { id: 'safer', title: 'Safer Options', description: 'Colleges where your profile may be more comfortable.', slugs: ['manipal-university', 'chandigarh-university'] },
-]
-
-export const previewSlugs = previewBuckets.flatMap((bucket) => bucket.slugs)
+export type PredictionSeat = { program: string; quota: string; category: string; gender: PredictorGender; openingRank: number; closingRank: number; chance: Chance }
+export type PredictionCollege = { slug: string; name: string; city: string | null; state: string | null; nirfRank: number | null; bestChance: Chance; seats: PredictionSeat[] }
+export type Prediction = {
+  exam: { slug: string; label: string }
+  year: number | null
+  round: number | null
+  counts: { safe: number; likely: number; reach: number; colleges: number }
+  colleges: PredictionCollege[]
+}

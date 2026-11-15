@@ -55,8 +55,8 @@ export const getStreamHub = cache(async (slug: string): Promise<StreamHub | unde
     const examSlug = entry.id.replace(/^exam-/, '')
     const name = entry.title.split(' — ')[0]
     return [
-      ...(examFromSlug[examSlug] ? [{ id: `cp-${examSlug}`, kind: 'tool' as const, title: `${name} College Predictor`, subtitle: 'Preview colleges from your score', href: `/college-predictor?exam=${examSlug}`, keywords: '' }] : []),
-      ...(rankExamFromSlug[examSlug] ? [{ id: `rp-${examSlug}`, kind: 'tool' as const, title: `${name} Rank Predictor`, subtitle: 'Estimate a rank range from your marks', href: `/rank-predictor?exam=${examSlug}`, keywords: '' }] : []),
+      ...(examFromSlug[examSlug] ? [{ id: `cp-${examSlug}`, kind: 'tool' as const, title: `${name} College Predictor`, subtitle: 'Colleges within reach of your JoSAA rank', href: `/college-predictor?exam=${examSlug}`, keywords: '' }] : []),
+      ...(rankExamFromSlug[examSlug] ? [{ id: `rp-${examSlug}`, kind: 'tool' as const, title: `${name} Rank Predictor`, subtitle: 'Estimate your rank from your percentile', href: `/rank-predictor?exam=${examSlug}`, keywords: '' }] : []),
     ]
   })
   const ordered = [...sections.slice(0, 3), { id: 'tools', title: 'Predictors & Tools', kind: 'tool' as const, entries: tools }, ...sections.slice(3)]

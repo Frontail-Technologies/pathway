@@ -2,6 +2,7 @@
 
 import { toast } from 'sonner'
 import { Bookmark, Briefcase, Building2, GraduationCap, IndianRupee, MapPin, Share2, Trophy, Users } from 'lucide-react'
+import { CompareToggle } from '@/features/compare/components/compare-toggle'
 import { VerifiedBadge } from '@/components/shared/verified-badge'
 import { SponsoredBadge } from '@/components/shared/sponsored-badge'
 import { RankChip } from '@/components/shared/rank-chip'
@@ -69,6 +70,7 @@ export function CollegeIdentityHeader({ college }: { college: CollegeDetailData 
       }
       actions={
         <>
+          <CompareToggle variant="button" college={{ slug: college.slug, name: college.name, shortName: college.name, location: [college.city, college.state].filter(Boolean).join(', ') }} />
           <div className="flex items-center gap-1">
             <button
               type="button"

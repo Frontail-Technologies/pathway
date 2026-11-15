@@ -29,7 +29,7 @@ export function AboutYouStep({ draft, showErrors, onChange }: { draft: Psychomet
           <OptionSelect value={draft.studyArea} onChange={(studyArea) => onChange({ studyArea })} options={studyAreas} placeholder="Select stream or area" invalid={showErrors && !draft.studyArea} />
         </Field>
       </div>
-      <Field label="What are you exploring?" required hint="Select all that apply." error={showErrors && draft.exploring.length === 0 ? 'Choose at least one.' : undefined}>
+      <Field label="What are you exploring?" required error={showErrors && draft.exploring.length === 0 ? 'Choose at least one.' : undefined}>
         <ChipGroup
           ariaLabel="What are you exploring"
           options={exploringOptions}

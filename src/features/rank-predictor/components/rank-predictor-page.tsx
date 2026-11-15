@@ -1,136 +1,119 @@
-'use client'
-
-import { useState } from 'react'
-import { useSearchParams } from 'next/navigation'
-import { ArrowRight, Pencil } from 'lucide-react'
-import { Container } from '@/components/shared/container'
+import Link from 'next/link'
+import { ArrowRight, Percent } from 'lucide-react'
 import { Breadcrumbs } from '@/components/shared/breadcrumbs'
+import { SourceNote } from '@/components/shared/source-note'
 import { Button } from '@/components/ui/button'
-import { StudentToolPageFrame, ToolActionBar, ToolEngineNotice, ToolStepper, ToolSummaryCard } from '@/components/shared/student-tool/student-tool-parts'
-import { emptyRankDraft, inputTypeLabel, rankExamFromSlug, validateRankInput, type RankErrors, type RankExam, type RankPredictorDraft } from '../data/rank'
-import { CandidateContextStep, ExamPerformanceStep, RankPreviewStep } from './rank-steps'
-import { RankHero, RankHowItWorks, RankRelatedTools } from './rank-sections'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { cn } from '@/lib/utils'
+import { jeeMainCandidates, rankFromPercentile, referencePercentiles } from '../data/rank'
 
-const STEPS = ['Exam & Performance', 'Candidate Context', 'Rank Preview']
-const LAST = STEPS.length - 1
+const fmt = (value: number) => value.toLocaleString('en-IN')
 
-export function RankPredictorPage() {
-  const searchParams = useSearchParams()
-  
-  const [draft, setDraft] = useState<RankPredictorDraft>(() => ({ ...emptyRankDraft, exam: rankExamFromSlug[searchParams.get('exam') ?? ''] ?? '' }))
-  const [step, setStep] = useState(0)
-  const [errors, setErrors] = useState<RankErrors>({})
-
-  const update = (patch: Partial<RankPredictorDraft>) => {
-    setDraft((current) => ({ ...current, ...patch }))
-    setErrors({})
-  }
-
-  const selectExam = (exam: RankExam) => update({ exam })
-
-  const goNext = () => {
-    if (step === 0) {
-      const found = validateRankInput(draft)
-      setErrors(found)
-      if (Object.keys(found).length > 0) return
-    }
-    setStep((current) => Math.min(current + 1, LAST))
-    window.scrollTo({ top: 0, behavior: 'smooth' })
-  }
-
-  const goBack = () => {
-    setErrors({})
-    setStep((current) => Math.max(current - 1, 0))
-  }
-
-  const goToStep = (target: number) => {
-    setErrors({})
-    setStep(target)
-    window.scrollTo({ top: 0, behavior: 'smooth' })
-  }
-
-  const inputGroup = [
-    { label: 'Exam', value: draft.exam },
-    { label: inputTypeLabel[draft.inputType], value: draft.value.trim() },
-  ].filter((row) => row.value)
-  const contextGroup = draft.category ? [{ label: 'Category', value: draft.category }] : []
-  const groups = [
-    { title: 'Exam & Performance', step: 0, rows: inputGroup },
-    { title: 'Context', step: 1, rows: contextGroup },
-  ].filter((group) => group.rows.length > 0)
+export function RankPredictorPage({ percentile, invalid }: { percentile: number | null; invalid: boolean }) {
+  const rank = percentile ? rankFromPercentile(percentile) : null
 
   return (
-    <StudentToolPageFrame>
-      <Container className="px-4 py-3">
-        <Breadcrumbs items={['Home', 'Student Tools', 'Rank Predictor']} />
-      </Container>
-      <RankHero />
-
-      <Container className="px-4 pb-4">
-        <div>
-          <div className="grid gap-6 lg:grid-cols-[minmax(0,7fr)_minmax(0,3fr)] lg:items-start">
-            <div className="min-w-0 rounded-[14px] border bg-card p-4 shadow-[0_10px_30px_rgba(30,58,138,0.07)] sm:p-6 lg:p-8">
-              <ToolStepper steps={STEPS} step={step} />
-
-              <div className="mt-7">
-                {step === 0 && <ExamPerformanceStep draft={draft} errors={errors} onSelectExam={selectExam} onChange={update} />}
-                {step === 1 && <CandidateContextStep draft={draft} onChange={update} />}
-                {step === 2 && <RankPreviewStep draft={draft} />}
-              </div>
-
-              <ToolActionBar>
-                <Button type="button" variant="outline" className="h-11 px-5 md:h-10" onClick={goBack} disabled={step === 0}>
-                  Back
-                </Button>
-                {step < LAST ? (
-                  <Button type="button" variant="cta" className="h-11 gap-2 px-6 font-semibold md:h-10" onClick={goNext}>
-                    {step === 0 ? 'Continue' : 'Preview Rank'}
-                    <ArrowRight className="size-4" aria-hidden="true" />
-                  </Button>
-                ) : (
-                  <Button type="button" variant="outline" className="h-11 px-5 md:h-10" onClick={() => goToStep(0)}>
-                    Edit Details
-                  </Button>
-                )}
-              </ToolActionBar>
-            </div>
-
-            <div className="lg:sticky lg:top-header-gap">
-              <ToolSummaryCard title="Your Input">
-                {groups.length === 0 ? (
-                  <p className="mt-3 text-sm text-muted-foreground">Your selections will appear here as you go.</p>
-                ) : (
-                  <div className="mt-2 divide-y">
-                    {groups.map((group) => (
-                      <section key={group.title} className="py-3">
-                        <div className="flex items-center justify-between gap-2">
-                          <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">{group.title}</p>
-                          <button type="button" onClick={() => goToStep(group.step)} className="flex cursor-pointer items-center gap-1 text-xs font-medium text-primary hover:underline" aria-label={`Edit ${group.title}`}>
-                            <Pencil className="size-3" aria-hidden="true" />
-                            Edit
-                          </button>
-                        </div>
-                        <dl className="mt-1.5">
-                          {group.rows.map((row) => (
-                            <div key={row.label} className="flex items-start justify-between gap-3 py-1 text-sm">
-                              <dt className="text-muted-foreground">{row.label}</dt>
-                              <dd className="text-right font-semibold text-foreground">{row.value}</dd>
-                            </div>
-                          ))}
-                        </dl>
-                      </section>
-                    ))}
-                  </div>
-                )}
-                <ToolEngineNotice title="Rank prediction engine not connected yet" text="Verified score-to-rank data is required before a rank estimate can be shown." />
-              </ToolSummaryCard>
-            </div>
-          </div>
-
-          <RankHowItWorks />
-          <RankRelatedTools />
+    <div className="bg-muted/50 pb-10">
+      <div className="border-b bg-card">
+        <div className="container-shell px-4 pt-5 pb-6 lg:pt-6">
+          <Breadcrumbs items={['Home', { label: 'Exams', href: '/exams' }, 'Rank Predictor']} />
+          <h1 className="mt-4 font-heading text-2xl font-bold text-foreground sm:text-3xl">JEE Main Rank Predictor</h1>
+          <p className="mt-2 max-w-3xl text-[15px] leading-7 text-muted-foreground">
+            Convert your JEE Main percentile into an estimated common rank (CRL), using NTA’s method and the {fmt(jeeMainCandidates.appeared)} candidates who appeared in {jeeMainCandidates.year}.
+          </p>
         </div>
-      </Container>
-    </StudentToolPageFrame>
+      </div>
+
+      <div className="container-shell px-4 pt-5 lg:pt-6">
+        <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:gap-6">
+          <aside className="flex flex-col gap-4 lg:sticky lg:top-header-gap lg:w-90 lg:shrink-0">
+            <form action="/rank-predictor" method="get" className="flex flex-col gap-4 rounded-xl border bg-card p-4 sm:p-5">
+              <input type="hidden" name="exam" value="jee-main" />
+              <div className="flex flex-col gap-1.5">
+                <Label htmlFor="rank-percentile">JEE Main percentile</Label>
+                <div className="relative">
+                  <Percent className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
+                  <Input
+                    id="rank-percentile"
+                    name="percentile"
+                    inputMode="decimal"
+                    autoComplete="off"
+                    placeholder="e.g. 98.25"
+                    defaultValue={percentile ?? ''}
+                    aria-invalid={invalid}
+                    aria-describedby={invalid ? 'rank-percentile-error' : undefined}
+                    className="pl-9"
+                  />
+                </div>
+                {invalid ? (
+                  <p id="rank-percentile-error" role="alert" className="text-xs text-destructive">
+                    Enter a percentile between 0 and 100, for example 98.25.
+                  </p>
+                ) : null}
+              </div>
+              <Button type="submit" variant="cta" size="lg" className="w-full font-semibold">
+                Estimate my rank
+              </Button>
+            </form>
+
+            {rank ? (
+              <section aria-live="polite" className="rounded-xl border bg-card p-4 sm:p-5">
+                <p className="text-sm text-muted-foreground">Estimated rank for {percentile} percentile</p>
+                <p className="mt-1 font-heading text-3xl font-bold text-foreground tabular-nums">{fmt(rank)}</p>
+                <p className="mt-1 text-[13px] text-muted-foreground">Common rank list (CRL). Category ranks are lower and are published by NTA.</p>
+                <Button variant="outline" className="mt-4 w-full gap-2 font-semibold" nativeButton={false} render={<Link href={`/college-predictor?exam=jee-main&rank=${rank}#results`} />}>
+                  See colleges for this rank
+                  <ArrowRight className="size-4" aria-hidden="true" />
+                </Button>
+              </section>
+            ) : null}
+          </aside>
+
+          <div className="flex min-w-0 flex-1 flex-col gap-4">
+            <section className="rounded-xl border bg-card p-4 sm:p-6">
+              <h2 className="font-heading text-lg font-bold text-foreground sm:text-xl">JEE Main percentile vs rank</h2>
+              <p className="mt-1 text-sm text-muted-foreground">Estimated CRL for common percentiles, based on {fmt(jeeMainCandidates.appeared)} candidates.</p>
+              <div className="mt-4 overflow-hidden rounded-lg border">
+                <table className="w-full text-sm">
+                  <thead className="bg-muted/50 text-left text-xs text-muted-foreground">
+                    <tr>
+                      <th scope="col" className="px-4 py-2.5 font-medium">Percentile</th>
+                      <th scope="col" className="px-4 py-2.5 text-right font-medium">Estimated rank</th>
+                      <th scope="col" className="px-4 py-2.5 text-right font-medium">Colleges</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y">
+                    {referencePercentiles.map((value) => {
+                      const estimate = rankFromPercentile(value)
+                      const mine = percentile != null && value === referencePercentiles.find((step) => percentile >= step)
+                      return (
+                        <tr key={value} className={cn(mine && 'bg-secondary/60')}>
+                          <td className="px-4 py-2.5 font-medium text-foreground tabular-nums">{value}</td>
+                          <td className="px-4 py-2.5 text-right text-foreground tabular-nums">{fmt(estimate)}</td>
+                          <td className="px-4 py-2.5 text-right">
+                            <Link href={`/college-predictor?exam=jee-main&rank=${estimate}#results`} className="text-sm font-semibold text-primary hover:underline">
+                              View
+                            </Link>
+                          </td>
+                        </tr>
+                      )
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </section>
+
+            <section className="rounded-xl border bg-card p-4 sm:p-6">
+              <h2 className="font-heading text-lg font-bold text-foreground sm:text-xl">How the estimate works</h2>
+              <p className="mt-2.5 text-[15px] leading-7 text-muted-foreground">
+                NTA ranks candidates by percentile. A percentile of P means (100 − P)% of candidates scored higher, so the estimated rank is (100 − P) × {fmt(jeeMainCandidates.appeared)} ÷ 100. Ties and the number of candidates in your year shift the final rank slightly, so treat it as an estimate.
+              </p>
+              <SourceNote className="mt-3" source={jeeMainCandidates.source} note="Unique candidates who appeared across both sessions" />
+            </section>
+          </div>
+        </div>
+      </div>
+    </div>
   )
 }

@@ -1,6 +1,7 @@
 import { PublicHeader } from '@/components/layout/public-header'
 import { PublicFooter } from '@/components/layout/public-footer'
 import { MobileBottomNavigation } from '@/components/layout/mobile-navigation'
+import { CompareTray } from '@/features/compare/components/compare-tray'
 
 export default function PublicLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -8,6 +9,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
       <PublicHeader />
       <main className="min-h-[70vh] flex-1">{children}</main>
       <PublicFooter />
+      <CompareTray />
       <MobileBottomNavigation />
     </div>
   )

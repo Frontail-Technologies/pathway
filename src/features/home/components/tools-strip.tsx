@@ -5,7 +5,7 @@ import { HomeSectionHeading } from './home-section-heading'
 
 const tools: { label: string; text: string; href: string; art: ToolArtName }[] = [
   { label: 'College predictor', text: 'Colleges and branches for your JEE rank, from JoSAA cutoffs', href: '/college-predictor', art: 'collegePredictor' },
-  { label: 'Rank predictor', text: 'Estimate your rank from your score', href: '/rank-predictor', art: 'rankPredictor' },
+  { label: 'Rank predictor', text: 'Estimate your JEE Main rank from your percentile', href: '/rank-predictor', art: 'rankPredictor' },
   { label: 'Compare colleges', text: 'Fees, ranks and placements side by side', href: '/compare/colleges', art: 'compare' },
   { label: 'Resume builder', text: 'A clean resume for internships and placements', href: '/resume-builder', art: 'resume' },
   { label: 'Psychometric test', text: 'Find courses and careers that suit your interests', href: '/psychometric-test', art: 'psychometric' },

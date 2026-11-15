@@ -24,7 +24,9 @@ type CompareInstitutionDto = {
   instituteStatus: string | null
   totalProgramsLabel: string | null
   fees: { hostelPaisePerYear: number | null; otherPaisePerYear: number | null }
-  placements: { averagePackage: Figure; highestPackage: Figure; placementRate: Figure; topRecruiters: string[] }
+  placements: { averagePackage: Figure; highestPackage: Figure; medianPackage?: Figure; placementRate: Figure; topRecruiters: string[] }
+  nirf?: { rank: number; category: string; year: number } | null
+  keyFacts?: { students: number | null; faculty: number | null; year: string | null }
   ratings: { overall: number | null; faculty: number | null; placements: number | null; infrastructure: number | null; valueForMoney: number | null }
   facilityFlags: CollegeComparisonItem['facilities']
 }
@@ -70,10 +72,15 @@ function toCollege(dto: CompareInstitutionDto): CollegeComparisonItem {
     approvedBy: dto.approvals.join(', ') || notAvailable,
     instituteStatus: dto.instituteStatus ?? notAvailable,
     totalPrograms: dto.totalProgramsLabel ?? notAvailable,
+    nirfRank: dto.nirf ? `#${dto.nirf.rank} ${dto.nirf.category === 'overall' ? 'Overall' : dto.nirf.category.replace(/^./, (c) => c.toUpperCase())} (${dto.nirf.year})` : notAvailable,
+    students: dto.keyFacts?.students ? dto.keyFacts.students.toLocaleString('en-IN') : notAvailable,
+    faculty: dto.keyFacts?.faculty ? dto.keyFacts.faculty.toLocaleString('en-IN') : notAvailable,
+    studentFacultyRatio: dto.keyFacts?.students && dto.keyFacts.faculty ? `${Math.round(dto.keyFacts.students / dto.keyFacts.faculty)} : 1` : notAvailable,
     fees: { hostel: perYear(dto.fees.hostelPaisePerYear), other: perYear(dto.fees.otherPaisePerYear) },
     placements: {
       averagePackage: placementValue(dto.placements.averagePackage) || notAvailable,
       highestPackage: placementValue(dto.placements.highestPackage) || notAvailable,
+      medianPackage: placementValue(dto.placements.medianPackage) || notAvailable,
       placementRate: placementValue(dto.placements.placementRate) || notAvailable,
       topRecruiters: dto.placements.topRecruiters,
     },
@@ -151,3 +158,12 @@ export const listPickerColleges = async () =>
       rating: dto.rating ?? 0,
     }))
   ).items
+
+export async function rankedPairs(courses: string, count = 3, exclude: string[] = []): Promise<[string, string][]> {
+  const { listColleges } = await import('@/features/colleges/api/colleges-api')
+  const list = await listColleges({ courses, sort: 'ranking', limit: String(count * 2 + exclude.length) }).catch(() => null)
+  const slugs = (list?.items ?? []).filter((college) => college.ranking && !exclude.includes(college.slug)).map((college) => college.slug)
+  const pairs: [string, string][] = []
+  for (let index = 0; index + 1 < slugs.length && pairs.length < count; index += 2) pairs.push([slugs[index]!, slugs[index + 1]!])
+  return pairs
+}

@@ -44,7 +44,6 @@ export function CollegeListingPage({ initial, initialQuery, facets }: { initial?
   const sort = useMemo(() => parseCollegeListingSort(searchParams), [searchParams])
   const query = useMemo(() => parseCollegeListingSearch(searchParams), [searchParams])
   const groups = useMemo(() => collegeFacetGroups(facets), [facets])
-  const [compared, setCompared] = useState<string[]>([])
 
   const apiQuery = useMemo(() => apiQueryFrom(serializeCollegeListing(selected, sort, query)), [selected, sort, query])
   const list = useCatalogList<InstitutionListDto, CollegeListItem>({ path: '/institutions', query: apiQuery, map: toCollegeListItem, limit: PAGE_SIZE, initial, initialQuery })
@@ -53,7 +52,6 @@ export function CollegeListingPage({ initial, initialQuery, facets }: { initial?
     const next = serializeCollegeListing(nextSelected, nextSort, nextQuery)
     router.push(next ? `${pathname}?${next}` : pathname, { scroll: false })
   }
-  const toggleCompare = (id: string) => setCompared((previous) => (previous.includes(id) ? previous.filter((item) => item !== id) : [...previous, id]))
 
   return (
     <CatalogListing
@@ -70,7 +68,7 @@ export function CollegeListingPage({ initial, initialQuery, facets }: { initial?
       query={query}
       onNavigate={navigate}
       list={list}
-      renderItems={(items) => items.map((college) => <CollegeCard key={college.id} college={college} compared={compared.includes(college.id)} onToggleCompare={toggleCompare} />)}
+      renderItems={(items) => items.map((college) => <CollegeCard key={college.id} college={college} />)}
       footer={
         <div className="mt-2 flex flex-wrap items-center gap-3 rounded-xl border bg-secondary/60 p-4 sm:p-5">
           <p className="min-w-0 flex-1 text-sm font-semibold text-foreground">Know your JEE rank? See which colleges and branches you could get.</p>

@@ -4,6 +4,7 @@ import type { Metadata, Viewport } from 'next'
 import { Toaster } from '@/components/ui/sonner'
 import { QueryProvider } from '@/lib/query-client'
 import { SavedItemsProvider } from '@/features/saved/saved-items-provider'
+import { CompareTrayProvider } from '@/features/compare/compare-tray-provider'
 import { AuthSessionProvider } from '@/features/auth/state/auth-session-provider'
 import { StudentProfileProvider } from '@/features/student/state/student-profile-provider'
 import { NavigationLoader } from '@/components/shared/navigation-loader'
@@ -32,7 +33,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <QueryProvider>
           <AuthSessionProvider>
             <SavedItemsProvider>
-              <StudentProfileProvider>{children}</StudentProfileProvider>
+              <CompareTrayProvider>
+                <StudentProfileProvider>{children}</StudentProfileProvider>
+              </CompareTrayProvider>
             </SavedItemsProvider>
           </AuthSessionProvider>
         </QueryProvider>

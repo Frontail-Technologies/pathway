@@ -174,13 +174,13 @@ function ProfileEditor() {
               <Field label="Last name" required htmlFor="fp-last" error={errors.lastName}>
                 <Input id="fp-last" autoComplete="family-name" className={softInputClass} value={draft.lastName} aria-invalid={!!errors.lastName} onChange={(event) => set('lastName', event.target.value)} />
               </Field>
-              <Field label="Email" required htmlFor="fp-email" hint="Your sign-in email. Changing it needs email verification, which isn't available yet.">
+              <Field label="Email" required htmlFor="fp-email">
                 <Input id="fp-email" type="email" className={softInputClass} value={draft.email} readOnly aria-readonly="true" />
               </Field>
               <Field label="City" required htmlFor="fp-city" error={errors.city}>
                 <Input id="fp-city" autoComplete="address-level2" className={softInputClass} value={draft.city} aria-invalid={!!errors.city} onChange={(event) => set('city', event.target.value)} />
               </Field>
-              <Field label="Phone" htmlFor="fp-phone" hint="Optional." error={errors.phone}>
+              <Field label="Phone" htmlFor="fp-phone" error={errors.phone}>
                 <Input id="fp-phone" type="tel" autoComplete="tel" className={softInputClass} value={draft.phone} aria-invalid={!!errors.phone} onChange={(event) => set('phone', event.target.value)} />
               </Field>
             </div>

@@ -41,8 +41,17 @@ export type ComparisonSectionConfig = {
 function toComparableNumber(value: ComparisonRowValue): number {
   if (typeof value === 'number') return value
   if (typeof value !== 'string') return NaN
-  const match = value.match(/[\d.]+/)
-  return match ? parseFloat(match[0]) : NaN
+  const match = value.replace(/,/g, '').match(/(\d+(?:\.\d+)?)\s*(crore|cr|lakh|lpa|l\b|k\b)?/i)
+  if (!match) return NaN
+  const unit = (match[2] ?? '').toLowerCase()
+  const scale = unit === 'crore' || unit === 'cr' ? 1e7 : unit === 'lakh' || unit === 'lpa' || unit === 'l' ? 1e5 : unit === 'k' ? 1e3 : 1
+  return parseFloat(match[1]!) * scale
+}
+
+const empty = (value: ComparisonRowValue) => value === '' || value === 'Not available' || value === 0 || (Array.isArray(value) && value.length === 0)
+
+export function visibleRows(section: ComparisonSectionConfig, entries: ComparisonEntry[]) {
+  return section.rows.filter((row) => entries.some((entry) => !empty(row.getValue(entry))))
 }
 
 export const comparisonSections: ComparisonSectionConfig[] = [
@@ -54,6 +63,10 @@ export const comparisonSections: ComparisonSectionConfig[] = [
       { label: 'Location', type: 'text', getValue: ({ college }) => college.location },
       { label: 'Established', type: 'text', getValue: ({ college }) => college.established },
       { label: 'Institute Status', type: 'text', getValue: ({ college }) => college.instituteStatus },
+      { label: 'NIRF Rank', type: 'text', getValue: ({ college }) => college.nirfRank ?? 'Not available', highlight: 'lowest' },
+      { label: 'Students', type: 'text', getValue: ({ college }) => college.students ?? 'Not available' },
+      { label: 'Faculty', type: 'text', getValue: ({ college }) => college.faculty ?? 'Not available' },
+      { label: 'Students per Faculty', type: 'text', getValue: ({ college }) => college.studentFacultyRatio ?? 'Not available', highlight: 'lowest' },
     ],
   },
   {
@@ -82,6 +95,7 @@ export const comparisonSections: ComparisonSectionConfig[] = [
     title: 'Placements',
     icon: BriefcaseBusiness,
     rows: [
+      { label: 'Median Package', type: 'text', getValue: ({ college }) => college.placements.medianPackage ?? 'Not available', highlight: 'highest' },
       { label: 'Average Package', type: 'text', getValue: ({ college }) => college.placements.averagePackage, highlight: 'highest' },
       { label: 'Highest Package', type: 'text', getValue: ({ college }) => college.placements.highestPackage },
       { label: 'Placement Rate', type: 'text', getValue: ({ college }) => college.placements.placementRate },
@@ -145,7 +159,16 @@ export const facilityRowIcons: Record<string, LucideIcon> = {
 export function highlightedIndex(row: ComparisonRowConfig, entries: ComparisonEntry[]): number {
   if (!row.highlight || entries.length < 2) return -1
   const numbers = entries.map((entry) => toComparableNumber(row.getValue(entry)))
-  if (numbers.some((n) => Number.isNaN(n))) return -1
-  const target = row.highlight === 'lowest' ? Math.min(...numbers) : Math.max(...numbers)
+  const valid = numbers.filter((n) => !Number.isNaN(n))
+  if (valid.length < 2) return -1
+  const target = row.highlight === 'lowest' ? Math.min(...valid) : Math.max(...valid)
+  if (valid.filter((n) => n === target).length > 1) return -1
   return numbers.indexOf(target)
 }
+
+export function rowDiffers(row: ComparisonRowConfig, entries: ComparisonEntry[]) {
+  const values = entries.map((entry) => JSON.stringify(row.getValue(entry)))
+  return new Set(values).size > 1
+}
+
+export const glanceRows: string[] = ['NIRF Rank', 'Median Package', 'Typical Tuition', 'Students per Faculty', 'Entrance Exam']

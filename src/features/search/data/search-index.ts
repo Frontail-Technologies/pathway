@@ -26,7 +26,7 @@ export type SearchEntry = {
 
 const tools: SearchEntry[] = [
   { id: 'tool-college-predictor', kind: 'tool', title: 'College Predictor', subtitle: 'Preview colleges from your exam score', href: '/college-predictor', keywords: 'predict admission chances jee neet cutoff' },
-  { id: 'tool-rank-predictor', kind: 'tool', title: 'Rank Predictor', subtitle: 'Estimate a rank range from your marks', href: '/rank-predictor', keywords: 'predict rank percentile marks score' },
+  { id: 'tool-rank-predictor', kind: 'tool', title: 'Rank Predictor', subtitle: 'Estimate your rank from your percentile', href: '/rank-predictor', keywords: 'predict rank percentile marks score' },
   { id: 'tool-compare', kind: 'tool', title: 'Compare Colleges', subtitle: 'Side-by-side fees, placements and ratings', href: '/compare/colleges', keywords: 'compare vs versus' },
   { id: 'tool-psychometric', kind: 'tool', title: 'Psychometric Test', subtitle: 'Discover careers that match your interests', href: '/psychometric-test', keywords: 'career aptitude test personality' },
   { id: 'tool-resume', kind: 'tool', title: 'Resume Builder', subtitle: 'Build a student resume', href: '/resume-builder', keywords: 'cv resume' },

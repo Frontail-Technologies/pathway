@@ -94,8 +94,8 @@ export function buildStreamHub(stream: StreamDefinition): StreamHub {
   const streamExams = stream.studyArea ? exams.filter((exam) => exam.studyArea === stream.studyArea) : []
 
   const tools: SearchEntry[] = streamExams.flatMap((exam) => [
-    ...(examFromSlug[exam.slug] ? [{ id: `cp-${exam.slug}`, kind: 'tool' as const, title: `${exam.shortName} College Predictor`, subtitle: 'Preview colleges from your score', href: `/college-predictor?exam=${exam.slug}`, keywords: '' }] : []),
-    ...(rankExamFromSlug[exam.slug] ? [{ id: `rp-${exam.slug}`, kind: 'tool' as const, title: `${exam.shortName} Rank Predictor`, subtitle: 'Estimate a rank range from your marks', href: `/rank-predictor?exam=${exam.slug}`, keywords: '' }] : []),
+    ...(examFromSlug[exam.slug] ? [{ id: `cp-${exam.slug}`, kind: 'tool' as const, title: `${exam.shortName} College Predictor`, subtitle: 'Colleges within reach of your JoSAA rank', href: `/college-predictor?exam=${exam.slug}`, keywords: '' }] : []),
+    ...(rankExamFromSlug[exam.slug] ? [{ id: `rp-${exam.slug}`, kind: 'tool' as const, title: `${exam.shortName} Rank Predictor`, subtitle: 'Estimate your rank from your percentile', href: `/rank-predictor?exam=${exam.slug}`, keywords: '' }] : []),
   ])
 
   const sections: StreamSection[] = [
