@@ -1,4 +1,5 @@
 import {
+  Brain,
   Award,
   Banknote,
   BarChart3,
@@ -83,6 +84,7 @@ export const adminModules: AdminModule[] = [
   { id: 'notes', label: 'Notes', href: '/admin/notes', icon: BookMarked, group: 'content', description: 'Study notes for sale or free.', create: { label: 'Note', href: '/admin/notes/new' } },
   { id: 'banners', label: 'Banners', href: '/admin/banners', icon: Image, group: 'content', description: 'Scheduled banners.', create: { label: 'Banner', href: '/admin/banners/new' } },
   { id: 'featured', label: 'Featured listings', href: '/admin/promotions', icon: Sparkles, group: 'content', description: 'Featured and sponsored placements.' },
+  { id: 'psychometric', label: 'Psychometric test', href: '/admin/psychometric', icon: Brain, group: 'content', description: 'Questions and result text for the career test.' },
   { id: 'seo', label: 'SEO', href: '/admin/seo', icon: SearchCode, group: 'content', description: 'Metadata overrides for public pages.' },
   { id: 'reports', label: 'Reports', href: '/admin/reports', icon: BarChart3, group: 'insights', description: 'Catalogue and operations reports.' },
   { id: 'activity', label: 'Activity log', href: '/admin/activity', icon: History, group: 'insights', description: 'Every change, by whom and when.' },

@@ -1,31 +1,39 @@
 'use client'
 
-import { ChipGroup, Field, OptionSelect, StepHeading } from '@/components/shared/student-tool/tool-fields'
+import { ChipGroup, Field, OptionSelect } from '@/components/shared/student-tool/tool-fields'
+import { cn } from '@/lib/utils'
 import {
   exploringOptions,
-  interestPageQuestions,
-  INTEREST_PAGE_SIZE,
-  interestQuestions,
   likertLabels,
+  likertValues,
+  RATING_PAGE_SIZE,
+  ratingPage,
   studyAreas,
   studyLevels,
-  workStyleQuestions,
-  type Dimension,
+  type DimensionKey,
   type Likert,
   type PsychometricDraft,
+  type PsychometricTest,
 } from '../data/psychometric'
 
-const likertValues: Likert[] = [1, 2, 3, 4, 5]
+export function StepTitle({ children, meta }: { children: string; meta?: string }) {
+  return (
+    <div className="flex flex-wrap items-baseline justify-between gap-2">
+      <h2 className="font-heading text-xl font-bold text-foreground sm:text-2xl">{children}</h2>
+      {meta ? <span className="text-sm text-muted-foreground tabular-nums">{meta}</span> : null}
+    </div>
+  )
+}
 
 export function AboutYouStep({ draft, showErrors, onChange }: { draft: PsychometricDraft; showErrors: boolean; onChange: (patch: Partial<PsychometricDraft>) => void }) {
   return (
     <div className="flex flex-col gap-6">
-      <StepHeading title="A little about you" helper="Keep it light — we only ask what helps frame your results. No personal details needed." />
+      <StepTitle>A little about you</StepTitle>
       <div className="grid gap-4 sm:grid-cols-2">
-        <Field label="Current Study Level" required error={showErrors && !draft.studyLevel ? 'Choose your current study level.' : undefined}>
+        <Field label="Current study level" required error={showErrors && !draft.studyLevel ? 'Choose your current study level.' : undefined}>
           <OptionSelect value={draft.studyLevel} onChange={(studyLevel) => onChange({ studyLevel })} options={studyLevels} placeholder="Select study level" invalid={showErrors && !draft.studyLevel} />
         </Field>
-        <Field label="Stream / Area of Study" required error={showErrors && !draft.studyArea ? 'Choose your stream or area.' : undefined}>
+        <Field label="Stream or area of study" required error={showErrors && !draft.studyArea ? 'Choose your stream or area.' : undefined}>
           <OptionSelect value={draft.studyArea} onChange={(studyArea) => onChange({ studyArea })} options={studyAreas} placeholder="Select stream or area" invalid={showErrors && !draft.studyArea} />
         </Field>
       </div>
@@ -41,7 +49,7 @@ export function AboutYouStep({ draft, showErrors, onChange }: { draft: Psychomet
   )
 }
 
-function QuestionScale({ id, value, onChange }: { id: string; value?: Likert; onChange: (value: Likert) => void }) {
+function Scale({ id, value, onChange }: { id: string; value?: Likert; onChange: (value: Likert) => void }) {
   return (
     <div role="radiogroup" aria-labelledby={`${id}-text`} className="mt-3 grid grid-cols-5 gap-1.5 sm:gap-2">
       {likertValues.map((option) => {
@@ -54,10 +62,12 @@ function QuestionScale({ id, value, onChange }: { id: string; value?: Likert; on
             aria-checked={active}
             aria-label={likertLabels[option]}
             onClick={() => onChange(option)}
-            className={`flex min-h-14 cursor-pointer flex-col items-center justify-center gap-1 rounded-lg border px-1 py-2 text-center transition-colors ${active ? 'border-primary bg-primary/10 text-primary' : 'border-border bg-card text-muted-foreground hover:border-primary/40'}`}
+            className={cn(
+              'flex min-h-12 cursor-pointer items-center justify-center rounded-lg border px-1 py-2 text-center text-[11px] leading-tight font-medium outline-none transition-colors focus-visible:ring-2 focus-visible:ring-primary/40 sm:text-xs',
+              active ? 'border-primary bg-primary text-primary-foreground' : 'bg-card text-foreground hover:border-primary/50',
+            )}
           >
-            <span className={`flex size-6 items-center justify-center rounded-full text-xs font-semibold ${active ? 'bg-primary text-primary-foreground' : 'bg-muted text-foreground'}`}>{option}</span>
-            <span className="text-[10px] leading-tight sm:text-xs">{likertLabels[option]}</span>
+            {likertLabels[option]}
           </button>
         )
       })}
@@ -65,51 +75,51 @@ function QuestionScale({ id, value, onChange }: { id: string; value?: Likert; on
   )
 }
 
-export function InterestStep({ draft, page, missingIds, onAnswer }: { draft: PsychometricDraft; page: number; missingIds: string[]; onAnswer: (id: string, value: Likert) => void }) {
-  const questions = interestPageQuestions(page)
-  const first = page * INTEREST_PAGE_SIZE + 1
+export function RatingStep({ test, draft, page, missingIds, onAnswer }: { test: PsychometricTest; draft: PsychometricDraft; page: number; missingIds: string[]; onAnswer: (id: string, value: Likert) => void }) {
+  const questions = ratingPage(test, page)
+  const first = page * RATING_PAGE_SIZE + 1
   return (
-    <div className="flex flex-col gap-6">
-      <StepHeading title="How much would you enjoy these?" helper={`Questions ${first}–${first + questions.length - 1} of ${interestQuestions.length}. There are no right or wrong answers.`} />
-      <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-5">
+      <StepTitle meta={`${first}–${first + questions.length - 1} of ${test.ratings.length}`}>How much would you enjoy these?</StepTitle>
+      <ol className="flex flex-col gap-3">
         {questions.map((question, index) => {
           const missing = missingIds.includes(question.id)
           return (
-            <div key={question.id} className={`rounded-[12px] border bg-card p-4 sm:p-5 ${missing ? 'border-destructive/60' : ''}`}>
-              <p id={`${question.id}-text`} className="text-sm font-semibold text-foreground sm:text-base">
-                <span className="mr-2 text-muted-foreground">{first + index}.</span>
+            <li key={question.id} className={cn('rounded-xl border p-4 sm:p-5', missing && 'border-destructive/60')}>
+              <p id={`${question.id}-text`} className="text-[15px] font-semibold text-foreground">
+                <span className="mr-2 text-muted-foreground tabular-nums">{first + index}.</span>
                 {question.text}
               </p>
-              <QuestionScale id={question.id} value={draft.interests[question.id]} onChange={(value) => onAnswer(question.id, value)} />
-              {missing && (
+              <Scale id={question.id} value={draft.ratings[question.id]} onChange={(value) => onAnswer(question.id, value)} />
+              {missing ? (
                 <p role="alert" className="mt-2 text-xs text-destructive">
-                  Please choose an answer.
+                  Choose an answer.
                 </p>
-              )}
-            </div>
+              ) : null}
+            </li>
           )
         })}
-      </div>
+      </ol>
     </div>
   )
 }
 
-export function WorkStyleStep({ draft, missingIds, onAnswer }: { draft: PsychometricDraft; missingIds: string[]; onAnswer: (id: string, dimension: Dimension) => void }) {
+export function ChoiceStep({ test, draft, missingIds, onAnswer }: { test: PsychometricTest; draft: PsychometricDraft; missingIds: string[]; onAnswer: (id: string, dimension: DimensionKey) => void }) {
   return (
-    <div className="flex flex-col gap-6">
-      <StepHeading title="How do you like to work?" helper="Pick the option that feels more natural to you. Neither is better — they're just different." />
-      <div className="flex flex-col gap-4">
-        {workStyleQuestions.map((question, index) => {
+    <div className="flex flex-col gap-5">
+      <StepTitle meta={`${test.choices.length} questions`}>Which sounds more like you?</StepTitle>
+      <ol className="flex flex-col gap-3">
+        {test.choices.map((question, index) => {
           const missing = missingIds.includes(question.id)
           return (
-            <div key={question.id} className={`rounded-[12px] border bg-card p-4 sm:p-5 ${missing ? 'border-destructive/60' : ''}`}>
-              <p id={`${question.id}-text`} className="text-sm font-semibold text-foreground sm:text-base">
-                <span className="mr-2 text-muted-foreground">{index + 1}.</span>
-                {question.prompt}
+            <li key={question.id} className={cn('rounded-xl border p-4 sm:p-5', missing && 'border-destructive/60')}>
+              <p id={`${question.id}-text`} className="text-[15px] font-semibold text-foreground">
+                <span className="mr-2 text-muted-foreground tabular-nums">{index + 1}.</span>
+                {question.text}
               </p>
-              <div role="radiogroup" aria-labelledby={`${question.id}-text`} className="mt-3 grid gap-3 sm:grid-cols-2">
+              <div role="radiogroup" aria-labelledby={`${question.id}-text`} className="mt-3 grid gap-2 sm:grid-cols-2">
                 {question.options.map((option) => {
-                  const active = draft.workStyle[question.id] === option.dimension
+                  const active = draft.choices[question.id] === option.dimension
                   return (
                     <button
                       key={option.label}
@@ -117,22 +127,25 @@ export function WorkStyleStep({ draft, missingIds, onAnswer }: { draft: Psychome
                       role="radio"
                       aria-checked={active}
                       onClick={() => onAnswer(question.id, option.dimension)}
-                      className={`min-h-14 cursor-pointer rounded-lg border p-3.5 text-left text-sm transition-colors ${active ? 'border-primary bg-primary/10 font-medium text-primary ring-1 ring-primary/30' : 'border-border bg-card text-foreground hover:border-primary/40'}`}
+                      className={cn(
+                        'min-h-12 cursor-pointer rounded-lg border p-3.5 text-left text-sm outline-none transition-colors focus-visible:ring-2 focus-visible:ring-primary/40',
+                        active ? 'border-primary bg-primary font-medium text-primary-foreground' : 'bg-card text-foreground hover:border-primary/50',
+                      )}
                     >
                       {option.label}
                     </button>
                   )
                 })}
               </div>
-              {missing && (
+              {missing ? (
                 <p role="alert" className="mt-2 text-xs text-destructive">
-                  Please choose one.
+                  Choose one.
                 </p>
-              )}
-            </div>
+              ) : null}
+            </li>
           )
         })}
-      </div>
+      </ol>
     </div>
   )
 }

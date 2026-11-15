@@ -49,6 +49,8 @@ export const queryKeys = {
   adminTaxonomyKinds: ['admin', 'master-data', 'kinds'] as const,
   adminTaxonomyTerms: (kind: string) => ['admin', 'master-data', 'terms', kind] as const,
   adminGeography: ['admin', 'master-data', 'geography'] as const,
+  adminPsychometric: ['admin', 'psychometric'] as const,
+  psychometricTest: ['psychometric', 'test'] as const,
   ingestion: ['admin', 'ingestion'] as const,
   ingestionSources: ['admin', 'ingestion', 'sources'] as const,
   ingestionSource: (id: string) => ['admin', 'ingestion', 'sources', id] as const,
