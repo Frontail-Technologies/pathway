@@ -21,7 +21,7 @@ export function ResumeTemplateThumbnail({ templateId, data }: { templateId: Resu
         </div>
       )}
       {document.pageCount > 1 && (
-        <span className="absolute top-2 left-2 rounded-full bg-foreground/80 px-2 py-0.5 text-[10px] font-medium text-background">{document.pageCount} pages</span>
+        <span className="absolute right-2 bottom-2 rounded-md bg-primary px-2 py-0.5 text-[10px] font-semibold text-primary-foreground">{document.pageCount} pages</span>
       )}
       {document.measureNode}
     </div>

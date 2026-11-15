@@ -47,6 +47,7 @@ export function CourseListingPage({ initial, initialQuery }: { initial?: Catalog
 
   return (
     <CatalogListing
+      art="courses"
       breadcrumbs={[{ label: 'Home', href: '/' }, 'Courses']}
       title={headingFor(filters)}
       description="Fees, duration, eligibility, entrance exams and the colleges that offer each course."

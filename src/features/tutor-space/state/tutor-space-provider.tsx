@@ -25,7 +25,7 @@ const TutorSpaceContext = createContext<TutorSpaceContextValue | null>(null)
 
 export function TutorSpaceProvider({ children }: { children: React.ReactNode }) {
   const { hydrated: sessionReady, signedIn, user, signOut } = useRoleSession('tutor')
-  const [requests, setRequests] = useState<SessionRequest[]>(initialTutorSpace.requests)
+  const [requests, setRequests] = useState<SessionRequest[]>([])
   const tutorId = user?.id
   const queryClient = useQueryClient()
 

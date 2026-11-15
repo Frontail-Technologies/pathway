@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Camera, CircleCheck, Plus, Trash2 } from 'lucide-react'
+import { Camera, Check, ChevronRight, Plus, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -26,7 +26,7 @@ import {
 import { getProfileCompletion, initialsOf, type ProfileFieldKey, type WorkExperienceType } from '../data/student'
 import { ApiRequestError } from '@/features/auth/lib/session-client'
 import { useStudentProfile } from '../state/student-profile-provider'
-import { DashboardSection } from './dashboard-parts'
+import { DashboardSection, StudentPageHeader } from './dashboard-parts'
 
 const MAX_PHOTO_BYTES = 5 * 1024 * 1024
 
@@ -124,18 +124,16 @@ function ProfileEditor() {
   const experienceError = (id: string) => errors.experience?.[id]
 
   return (
-    <div className="w-full max-w-[1200px]">
-      <div className="flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <h1 className="font-heading text-2xl font-extrabold text-foreground sm:text-3xl">My Profile</h1>
-          <p className="mt-1 text-sm text-muted-foreground sm:text-[15px]">Keep your personal and education details up to date.</p>
-        </div>
-        <p className="rounded-full border bg-card px-3 py-1 text-sm font-medium text-foreground">Profile {completion.percent}% complete</p>
-      </div>
+    <div className="mx-auto w-full max-w-[1360px]">
+      <StudentPageHeader
+        title="My profile"
+        subtitle="Your personal, education and career details"
+        action={<span className="rounded-lg bg-secondary px-3 py-1.5 text-sm font-semibold text-primary">{completion.percent}% complete</span>}
+      />
 
       <div className="mt-5 grid grid-cols-1 gap-5 xl:grid-cols-[minmax(0,1fr)_20rem] xl:items-start">
         <form ref={formRef} onSubmit={onSubmit} noValidate className="flex min-w-0 flex-col gap-5">
-          <DashboardSection id="personal" className="scroll-mt-section" title="Personal Information">
+          <DashboardSection id="personal" className="scroll-mt-section" title="Personal details" art="tutor">
             <div className="flex items-center gap-4">
               <span className="relative flex size-18 shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary text-xl font-bold text-primary-foreground">
                 {photoUrl ? (
@@ -146,7 +144,6 @@ function ProfileEditor() {
               </span>
               <div className="min-w-0">
                 <p className="text-sm font-semibold text-foreground">Profile photo</p>
-                <p className="text-xs text-muted-foreground">Optional. JPG, PNG or WebP up to 5 MB. Only you can see it.</p>
                 <div className="mt-2 flex flex-wrap gap-2">
                   <input ref={fileInput} type="file" accept="image/jpeg,image/png,image/webp" className="sr-only" aria-label="Choose profile photo" onChange={(event) => onPhoto(event.target.files?.[0])} />
                   <Button type="button" variant="outline" className="h-8 gap-1.5 px-3 text-xs" disabled={photoBusy} onClick={() => fileInput.current?.click()}>
@@ -186,7 +183,7 @@ function ProfileEditor() {
             </div>
           </DashboardSection>
 
-          <DashboardSection id="education" className="scroll-mt-section" title="Education">
+          <DashboardSection id="education" className="scroll-mt-section" title="Education" art="college">
             <div className="grid gap-4 sm:grid-cols-2">
               <Field label="Current study level">
                 <OptionSelect value={draft.studyLevel} onChange={(value) => set('studyLevel', value)} options={studyLevelOptions} placeholder="Select level" />
@@ -203,7 +200,7 @@ function ProfileEditor() {
             </div>
           </DashboardSection>
 
-          <DashboardSection id="career-goal" className="scroll-mt-section" title="Career Goal">
+          <DashboardSection id="career-goal" className="scroll-mt-section" title="Career goal" art="guide">
             <div className="grid gap-4 sm:grid-cols-2">
               <Field label="Career goal / direction">
                 <OptionSelect value={draft.goalChoice} onChange={(value) => set('goalChoice', value)} options={[...careerGoalOptions, OTHER_GOAL]} placeholder="Select a direction" />
@@ -216,15 +213,15 @@ function ProfileEditor() {
             </div>
           </DashboardSection>
 
-          <DashboardSection id="experience" className="scroll-mt-section" title="Experience" description="Optional — work, internship, volunteering or project experience.">
+          <DashboardSection id="experience" className="scroll-mt-section" title="Experience" art="presentation">
             {draft.experience.length === 0 ? (
-              <p className="text-sm text-muted-foreground">No experience yet. You can skip this if it does not apply.</p>
+              <p className="text-sm text-muted-foreground">No internships, jobs or projects added.</p>
             ) : (
               <ul className="flex flex-col gap-4">
                 {draft.experience.map((item, index) => {
                   const itemError = experienceError(item.id)
                   return (
-                    <li key={item.id} className="rounded-[10px] border bg-muted/20 p-4">
+                    <li key={item.id} className="rounded-xl border bg-muted/30 p-4">
                       <div className="mb-3 flex items-center justify-between">
                         <p className="text-sm font-semibold text-foreground">Experience {index + 1}</p>
                         <Button type="button" variant="ghost" className="h-8 gap-1.5 px-2 text-xs text-muted-foreground" onClick={() => set('experience', draft.experience.filter((entry) => entry.id !== item.id))}>
@@ -263,7 +260,7 @@ function ProfileEditor() {
             )}
             <Button type="button" variant="outline" className="mt-4 h-9 gap-1.5 px-3 text-sm" onClick={() => set('experience', [...draft.experience, { id: `exp-${Date.now()}-${draft.experience.length}`, organisation: '', role: '' }])}>
               <Plus className="size-4" aria-hidden="true" />
-              Add Experience
+              Add experience
             </Button>
           </DashboardSection>
 
@@ -271,20 +268,20 @@ function ProfileEditor() {
             <Button
               type="button"
               variant="outline"
-              className="h-11 basis-[42%] px-3 text-sm sm:basis-auto sm:px-5"
+              className="web-chrome h-11 basis-[42%] px-3 text-sm sm:basis-auto sm:px-5"
               nativeButton={false}
               render={<Link href="/student" onClick={(event) => { if (dirty && !window.confirm('Discard your unsaved changes?')) event.preventDefault() }} />}
             >
-              Back to Dashboard
+              Back to dashboard
             </Button>
             <Button type="submit" variant="cta" className="h-11 flex-1 px-4 text-sm font-semibold sm:flex-none sm:px-6" disabled={saving}>
-              {saving ? 'Saving…' : 'Save Changes'}
+              {saving ? 'Saving…' : 'Save changes'}
             </Button>
           </div>
         </form>
 
         <aside aria-label="Profile completion" className="max-xl:hidden xl:sticky xl:top-20">
-          <DashboardSection title="Profile Completion">
+          <DashboardSection title="Profile strength" art="verified">
             <div className="flex items-baseline justify-between gap-3">
               <p className="font-heading text-2xl font-extrabold text-foreground">{completion.percent}%</p>
               <p className="text-xs text-muted-foreground">
@@ -292,36 +289,43 @@ function ProfileEditor() {
               </p>
             </div>
             <div role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={completion.percent} aria-label="Profile completion" className="mt-2 h-2 overflow-hidden rounded-full bg-muted">
-              <div className="h-full rounded-full bg-primary" style={{ width: `${completion.percent}%` }} />
+              <div className="h-full rounded-full bg-cta" style={{ width: `${completion.percent}%` }} />
             </div>
-            <p className="mt-2 text-xs text-muted-foreground">Based on your last saved changes.</p>
-            <div className="mt-4 border-t pt-3">
+            <ul className="mt-4 flex flex-col gap-1 border-t pt-3">
               {completion.missing.length === 0 ? (
-                <p className="flex items-center gap-2 text-sm font-medium text-foreground">
-                  <CircleCheck className="size-4 text-primary" aria-hidden="true" />
-                  Your profile is complete.
-                </p>
+                <li className="flex items-center gap-2.5 px-2 py-2 text-sm font-medium text-foreground">
+                  <span className="flex size-4 items-center justify-center rounded-full bg-primary text-primary-foreground">
+                    <Check className="size-3" aria-hidden="true" />
+                  </span>
+                  Every detail is filled in
+                </li>
               ) : (
-                <ul className="flex flex-col gap-1.5">
-                  {completion.missing.map((key) => {
-                    const section = fieldSection[key]
-                    return (
-                      <li key={key} className="text-[13px]">
-                        {section ? (
-                          <a href={`#${section}`} className="text-primary outline-none hover:underline focus-visible:ring-2 focus-visible:ring-primary/40">
-                            Add {fieldLabels[key].toLowerCase()}
-                          </a>
-                        ) : (
-                          <Link href="/student/preferences" className="text-primary outline-none hover:underline focus-visible:ring-2 focus-visible:ring-primary/40">
-                            Add {fieldLabels[key].toLowerCase()} in Preferences
-                          </Link>
-                        )}
-                      </li>
-                    )
-                  })}
-                </ul>
+                completion.missing.map((key) => {
+                  const section = fieldSection[key]
+                  const className = 'group flex items-center gap-2.5 rounded-lg px-2 py-2 text-sm outline-none transition-colors hover:bg-muted focus-visible:ring-2 focus-visible:ring-primary/40'
+                  const body = (
+                    <>
+                      <span aria-hidden="true" className="size-4 shrink-0 rounded-full border-2 border-primary/40" />
+                      <span className="min-w-0 flex-1 font-medium text-foreground group-hover:text-primary">{fieldLabels[key]}</span>
+                      <ChevronRight className="size-4 shrink-0 text-muted-foreground" aria-hidden="true" />
+                    </>
+                  )
+                  return (
+                    <li key={key}>
+                      {section ? (
+                        <a href={`#${section}`} className={className}>
+                          {body}
+                        </a>
+                      ) : (
+                        <Link href="/student/preferences" className={className}>
+                          {body}
+                        </Link>
+                      )}
+                    </li>
+                  )
+                })
               )}
-            </div>
+            </ul>
           </DashboardSection>
         </aside>
       </div>

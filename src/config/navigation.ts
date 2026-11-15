@@ -33,14 +33,16 @@ export const headerSections: HeaderSection[] = [
   {
     id: 'exams',
     label: 'Exams',
-    match: /^\/(exams|exam|rank-predictor)(\/|$)/,
+    match: /^\/(exams|exam|rank-predictor|cutoffs|exam-calendar|predictors)(\/|$)/,
     links: [
       { label: 'All exams', href: '/exams' },
       { label: 'Engineering', href: '/exams?area=engineering' },
       { label: 'Medical', href: '/exams?area=medical' },
       { label: 'Management', href: '/exams?area=management' },
       { label: 'Law', href: '/exams?area=law' },
-      { label: 'Rank predictor', href: '/rank-predictor' },
+      { label: 'Exam calendar', href: '/exam-calendar' },
+      { label: 'JoSAA cutoffs', href: '/cutoffs' },
+      { label: 'Predictors', href: '/predictors' },
       { label: 'College predictor', href: '/college-predictor' },
     ],
   },

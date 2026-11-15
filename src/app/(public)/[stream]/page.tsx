@@ -1,24 +1,24 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { getStreamHub } from '@/features/streams/api/stream-hub-api'
+import { getStreamLanding } from '@/features/streams/api/stream-landing'
 import { listStreams } from '@/features/streams/api/streams-api'
 import { StreamHubPage } from '@/features/streams/components/stream-hub-page'
 
 type Props = { params: Promise<{ stream: string }> }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const hub = await getStreamHub((await params).stream)
-  if (!hub) return { title: 'Not Found' }
+  const landing = await getStreamLanding((await params).stream)
+  if (!landing) return { title: 'Not Found' }
   return {
-    title: `${hub.stream.name}: Colleges, Courses, Exams & Scholarships`,
-    description: hub.stream.description,
-    alternates: { canonical: `/${hub.stream.slug}` },
+    title: `${landing.stream.name}: Colleges, Exams, Courses & Scholarships`,
+    description: landing.stream.description,
+    alternates: { canonical: `/${landing.stream.slug}` },
   }
 }
 
 export default async function StreamRoute({ params }: Props) {
-  const hub = await getStreamHub((await params).stream)
-  if (!hub) notFound()
-  const otherStreams = (await listStreams()).filter((stream) => stream.slug !== hub.stream.slug)
-  return <StreamHubPage hub={hub} otherStreams={otherStreams} />
+  const landing = await getStreamLanding((await params).stream)
+  if (!landing) notFound()
+  const otherStreams = (await listStreams()).filter((stream) => stream.slug !== landing.stream.slug)
+  return <StreamHubPage landing={landing} otherStreams={otherStreams} />
 }

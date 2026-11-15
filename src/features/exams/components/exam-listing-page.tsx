@@ -35,6 +35,7 @@ export function ExamListingPage({ initial, initialQuery }: { initial?: CatalogLi
 
   return (
     <CatalogListing
+      art="exam"
       breadcrumbs={[{ label: 'Home', href: '/' }, 'Exams']}
       title={area ? `${area} entrance exams` : 'Entrance exams in India'}
       description="Official notices, conducting bodies and the colleges that accept each exam."

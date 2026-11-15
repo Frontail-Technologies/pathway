@@ -1,8 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import Link from 'next/link'
-import { ArrowLeft, Download, Eye, Save } from 'lucide-react'
+import { Download, Eye, Save } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet'
@@ -11,6 +10,8 @@ import { StepContent } from '../step-content'
 import { ResumeDocumentViewport } from '../resume-document-viewport'
 import { useResumeDocument } from '../resume-template-renderer'
 import { TemplatePicker } from '../template-picker'
+import { ResumePrint, printResume } from '../resume-print'
+import { WorkspaceBar } from './workspace-bar'
 
 type MobileWorkspaceProps = {
   savedAt: number | null
@@ -37,26 +38,24 @@ export function MobileWorkspace({ savedAt, step, data, onChange, templateId, onT
     const previous = RESUME_STEPS[stepIndex - 1]
     if (previous) onStepChange(previous.id)
   }
-  const handleExport = () => window.print()
 
   return (
     <div className="flex h-full min-h-0 w-full min-w-0 flex-col">
-      <header className="flex h-13 shrink-0 items-center gap-2 border-b bg-card px-2">
-        <Button variant="ghost" size="icon-sm" nativeButton={false} render={<Link href="/" aria-label="Back to Student Tools" />}>
-          <ArrowLeft className="size-4" aria-hidden="true" />
-        </Button>
-        <span className="min-w-0 flex-1 truncate text-center text-sm font-semibold text-foreground">Resume Builder</span>
-        <span className="flex size-8 shrink-0 items-center justify-center text-muted-foreground" aria-label={savedAt ? 'Draft saved locally' : undefined}>
-          {savedAt && <Save className="size-4" aria-hidden="true" />}
-        </span>
-      </header>
+      <WorkspaceBar>
+        {savedAt ? (
+          <span className="flex items-center gap-1 text-xs text-primary-foreground/80">
+            <Save className="size-3.5" aria-hidden="true" />
+            Saved
+          </span>
+        ) : null}
+      </WorkspaceBar>
 
       <div className="shrink-0 border-b bg-card px-4 py-2.5">
         <div className="flex items-center justify-between text-sm">
-          <span className="font-semibold text-foreground">
+          <span className="font-semibold text-foreground">{meta.label}</span>
+          <span className="text-muted-foreground">
             Step {stepIndex + 1} of {RESUME_STEPS.length}
           </span>
-          <span className="text-muted-foreground">{meta.label}</span>
         </div>
         <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-muted">
           <div className="h-full rounded-full bg-primary transition-all" style={{ width: `${((stepIndex + 1) / RESUME_STEPS.length) * 100}%` }} />
@@ -79,11 +78,11 @@ export function MobileWorkspace({ savedAt, step, data, onChange, templateId, onT
         </Button>
         {step !== 'review' ? (
           <Button type="button" variant="cta" onClick={goNext}>
-            Save & Next
+            Save and next
           </Button>
         ) : (
           <Button type="button" variant="cta" onClick={() => setPreviewOpen(true)}>
-            View Resume
+            View resume
           </Button>
         )}
       </div>
@@ -93,10 +92,10 @@ export function MobileWorkspace({ savedAt, step, data, onChange, templateId, onT
           <SheetHeader className="flex-row items-center justify-between gap-2 border-b p-3">
             <SheetTitle>Resume Preview</SheetTitle>
             <div className="flex flex-wrap items-center justify-end gap-2">
-              <TemplatePicker data={data} templateId={templateId} onSelect={onTemplateChange} trigger={<Button type="button" variant="outline" size="sm">Change Template</Button>} />
-              <Button type="button" variant="cta" size="sm" className="gap-1.5" onClick={handleExport}>
+              <TemplatePicker data={data} templateId={templateId} onSelect={onTemplateChange} trigger={<Button type="button" variant="outline" size="sm">Change template</Button>} />
+              <Button type="button" variant="cta" size="sm" className="gap-1.5" onClick={printResume}>
                 <Download className="size-4" aria-hidden="true" />
-                Export
+                PDF
               </Button>
               <Button type="button" variant="ghost" size="sm" onClick={() => setPreviewOpen(false)}>
                 Close
@@ -106,6 +105,7 @@ export function MobileWorkspace({ savedAt, step, data, onChange, templateId, onT
           <div className="min-h-0 flex-1">{previewOpen && <ResumeDocumentViewport document={resumeDocument} resetKey={templateId} zoomable={false} />}</div>
         </SheetContent>
       </Sheet>
+      <ResumePrint pages={resumeDocument.pages} />
     </div>
   )
 }

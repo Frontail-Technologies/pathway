@@ -1,3 +1,7 @@
+import { RankingsTablesSection } from '@/features/home/components/rankings-tables-section'
+import { HomeComparisonsSection } from '@/features/home/components/home-comparisons-section'
+import { HomePredictorsSection } from '@/features/home/components/home-predictors-section'
+import { HomeTopRankedSection } from '@/features/home/components/home-top-ranked-section'
 import { HeroSection } from '@/features/home/components/hero-section'
 import { StreamSwitcherSection } from '@/features/home/components/stream-switcher-section'
 import { TrustStrip } from '@/features/home/components/trust-strip'
@@ -18,7 +22,11 @@ export default function PublicHomePage() {
       <StreamSwitcherSection />
       <TrustStrip />
       <TrendingCollegesSection />
+      <RankingsTablesSection />
+      <HomeTopRankedSection />
       <TopExamsSection />
+      <HomePredictorsSection />
+      <HomeComparisonsSection />
       <ToolsStrip />
       <TrendingCoursesSection />
       <CounsellingCtaSection tone="muted" />

@@ -31,3 +31,16 @@ export function collegeFactFaqs(college: CollegeDetailData): Faq[] {
   ]
   return faqs.filter((faq): faq is Faq => Boolean(faq))
 }
+
+const institutePrefixes: [RegExp, string][] = [
+  [/^Indian Institute of Technology \(Banaras Hindu University\)/, 'IIT (BHU)'],
+  [/^Indian Institute of Technology/, 'IIT'],
+  [/^National Institute of Technology/, 'NIT'],
+  [/^Indian Institute of Information Technology/, 'IIIT'],
+  [/^Indian Institute of Management/, 'IIM'],
+  [/^Indian Institute of Science Education and Research/, 'IISER'],
+  [/^Indian Institute of Science\b/, 'IISc'],
+  [/^All India Institute of Medical Sciences,?/, 'AIIMS'],
+]
+
+export const shortInstituteName = (name: string) => institutePrefixes.reduce((value, [pattern, short]) => value.replace(pattern, short), name).replace(/\s+/g, ' ').trim()

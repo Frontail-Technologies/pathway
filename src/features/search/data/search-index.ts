@@ -1,4 +1,3 @@
-import { getPublishedNotes } from '@/features/notes/data/notes'
 import { streams } from '@/features/streams/data/stream-taxonomy'
 
 export type SearchKind = 'stream' | 'college' | 'course' | 'exam' | 'scholarship' | 'coaching' | 'tutor' | 'note' | 'tool'
@@ -25,8 +24,12 @@ export type SearchEntry = {
 }
 
 const tools: SearchEntry[] = [
-  { id: 'tool-college-predictor', kind: 'tool', title: 'College Predictor', subtitle: 'Preview colleges from your exam score', href: '/college-predictor', keywords: 'predict admission chances jee neet cutoff' },
+  { id: 'tool-college-predictor', kind: 'tool', title: 'College Predictor', subtitle: 'Colleges and branches within reach of your rank', href: '/college-predictor', keywords: 'predict admission chances jee neet cutoff' },
   { id: 'tool-rank-predictor', kind: 'tool', title: 'Rank Predictor', subtitle: 'Estimate your rank from your percentile', href: '/rank-predictor', keywords: 'predict rank percentile marks score' },
+  { id: 'tool-cutoffs', kind: 'tool', title: 'JoSAA Cutoff Explorer', subtitle: 'Opening and closing ranks for every branch and quota', href: '/cutoffs', keywords: 'josaa cutoff closing rank opening rank nit iit iiit branch' },
+  { id: 'tool-exam-calendar', kind: 'tool', title: 'Exam Calendar', subtitle: 'Application, exam and result dates', href: '/exam-calendar', keywords: 'exam dates calendar schedule application result' },
+  { id: 'tool-loan-calculator', kind: 'tool', title: 'Education Loan EMI Calculator', subtitle: 'Monthly EMI and total interest for a study loan', href: '/education-loan-calculator', keywords: 'education loan emi calculator interest study loan' },
+  { id: 'tool-neet-rank-predictor', kind: 'tool', title: 'NEET UG Rank Predictor', subtitle: 'Estimate your NEET rank from your percentile', href: '/rank-predictor?exam=neet-ug', keywords: 'neet rank predictor percentile air medical' },
   { id: 'tool-compare', kind: 'tool', title: 'Compare Colleges', subtitle: 'Side-by-side fees, placements and ratings', href: '/compare/colleges', keywords: 'compare vs versus' },
   { id: 'tool-psychometric', kind: 'tool', title: 'Psychometric Test', subtitle: 'Discover careers that match your interests', href: '/psychometric-test', keywords: 'career aptitude test personality' },
   { id: 'tool-resume', kind: 'tool', title: 'Resume Builder', subtitle: 'Build a student resume', href: '/resume-builder', keywords: 'cv resume' },
@@ -45,14 +48,6 @@ export function getSearchIndex(): SearchEntry[] {
       subtitle: `${s.tagline} · colleges, courses, exams`,
       href: `/${s.slug}`,
       keywords: s.examKeywords.join(' '),
-    })),
-    ...getPublishedNotes().map((n) => ({
-      id: n.id,
-      kind: 'note' as const,
-      title: n.title,
-      subtitle: [n.subject, n.stream, n.studyLevel].filter(Boolean).join(' · ') || 'Study notes',
-      href: `/notes/${n.slug}`,
-      keywords: n.shortDescription ?? '',
     })),
     ...tools,
   ]

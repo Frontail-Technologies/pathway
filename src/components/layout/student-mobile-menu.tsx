@@ -15,10 +15,10 @@ export function StudentMobileMenu() {
         <Menu className="size-5" aria-hidden="true" />
       </SheetTrigger>
       <SheetContent side="left" className="w-72 p-0">
-        <SheetHeader className="border-b p-4">
+        <SheetHeader className="sr-only">
           <SheetTitle>Your account</SheetTitle>
         </SheetHeader>
-        <div className="p-3">
+        <div className="h-full p-4 pt-12">
           <StudentNavigation onNavigate={() => setOpen(false)} />
         </div>
       </SheetContent>

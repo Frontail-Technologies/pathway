@@ -26,7 +26,7 @@ function TutorSpaceFrame({ children }: { children: React.ReactNode }) {
   const ready = hydrated && signedIn
 
   return (
-    <div className="pw-dashboard-shell flex min-h-dvh flex-col bg-background">
+    <div className="pw-dashboard-shell flex min-h-dvh flex-col bg-muted/50">
       <header className="web-chrome sticky top-0 z-30 bg-primary text-primary-foreground">
         <div className="mx-auto flex h-14 w-full max-w-[1680px] items-center gap-2 px-4 sm:gap-3 sm:px-6">
           {ready && (
@@ -35,10 +35,10 @@ function TutorSpaceFrame({ children }: { children: React.ReactNode }) {
                 <Menu className="size-5" aria-hidden="true" />
               </SheetTrigger>
               <SheetContent side="left" className="w-72 p-0">
-                <SheetHeader className="border-b p-4">
+                <SheetHeader className="sr-only">
                   <SheetTitle>Tutor space</SheetTitle>
                 </SheetHeader>
-                <div className="p-3">
+                <div className="h-full p-4 pt-12">
                   <TutorSpaceNav onNavigate={() => setMenuOpen(false)} />
                 </div>
               </SheetContent>
@@ -47,7 +47,7 @@ function TutorSpaceFrame({ children }: { children: React.ReactNode }) {
           <Link href="/tutor-dashboard" aria-label="Pathway tutor space" className="outline-none focus-visible:ring-2 focus-visible:ring-white/60">
             <Logo inverted />
           </Link>
-          <span className="hidden rounded-full bg-white/15 px-2.5 py-0.5 text-xs font-medium sm:inline">Tutor space</span>
+          <span className="hidden rounded-md bg-white/15 px-2 py-0.5 text-xs font-semibold sm:inline">Tutor</span>
           <div className="flex-1" />
           <Link href="/" className="rounded-md px-2 py-1.5 text-[13px] font-medium whitespace-nowrap outline-none hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-white/60 sm:text-sm">
             Back to Pathway
@@ -55,21 +55,21 @@ function TutorSpaceFrame({ children }: { children: React.ReactNode }) {
         </div>
       </header>
 
-      {ready && <DetailTabNav items={tabs} label="Tutor sections" className="lg:hidden" />}
+      {ready && <DetailTabNav items={tabs} label="Tutor sections" className="web-chrome lg:hidden" />}
 
-      <div className="mx-auto flex w-full max-w-[1680px] flex-1 gap-6 px-4 py-4 sm:px-6 lg:py-6">
+      <div className="flex w-full flex-1">
         {ready && (
-          <aside className="hidden w-56 shrink-0 lg:block">
-            <div className="sticky top-20 rounded-[12px] border bg-card p-2 shadow-[0_2px_10px_rgba(15,23,42,0.04)]">
+          <aside className="hidden w-64 shrink-0 border-r bg-card lg:block">
+            <div className="sticky top-14 h-[calc(100dvh-3.5rem)] overflow-y-auto p-4">
               <TutorSpaceNav />
             </div>
           </aside>
         )}
-        <main className="min-w-0 flex-1">{!hydrated ? <div aria-busy="true" className="min-h-[60dvh]" /> : signedIn ? children : <TutorSignIn />}</main>
+        <main className="min-w-0 flex-1 px-4 py-4 sm:px-6 lg:px-8 lg:py-6">{!hydrated ? <div aria-busy="true" className="min-h-[60dvh]" /> : signedIn ? children : <TutorSignIn />}</main>
       </div>
 
-      <footer className="border-t bg-card">
-        <p className="mx-auto max-w-[1680px] px-4 py-3 text-xs text-muted-foreground sm:px-6">© 2026 Pathway · Demo tutor account — sign-in and requests are not connected yet.</p>
+      <footer className="web-chrome border-t bg-card">
+        <p className="mx-auto max-w-[1680px] px-4 py-3 text-xs text-muted-foreground sm:px-6">© 2026 Pathway</p>
       </footer>
     </div>
   )

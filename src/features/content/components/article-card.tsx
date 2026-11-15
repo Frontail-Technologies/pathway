@@ -1,17 +1,8 @@
-import Image from 'next/image'
 import Link from 'next/link'
 import { Clock } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { ArticleCover } from './article-cover'
 import { articleTypeLabel, categoryLabel, formatArticleDate, type Article } from '../api/content-api'
-
-function Cover({ article, className }: { article: Article; className?: string }) {
-  if (!article.heroImageUrl) return null
-  return (
-    <div className={cn('relative overflow-hidden bg-muted', className)}>
-      <Image src={article.heroImageUrl} alt="" fill sizes="(min-width: 1024px) 40vw, 100vw" className="object-cover transition-transform duration-300 group-hover:scale-[1.02]" unoptimized />
-    </div>
-  )
-}
 
 function Meta({ article }: { article: Article }) {
   return (
@@ -28,8 +19,8 @@ function Meta({ article }: { article: Article }) {
 
 export function ArticleFeature({ article }: { article: Article }) {
   return (
-    <article className={cn('group relative grid overflow-hidden rounded-2xl border bg-card', article.heroImageUrl && 'md:grid-cols-[1.1fr_1fr]')}>
-      <Cover article={article} className="aspect-[16/9] md:aspect-auto md:min-h-72" />
+    <article className={'group relative grid overflow-hidden rounded-2xl border bg-card md:grid-cols-[1.1fr_1fr]'}>
+      <ArticleCover article={article} tone="blue" className="aspect-[16/9] md:aspect-auto md:min-h-72" />
       <div className="flex flex-col justify-center gap-3 p-5 sm:p-7">
         <p className="text-sm font-medium text-primary">
           {articleTypeLabel[article.type]}
@@ -50,7 +41,7 @@ export function ArticleFeature({ article }: { article: Article }) {
 export function ArticleCard({ article, className }: { article: Article; className?: string }) {
   return (
     <article className={cn('group relative flex flex-col overflow-hidden rounded-xl border bg-card transition-shadow hover:shadow-[0_12px_28px_rgba(15,23,42,0.08)]', className)}>
-      <Cover article={article} className="aspect-[16/9]" />
+      <ArticleCover article={article} className="aspect-[16/9]" />
       <div className="flex flex-1 flex-col gap-2 p-4">
         <p className="text-[13px] font-medium text-primary">
           {articleTypeLabel[article.type]}

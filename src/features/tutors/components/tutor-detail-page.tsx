@@ -1,352 +1,233 @@
-import type { ReactNode } from 'react'
 import Link from 'next/link'
-import { ArrowRight, BookOpen, Check, Globe, GraduationCap, Info, MonitorSmartphone } from 'lucide-react'
-import { Container } from '@/components/shared/container'
+import { ArrowRight, Check, Globe, MonitorSmartphone } from 'lucide-react'
 import { Breadcrumbs } from '@/components/shared/breadcrumbs'
-import { DetailQuickFacts, type DetailQuickFact } from '@/components/shared/detail-quick-facts'
+import { DetailBody, DetailSection } from '@/components/shared/detail-section'
 import { DetailSectionNav, type DetailSectionNavItem } from '@/components/shared/detail-section-nav'
-import { DetailStickySidebar } from '@/components/shared/detail-sticky-sidebar'
-import { TutorActionBar } from './tutor-action-bar'
-import { HorizontalContentRail } from '@/components/shared/horizontal-content-rail'
+import { SpotArt, type SpotArtName } from '@/components/shared/spot-art'
 import { Button } from '@/components/ui/button'
 import { teachingSteps } from '../data/tutors'
 import type { DetailedTutor } from '../api/tutors-api'
+import { TutorActionBar } from './tutor-action-bar'
 import { TutorPortrait } from './tutor-avatar'
 import { TutorProfileAction, TutorSaveAction } from './tutor-cards'
 
-
-const chip = 'rounded-md bg-secondary px-2 py-0.5 text-xs font-semibold text-primary'
-
-function Section({ id, title, children }: { id: string; title: string; children: ReactNode }) {
-  return (
-    <section id={id} className="scroll-mt-section border-b py-7 lg:py-9">
-      <h2 className="font-heading text-xl font-bold text-foreground sm:text-[22px]">{title}</h2>
-      <div className="mt-4">{children}</div>
-    </section>
-  )
-}
-
- 
-function RequestSessionButton({ className }: { className?: string }) {
-  return (
-    <Button variant="cta" className={className} disabled title="Session requests are coming soon">
-      Request Session
-    </Button>
-  )
-}
+const subjectArt: Record<string, SpotArtName> = { Physics: 'predictor', Chemistry: 'notes', Mathematics: 'chart', Biology: 'scholarship', English: 'courses', 'Computer Science': 'presentation' }
 
 function TutorHeader({ tutor }: { tutor: DetailedTutor }) {
-  const facts: DetailQuickFact[] = [
-    { icon: BookOpen, label: 'Subjects', value: tutor.subjects.join(', ') },
-    { icon: Globe, label: 'Languages', value: tutor.languages.join(', ') },
-    { icon: MonitorSmartphone, label: 'Learning Mode', value: tutor.modes.join(' & ') },
-    { icon: GraduationCap, label: 'Study Level', value: tutor.studyLevels.join(', ') },
-  ]
-
   return (
-    <div>
-      <div className="relative overflow-hidden rounded-[16px] border bg-[linear-gradient(135deg,#ffffff_45%,var(--brand-blue-light))] p-4 shadow-[0_8px_28px_rgba(30,58,138,0.06)] sm:p-6 lg:p-7">
-        <span className="pointer-events-none absolute -top-16 -right-10 size-56 rounded-full bg-primary/5" aria-hidden="true" />
-        <span className="pointer-events-none absolute -right-4 bottom-6 size-24 rounded-full border border-primary/10" aria-hidden="true" />
-
-        <div className="relative flex items-start gap-4 sm:gap-6 lg:gap-8">
-          <TutorPortrait tutor={tutor} className="h-40 w-32 rounded-2xl shadow-[0_12px_28px_rgba(30,58,138,0.16)] sm:h-52 sm:w-44 lg:h-60 lg:w-52" />
+    <section className="bg-primary text-primary-foreground">
+      <div className="container-shell px-4 pt-5 pb-8 lg:pt-6 lg:pb-10">
+        <div className="[&_a]:text-primary-foreground/80 [&_li]:text-primary-foreground/80 [&_span]:text-primary-foreground">
+          <Breadcrumbs items={['Home', { label: 'Tutors', href: '/tutors' }, tutor.name]} />
+        </div>
+        <div className="mt-6 flex flex-col gap-5 sm:flex-row sm:items-center sm:gap-7">
+          <div className="w-fit shrink-0 rounded-2xl bg-primary-foreground p-1.5 shadow-[0_14px_36px_rgba(15,23,42,0.22)]">
+            <TutorPortrait tutor={tutor} className="h-36 w-28 rounded-xl sm:h-44 sm:w-36" />
+          </div>
           <div className="min-w-0 flex-1">
-            <p className="text-xs font-bold tracking-[0.16em] text-primary uppercase">Tutor</p>
-            <h1 className="mt-1 font-heading text-2xl leading-tight font-extrabold text-foreground sm:text-4xl">{tutor.name}</h1>
-            <p className="mt-1 text-sm font-medium text-muted-foreground sm:text-base">{tutor.headline}</p>
-            <p className="mt-3 hidden max-w-2xl text-sm leading-6 text-foreground sm:block sm:text-[15px]">{tutor.intro}</p>
-
-            <div className="mt-3 hidden flex-wrap gap-1.5 sm:flex">
+            <h1 className="font-heading text-[28px] leading-tight font-extrabold sm:text-[38px]">{tutor.name}</h1>
+            <p className="mt-1 text-base text-primary-foreground/85">{tutor.headline}</p>
+            <div className="mt-3 flex flex-wrap gap-1.5">
               {tutor.subjects.map((subject) => (
-                <span key={subject} className={chip}>
+                <span key={subject} className="rounded-md bg-primary-foreground px-2 py-0.5 text-xs font-semibold text-primary">
                   {subject}
                 </span>
               ))}
               {tutor.exams.map((exam) => (
-                <span key={exam} className="rounded-md border bg-white/80 px-2 py-0.5 text-xs font-medium text-foreground">
+                <span key={exam} className="rounded-md bg-primary-foreground/15 px-2 py-0.5 text-xs font-semibold">
                   {exam}
                 </span>
               ))}
             </div>
-            <p className="mt-3 hidden text-[13px] text-muted-foreground sm:block">
-              {tutor.languages.join(', ')} · {tutor.modes.join(' & ')}
+            <p className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-sm text-primary-foreground/85">
+              <span className="flex items-center gap-1.5">
+                <Globe className="size-4" aria-hidden="true" />
+                {tutor.languages.join(', ')}
+              </span>
+              <span className="flex items-center gap-1.5">
+                <MonitorSmartphone className="size-4" aria-hidden="true" />
+                {tutor.modes.join(' and ')}
+              </span>
             </p>
-
-            <div className="mt-4 hidden flex-wrap items-center gap-2.5 sm:flex">
-              <RequestSessionButton className="h-10 px-6 text-sm font-semibold" />
-              <TutorSaveAction tutor={tutor} />
-              <p className="text-xs text-muted-foreground">Session requests coming soon</p>
+            <div className="mt-5 hidden flex-wrap gap-2.5 sm:flex">
+              <Button variant="cta" className="h-10 gap-1.5 px-5 text-sm font-semibold" nativeButton={false} render={<Link href="/counselling" />}>
+                Get free counselling
+                <ArrowRight className="size-4" aria-hidden="true" />
+              </Button>
+              <div className="[&_button]:border-primary-foreground/40 [&_button]:bg-transparent [&_button]:text-primary-foreground [&_button:hover]:bg-primary-foreground/10 [&_button:hover]:text-primary-foreground [&_svg]:text-primary-foreground">
+                <TutorSaveAction tutor={tutor} />
+              </div>
             </div>
           </div>
         </div>
-
-        <div className="relative mt-4 sm:hidden">
-          <p className="text-sm leading-6 text-foreground">{tutor.intro}</p>
-          <div className="mt-3 flex flex-wrap gap-1.5">
-            {tutor.subjects.map((subject) => (
-              <span key={subject} className={chip}>
-                {subject}
-              </span>
-            ))}
-            {tutor.exams.map((exam) => (
-              <span key={exam} className="rounded-md border bg-white/80 px-2 py-0.5 text-xs font-medium text-foreground">
-                {exam}
-              </span>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      <div className="mt-4">
-        <DetailQuickFacts facts={facts} />
-      </div>
-
-      <div className="mt-4 flex flex-col gap-2 pb-5 sm:hidden">
-        <RequestSessionButton className="h-11 w-full text-sm font-semibold" />
-        <TutorSaveAction tutor={tutor} />
-        <p className="text-center text-xs text-muted-foreground">Session requests coming soon</p>
-      </div>
-      <div className="hidden pb-6 sm:block" />
-    </div>
-  )
-}
-
-function AboutSection({ tutor }: { tutor: DetailedTutor }) {
-  return (
-    <Section id="overview" title={`About ${tutor.name.split(' ')[0]}`}>
-      <p className="text-[15px] leading-7 text-foreground">{tutor.detail.longBio || tutor.intro}</p>
-      {tutor.detail.traits.length === 0 ? null : <ul className="mt-4 grid gap-2.5 sm:grid-cols-3">
-        {tutor.detail.traits.map((trait) => (
-          <li key={trait} className="flex items-center gap-2.5 rounded-[10px] bg-secondary/60 px-3.5 py-3 text-sm font-medium text-foreground">
-            <Check className="size-4 shrink-0 text-primary" aria-hidden="true" />
-            {trait}
-          </li>
-        ))}
-      </ul>}
-    </Section>
-  )
-}
-
-function SubjectsSection({ tutor }: { tutor: DetailedTutor }) {
-  return (
-    <Section id="subjects" title="Subjects & Expertise">
-      <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-3">
-        {tutor.subjects.map((subject) => (
-          <div key={subject} className="flex items-center gap-3 rounded-[10px] border bg-card p-4">
-            <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-secondary text-primary">
-              <BookOpen className="size-4.5" aria-hidden="true" />
-            </span>
-            <p className="text-sm font-semibold text-foreground">{subject}</p>
-          </div>
-        ))}
-      </div>
-      <p className="mt-4 text-[11px] tracking-wide text-muted-foreground uppercase">Exam preparation</p>
-      <div className="mt-2 flex flex-wrap gap-2">
-        {tutor.exams.map((exam) => (
-          <span key={exam} className="rounded-md border bg-card px-3 py-1.5 text-sm font-medium text-foreground">
-            {exam}
-          </span>
-        ))}
-      </div>
-    </Section>
-  )
-}
-
-function ApproachSection() {
-  return (
-    <Section id="approach" title="Teaching Approach">
-      <ol className="grid gap-3 sm:grid-cols-2">
-        {teachingSteps.map((step, index) => (
-          <li key={step.title} className="flex items-start gap-3 rounded-[10px] border bg-card p-4">
-            <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">{index + 1}</span>
-            <div>
-              <p className="text-sm font-semibold text-foreground">{step.title}</p>
-              <p className="mt-0.5 text-[13px] leading-5 text-muted-foreground">{step.text}</p>
-            </div>
-          </li>
-        ))}
-      </ol>
-      <p className="mt-3 text-xs text-muted-foreground">A general outline of how sessions are structured. Outcomes depend on the student’s own effort and starting point.</p>
-    </Section>
-  )
-}
-
-function FitSection({ tutor }: { tutor: DetailedTutor }) {
-  if (tutor.detail.whoHelps.length === 0) return null
-  return (
-    <Section id="fit" title="Who This Tutor Helps">
-      <ul className="flex flex-col gap-3">
-        {tutor.detail.whoHelps.map((item) => (
-          <li key={item} className="flex items-start gap-3 text-[15px] leading-6 text-foreground">
-            <span className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full bg-secondary text-primary">
-              <Check className="size-3" aria-hidden="true" />
-            </span>
-            {item}
-          </li>
-        ))}
-      </ul>
-    </Section>
-  )
-}
-
-function LanguagesSection({ tutor }: { tutor: DetailedTutor }) {
-  return (
-    <Section id="languages" title="Languages & Modes">
-      <div className="grid gap-3 sm:grid-cols-2">
-        <div className="rounded-[10px] border bg-card p-4">
-          <p className="text-[11px] tracking-wide text-muted-foreground uppercase">Languages</p>
-          <div className="mt-2 flex flex-wrap gap-2">
-            {tutor.languages.map((language) => (
-              <span key={language} className="rounded-md bg-muted px-2.5 py-1 text-sm font-medium text-foreground">
-                {language}
-              </span>
-            ))}
-          </div>
-        </div>
-        <div className="rounded-[10px] border bg-card p-4">
-          <p className="text-[11px] tracking-wide text-muted-foreground uppercase">Learning modes</p>
-          <div className="mt-2 flex flex-wrap gap-2">
-            {tutor.modes.map((mode) => (
-              <span key={mode} className="rounded-md bg-muted px-2.5 py-1 text-sm font-medium text-foreground">
-                {mode}
-              </span>
-            ))}
-          </div>
-        </div>
-      </div>
-      <p className="mt-3 text-xs text-muted-foreground">Modes describe what this tutor offers. Booking is not connected yet.</p>
-    </Section>
-  )
-}
-
-function AvailabilitySection() {
-  return (
-    <section id="availability" className="scroll-mt-section py-7 lg:py-9">
-      <h2 className="font-heading text-xl font-bold text-foreground sm:text-[22px]">Availability</h2>
-      <div className="mt-4 flex items-start gap-3 rounded-[10px] border border-dashed bg-muted/40 p-4">
-        <Info className="mt-0.5 size-4 shrink-0 text-primary" aria-hidden="true" />
-        <p className="text-sm leading-6 text-muted-foreground">Session scheduling coming soon. Live availability and booking will appear here once scheduling is connected.</p>
       </div>
     </section>
   )
 }
 
-function TutorSidebar({ tutor }: { tutor: DetailedTutor }) {
+function Facts({ tutor }: { tutor: DetailedTutor }) {
+  const facts: { art: SpotArtName; label: string; value: string }[] = [
+    { art: 'courses', label: 'Subjects', value: tutor.subjects.join(', ') },
+    { art: 'exam', label: 'Exams', value: tutor.exams.join(', ') || 'General' },
+    { art: 'college', label: 'Class level', value: tutor.studyLevels.join(', ') },
+    { art: 'presentation', label: 'Mode', value: tutor.modes.join(' and ') },
+  ]
   return (
-    <div className="rounded-[10px] border bg-card p-4">
-      <div className="flex items-center gap-3">
-        <TutorPortrait tutor={tutor} className="size-16 rounded-xl" />
-        <div className="min-w-0">
-          <p className="text-[15px] font-semibold text-foreground">{tutor.name}</p>
-          <p className="text-xs text-muted-foreground">{tutor.subjects.join(' · ')}</p>
+    <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
+      {facts.map((fact) => (
+        <li key={fact.label} className="flex items-center gap-3 rounded-xl border bg-card p-3.5">
+          <SpotArt name={fact.art} className="size-11" />
+          <span className="min-w-0">
+            <span className="block text-xs text-muted-foreground">{fact.label}</span>
+            <span className="block text-sm font-semibold text-foreground">{fact.value}</span>
+          </span>
+        </li>
+      ))}
+    </ul>
+  )
+}
+
+function SideCard({ tutor }: { tutor: DetailedTutor }) {
+  return (
+    <div className="flex flex-col gap-4">
+      <div className="rounded-xl border bg-card p-4">
+        <div className="flex items-center gap-3">
+          <TutorPortrait tutor={tutor} className="size-14 rounded-xl" />
+          <div className="min-w-0">
+            <p className="truncate text-[15px] font-semibold text-foreground">{tutor.name}</p>
+            <p className="truncate text-xs text-muted-foreground">{tutor.subjects.join(' · ')}</p>
+          </div>
+        </div>
+        <dl className="mt-4 flex flex-col gap-2 border-t pt-3 text-sm">
+          {[
+            ['Languages', tutor.languages.join(', ')],
+            ['Modes', tutor.modes.join(' and ')],
+            ['Levels', tutor.studyLevels.join(', ')],
+          ].map(([label, value]) => (
+            <div key={label} className="flex justify-between gap-3">
+              <dt className="text-muted-foreground">{label}</dt>
+              <dd className="text-right font-medium text-foreground">{value}</dd>
+            </div>
+          ))}
+        </dl>
+        <div className="mt-4 flex flex-col gap-2">
+          <Button variant="cta" className="h-10 w-full text-sm font-semibold" nativeButton={false} render={<Link href="/counselling" />}>
+            Get free counselling
+          </Button>
+          <TutorSaveAction tutor={tutor} />
         </div>
       </div>
-      <dl className="mt-4 flex flex-col gap-2 border-t pt-3 text-sm">
-        {[
-          ['Languages', tutor.languages.join(', ')],
-          ['Modes', tutor.modes.join(' & ')],
-          ['Levels', tutor.studyLevels.join(', ')],
-          ['Sessions', 'Coming soon'],
-        ].map(([label, value]) => (
-          <div key={label} className="flex justify-between gap-3">
-            <dt className="text-muted-foreground">{label}</dt>
-            <dd className="text-right font-medium text-foreground">{value}</dd>
-          </div>
-        ))}
-      </dl>
-      <RequestSessionButton className="mt-4 h-10 w-full text-sm font-semibold" />
-      <p className="mt-2 text-center text-xs text-muted-foreground">Session requests coming soon</p>
+      <div className="rounded-xl bg-secondary p-4">
+        <SpotArt name="updated" className="size-11 bg-card" />
+        <p className="mt-2.5 text-sm font-semibold text-foreground">Booking sessions</p>
+        <p className="mt-0.5 text-[13px] text-muted-foreground">Requesting a session directly is on the way. A counsellor can help you get started now.</p>
+      </div>
     </div>
   )
 }
 
-function RelatedTutorsSection({ tutor }: { tutor: DetailedTutor }) {
-  const related = tutor.related
-  if (related.length === 0) return null
-  return (
-    <Container className="px-4">
-      <section className="border-t py-7 lg:py-9" aria-labelledby="related-tutors-title">
-        <h2 id="related-tutors-title" className="font-heading text-xl font-bold text-foreground sm:text-[22px]">
-          Related Tutors
-        </h2>
-        <HorizontalContentRail ariaLabel="Related tutors" className="mt-4" trackClassName="lg:grid lg:grid-cols-3 lg:overflow-visible">
-          {related.map((other) => (
-            <div key={other.id} className="flex w-72 shrink-0 snap-start flex-col rounded-[10px] border bg-card p-4 lg:w-auto">
-              <div className="flex items-center gap-3">
-                <TutorPortrait tutor={other} className="size-16 rounded-xl" />
-                <div className="min-w-0">
-                  <p className="text-sm font-bold text-foreground">{other.name}</p>
-                  <p className="text-xs text-muted-foreground">{other.headline}</p>
-                </div>
-              </div>
-              <div className="mt-3">
-                <TutorProfileAction tutor={other} variant="outline" />
-              </div>
-            </div>
-          ))}
-        </HorizontalContentRail>
-      </section>
-    </Container>
-  )
-}
-
-function FinalCta() {
-  return (
-    <Container className="px-4 pb-10">
-      <div className="flex flex-col gap-4 rounded-[12px] border bg-primary/5 p-5 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <p className="font-heading text-lg font-bold text-foreground">Still comparing tutors?</p>
-          <p className="mt-0.5 text-sm text-muted-foreground">Browse every tutor by subject, exam, class level, language and learning mode.</p>
-        </div>
-        <Button variant="cta" className="h-11 gap-2 px-5 text-sm font-semibold" nativeButton={false} render={<Link href="/tutors" />}>
-          Browse All Tutors
-          <ArrowRight className="size-4" aria-hidden="true" />
-        </Button>
-      </div>
-    </Container>
-  )
-}
-
 export function TutorDetailPage({ tutor }: { tutor: DetailedTutor }) {
+  const firstName = tutor.name.split(' ')[0]
   const navItems: DetailSectionNavItem[] = [
     { id: 'overview', label: 'Overview' },
     { id: 'subjects', label: 'Subjects' },
     { id: 'approach', label: 'Approach' },
-    ...(tutor.detail.whoHelps.length ? [{ id: 'fit', label: 'Learning Fit' }] : []),
-    { id: 'languages', label: 'Languages' },
-    { id: 'availability', label: 'Availability' },
+    ...(tutor.detail.whoHelps.length ? [{ id: 'fit', label: 'Who it suits' }] : []),
+    ...(tutor.related.length ? [{ id: 'related', label: 'Similar tutors' }] : []),
   ]
 
   return (
-    <div className="bg-background">
-      <Container className="px-4 pt-5 lg:pt-6">
-        <Breadcrumbs items={['Home', { label: 'Tutors', href: '/tutors' }, tutor.name]} />
-        <div className="mt-4">
-          <TutorHeader tutor={tutor} />
-        </div>
-      </Container>
-
+    <div className="bg-muted/50 pb-24 lg:pb-12">
+      <TutorHeader tutor={tutor} />
       <DetailSectionNav items={navItems} />
+      <DetailBody aside={<SideCard tutor={tutor} />}>
+        <Facts tutor={tutor} />
 
-      <Container className="px-4">
-        <div className="flex flex-col gap-8 lg:flex-row lg:items-start lg:gap-6">
-          <div className="min-w-0 flex-1">
-            <AboutSection tutor={tutor} />
-            <SubjectsSection tutor={tutor} />
-            <ApproachSection />
-            <FitSection tutor={tutor} />
-            <LanguagesSection tutor={tutor} />
-            <AvailabilitySection />
-          </div>
-          <DetailStickySidebar>
-            <TutorSidebar tutor={tutor} />
-          </DetailStickySidebar>
-        </div>
-      </Container>
+        <DetailSection id="overview" title={`About ${firstName}`}>
+          <p className="text-[15px] leading-7 text-foreground">{tutor.detail.longBio || tutor.intro}</p>
+          {tutor.detail.traits.length ? (
+            <ul className="mt-4 grid gap-2.5 sm:grid-cols-3">
+              {tutor.detail.traits.map((trait) => (
+                <li key={trait} className="flex items-center gap-2.5 rounded-lg bg-secondary px-3.5 py-3 text-sm font-medium text-foreground">
+                  <Check className="size-4 shrink-0 text-primary" aria-hidden="true" />
+                  {trait}
+                </li>
+              ))}
+            </ul>
+          ) : null}
+        </DetailSection>
 
-      <RelatedTutorsSection tutor={tutor} />
-      <FinalCta />
+        <DetailSection id="subjects" title="Subjects and exams">
+          <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {tutor.subjects.map((subject) => (
+              <li key={subject} className="flex items-center gap-3 rounded-xl border p-3.5">
+                <SpotArt name={subjectArt[subject] ?? 'courses'} className="size-11" />
+                <span className="text-sm font-semibold text-foreground">{subject}</span>
+              </li>
+            ))}
+          </ul>
+          {tutor.exams.length ? (
+            <div className="mt-4 flex flex-wrap items-center gap-2">
+              <span className="text-sm text-muted-foreground">Prepares students for</span>
+              {tutor.exams.map((exam) => (
+                <span key={exam} className="rounded-md bg-secondary px-2.5 py-1 text-sm font-semibold text-primary">
+                  {exam}
+                </span>
+              ))}
+            </div>
+          ) : null}
+        </DetailSection>
+
+        <DetailSection id="approach" title="How sessions run">
+          <ol className="grid gap-3 sm:grid-cols-2">
+            {teachingSteps.map((step, index) => (
+              <li key={step.title} className="flex items-start gap-3 rounded-xl border p-4">
+                <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-bold text-primary-foreground">{index + 1}</span>
+                <div>
+                  <p className="text-sm font-semibold text-foreground">{step.title}</p>
+                  <p className="mt-0.5 text-[13px] leading-5 text-muted-foreground">{step.text}</p>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </DetailSection>
+
+        {tutor.detail.whoHelps.length ? (
+          <DetailSection id="fit" title={`Who ${firstName} helps`}>
+            <ul className="flex flex-col gap-3">
+              {tutor.detail.whoHelps.map((item) => (
+                <li key={item} className="flex items-start gap-3 text-[15px] leading-6 text-foreground">
+                  <span className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
+                    <Check className="size-3" aria-hidden="true" />
+                  </span>
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </DetailSection>
+        ) : null}
+
+        {tutor.related.length ? (
+          <DetailSection id="related" title="Similar tutors" action={<Link href="/tutors" className="flex shrink-0 items-center gap-1 text-sm font-semibold text-primary hover:underline">All tutors<ArrowRight className="size-4" aria-hidden="true" /></Link>}>
+            <ul className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+              {tutor.related.map((other) => (
+                <li key={other.id} className="flex flex-col rounded-xl border p-4">
+                  <div className="flex items-center gap-3">
+                    <TutorPortrait tutor={other} className="size-14 rounded-xl" />
+                    <div className="min-w-0">
+                      <p className="text-sm font-bold text-foreground">{other.name}</p>
+                      <p className="line-clamp-2 text-xs text-muted-foreground">{other.headline}</p>
+                    </div>
+                  </div>
+                  <div className="mt-3">
+                    <TutorProfileAction tutor={other} variant="outline" />
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </DetailSection>
+        ) : null}
+      </DetailBody>
       <TutorActionBar tutorSlug={tutor.slug} tutorName={tutor.name} />
     </div>
   )

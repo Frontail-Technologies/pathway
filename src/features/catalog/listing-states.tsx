@@ -1,6 +1,7 @@
 'use client'
 
-import { AlertCircle, Loader2 } from 'lucide-react'
+import { Illustration } from '@/components/shared/illustration'
+import { Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 export function ListingLoading({ label }: { label: string }) {
@@ -19,8 +20,8 @@ export function ListingLoading({ label }: { label: string }) {
 
 export function ListingError({ message, onRetry }: { message: string | null; onRetry: () => void }) {
   return (
-    <div role="alert" className="flex flex-col items-center gap-3 rounded-[12px] border border-destructive/30 bg-destructive/5 px-6 py-10 text-center">
-      <AlertCircle className="size-6 text-destructive" aria-hidden="true" />
+    <div role="alert" className="flex flex-col items-center gap-3 rounded-xl border bg-card px-6 py-8 text-center">
+      <Illustration name="loadError" width={180} />
       <p className="text-sm font-semibold text-foreground">Results couldn&apos;t be loaded</p>
       <p className="max-w-md text-sm text-muted-foreground">{message ?? 'Please try again.'}</p>
       <Button variant="outline" onClick={onRetry}>

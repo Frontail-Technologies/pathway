@@ -25,6 +25,8 @@ export type NativeMessage =
   | { type: 'route'; path: string; title: string }
   | { type: 'title'; title: string }
   | { type: 'openExternal'; url: string }
+  | { type: 'requestToken'; stale: boolean }
+  | { type: 'signOut' }
 
 type BridgeWindow = Window & {
   ReactNativeWebView?: { postMessage: (data: string) => void }
@@ -61,4 +63,24 @@ export function postToNative(message: NativeMessage): boolean {
   } catch {
   }
   return false
+}
+
+export const APP_TOKEN_EVENT = 'pathway:token'
+
+export function requestAppToken(stale: boolean, timeoutMs = 8000): Promise<string | null> {
+  if (typeof window === 'undefined' || !isAppShell() || !hasNativeBridge()) return Promise.resolve(null)
+  return new Promise((resolve) => {
+    const done = (token: string | null) => {
+      window.clearTimeout(timer)
+      window.removeEventListener(APP_TOKEN_EVENT, onToken)
+      resolve(token)
+    }
+    const onToken = (event: Event) => {
+      const detail = (event as CustomEvent<{ accessToken?: string | null }>).detail
+      done(typeof detail?.accessToken === 'string' && detail.accessToken ? detail.accessToken : null)
+    }
+    const timer = window.setTimeout(() => done(null), timeoutMs)
+    window.addEventListener(APP_TOKEN_EVENT, onToken)
+    if (!postToNative({ type: 'requestToken', stale })) done(null)
+  })
 }

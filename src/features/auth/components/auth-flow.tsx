@@ -10,7 +10,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { cn } from '@/lib/utils'
 import { ApiRequestError, registerStudentAccount, registerTutorAccount, signInWithGoogle, signInWithPassword, signOut, type SessionUser } from '../lib/session-client'
-import { GoogleSignInButton, googleSignInEnabled } from './google-sign-in-button'
+import { GoogleSignInButton } from './google-sign-in-button'
 import { useAuthSession } from '../state/auth-session-provider'
 import { isEmail, MIN_PASSWORD, safeNextPath } from '../lib/auth-helpers'
 
@@ -46,7 +46,7 @@ function AccountTypeSwitch({ value, onChange }: { value: AccountType; onChange: 
           onClick={() => onChange(option)}
           className={cn(
             'flex h-10 items-center justify-center gap-2 rounded-[9px] text-sm font-semibold outline-none transition-colors focus-visible:ring-2 focus-visible:ring-primary/40',
-            value === option ? 'bg-background text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground',
+            value === option ? 'bg-primary text-primary-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground',
           )}
         >
           <Icon className="size-4" aria-hidden="true" />
@@ -146,16 +146,14 @@ export function AuthFlow({ mode, next, accountType: initialType }: { mode: Mode;
     }
   }
 
-  const showGoogle = googleSignInEnabled && accountType === 'student'
+  const showGoogle = accountType === 'student'
 
   const heading = isRegister ? (accountType === 'tutor' ? 'Join Pathway as a tutor' : 'Create your account') : 'Sign in to Pathway'
   const subheading = isRegister
     ? accountType === 'tutor'
       ? 'Create your tutor account. Your profile is reviewed before students can see it.'
       : 'Save colleges, track enquiries and get picks for your goals.'
-    : showGoogle
-      ? 'Welcome back.'
-      : 'Welcome back. Sign in with your email and password.'
+    : 'Welcome back. Pick up where you left off.'
 
   const textField = (field: Field, label: string, value: string, setValue: (value: string) => void, props: React.ComponentProps<typeof Input> = {}) => (
     <div className="flex flex-col gap-1.5">
@@ -203,9 +201,9 @@ export function AuthFlow({ mode, next, accountType: initialType }: { mode: Mode;
       {showGoogle ? (
         <div className="flex flex-col gap-4">
           <GoogleSignInButton mode={mode} disabled={busy} onCredential={continueWithGoogle} onError={setFormError} />
-          <div className="flex items-center gap-3 text-xs font-medium tracking-wide text-muted-foreground uppercase" aria-hidden="true">
+          <div className="flex items-center gap-3 text-xs font-medium text-muted-foreground" aria-hidden="true">
             <span className="h-px flex-1 bg-border" />
-            or
+            or use email
             <span className="h-px flex-1 bg-border" />
           </div>
         </div>
@@ -230,7 +228,7 @@ export function AuthFlow({ mode, next, accountType: initialType }: { mode: Mode;
               className={cn(inputClass, 'pr-11')}
               value={password}
               aria-invalid={!!errors.password || undefined}
-              aria-describedby={`${ids}-password-${errors.password ? 'error' : 'hint'}`}
+              aria-describedby={errors.password ? `${ids}-password-error` : undefined}
               onChange={(event) => {
                 setPassword(event.target.value)
                 clearError('password')
@@ -246,15 +244,9 @@ export function AuthFlow({ mode, next, accountType: initialType }: { mode: Mode;
               {showPassword ? <EyeOff className="size-4.5" aria-hidden="true" /> : <Eye className="size-4.5" aria-hidden="true" />}
             </button>
           </div>
-          {errors.password ? (
-            <FieldError id={`${ids}-password-error`} message={errors.password} />
-          ) : (
-            <p id={`${ids}-password-hint`} className="text-[13px] text-muted-foreground">
-              {isRegister ? `At least ${MIN_PASSWORD} characters. Avoid common passwords and your email name.` : 'Use the email and password of your Pathway account.'}
-            </p>
-          )}
+          <FieldError id={`${ids}-password-error`} message={errors.password} />
         </div>
-        <Button type="submit" size="lg" className="h-11 w-full text-[15px] font-semibold" disabled={busy}>
+        <Button type="submit" variant="cta" size="lg" className="h-11 w-full text-[15px] font-semibold" disabled={busy}>
           {busy ? 'Please wait…' : isRegister ? (accountType === 'tutor' ? 'Create tutor account' : 'Create account') : 'Sign in'}
         </Button>
       </form>

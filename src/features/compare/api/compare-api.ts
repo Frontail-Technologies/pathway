@@ -1,3 +1,4 @@
+import { shortInstituteName } from '@/features/colleges/utils'
 import { catalogGet, catalogList } from '@/services/api/catalog'
 import { cityName, formatLakh, formatRupees, labels, placementValue, stateName, type Place, type TermRef } from '@/features/catalog/format'
 import type { CollegeComparisonItem } from '../data/college-compare'
@@ -61,7 +62,7 @@ function toCollege(dto: CompareInstitutionDto): CollegeComparisonItem {
     href: `/college/${dto.slug}`,
     logo: dto.logoUrl ?? '',
     name: dto.name,
-    shortName: dto.shortName ?? dto.name,
+    shortName: dto.shortName ?? shortInstituteName(dto.name),
     location,
     type: dto.ownership.label,
     rating: dto.rating ?? 0,

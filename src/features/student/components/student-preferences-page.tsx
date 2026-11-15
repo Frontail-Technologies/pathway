@@ -9,7 +9,7 @@ import { ChipGroup } from '@/components/shared/student-tool/tool-fields'
 import { courses } from '@/features/courses/data/courses'
 import { exams } from '@/features/exams/data/exams'
 import { useStudentProfile } from '../state/student-profile-provider'
-import { DashboardSection } from './dashboard-parts'
+import { DashboardSection, StudentPageHeader } from './dashboard-parts'
 
 const studyGoalOptions = ['Undergraduate study', 'Postgraduate study', 'Entrance exam preparation', 'Explore career options', 'Still deciding']
 const streamOptions = ['Engineering', 'Medical', 'Commerce', 'Science', 'Management', 'Design', 'Law', 'Arts / Humanities']
@@ -61,9 +61,8 @@ function PreferencesEditor() {
   }
 
   return (
-    <div className="w-full">
-      <h1 className="font-heading text-2xl font-extrabold text-foreground sm:text-3xl">Preferences</h1>
-      <p className="mt-1 text-sm text-muted-foreground sm:text-[15px]">Tell Pathway what you are planning so your discovery experience can be more relevant.</p>
+    <div className="mx-auto w-full max-w-[1360px]">
+      <StudentPageHeader title="Preferences" subtitle="What you want to study, which exams and where" />
 
       <form
         className="mt-4 flex flex-col gap-4 sm:mt-5 sm:gap-5"
@@ -72,7 +71,7 @@ function PreferencesEditor() {
           save()
         }}
       >
-        <DashboardSection title="Study Goal" description="Pick the one that fits best right now.">
+        <DashboardSection title="Study goal" art="guide">
           <div role="radiogroup" aria-label="Study goal" className="grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-2.5 xl:grid-cols-5">
             {studyGoalOptions.map((option) => {
               const active = draft.studyGoal === option
@@ -83,7 +82,7 @@ function PreferencesEditor() {
                   role="radio"
                   aria-checked={active}
                   onClick={() => setDraft((prev) => ({ ...prev, studyGoal: active ? '' : option }))}
-                  className={`flex min-h-11 cursor-pointer items-center justify-between gap-2 rounded-[10px] border px-3 py-1.5 text-left text-[13px] leading-tight outline-none sm:min-h-12 sm:px-4 sm:text-sm transition-colors focus-visible:ring-2 focus-visible:ring-primary/40 ${active ? 'border-primary bg-primary/10 font-semibold text-primary' : 'border-border bg-card text-foreground hover:border-primary/40'}`}
+                  className={`flex min-h-11 cursor-pointer items-center justify-between gap-2 rounded-[10px] border px-3 py-1.5 text-left text-[13px] leading-tight outline-none sm:min-h-12 sm:px-4 sm:text-sm transition-colors focus-visible:ring-2 focus-visible:ring-primary/40 ${active ? 'border-primary bg-primary font-semibold text-primary-foreground' : 'border-border bg-card text-foreground hover:border-primary/40'}`}
                 >
                   {option}
                   {active && <Check className="size-4 shrink-0" aria-hidden="true" />}
@@ -93,10 +92,10 @@ function PreferencesEditor() {
           </div>
         </DashboardSection>
 
-        <DashboardSection title="Course / Stream" description="Choose one or more streams, then optionally a specific course.">
+        <DashboardSection title="Courses and streams" art="courses">
           <ChipGroup ariaLabel="Preferred streams" options={streamOptions} selected={draft.streams} onToggle={(value) => toggle('streams', value)} />
           <div className="mt-4 border-t pt-4">
-            <p className="text-[11px] tracking-wide text-muted-foreground uppercase">Specific courses (optional)</p>
+            <p className="text-sm font-semibold text-foreground">Specific courses</p>
             {courseChoices.length ? (
               <div className="mt-2">
                 <ChipGroup ariaLabel="Preferred courses" options={courseChoices} selected={draft.courses} onToggle={(value) => toggle('courses', value)} />
@@ -107,7 +106,7 @@ function PreferencesEditor() {
           </div>
         </DashboardSection>
 
-        <DashboardSection title="Exams" description="Entrance exams you are preparing for or considering.">
+        <DashboardSection title="Entrance exams" art="exam">
           <div className="grid grid-cols-2 gap-2 sm:gap-2.5 lg:grid-cols-3 2xl:grid-cols-4" role="group" aria-label="Preferred exams">
             {exams.map((exam) => {
               const active = draft.exams.includes(exam.shortName)
@@ -131,7 +130,7 @@ function PreferencesEditor() {
           </div>
         </DashboardSection>
 
-        <DashboardSection title="Preferred Locations" description="States you would consider studying in.">
+        <DashboardSection title="Where you want to study" art="state">
           <ChipGroup ariaLabel="Preferred locations" options={locationOptions} selected={draft.locations} onToggle={(value) => toggle('locations', value)} />
         </DashboardSection>
 
@@ -139,14 +138,14 @@ function PreferencesEditor() {
           <Button
             type="button"
             variant="outline"
-            className="h-11 basis-[42%] px-3 text-sm sm:basis-auto sm:px-5"
+            className="web-chrome h-11 basis-[42%] px-3 text-sm sm:basis-auto sm:px-5"
             nativeButton={false}
             render={<Link href="/student" onClick={(event) => { if (dirty && !window.confirm('Discard your unsaved changes?')) event.preventDefault() }} />}
           >
-            Back to Dashboard
+            Back to dashboard
           </Button>
           <Button type="submit" variant="cta" className="h-11 flex-1 px-4 text-sm font-semibold sm:flex-none sm:px-6" disabled={saving}>
-            {saving ? 'Saving…' : 'Save Preferences'}
+            {saving ? 'Saving…' : 'Save preferences'}
           </Button>
         </div>
       </form>

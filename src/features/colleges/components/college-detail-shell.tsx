@@ -21,6 +21,7 @@ import { CollegeFacilitiesSection } from './college-facilities-section'
 import { CollegeScholarshipsSection } from './college-scholarships-section'
 import { CollegeFaqSection } from './college-faq-section'
 import { SimilarCollegesSection } from './similar-colleges-section'
+import { CollegeRecommendations } from './college-recommendations'
 
 export function CollegeDetailShell({ college, children }: { college: CollegeDetailData; children: ReactNode }) {
   const base = collegeBase(college.slug)
@@ -53,6 +54,7 @@ export function CollegeDetailShell({ college, children }: { college: CollegeDeta
         {has('facilities') ? <CollegeFacilitiesSection college={college} /> : null}
         {has('scholarships') ? <CollegeScholarshipsSection college={college} /> : null}
         {has('faqs') ? <CollegeFaqSection college={college} /> : null}
+        <CollegeRecommendations college={college} />
         <SimilarCollegesSection college={college} />
 
       </DetailBody>

@@ -3,7 +3,8 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { ArrowLeft, Search, UserRound } from 'lucide-react'
+import { ArrowLeft, Search } from 'lucide-react'
+import { AccountBadge } from './header-account'
 import { Button } from '@/components/ui/button'
 import { Logo } from '@/components/shared/logo'
 import { MobileNavigation } from './mobile-navigation'
@@ -64,7 +65,7 @@ export function MobileHeaderBar() {
         </>
       )}
       <Button size="icon" variant="ghost" aria-label="Account" className={iconButton} nativeButton={false} render={<Link href="/account" />}>
-        <UserRound className="size-5" />
+        <AccountBadge />
       </Button>
     </div>
   )

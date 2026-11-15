@@ -1,139 +1,56 @@
-'use client'
-
-import * as React from 'react'
-import { Note, formatFileSize, noteTypeMap } from '@/features/notes/types/note'
-import { getAccessibleNotesForStudent } from '@/features/notes/selectors/note-selectors'
-import { useStudentSession } from '@/features/student/state/student-session'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { BookOpen, Download, FileText, Lock, ArrowRight, ShieldCheck } from 'lucide-react'
 import Link from 'next/link'
-import { toast } from 'sonner'
+import { ArrowRight } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Illustration } from '@/components/shared/illustration'
+import { SpotArt, type SpotArtName } from '@/components/shared/spot-art'
+
+const steps: { art: SpotArtName; title: string; text: string }[] = [
+  { art: 'search', title: 'Find notes', text: 'Browse by subject, exam or class' },
+  { art: 'notes', title: 'Open free or buy', text: 'Preview pages before you decide' },
+  { art: 'verified', title: 'Read here any time', text: 'Your library keeps every note you open' },
+]
 
 export function StudentMyNotesView() {
-  const { signedIn } = useStudentSession()
-  const [activeTab, setActiveTab] = React.useState<'all' | 'purchased' | 'free'>('all')
-
-  
-  const accessibleNotes = React.useMemo(() => {
-    return getAccessibleNotesForStudent(signedIn ? 'demo-student' : 'guest')
-  }, [signedIn])
-
-  const filteredNotes = React.useMemo(() => {
-    if (activeTab === 'all') return accessibleNotes
-    if (activeTab === 'purchased') {
-      return accessibleNotes.filter((n) => n.pricingType === 'paid')
-    }
-    return accessibleNotes.filter((n) => n.pricingType === 'free')
-  }, [accessibleNotes, activeTab])
-
-  const handleDownload = (_note: Note) => {
-    toast.info('Secure download becomes available after server-side access verification.')
-  }
-
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div className="mx-auto flex w-full max-w-[1360px] flex-col gap-5">
+      <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold font-heading text-foreground">
-            My Notes Library
-          </h1>
-          <p className="text-xs sm:text-sm text-muted-foreground mt-1">
-            Your library of purchased study packages and accessed educational notes.
-          </p>
+          <h1 className="font-heading text-2xl font-extrabold text-foreground sm:text-[28px]">My notes</h1>
+          <p className="mt-1 text-sm text-muted-foreground">Study notes you have opened or bought</p>
         </div>
-
-        <Link
-          href="/notes"
-          className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:underline self-start sm:self-auto"
-        >
-          <span>Browse Notes Marketplace</span>
-          <ArrowRight className="w-3.5 h-3.5" />
+        <Link href="/notes" className="flex items-center gap-1 text-sm font-semibold text-primary hover:underline">
+          Browse notes
+          <ArrowRight className="size-4" aria-hidden="true" />
         </Link>
       </div>
 
-      {accessibleNotes.length === 0 ? (
-        <div className="p-10 sm:p-14 text-center bg-card rounded-2xl border border-dashed border-border/80 space-y-4">
-          <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto text-primary">
-            <BookOpen className="w-6 h-6" />
+      <section className="overflow-hidden rounded-2xl border bg-card">
+        <div className="flex flex-col items-center gap-6 px-6 py-10 text-center md:flex-row md:gap-10 md:px-10 md:text-left">
+          <div className="flex shrink-0 items-center justify-center rounded-2xl bg-secondary p-4">
+            <Illustration name="noNotes" width={220} />
           </div>
-          <div className="space-y-1">
-            <h2 className="text-base font-bold text-foreground">
-              No notes in your library yet
-            </h2>
-            <p className="text-xs sm:text-sm text-muted-foreground max-w-sm mx-auto leading-relaxed">
-              Purchased and free notes you access will appear here for secure reading and download.
-            </p>
-          </div>
-          <div className="pt-2">
-            <Link
-              href="/notes"
-              className="inline-flex items-center gap-1.5 h-9 px-4 text-xs font-semibold rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors shadow-xs"
-            >
-              <span>Browse Notes</span>
-            </Link>
+          <div className="max-w-md">
+            <h2 className="font-heading text-xl font-bold text-foreground">Your library is empty</h2>
+            <p className="mt-2 text-[15px] leading-7 text-muted-foreground">Notes you open or buy are saved here, so you can come back to them from any device.</p>
+            <Button variant="cta" className="mt-5 h-10 px-5 text-sm font-semibold" nativeButton={false} render={<Link href="/notes" />}>
+              Explore notes
+            </Button>
           </div>
         </div>
-      ) : (
-        <div className="space-y-4">
-          <div className="flex items-center gap-2 border-b border-border pb-2">
-            {(['all', 'purchased', 'free'] as const).map((tab) => (
-              <button
-                key={tab}
-                type="button"
-                onClick={() => setActiveTab(tab)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold capitalize transition-colors cursor-pointer ${
-                  activeTab === tab
-                    ? 'bg-primary text-primary-foreground'
-                    : 'text-muted-foreground hover:text-foreground'
-                }`}
-              >
-                {tab} Notes
-              </button>
-            ))}
-          </div>
-
-          <div className="space-y-3">
-            {filteredNotes.map((note) => {
-              const typeMeta = noteTypeMap[note.noteType] || noteTypeMap.other
-              return (
-                <div
-                  key={note.id}
-                  className="p-4 rounded-xl border border-border/70 bg-card flex flex-col sm:flex-row sm:items-center justify-between gap-4"
-                >
-                  <div className="space-y-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <Badge variant="outline" className="text-[10px]">
-                        {typeMeta.label}
-                      </Badge>
-                      <Badge
-                        variant={note.pricingType === 'free' ? 'secondary' : 'default'}
-                        className="text-[10px]"
-                      >
-                        {note.pricingType === 'free' ? 'Free Access' : 'Purchased'}
-                      </Badge>
-                    </div>
-                    <h3 className="text-sm font-bold text-foreground truncate">{note.title}</h3>
-                    <p className="text-xs text-muted-foreground">
-                      {note.subject} • {note.downloadableAsset?.pageCount || 1} Pages •{' '}
-                      {formatFileSize(note.downloadableAsset?.fileSizeBytes)}
-                    </p>
-                  </div>
-
-                  <Button
-                    size="sm"
-                    onClick={() => handleDownload(note)}
-                    className="text-xs font-semibold gap-1.5 shrink-0"
-                  >
-                    <Download className="w-3.5 h-3.5" />
-                    <span>Download PDF</span>
-                  </Button>
-                </div>
-              )
-            })}
-          </div>
-        </div>
-      )}
+        <ol className="grid border-t bg-muted/40 sm:grid-cols-3">
+          {steps.map((step, index) => (
+            <li key={step.title} className="flex items-center gap-3 border-b p-4 last:border-b-0 sm:border-r sm:border-b-0 sm:last:border-r-0">
+              <SpotArt name={step.art} className="size-11 bg-card" />
+              <span>
+                <span className="block text-sm font-semibold text-foreground">
+                  {index + 1}. {step.title}
+                </span>
+                <span className="block text-xs text-muted-foreground">{step.text}</span>
+              </span>
+            </li>
+          ))}
+        </ol>
+      </section>
     </div>
   )
 }

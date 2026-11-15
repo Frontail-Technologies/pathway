@@ -26,7 +26,7 @@ function SaveButton({ tutor, className = '' }: { tutor: Tutor; className?: strin
 function ProfileAction({ tutor, className = 'h-9 px-4 text-sm', variant = 'cta' }: { tutor: Tutor; className?: string; variant?: 'cta' | 'outline' }) {
   return (
     <Button variant={variant} className={className} nativeButton={false} render={<Link href={`/tutor/${tutor.slug}`} />}>
-      View Profile
+      View profile
     </Button>
   )
 }
@@ -48,7 +48,7 @@ const chip = 'rounded-md bg-secondary px-2 py-0.5 text-xs font-semibold text-pri
  
 export function FeaturedTutorCard({ tutor }: { tutor: Tutor }) {
   return (
-    <article className="flex h-full w-72 shrink-0 snap-start flex-col rounded-[12px] border bg-card p-4 shadow-[0_2px_10px_rgba(15,23,42,0.04)] lg:w-auto">
+    <article className="flex h-full w-72 shrink-0 snap-start flex-col rounded-xl border bg-card p-4 transition-colors hover:border-primary/40 lg:w-auto">
       <div className="flex items-start gap-3">
         <TutorPortrait tutor={tutor} className="size-24 rounded-xl" />
         <div className="min-w-0 flex-1">
@@ -74,7 +74,7 @@ export function FeaturedTutorCard({ tutor }: { tutor: Tutor }) {
 
 export function TutorResultCard({ tutor }: { tutor: Tutor }) {
   return (
-    <article className="flex gap-4 rounded-[12px] border bg-card p-4 shadow-[0_2px_10px_rgba(15,23,42,0.04)] sm:p-5">
+    <article className="flex gap-4 rounded-xl border bg-card p-4 transition-colors hover:border-primary/40 sm:p-5">
       <TutorPortrait tutor={tutor} className="size-[72px] rounded-xl sm:size-22" />
       <div className="flex min-w-0 flex-1 flex-col">
         <div className="flex items-start justify-between gap-2">

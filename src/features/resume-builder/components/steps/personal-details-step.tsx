@@ -37,7 +37,6 @@ export function PersonalDetailsStep({ personal, onChange }: { personal: ResumePe
           <Button type="button" variant="outline" size="sm" onClick={() => fileInputRef.current?.click()}>
             Upload Photo
           </Button>
-          <p className="mt-1 text-xs text-muted-foreground">Optional — stays on this device only.</p>
           <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handlePhotoChange} />
         </div>
       </div>

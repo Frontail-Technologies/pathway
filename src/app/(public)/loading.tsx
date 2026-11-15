@@ -1,3 +1,5 @@
+import { PageSkeleton } from '@/components/shared/page-skeleton'
+
 export default function PublicPageLoading() {
-  return <div className="min-h-[70vh]" aria-hidden="true" />
+  return <PageSkeleton />
 }

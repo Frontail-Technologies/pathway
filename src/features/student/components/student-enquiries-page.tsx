@@ -1,16 +1,18 @@
 'use client'
 
+import { Illustration } from '@/components/shared/illustration'
 import { useState } from 'react'
 import Link from 'next/link'
 import { useQuery } from '@tanstack/react-query'
-import { MessagesSquare } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useRoleSession } from '@/features/auth/state/auth-session-provider'
 import { formatDate } from '@/features/catalog/format'
 import { listOwnEnquiries, type OwnEnquiry } from '@/features/enquiries/api/enquiries-api'
 import { leadStatusMap } from '@/features/enquiries/types/enquiry'
 import { queryKeys } from '@/lib/query-client'
-import { DashboardSection } from './dashboard-parts'
+import { SpotArt } from '@/components/shared/spot-art'
+import { cn } from '@/lib/utils'
+import { StudentPageHeader } from './dashboard-parts'
 
 export type Enquiry = {
   id: string
@@ -39,9 +41,10 @@ function toCard(item: OwnEnquiry): Enquiry {
 
 export function EnquiryCard({ enquiry }: { enquiry: Enquiry }) {
   return (
-    <li className="rounded-[10px] border p-4">
-      <div className="flex items-start justify-between gap-3">
-        <div className="min-w-0">
+    <li className="rounded-xl border p-4">
+      <div className="flex items-start gap-3">
+        <SpotArt name={enquiry.enquiryType.startsWith('Counselling') ? 'guide' : enquiry.enquiryType.startsWith('Brochure') ? 'notes' : 'college'} className="size-11 rounded-lg" />
+        <div className="min-w-0 flex-1">
           {enquiry.entity.href ? (
             <Link href={enquiry.entity.href} className="block truncate text-sm font-semibold text-foreground hover:text-primary">
               {enquiry.entity.name}
@@ -55,7 +58,7 @@ export function EnquiryCard({ enquiry }: { enquiry: Enquiry }) {
         </div>
         <span className="shrink-0 rounded bg-secondary px-2 py-0.5 text-xs font-semibold text-primary">{enquiry.status}</span>
       </div>
-      {enquiry.nextAction && <p className="mt-2 text-xs text-muted-foreground">Next: {enquiry.nextAction}</p>}
+      {enquiry.nextAction && <p className="mt-3 rounded-lg bg-muted/50 px-3 py-2 text-xs text-muted-foreground">Next: {enquiry.nextAction}</p>}
     </li>
   )
 }
@@ -77,12 +80,19 @@ export function StudentEnquiriesPage() {
   const tab = tabs.find((item) => item.id === active)!
 
   return (
-    <div className="w-full">
-      <h1 className="font-heading text-2xl font-extrabold text-foreground sm:text-3xl">Counselling &amp; Enquiries</h1>
-      <p className="mt-1 text-sm text-muted-foreground sm:text-[15px]">Keep track of your counselling requests and enquiries.</p>
+    <div className="mx-auto flex w-full max-w-[1360px] flex-col gap-5">
+      <StudentPageHeader
+        title="Enquiries"
+        subtitle="Counselling requests and messages to colleges, coaching and tutors"
+        action={
+          <Button variant="cta" className="h-10 px-4 text-sm font-semibold" nativeButton={false} render={<Link href="/counselling" />}>
+            Get free counselling
+          </Button>
+        }
+      />
 
-      <DashboardSection className="mt-5" title={tab.label}>
-        <div role="tablist" aria-label="Enquiry status" className="-mt-1 flex gap-1 overflow-x-auto border-b max-sm:[scrollbar-width:none] max-sm:[&::-webkit-scrollbar]:hidden">
+      <section className="rounded-xl border bg-card p-4 sm:p-5">
+        <div role="tablist" aria-label="Enquiry status" className="flex gap-2">
           {tabs.map((item) => {
             const selected = active === item.id
             return (
@@ -92,7 +102,7 @@ export function StudentEnquiriesPage() {
                 role="tab"
                 aria-selected={selected}
                 onClick={() => setActive(item.id)}
-                className={`-mb-px cursor-pointer border-b-2 px-3 py-2 text-sm outline-none transition-colors focus-visible:text-primary ${selected ? 'border-primary font-semibold text-primary' : 'border-transparent font-medium text-muted-foreground hover:text-primary'}`}
+                className={cn('h-9 cursor-pointer rounded-full border px-4 text-sm font-semibold outline-none transition-colors focus-visible:ring-2 focus-visible:ring-primary/40', selected ? 'border-primary bg-primary text-primary-foreground' : 'bg-card text-foreground hover:border-primary/50')}
               >
                 {item.label} ({item.list.length})
               </button>
@@ -112,23 +122,21 @@ export function StudentEnquiriesPage() {
             </Button>
           </div>
         ) : tab.list.length === 0 ? (
-          <div className="mt-4 flex items-start gap-3 rounded-[10px] border border-dashed p-4 sm:p-6">
-            <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-secondary text-primary">
-              <MessagesSquare className="size-5" aria-hidden="true" />
-            </span>
+          <div className="mt-4 flex flex-col items-center gap-2 rounded-xl bg-muted/40 p-6 text-center">
+            <Illustration name="inboxEmpty" width={180} />
             <div className="min-w-0">
-              <p className="text-sm font-semibold text-foreground">{tab.title}</p>
+              <p className="font-heading text-base font-bold text-foreground">{tab.title}</p>
               <p className="mt-1 text-sm text-muted-foreground">{tab.text}</p>
               {active === 'active' && (
-                <div className="mt-3 grid gap-2 sm:flex sm:flex-wrap">
+                <div className="mt-3 grid gap-2 sm:flex sm:flex-wrap sm:justify-center">
                   <Button variant="cta" className="h-10 w-full px-4 text-sm font-semibold sm:h-9 sm:w-auto" nativeButton={false} render={<Link href="/colleges" />}>
-                    Explore Colleges
+                    Explore colleges
                   </Button>
                   <Button variant="outline" className="h-10 w-full px-4 text-sm sm:h-9 sm:w-auto" nativeButton={false} render={<Link href="/coaching" />}>
-                    Browse Coaching
+                    Browse coaching
                   </Button>
                   <Button variant="outline" className="h-10 w-full px-4 text-sm sm:h-9 sm:w-auto" nativeButton={false} render={<Link href="/tutors" />}>
-                    Browse Tutors
+                    Browse tutors
                   </Button>
                 </div>
               )}
@@ -141,7 +149,7 @@ export function StudentEnquiriesPage() {
             ))}
           </ul>
         )}
-      </DashboardSection>
+      </section>
     </div>
   )
 }

@@ -196,8 +196,10 @@ export function getCollegeComparisonItem(slug: string): CollegeComparisonItem | 
 
  
 export function getCollegeInitials(shortName: string): string {
-  const words = shortName.split(' ').filter(Boolean)
-  if (words.length === 1) return words[0].slice(0, 2).toUpperCase()
+  const words = shortName.replace(/[()]/g, '').split(' ').filter(Boolean)
+  const lead = words[0] ?? ''
+  if (lead.length <= 5 && (lead.match(/[A-Z]/g)?.length ?? 0) >= 2) return words[1] && lead.length <= 3 ? lead + words[1][0].toUpperCase() : lead
+  if (words.length === 1) return lead.slice(0, 2).toUpperCase()
   return (words[0][0] + words[1][0]).toUpperCase()
 }
 

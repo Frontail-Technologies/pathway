@@ -60,6 +60,7 @@ export function ScholarshipListingPage({ initial, initialQuery }: { initial?: Ca
 
   return (
     <CatalogListing
+      art="scholarship"
       breadcrumbs={[{ label: 'Home', href: '/' }, 'Scholarships']}
       title={statuses.length === 1 ? `${statuses[0]} scholarships in India` : 'Scholarships in India'}
       description="Government and private scholarships with award amounts, eligibility, deadlines and official application links."

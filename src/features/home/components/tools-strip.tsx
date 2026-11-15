@@ -5,10 +5,13 @@ import { HomeSectionHeading } from './home-section-heading'
 
 const tools: { label: string; text: string; href: string; art: ToolArtName }[] = [
   { label: 'College predictor', text: 'Colleges and branches for your JEE rank, from JoSAA cutoffs', href: '/college-predictor', art: 'collegePredictor' },
-  { label: 'Rank predictor', text: 'Estimate your JEE Main rank from your percentile', href: '/rank-predictor', art: 'rankPredictor' },
-  { label: 'Compare colleges', text: 'Fees, ranks and placements side by side', href: '/compare/colleges', art: 'compare' },
-  { label: 'Resume builder', text: 'A clean resume for internships and placements', href: '/resume-builder', art: 'resume' },
+  { label: 'Rank predictor', text: 'JEE Main and NEET UG rank from your percentile', href: '/rank-predictor', art: 'rankPredictor' },
+  { label: 'JoSAA cutoffs', text: 'Opening and closing ranks for every branch and quota', href: '/cutoffs', art: 'cutoffs' },
+  { label: 'Compare colleges', text: 'Fees, ranks and placements side by side', href: '/compare', art: 'compare' },
+  { label: 'Exam calendar', text: 'Application, exam and result dates in one place', href: '/exam-calendar', art: 'calendar' },
+  { label: 'Education loan EMI', text: 'Monthly EMI and total interest for a study loan', href: '/education-loan-calculator', art: 'loan' },
   { label: 'Psychometric test', text: 'Find courses and careers that suit your interests', href: '/psychometric-test', art: 'psychometric' },
+  { label: 'Resume builder', text: 'A clean resume for internships and placements', href: '/resume-builder', art: 'resume' },
 ]
 
 export function ToolsStrip() {
@@ -19,7 +22,7 @@ export function ToolsStrip() {
           Free tools
         </span>
         <HomeSectionHeading eyebrow="Free tools" title="Free tools" subtitle="Built on official cutoffs and rankings, no sign-up needed" />
-        <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+        <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {tools.map((tool) => (
             <Link
               key={tool.href}

@@ -26,6 +26,7 @@ import {
 import { Sheet, SheetClose, SheetContent, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
 import { Button } from '@/components/ui/button'
 import { Logo } from '@/components/shared/logo'
+import { MobileAccountLink } from './header-account'
 import { listStreams } from '@/features/streams/api/streams-api'
 import type { StreamDefinition } from '@/features/streams/data/stream-taxonomy'
 
@@ -164,10 +165,7 @@ export function MobileNavigation() {
         </div>
 
         <div className="shrink-0 border-t p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
-          <Link href="/login" className="flex h-11 items-center gap-3 rounded-md px-3 text-sm font-medium text-foreground outline-none transition-colors hover:bg-muted focus-visible:bg-muted">
-            <UserRound className="size-4.5 shrink-0 text-muted-foreground" aria-hidden="true" />
-            Sign in
-          </Link>
+          <MobileAccountLink />
         </div>
       </SheetContent>
     </Sheet>

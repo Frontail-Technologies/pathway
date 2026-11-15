@@ -1,423 +1,259 @@
-"use client";
+'use client'
 
-import type { ComponentType } from "react";
-import {
-  BookOpen,
-  Briefcase,
-  CalendarDays,
-  CircleCheck,
-  FileText,
-  GraduationCap,
-  Layers,
-  Mail,
-  MapPin,
-  Phone,
-  School,
-  Target,
-  UserRound,
-} from "lucide-react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { toast } from "sonner";
-import { LogOut } from "lucide-react";
-import { useStudentSession } from "@/features/student/state/student-session";
-import Image from "next/image";
-import { Button } from "@/components/ui/button";
-import {
-  getProfileCompletion,
-  initialsOf,
-  type ProfileFieldKey,
-} from "../data/student";
-import { useStudentProfile } from "../state/student-profile-provider";
-import {
-  ActionButton,
-  ChipField,
-  DashboardSection,
-  ProfileField,
-} from "./dashboard-parts";
+import Image from 'next/image'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { useQuery } from '@tanstack/react-query'
+import { ArrowRight, Briefcase, Check, ChevronRight, LogOut, MapPin } from 'lucide-react'
+import { toast } from 'sonner'
+import { Button } from '@/components/ui/button'
+import { SpotArt, type SpotArtName } from '@/components/shared/spot-art'
+import { queryKeys } from '@/lib/query-client'
+import { listOwnEnquiries } from '@/features/enquiries/api/enquiries-api'
+import { savedKinds, useSavedItems } from '@/features/saved/saved-items-provider'
+import { useStudentSession } from '@/features/student/state/student-session'
+import { getProfileCompletion, initialsOf, type ProfileFieldKey } from '../data/student'
+import { useStudentProfile } from '../state/student-profile-provider'
+import { ActionButton, ChipField, DashboardSection, ProfileField } from './dashboard-parts'
 
-type Icon = ComponentType<{
-  className?: string;
-  "aria-hidden"?: boolean | "true" | "false";
-}>;
+const missingPrompts: Record<ProfileFieldKey, { title: string; href: string }> = {
+  name: { title: 'Add your name', href: '/student/profile#personal' },
+  email: { title: 'Add your email', href: '/student/profile#personal' },
+  phone: { title: 'Add your phone number', href: '/student/profile#personal' },
+  city: { title: 'Add your city', href: '/student/profile#personal' },
+  studyLevel: { title: 'Add your study level', href: '/student/profile#education' },
+  stream: { title: 'Add your stream', href: '/student/profile#education' },
+  graduationYear: { title: 'Add your passing year', href: '/student/profile#education' },
+  preferredCourse: { title: 'Pick courses you want to study', href: '/student/preferences' },
+  preferredExam: { title: 'Pick exams you plan to take', href: '/student/preferences' },
+  preferredLocation: { title: 'Pick where you want to study', href: '/student/preferences' },
+  careerGoal: { title: 'Add a career goal', href: '/student/profile#career-goal' },
+}
 
- 
-const missingPrompts: Record<
-  ProfileFieldKey,
-  { icon: Icon; title: string; text: string; href?: string }
-> = {
-  name: {
-    icon: UserRound,
-    title: "Add your name",
-    text: "So Pathway can address you properly.",
-    href: "/student/profile#personal",
-  },
-  email: {
-    icon: Mail,
-    title: "Add your email",
-    text: "Used for your account.",
-    href: "/student/profile#personal",
-  },
-  phone: {
-    icon: Phone,
-    title: "Add phone number",
-    text: "Keep your contact details up to date.",
-    href: "/student/profile#personal",
-  },
-  city: {
-    icon: MapPin,
-    title: "Add your city",
-    text: "Where you are based.",
-    href: "/student/profile#personal",
-  },
-  studyLevel: {
-    icon: GraduationCap,
-    title: "Add study level",
-    text: "Where you are in your education today.",
-    href: "/student/profile#education",
-  },
-  stream: {
-    icon: BookOpen,
-    title: "Add your stream",
-    text: "The subjects or course you are studying.",
-    href: "/student/profile#education",
-  },
-  graduationYear: {
-    icon: CalendarDays,
-    title: "Add passing year",
-    text: "When you finish or finished this level.",
-    href: "/student/profile#education",
-  },
-  preferredCourse: {
-    icon: Layers,
-    title: "Add preferred course",
-    text: "What you would like to study next.",
-    href: "/student/preferences",
-  },
-  preferredExam: {
-    icon: FileText,
-    title: "Add preferred exams",
-    text: "Entrance exams you plan to take.",
-    href: "/student/preferences",
-  },
-  preferredLocation: {
-    icon: MapPin,
-    title: "Add preferred study location",
-    text: "Tell us where you would like to study.",
-    href: "/student/preferences",
-  },
-  careerGoal: {
-    icon: Target,
-    title: "Add career goal",
-    text: "A goal helps shape what is relevant to you.",
-    href: "/student/profile#career-goal",
-  },
-};
+const tools: { label: string; text: string; href: string; art: SpotArtName }[] = [
+  { label: 'College predictor', text: 'Colleges for your rank', href: '/college-predictor', art: 'predictor' },
+  { label: 'Rank predictor', text: 'Percentile to rank', href: '/rank-predictor', art: 'chart' },
+  { label: 'Compare colleges', text: 'Side by side', href: '/compare', art: 'compare' },
+  { label: 'Scholarships', text: 'Open schemes', href: '/scholarships', art: 'scholarship' },
+  { label: 'Resume builder', text: 'Download a PDF', href: '/resume-builder', art: 'notes' },
+  { label: 'Psychometric test', text: 'Find your fit', href: '/psychometric-test', art: 'guide' },
+]
 
+function CompletionRing({ percent }: { percent: number }) {
+  const radius = 34
+  const circumference = 2 * Math.PI * radius
+  return (
+    <div role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={percent} aria-label="Profile completion" className="relative size-24 shrink-0">
+      <svg viewBox="0 0 80 80" className="size-full -rotate-90">
+        <circle cx={40} cy={40} r={radius} fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth={8} />
+        <circle cx={40} cy={40} r={radius} fill="none" stroke="var(--brand-orange)" strokeWidth={8} strokeLinecap="round" strokeDasharray={circumference} strokeDashoffset={circumference * (1 - percent / 100)} />
+      </svg>
+      <span className="absolute inset-0 flex flex-col items-center justify-center">
+        <span className="font-heading text-xl font-extrabold">{percent}%</span>
+        <span className="text-[11px] text-primary-foreground/80">complete</span>
+      </span>
+    </div>
+  )
+}
 
-
-
- 
 function LogOutButton() {
-  const { signOut } = useStudentSession();
-  const router = useRouter();
+  const { signOut } = useStudentSession()
+  const router = useRouter()
   return (
     <button
       type="button"
-      onClick={() => {
-        signOut();
-        toast.success("Signed out of the demo account.");
-        router.push("/login");
+      onClick={async () => {
+        await signOut()
+        toast.success('Signed out')
+        router.push('/login')
       }}
-      className="mt-3 flex h-11 w-full cursor-pointer items-center justify-center gap-2 rounded-lg border text-sm font-semibold text-destructive outline-none transition-colors hover:bg-destructive/5 focus-visible:ring-2 focus-visible:ring-destructive/40"
+      className="mt-4 flex h-10 w-full cursor-pointer items-center justify-center gap-2 rounded-lg border text-sm font-semibold text-destructive outline-none transition-colors hover:bg-destructive/5 focus-visible:ring-2 focus-visible:ring-destructive/40"
     >
       <LogOut className="size-4" aria-hidden="true" />
       Log out
     </button>
-  );
+  )
 }
 
 export function StudentDashboardPage() {
-  const { profile, photoUrl } = useStudentProfile();
-  const completion = getProfileCompletion(profile);
-  const firstName = profile.name.split(" ")[0];
+  const { profile, photoUrl } = useStudentProfile()
+  const { user } = useStudentSession()
+  const { saved } = useSavedItems()
+  const enquiries = useQuery({ queryKey: queryKeys.studentEnquiries(user?.id ?? 'none'), queryFn: listOwnEnquiries, enabled: Boolean(user) })
+  const completion = getProfileCompletion(profile)
+  const firstName = profile.name.split(' ')[0] || 'there'
+  const savedCount = savedKinds.reduce((sum, kind) => sum + (saved[kind]?.length ?? 0), 0)
+  const openEnquiries = (enquiries.data ?? []).length
+
+  const stats: { label: string; value: string; href: string; art: SpotArtName }[] = [
+    { label: 'Saved items', value: String(savedCount), href: '/student/saved', art: 'college' },
+    { label: 'Enquiries', value: enquiries.isSuccess ? String(openEnquiries) : '–', href: '/student/enquiries', art: 'guide' },
+    { label: 'Exams', value: String(profile.preferredExams.length), href: '/student/preferences', art: 'exam' },
+    { label: 'Profile details', value: `${completion.filled}/${completion.total}`, href: '/student/profile', art: 'verified' },
+  ]
 
   return (
-    <div className="mx-auto grid w-full max-w-[1360px] grid-cols-1 gap-5 xl:grid-cols-[minmax(0,1fr)_22rem]">
-      <div className="max-xl:order-1 xl:col-span-2">
-        <h1 className="font-heading text-2xl font-extrabold text-foreground sm:text-3xl">
-          Welcome back, {firstName}
-        </h1>
-        <p className="mt-1 text-sm text-muted-foreground sm:text-[15px]">
-          Keep your student profile updated to get more relevant Pathway
-          experiences.
-        </p>
-      </div>
-
-      <section
-        aria-label="Profile summary"
-        className="rounded-[12px] border bg-card p-4 shadow-[0_2px_10px_rgba(15,23,42,0.04)] max-xl:order-2 sm:p-5 xl:col-span-2"
-      >
-        <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between md:gap-8">
+    <div className="mx-auto flex w-full max-w-[1360px] flex-col gap-5">
+      <section aria-label="Profile summary" className="relative overflow-hidden rounded-2xl bg-primary p-5 text-primary-foreground sm:p-6">
+        <span aria-hidden="true" className="absolute -top-16 -right-10 size-56 rounded-full bg-primary-foreground/10" />
+        <span aria-hidden="true" className="absolute right-40 bottom-5 hidden size-2.5 rounded-full bg-cta md:block" />
+        <div className="relative flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
           <div className="flex min-w-0 items-center gap-4">
-            <span className="relative flex size-16 shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary text-xl font-bold text-primary-foreground">
-              {photoUrl ? (
-                <Image src={photoUrl} alt="" fill className="object-cover" />
-              ) : (
-                <span aria-hidden="true">{initialsOf(profile.name)}</span>
-              )}
+            <span className="relative flex size-16 shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary-foreground text-xl font-bold text-primary ring-4 ring-primary-foreground/20 sm:size-18">
+              {photoUrl ? <Image src={photoUrl} alt="" fill className="object-cover" /> : <span aria-hidden="true">{initialsOf(profile.name || profile.email)}</span>}
             </span>
             <div className="min-w-0">
-              <p className="truncate font-heading text-lg font-bold text-foreground sm:text-xl">
-                {profile.name}
+              <h1 className="font-heading text-2xl leading-tight font-extrabold sm:text-[28px]">Welcome back, {firstName}</h1>
+              <p className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-primary-foreground/85">
+                <span className="truncate">{profile.email}</span>
+                {profile.city ? (
+                  <span className="flex items-center gap-1">
+                    <MapPin className="size-3.5" aria-hidden="true" />
+                    {profile.city}
+                  </span>
+                ) : null}
               </p>
-              <p className="truncate text-sm text-muted-foreground">
-                {profile.email}
-              </p>
-              {profile.city && (
-                <p className="mt-0.5 flex items-center gap-1 text-sm text-muted-foreground">
-                  <MapPin className="size-3.5" aria-hidden="true" />
-                  {profile.city}
-                </p>
-              )}
             </div>
           </div>
-
-          <div className="w-full md:max-w-sm md:flex-1">
-            <div className="flex items-baseline justify-between gap-3">
-              <p className="font-heading text-2xl font-extrabold text-foreground">
-                {completion.percent}%
-              </p>
-              <p className="text-sm text-muted-foreground">
-                {completion.filled} of {completion.total} details completed
-              </p>
+          <div className="flex items-center gap-4 md:gap-5">
+            <CompletionRing percent={completion.percent} />
+            <div className="flex flex-col gap-2">
+              <p className="text-sm text-primary-foreground/85">{completion.missing.length ? `${completion.missing.length} ${completion.missing.length === 1 ? 'detail' : 'details'} left` : 'Your profile is complete'}</p>
+              <Button variant="cta" className="h-10 px-5 text-sm font-semibold" nativeButton={false} render={<Link href="/student/profile" />}>
+                {completion.missing.length ? 'Complete profile' : 'Edit profile'}
+              </Button>
             </div>
-            <div
-              role="progressbar"
-              aria-valuemin={0}
-              aria-valuemax={100}
-              aria-valuenow={completion.percent}
-              aria-label="Profile completion"
-              className="mt-2 h-2.5 overflow-hidden rounded-full bg-muted"
-            >
-              <div
-                className="h-full rounded-full bg-primary"
-                style={{ width: `${completion.percent}%` }}
-              />
-            </div>
-          </div>
-
-          <div className="shrink-0">
-            <Button
-              variant="cta"
-              className="h-10 w-full px-6 text-sm font-semibold md:w-auto"
-              nativeButton={false}
-              render={<Link href="/student/profile" />}
-            >
-              Complete Profile
-            </Button>
           </div>
         </div>
       </section>
 
-      <div className="flex min-w-0 flex-col gap-5 max-xl:contents">
-        <DashboardSection
-          className="max-xl:order-4"
-          title="Personal Information"
-          action={
-            <ActionButton href="/student/profile#personal">
-              Edit Personal Info
-            </ActionButton>
-          }
-        >
-          <dl className="grid gap-x-8 gap-y-4 sm:grid-cols-2">
-            <ProfileField label="Full name" value={profile.name} />
-            <ProfileField label="Email" value={profile.email} />
-            <ProfileField label="Phone" value={profile.phone} />
-            <ProfileField label="City" value={profile.city} />
-          </dl>
-        </DashboardSection>
+      <ul className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+        {stats.map((stat) => (
+          <li key={stat.label}>
+            <Link href={stat.href} className="group flex h-full items-center gap-3 rounded-xl border bg-card p-3.5 outline-none transition-colors hover:border-primary/50 focus-visible:ring-2 focus-visible:ring-primary/40 sm:p-4">
+              <SpotArt name={stat.art} className="size-11 sm:size-12" />
+              <span className="min-w-0">
+                <span className="block font-heading text-xl font-extrabold text-foreground tabular-nums sm:text-2xl">{stat.value}</span>
+                <span className="block truncate text-xs text-muted-foreground group-hover:text-primary sm:text-[13px]">{stat.label}</span>
+              </span>
+            </Link>
+          </li>
+        ))}
+      </ul>
 
-        <DashboardSection
-          className="max-xl:order-5"
-          title="Education Background"
-          action={
-            <ActionButton href="/student/profile#education">
-              Edit Education
-            </ActionButton>
-          }
-        >
-          <dl className="grid gap-x-8 gap-y-4 sm:grid-cols-2">
-            <ProfileField
-              label="Current study level"
-              value={profile.studyLevel}
-            />
-            <ProfileField
-              label="School / college"
-              value={profile.education?.institution}
-            />
-            <ProfileField label="Course / stream" value={profile.stream} />
-            <ProfileField
-              label="Graduation / passing year"
-              value={profile.education?.graduationYear?.toString()}
-            />
-          </dl>
-        </DashboardSection>
-
-        <DashboardSection
-          className="max-xl:order-6"
-          title="Study Preferences"
-          action={
-            <ActionButton href="/student/preferences">
-              Edit Preferences
-            </ActionButton>
-          }
-        >
-          <dl className="grid gap-x-8 gap-y-4 sm:grid-cols-2">
-            <ChipField
-              label="Study goal"
-              values={profile.studyGoal ? [profile.studyGoal] : []}
-            />
-            <ChipField
-              label="Preferred course / stream"
-              values={[
-                ...(profile.preferredStreams ?? []),
-                ...profile.preferredCourses,
-              ]}
-            />
-            <ChipField
-              label="Preferred exams"
-              values={profile.preferredExams}
-            />
-            <ChipField
-              label="Preferred locations"
-              values={profile.preferredLocations}
-            />
-          </dl>
-        </DashboardSection>
-
-        <DashboardSection
-          className="max-xl:order-7"
-          title="Career Goal"
-          action={
-            <ActionButton href="/student/profile#career-goal">
-              {profile.careerGoal ? "Edit Career Goal" : "Add Career Goal"}
-            </ActionButton>
-          }
-        >
-          {profile.careerGoal ? (
-            <p className="text-sm font-medium text-foreground">
-              {profile.careerGoal}
-            </p>
-          ) : (
-            <p className="text-sm text-muted-foreground">
-              Career goal not added yet.
-            </p>
-          )}
-        </DashboardSection>
-
-        <DashboardSection
-          className="max-xl:order-8"
-          title="Experience"
-          description="Optional — work or internship experience."
-          action={
-            <ActionButton href="/student/profile#experience">
-              {profile.workExperience.length
-                ? "Edit Experience"
-                : "Add Experience"}
-            </ActionButton>
-          }
-        >
-          {profile.workExperience.length ? (
-            <ul className="flex flex-col gap-2">
-              {profile.workExperience.map((item) => (
-                <li
-                  key={`${item.role}-${item.organisation}`}
-                  className="flex items-center gap-2 text-sm text-foreground"
-                >
-                  <Briefcase
-                    className="size-4 text-muted-foreground"
-                    aria-hidden="true"
-                  />
-                  {item.role} · {item.organisation}
+      <div className="grid grid-cols-1 gap-5 xl:grid-cols-[minmax(0,1fr)_22rem]">
+        <div className="flex min-w-0 flex-col gap-5">
+          <DashboardSection title="Plan your next step" action={<ActionButton href="/predictors">All tools</ActionButton>}>
+            <ul className="grid grid-cols-2 gap-2.5 sm:grid-cols-3">
+              {tools.map((tool) => (
+                <li key={tool.href}>
+                  <Link href={tool.href} className="group flex h-full flex-col items-center gap-2 rounded-xl border p-3 text-center outline-none sm:flex-row sm:gap-3 sm:text-left transition-colors hover:border-primary/50 hover:bg-secondary/40 focus-visible:ring-2 focus-visible:ring-primary/40">
+                    <SpotArt name={tool.art} className="size-10 rounded-lg" />
+                    <span className="min-w-0">
+                      <span className="block text-sm font-semibold text-foreground group-hover:text-primary sm:truncate">{tool.label}</span>
+                      <span className="block text-xs text-muted-foreground sm:truncate">{tool.text}</span>
+                    </span>
+                  </Link>
                 </li>
               ))}
             </ul>
-          ) : (
-            <p className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Briefcase className="size-4 shrink-0" aria-hidden="true" />
-              No work or internship experience added yet.
-            </p>
-          )}
-        </DashboardSection>
-      </div>
+          </DashboardSection>
 
-      <div className="flex flex-col gap-5 max-xl:contents">
-        <DashboardSection
-          className="max-xl:order-3"
-          title="Complete your profile"
-          description={
-            completion.missing.length
-              ? `${completion.missing.length} ${completion.missing.length === 1 ? "detail is" : "details are"} still missing.`
-              : undefined
-          }
-        >
-          {completion.missing.length === 0 ? (
-            <p className="flex items-center gap-2 text-sm font-medium text-foreground">
-              <CircleCheck className="size-4 text-primary" aria-hidden="true" />
-              Your profile is complete.
-            </p>
-          ) : (
-            <ul className="flex flex-col gap-2">
-              {completion.missing.map((key) => {
-                const prompt = missingPrompts[key];
-                return (
-                  <li
-                    key={key}
-                    className="flex items-start gap-2.5 rounded-[10px] bg-muted/50 p-2.5"
-                  >
-                    <prompt.icon
-                      className="mt-0.5 size-4 shrink-0 text-primary"
-                      aria-hidden="true"
-                    />
-                    <div className="min-w-0 flex-1">
-                      <p className="text-[13px] font-semibold text-foreground">
-                        {prompt.title}
-                      </p>
-                      <p className="text-xs leading-5 text-muted-foreground">
-                        {prompt.text}
-                      </p>
-                    </div>
-                    <ActionButton href={prompt.href}>Add</ActionButton>
+          <DashboardSection title="About you" action={<ActionButton href="/student/profile">Edit</ActionButton>}>
+            <dl className="grid grid-cols-2 gap-x-6 gap-y-4 lg:grid-cols-3">
+              <ProfileField label="Full name" value={profile.name} />
+              <ProfileField label="Phone" value={profile.phone} />
+              <ProfileField label="City" value={profile.city} />
+              <ProfileField label="Study level" value={profile.studyLevel} />
+              <ProfileField label="Course or stream" value={profile.stream} />
+              <ProfileField label="School or college" value={profile.education?.institution} />
+              <ProfileField label="Passing year" value={profile.education?.graduationYear?.toString()} />
+              <ProfileField label="Career goal" value={profile.careerGoal} />
+            </dl>
+          </DashboardSection>
+
+          <DashboardSection title="Study preferences" action={<ActionButton href="/student/preferences">Edit</ActionButton>}>
+            <dl className="grid gap-x-8 gap-y-4 sm:grid-cols-2">
+              <ChipField label="Study goal" values={profile.studyGoal ? [profile.studyGoal] : []} />
+              <ChipField label="Courses and streams" values={[...(profile.preferredStreams ?? []), ...profile.preferredCourses]} />
+              <ChipField label="Exams" values={profile.preferredExams} />
+              <ChipField label="Locations" values={profile.preferredLocations} />
+            </dl>
+          </DashboardSection>
+
+          <DashboardSection title="Experience" action={<ActionButton href="/student/profile#experience">{profile.workExperience.length ? 'Edit' : 'Add'}</ActionButton>}>
+            {profile.workExperience.length ? (
+              <ul className="flex flex-col gap-2">
+                {profile.workExperience.map((item) => (
+                  <li key={`${item.role}-${item.organisation}`} className="flex items-center gap-2.5 text-sm text-foreground">
+                    <Briefcase className="size-4 text-primary" aria-hidden="true" />
+                    <span className="font-medium">{item.role}</span>
+                    <span className="text-muted-foreground">{item.organisation}</span>
                   </li>
-                );
-              })}
-            </ul>
-          )}
-        </DashboardSection>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-sm text-muted-foreground">No internships or projects added yet.</p>
+            )}
+          </DashboardSection>
+        </div>
 
-        <DashboardSection className="max-xl:order-9" title="Account">
-          <dl className="flex flex-col gap-2.5 text-sm">
-            {[
-              ["Email", profile.email],
-              ["Account type", "Student"],
-              ["Sign-in status", "Demo account"],
-            ].map(([label, value]) => (
-              <div key={label} className="flex justify-between gap-3">
-                <dt className="text-muted-foreground">{label}</dt>
-                <dd className="min-w-0 truncate text-right font-medium text-foreground">
-                  {value}
-                </dd>
+        <div className="flex flex-col gap-5">
+          <DashboardSection title="Finish your profile">
+            {completion.missing.length === 0 ? (
+              <div className="flex items-center gap-3">
+                <SpotArt name="verified" className="size-11" />
+                <p className="text-sm font-medium text-foreground">Every detail is filled in.</p>
               </div>
-            ))}
-          </dl>
-          <p className="mt-3 flex items-start gap-2 border-t pt-3 text-xs leading-5 text-muted-foreground">
-            <School className="mt-0.5 size-3.5 shrink-0" aria-hidden="true" />
-            Frontend demo account — sign-in is not connected yet.
-          </p>
-          <LogOutButton />
-        </DashboardSection>
+            ) : (
+              <ul className="flex flex-col gap-1.5">
+                {completion.missing.map((key) => (
+                  <li key={key}>
+                    <Link href={missingPrompts[key].href} className="group flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm outline-none transition-colors hover:bg-muted focus-visible:ring-2 focus-visible:ring-primary/40">
+                      <span aria-hidden="true" className="size-4 shrink-0 rounded-full border-2 border-primary/40" />
+                      <span className="min-w-0 flex-1 font-medium text-foreground group-hover:text-primary">{missingPrompts[key].title}</span>
+                      <ChevronRight className="size-4 shrink-0 text-muted-foreground" aria-hidden="true" />
+                    </Link>
+                  </li>
+                ))}
+                {completion.filled ? (
+                  <li className="flex items-center gap-2.5 px-2.5 py-2 text-sm text-muted-foreground">
+                    <span className="flex size-4 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
+                      <Check className="size-3" aria-hidden="true" />
+                    </span>
+                    {completion.filled} {completion.filled === 1 ? 'detail' : 'details'} done
+                  </li>
+                ) : null}
+              </ul>
+            )}
+          </DashboardSection>
+
+          <section className="rounded-xl bg-secondary p-5">
+            <SpotArt name="guide" className="size-12 bg-card" />
+            <h2 className="mt-3 font-heading text-base font-bold text-foreground">Not sure what to pick?</h2>
+            <p className="mt-1 text-sm text-muted-foreground">A counsellor can help with colleges, exams and scholarships.</p>
+            <Link href="/counselling" className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-primary hover:underline">
+              Get free counselling
+              <ArrowRight className="size-4" aria-hidden="true" />
+            </Link>
+          </section>
+
+          <DashboardSection title="Account">
+            <dl className="flex flex-col gap-2.5 text-sm">
+              {[
+                ['Email', profile.email],
+                ['Account type', 'Student'],
+              ].map(([label, value]) => (
+                <div key={label} className="flex justify-between gap-3">
+                  <dt className="text-muted-foreground">{label}</dt>
+                  <dd className="min-w-0 truncate text-right font-medium text-foreground">{value}</dd>
+                </div>
+              ))}
+            </dl>
+            <LogOutButton />
+          </DashboardSection>
+        </div>
       </div>
     </div>
-  );
+  )
 }

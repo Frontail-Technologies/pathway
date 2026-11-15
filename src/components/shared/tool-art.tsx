@@ -70,6 +70,40 @@ const art = {
       <path d="M58 72 l16 -16 l5 5 l-16 16 h-5 z" fill={accent} stroke={accent} strokeWidth={2} strokeLinejoin="round" />
     </>
   ),
+  cutoffs: (
+    <>
+      <rect x={10} y={14} width={68} height={60} rx={8} fill={fill} stroke={ink} strokeWidth={3} />
+      <path d="M10 30 h68" stroke={ink} strokeWidth={3} />
+      <rect x={18} y={20} width={22} height={5} rx={2.5} fill={wash} />
+      <rect x={18} y={38} width={30} height={5} rx={2.5} fill={faint} />
+      <rect x={18} y={50} width={24} height={5} rx={2.5} fill={faint} />
+      <rect x={18} y={62} width={28} height={5} rx={2.5} fill={faint} />
+      <rect x={56} y={36} width={14} height={9} rx={3} fill={accent} />
+      <rect x={56} y={48} width={14} height={9} rx={3} fill={wash} />
+      <rect x={56} y={60} width={14} height={9} rx={3} fill={wash} />
+    </>
+  ),
+  calendar: (
+    <>
+      <rect x={12} y={18} width={64} height={58} rx={8} fill={fill} stroke={ink} strokeWidth={3} />
+      <path d="M12 34 h64" stroke={ink} strokeWidth={3} />
+      <path d="M28 12 v12 M60 12 v12" stroke={ink} strokeWidth={4} strokeLinecap="round" />
+      <rect x={22} y={42} width={10} height={9} rx={2} fill={faint} />
+      <rect x={39} y={42} width={10} height={9} rx={2} fill={faint} />
+      <rect x={56} y={42} width={10} height={9} rx={2} fill={accent} />
+      <rect x={22} y={57} width={10} height={9} rx={2} fill={faint} />
+      <rect x={39} y={57} width={10} height={9} rx={2} fill={wash} />
+    </>
+  ),
+  loan: (
+    <>
+      <circle cx={32} cy={46} r={22} fill={fill} stroke={ink} strokeWidth={3} />
+      <path d="M24 36 h16 M24 43 h16 M28 36 c10 0 10 14 0 14 l12 12" fill="none" stroke={ink} strokeWidth={3} strokeLinecap="round" strokeLinejoin="round" />
+      <rect x={58} y={50} width={8} height={18} rx={2} fill={wash} />
+      <rect x={70} y={40} width={8} height={28} rx={2} fill={ink} />
+      <path d="M56 34 l10 -8 l8 4 l8 -10" fill="none" stroke={accent} strokeWidth={3.5} strokeLinecap="round" strokeLinejoin="round" />
+    </>
+  ),
 } satisfies Record<string, ReactNode>
 
 export type ToolArtName = keyof typeof art

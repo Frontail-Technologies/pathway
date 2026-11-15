@@ -2,6 +2,7 @@
 
 import { createEmptyResume, createSampleResume } from '../data/fixtures'
 import { useResumeDraft } from '../hooks/use-resume-draft'
+import { useMediaQuery } from '../hooks/use-media-query'
 import { StartScreen } from './start-screen'
 import { DesktopWorkspace } from './workspace/desktop-workspace'
 import { MobileWorkspace } from './workspace/mobile-workspace'
@@ -9,6 +10,7 @@ import { MobileWorkspace } from './workspace/mobile-workspace'
  
 export function ResumeBuilderPage() {
   const draft = useResumeDraft()
+  const isDesktop = useMediaQuery('(min-width: 1024px)')
 
   if (!draft.restored) return null
 
@@ -40,13 +42,6 @@ export function ResumeBuilderPage() {
   }
 
   return (
-    <div className="h-full w-full">
-      <div className="hidden h-full w-full lg:flex">
-        <DesktopWorkspace {...workspaceProps} />
-      </div>
-      <div className="h-full w-full lg:hidden">
-        <MobileWorkspace {...workspaceProps} />
-      </div>
-    </div>
+    <div className="flex h-full w-full">{isDesktop ? <DesktopWorkspace {...workspaceProps} /> : <MobileWorkspace {...workspaceProps} />}</div>
   )
 }

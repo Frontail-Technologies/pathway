@@ -1,5 +1,6 @@
 import Link from 'next/link'
-import { ArrowUpRight, FileText } from 'lucide-react'
+import { ArrowUpRight } from 'lucide-react'
+import { SpotArt } from '@/components/shared/spot-art'
 import { cn } from '@/lib/utils'
 import { noticeTypeLabel, type OfficialNotice } from '../api/content-api'
 
@@ -7,9 +8,7 @@ export function NoticeRow({ notice }: { notice: OfficialNotice }) {
   const ownerHref = notice.owner.kind === 'exam' ? `/exam/${notice.owner.slug}` : `/scholarship/${notice.owner.slug}`
   return (
     <li className="group relative flex gap-3 py-3.5">
-      <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
-        <FileText className="size-5" aria-hidden="true" />
-      </span>
+      <SpotArt name={notice.owner.kind === 'exam' ? 'exam' : 'scholarship'} className="size-10 rounded-lg" />
       <div className="min-w-0 flex-1">
         <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs">
           <Link href={ownerHref} className="relative z-10 rounded-md bg-secondary px-1.5 py-0.5 font-semibold text-primary hover:underline">

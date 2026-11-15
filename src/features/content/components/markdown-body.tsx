@@ -1,8 +1,9 @@
 import ReactMarkdown, { type Components } from 'react-markdown'
 import remarkGfm from 'remark-gfm'
+import { headingId, nodeText } from '../lib/headings'
 
 const components: Components = {
-  h2: ({ children }) => <h2 className="mt-9 mb-3 font-heading text-[22px] leading-snug font-bold text-foreground">{children}</h2>,
+  h2: ({ children }) => <h2 id={headingId(nodeText(children))} className="scroll-mt-header mt-9 mb-3 font-heading text-[22px] leading-snug font-bold text-foreground">{children}</h2>,
   h3: ({ children }) => <h3 className="mt-7 mb-2 font-heading text-lg font-bold text-foreground">{children}</h3>,
   p: ({ children }) => <p className="my-4 text-[16px] leading-8 text-foreground/90">{children}</p>,
   ul: ({ children }) => <ul className="my-4 list-disc space-y-2 pl-6 text-[16px] leading-7 text-foreground/90 marker:text-primary">{children}</ul>,

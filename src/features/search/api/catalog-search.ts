@@ -5,12 +5,13 @@ import { listExams } from '@/features/exams/api/exams-api'
 import { listScholarships, type ScholarshipListItem } from '@/features/scholarships/api/scholarships-api'
 import { listCoaching, type CoachingListItem } from '@/features/coaching/api/coaching-api'
 import { listTutors } from '@/features/tutors/api/tutors-api'
+import { listNotes, type PublicNote } from '@/features/notes/api/notes-api'
 import type { Exam } from '@/features/exams/data/exams'
 import type { Tutor } from '@/features/tutors/data/tutors'
 import type { SearchEntry, SearchKind } from '../data/search-index'
 
-export type CatalogKind = Extract<SearchKind, 'college' | 'course' | 'exam' | 'scholarship' | 'coaching' | 'tutor'>
-export const catalogKinds: CatalogKind[] = ['college', 'course', 'exam', 'scholarship', 'coaching', 'tutor']
+export type CatalogKind = Extract<SearchKind, 'college' | 'course' | 'exam' | 'scholarship' | 'coaching' | 'tutor' | 'note'>
+export const catalogKinds: CatalogKind[] = ['college', 'course', 'exam', 'scholarship', 'note', 'coaching', 'tutor']
 
 const listing = (path: string, name: string) => `${path}?q=${encodeURIComponent(name)}`
 
@@ -56,6 +57,15 @@ export const coachingEntry = (p: CoachingListItem): SearchEntry => ({
 })
 export const tutorEntry = (t: Tutor): SearchEntry => ({ id: `tutor-${t.slug}`, kind: 'tutor', title: t.name, subtitle: t.headline, href: `/tutor/${t.slug}`, keywords: '' })
 
+export const noteEntry = (n: PublicNote): SearchEntry => ({
+  id: `note-${n.slug}`,
+  kind: 'note',
+  title: n.title,
+  subtitle: [n.subject, n.stream, n.pricingType === 'free' ? 'Free' : null].filter(Boolean).join(' · ') || 'Study notes',
+  href: `/notes/${n.slug}`,
+  keywords: '',
+})
+
 export async function listCatalogEntries(kind: CatalogKind, query: CatalogQuery): Promise<CatalogList<SearchEntry>> {
   const toEntries = <T,>(list: CatalogList<T>, map: (item: T) => SearchEntry) => ({ items: list.items.map(map), page: list.page })
   if (kind === 'college') return toEntries(await listColleges(query), collegeEntry)
@@ -63,6 +73,7 @@ export async function listCatalogEntries(kind: CatalogKind, query: CatalogQuery)
   if (kind === 'exam') return toEntries(await listExams(query), examEntry)
   if (kind === 'scholarship') return toEntries(await listScholarships(query), scholarshipEntry)
   if (kind === 'coaching') return toEntries(await listCoaching(query), coachingEntry)
+  if (kind === 'note') return toEntries(await listNotes(query), noteEntry)
   return toEntries(await listTutors(query), tutorEntry)
 }
 

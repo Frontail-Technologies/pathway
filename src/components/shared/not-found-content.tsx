@@ -1,13 +1,12 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { Illustration } from "@/components/shared/illustration";
 
 export function NotFoundContent() {
   return (
     <div className="flex min-h-[60dvh] items-center justify-center px-4 py-12 sm:py-20 lg:min-h-[calc(100dvh-7.5rem)]">
       <div className="w-full max-w-md text-center">
-        <p className="font-heading text-5xl font-extrabold text-primary sm:text-[64px]">
-          404
-        </p>
+        <Illustration name="notFound" width={220} className="mx-auto" />
         <h1 className="mt-2 font-heading text-xl font-bold text-foreground sm:text-2xl">
           Page not found
         </h1>

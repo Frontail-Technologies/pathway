@@ -21,26 +21,26 @@ export function PopularComparisonCard({ collegeA, collegeB, programA, programB }
 
   return (
     <div className="group rounded-xl border bg-card p-4 transition-colors hover:border-primary/40">
-      <div className="flex items-center justify-center gap-3">
-        <CollegeMini college={collegeA.college} />
-        <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-secondary text-[11px] font-bold text-primary">VS</span>
-        <CollegeMini college={collegeB.college} />
+      <div className="flex items-start justify-center gap-3">
+        <CollegeMini entry={collegeA} />
+        <span className="mt-3 flex size-8 shrink-0 items-center justify-center rounded-full bg-primary text-[11px] font-bold text-primary-foreground">VS</span>
+        <CollegeMini entry={collegeB} />
       </div>
-      <Button variant="outline" className="mt-4 h-10 w-full text-sm font-semibold" nativeButton={false} render={<Link href={`/compare/colleges?${query}`} />}>
+      <Button variant="cta" className="mt-4 h-10 w-full text-sm font-semibold" nativeButton={false} render={<Link href={`/compare/colleges?${query}`} />}>
         Compare
       </Button>
     </div>
   )
 }
 
-function CollegeMini({ college }: { college: { logo: string; shortName: string; location: string } }) {
+function CollegeMini({ entry }: { entry: CompareEntry }) {
+  const { college, program } = entry
   return (
-    <div className="flex min-w-0 flex-1 flex-col items-center gap-1.5 text-center">
-      <div className="relative flex size-11 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-secondary text-xs font-bold text-primary">
-        {getCollegeInitials(college.shortName)}
-      </div>
-      <p className="w-full truncate text-sm font-bold text-foreground">{college.shortName}</p>
-      <p className="w-full truncate text-xs text-muted-foreground">{college.location.split(',')[0]}</p>
+    <div className="flex min-w-0 flex-1 flex-col items-center gap-1 text-center">
+      <div className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-secondary text-[13px] font-bold text-primary">{getCollegeInitials(college.shortName)}</div>
+      <p className="mt-1 line-clamp-2 w-full text-sm font-semibold text-foreground">{college.shortName}</p>
+      {program.slug ? <p className="line-clamp-2 w-full text-xs text-muted-foreground">{program.degree} {program.course}</p> : null}
+      {college.nirfRank && college.nirfRank !== 'Not available' ? <p className="text-xs font-medium text-primary">NIRF {college.nirfRank.replace(/\s*\(\d{4}\)$/, '')}</p> : null}
     </div>
   )
 }

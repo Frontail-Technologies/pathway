@@ -1,7 +1,6 @@
 'use client'
 
-import Link from 'next/link'
-import { ArrowLeft, Save } from 'lucide-react'
+import { Download, Save } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable'
@@ -9,8 +8,10 @@ import { RESUME_STEPS, type ResumeData, type ResumeStepId, type ResumeTemplateId
 import { TemplatePicker } from '../template-picker'
 import { ResumeDocumentViewport } from '../resume-document-viewport'
 import { useResumeDocument } from '../resume-template-renderer'
+import { ResumePrint, printResume } from '../resume-print'
 import { StepContent } from '../step-content'
 import { BuilderSidebar } from './builder-sidebar'
+import { WorkspaceBar, onBlueOutline } from './workspace-bar'
 
 type DesktopWorkspaceProps = {
   savedAt: number | null
@@ -22,16 +23,10 @@ type DesktopWorkspaceProps = {
   onStepChange: (step: ResumeStepId) => void
 }
 
-
-
-
-
-
-
- 
 export function DesktopWorkspace({ savedAt, step, data, onChange, templateId, onTemplateChange, onStepChange }: DesktopWorkspaceProps) {
   const stepIndex = RESUME_STEPS.findIndex((entry) => entry.id === step)
   const resumeDocument = useResumeDocument(templateId, data)
+  const meta = RESUME_STEPS[stepIndex]
 
   const goNext = () => {
     const next = RESUME_STEPS[stepIndex + 1]
@@ -44,35 +39,31 @@ export function DesktopWorkspace({ savedAt, step, data, onChange, templateId, on
 
   return (
     <div className="flex h-full min-h-0 w-full min-w-0 flex-col">
-      <header className="flex h-14 shrink-0 items-center justify-between gap-3 border-b bg-card px-4">
-        <div className="flex min-w-0 items-center gap-2.5">
-          <Button variant="ghost" size="icon-sm" nativeButton={false} render={<Link href="/" aria-label="Back to Student Tools" />}>
-            <ArrowLeft className="size-4" aria-hidden="true" />
-          </Button>
-          <span className="font-heading text-sm font-bold text-foreground">Pathway</span>
-          <span className="text-muted-foreground" aria-hidden="true">
-            /
+      <WorkspaceBar>
+        {savedAt ? (
+          <span className="flex items-center gap-1.5 text-xs text-primary-foreground/80">
+            <Save className="size-3.5" aria-hidden="true" />
+            Saved in this browser
           </span>
-          <span className="truncate text-sm font-medium text-foreground">Resume Builder</span>
-        </div>
-        <div className="flex shrink-0 items-center gap-3">
-          {savedAt && (
-            <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
-              <Save className="size-3.5" aria-hidden="true" />
-              Draft saved locally
-            </span>
-          )}
-          <TemplatePicker data={data} templateId={templateId} onSelect={onTemplateChange} trigger={<Button type="button" variant="outline" size="sm">Change Template</Button>} />
-        </div>
-      </header>
+        ) : null}
+        <TemplatePicker data={data} templateId={templateId} onSelect={onTemplateChange} trigger={<Button type="button" variant="outline" size="sm" className={onBlueOutline}>Change template</Button>} />
+        <Button type="button" variant="cta" size="sm" className="gap-1.5" onClick={printResume}>
+          <Download className="size-4" aria-hidden="true" />
+          Download PDF
+        </Button>
+      </WorkspaceBar>
 
       <div className="flex min-h-0 flex-1">
-        <BuilderSidebar activeStep={step} onStepClick={onStepChange} />
+        <BuilderSidebar activeStep={step} data={data} onStepClick={onStepChange} />
 
         <ResizablePanelGroup direction="horizontal" className="min-w-0 flex-1">
           <ResizablePanel defaultSize={43} minSize={36} className="flex min-h-0 flex-col">
             <ScrollArea className="min-h-0 flex-1">
               <div className="mx-auto max-w-3xl px-6 py-6">
+                <p className="text-xs font-semibold text-muted-foreground">
+                  Step {stepIndex + 1} of {RESUME_STEPS.length}
+                </p>
+                <h1 className="mt-1 mb-5 font-heading text-2xl font-bold text-foreground">{meta?.label}</h1>
                 <StepContent step={step} data={data} onChange={onChange} templateId={templateId} onTemplateChange={onTemplateChange} onEditStep={onStepChange} />
               </div>
             </ScrollArea>
@@ -82,10 +73,13 @@ export function DesktopWorkspace({ savedAt, step, data, onChange, templateId, on
               </Button>
               {step !== 'review' ? (
                 <Button type="button" variant="cta" onClick={goNext}>
-                  Save & Next
+                  Save and next
                 </Button>
               ) : (
-                <span className="text-sm font-medium text-success">All steps complete</span>
+                <Button type="button" variant="cta" className="gap-1.5" onClick={printResume}>
+                  <Download className="size-4" aria-hidden="true" />
+                  Download PDF
+                </Button>
               )}
             </div>
           </ResizablePanel>
@@ -97,6 +91,7 @@ export function DesktopWorkspace({ savedAt, step, data, onChange, templateId, on
           </ResizablePanel>
         </ResizablePanelGroup>
       </div>
+      <ResumePrint pages={resumeDocument.pages} />
     </div>
   )
 }

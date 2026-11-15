@@ -11,6 +11,7 @@ import { ListingError, ListingLoading } from '@/features/catalog/listing-states'
 import { FilterSheet } from './filter-sheet'
 import { FilterSidebar } from './filter-sidebar'
 import { ListingHeader } from './listing-header'
+import type { SpotArtName } from '@/components/shared/spot-art'
 import { LoadMoreFooter } from './load-more-footer'
 import { MobileListingBar } from './mobile-listing-bar'
 import { appliedFilters, countSelected, type FacetGroup, type SelectedFilters, type SortOption } from './types'
@@ -31,6 +32,7 @@ export function CatalogListing<T>({
   title,
   description,
   meta,
+  art,
   searchPlaceholder,
   noun,
   groups,
@@ -49,6 +51,7 @@ export function CatalogListing<T>({
   title: string
   description?: string
   meta?: ReactNode
+  art?: SpotArtName
   searchPlaceholder: string
   noun: [string, string]
   groups: FacetGroup[]
@@ -82,14 +85,14 @@ export function CatalogListing<T>({
 
   return (
     <div className="bg-background pb-24 lg:pb-14">
-      <ListingHeader breadcrumbs={breadcrumbs} title={title} description={description} meta={meta}>
+      <ListingHeader breadcrumbs={breadcrumbs} title={title} description={description} meta={meta} art={art}>
         <form
           role="search"
           onSubmit={(event) => {
             event.preventDefault()
             onNavigate(selected, sort, draftQuery)
           }}
-          className="flex h-11 max-w-xl items-center gap-2 rounded-xl border bg-background pr-1 pl-3.5 transition-colors focus-within:border-primary"
+          className="flex h-12 max-w-2xl items-center gap-2 rounded-xl bg-card pr-1.5 pl-3.5 text-foreground shadow-[0_8px_24px_rgba(15,23,42,0.18)]"
         >
           <Search className="size-4 shrink-0 text-muted-foreground" aria-hidden="true" />
           <input
@@ -99,7 +102,7 @@ export function CatalogListing<T>({
             aria-label={searchPlaceholder}
             className="h-full min-w-0 flex-1 bg-transparent text-[15px] outline-none placeholder:text-muted-foreground sm:text-sm"
           />
-          <Button type="submit" size="sm" className="px-4">
+          <Button type="submit" variant="cta" className="h-9 px-4 font-semibold">
             Search
           </Button>
         </form>
@@ -155,7 +158,7 @@ export function CatalogListing<T>({
               </div>
             ) : (
               <>
-                <div className={layout === 'grid' ? 'grid gap-4 sm:grid-cols-2' : 'grid gap-4'}>{renderItems(list.items)}</div>
+                <div className={layout === 'grid' ? 'grid grid-cols-1 gap-4 sm:grid-cols-2 [&>*]:min-w-0' : 'grid grid-cols-1 gap-4 [&>*]:min-w-0'}>{renderItems(list.items)}</div>
                 <LoadMoreFooter shown={list.items.length} total={list.total} noun={noun[1]} hasMore={list.hasMore} loading={list.loadingMore} onLoadMore={list.loadMore} />
               </>
             )}

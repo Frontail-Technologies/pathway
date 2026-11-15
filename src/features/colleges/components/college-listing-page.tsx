@@ -55,6 +55,7 @@ export function CollegeListingPage({ initial, initialQuery, facets }: { initial?
 
   return (
     <CatalogListing
+      art="college"
       breadcrumbs={[{ label: 'Home', href: '/' }, 'Colleges']}
       title={headingFor(groups, selected)}
       description="Compare colleges by NIRF rank, fees, median package and entrance exams."

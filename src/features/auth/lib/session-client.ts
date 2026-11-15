@@ -1,4 +1,5 @@
 import { apiUrl } from '@/services/api/client'
+import { hasNativeBridge, isAppShell, postToNative, requestAppToken } from '@/lib/app-shell'
 
 export type ServerRole = 'student' | 'tutor' | 'staff' | 'admin'
 
@@ -74,8 +75,16 @@ function adopt(result: AuthPayload) {
   return result.user
 }
 
+async function appSession(stale: boolean): Promise<AuthPayload> {
+  const token = await requestAppToken(stale)
+  if (!token) throw new ApiRequestError('Sign in to the app to continue.', 401, 'UNAUTHENTICATED')
+  const user = await send<SessionUser>('GET', '/auth/me', undefined, token)
+  return { user, session: { accessToken: token } }
+}
+
 export function refreshSession(): Promise<SessionUser | null> {
-  refreshing ??= send<AuthPayload>('POST', '/auth/refresh', {}, null)
+  const inApp = isAppShell() && hasNativeBridge()
+  refreshing ??= (inApp ? appSession(accessToken !== null) : send<AuthPayload>('POST', '/auth/refresh', {}, null))
     .then(adopt)
     .catch((error: unknown) => {
       if (error instanceof ApiRequestError && (error.status === 401 || error.status === 403)) {
@@ -121,5 +130,6 @@ export const acceptStaffInvitation = async (input: { token: string; password: st
 export async function signOut() {
   accessToken = null
   emit(null)
+  if (isAppShell() && postToNative({ type: 'signOut' })) return
   await send('POST', '/auth/logout', {}, null).catch(() => undefined)
 }

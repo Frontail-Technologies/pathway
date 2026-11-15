@@ -1,13 +1,10 @@
 import Link from 'next/link'
-import { UserRound } from 'lucide-react'
-import { Button } from '@/components/ui/button'
 import { Logo } from '@/components/shared/logo'
 import { ExploreMenu } from './explore-menu'
+import { HeaderAccount } from './header-account'
 import { MobileHeaderBar } from './mobile-header-bar'
 import { SearchDialog, SearchTrigger } from './search-dialog'
 import { SectionNavigation } from './section-navigation'
-
-const iconButtonClass = 'text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground focus-visible:border-transparent focus-visible:ring-white/70'
 
 const blueSurface = 'pw-brand-surface'
 
@@ -28,13 +25,8 @@ export function PublicHeader() {
             <div className="mx-auto w-full max-w-160 min-w-0">
               <SearchTrigger variant="desktop" />
             </div>
-            <div className="flex shrink-0 items-center gap-2">
-              <Button variant="ghost" className={`text-[15px] font-semibold ${iconButtonClass}`} nativeButton={false} render={<Link href="/login" />}>
-                Sign in
-              </Button>
-              <Button size="icon" variant="ghost" aria-label="Account" className={`rounded-full bg-primary-foreground/12 ${iconButtonClass}`} nativeButton={false} render={<Link href="/account" />}>
-                <UserRound className="size-5" />
-              </Button>
+            <div className="flex shrink-0 items-center">
+              <HeaderAccount />
             </div>
           </div>
         </div>

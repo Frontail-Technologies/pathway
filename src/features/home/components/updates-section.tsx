@@ -1,9 +1,10 @@
 import Link from 'next/link'
-import { ArrowRight, Bell } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 import { SourceNote } from '@/components/shared/source-note'
 import { listArticles, listNotices } from '@/features/content/api/content-api'
 import { ArticleCard, ArticleFeature } from '@/features/content/components/article-card'
 import { NoticeList } from '@/features/content/components/notice-list'
+import { SpotArt } from '@/components/shared/spot-art'
 import { HomeSectionHeading } from './home-section-heading'
 
 export async function UpdatesSection() {
@@ -48,9 +49,7 @@ export async function UpdatesSection() {
             <aside aria-label="Official notices" className="rounded-2xl border bg-card p-4 sm:p-5">
               <div className="flex items-center justify-between gap-3">
                 <p className="flex items-center gap-2 font-heading text-base font-bold text-foreground">
-                  <span className="flex size-8 items-center justify-center rounded-lg bg-secondary text-primary">
-                    <Bell className="size-4" aria-hidden="true" />
-                  </span>
+                  <SpotArt name="sources" className="size-9 rounded-lg" />
                   Official notices
                 </p>
                 <Link href="/exams" className="flex items-center gap-1 text-sm font-semibold text-primary hover:underline">

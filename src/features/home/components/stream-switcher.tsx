@@ -2,16 +2,17 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { Award, BarChart3, BookOpen, ChevronRight, Compass, FileText, Landmark, Presentation, Scale, Target, type LucideIcon } from 'lucide-react'
-import { Briefcase, Calculator, Cpu, Flask, Scales, Stethoscope, type Icon } from '@phosphor-icons/react'
+import { ChevronRight } from 'lucide-react'
+import { FieldArt, type FieldArtName } from '@/components/shared/landing-art'
+import { SpotArt, type SpotArtName } from '@/components/shared/spot-art'
 import { cn } from '@/lib/utils'
 
 export type StreamEntry = { label: string; hint: string; href: string; icon: keyof typeof icons }
 export type StreamPanel = { slug: string; name: string; icon: string; colleges: number; entries: StreamEntry[] }
 
-const icons = { landmark: Landmark, book: BookOpen, file: FileText, award: Award, compass: Compass, target: Target, chart: BarChart3, scale: Scale, presentation: Presentation } satisfies Record<string, LucideIcon>
+const icons = { landmark: 'college', book: 'courses', file: 'exam', award: 'scholarship', compass: 'guide', target: 'predictor', chart: 'chart', scale: 'compare', presentation: 'presentation' } satisfies Record<string, SpotArtName>
 
-const streamIcons: Record<string, Icon> = { cpu: Cpu, briefcase: Briefcase, stethoscope: Stethoscope, scale: Scales, 'flask-conical': Flask, flask: Flask, calculator: Calculator }
+const streamArt: Record<string, FieldArtName> = { cpu: 'engineering', briefcase: 'business', stethoscope: 'medicine', scale: 'law', 'flask-conical': 'science', flask: 'science', calculator: 'commerce' }
 
 export function StreamSwitcher({ panels }: { panels: StreamPanel[] }) {
   const [active, setActive] = useState(panels[0]?.slug ?? '')
@@ -32,7 +33,6 @@ export function StreamSwitcher({ panels }: { panels: StreamPanel[] }) {
           </div>
           <div role="tablist" aria-label="Streams" className="mt-4 grid grid-cols-3 gap-2 sm:gap-3 lg:grid-cols-6">
             {panels.map((item) => {
-              const StreamIcon = streamIcons[item.icon] ?? Cpu
               const selected = item.slug === panel.slug
               return (
                 <button
@@ -48,9 +48,7 @@ export function StreamSwitcher({ panels }: { panels: StreamPanel[] }) {
                     selected ? 'border-primary bg-secondary' : 'bg-card hover:bg-muted/60',
                   )}
                 >
-                  <span className={cn('flex size-10 items-center justify-center rounded-lg sm:size-11', selected ? 'bg-primary text-primary-foreground' : 'bg-secondary text-primary')}>
-                    <StreamIcon size={22} aria-hidden="true" />
-                  </span>
+                  <FieldArt name={streamArt[item.icon] ?? 'education'} className={cn('size-12 rounded-xl sm:size-14', selected ? 'bg-card' : 'bg-secondary')} />
                   <span>
                     <span className="block text-sm font-bold text-foreground sm:text-[15px]">{item.name}</span>
                     {item.colleges >= 10 ? <span className="block text-xs text-muted-foreground">{item.colleges.toLocaleString('en-IN')} colleges</span> : <span className="block text-xs text-muted-foreground">Courses &amp; exams</span>}
@@ -61,14 +59,13 @@ export function StreamSwitcher({ panels }: { panels: StreamPanel[] }) {
           </div>
           <div role="tabpanel" id={`stream-panel-${panel.slug}`} aria-labelledby={`stream-tab-${panel.slug}`} className="mt-4 grid gap-2.5 border-t pt-4 sm:grid-cols-2 lg:grid-cols-4">
             {panel.entries.map((entry) => {
-              const EntryIcon = icons[entry.icon]
               return (
                 <Link
                   key={entry.href}
                   href={entry.href}
                   className="group flex items-center gap-3 rounded-xl p-2.5 outline-none transition-colors hover:bg-muted/70 focus-visible:ring-2 focus-visible:ring-ring/50"
                 >
-                  <EntryIcon className="size-5 shrink-0 text-muted-foreground" aria-hidden="true" />
+                  <SpotArt name={icons[entry.icon]} className="size-11 rounded-lg" />
                   <span className="min-w-0 flex-1">
                     <span className="block truncate text-[15px] font-semibold text-foreground group-hover:text-primary">{entry.label}</span>
                     <span className="block truncate text-[13px] text-muted-foreground">{entry.hint}</span>
